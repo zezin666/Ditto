@@ -468,3 +468,48 @@
 2026-11-11T03:53:21.736 [t6-dark-full] exit clean=True
 2026-11-11T03:53:21.752 [t6-dark-full] log-scan clean
 2026-11-11T03:53:21.766 [t6-dark-full] DONE
+2026-11-11T04:54:31.995 [t7-release-full-light] BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t5-t7-release-full-light-2acb2b59e162424d903bc6cf7e310674
+2026-11-11T04:54:37.757 [t7-release-full-light] main=4656838 mainhWndSetting=4656838
+2026-11-11T04:54:37.777 [t7-release-full-light] top-level-windows=[Afx:00007FF7E7180000:0|Ditto Clipboard Viewer|vis=False][TrayNotifyIconClass|CTrayNotifyIcon Helper Window|vis=False][Ditto|Ditto|vis=False][GDI+ Hook Window Class|GDI+ Window (Ditto.exe)|vis=False][IME|Default IME|vis=False][IME|Default IME|vis=False][IME|Default IME|vis=False]
+2026-11-11T04:54:50.303 [t7-release-full-light] gdi-before gdi=15 user=27
+2026-11-11T04:54:53.543 [t7-release-full-light] popup=1152,751,1602,1201 dpi=144 items=20 list=1154,753,1590,1179 edit=1217,1143,1434,1194
+2026-11-11T04:54:53.545 [t7-release-full-light] options-button=1446,1148,1488,1190
+2026-11-11T04:54:53.548 [t7-release-full-light] list-visible=1154,753,1551,1139
+2026-11-11T04:54:53.550 [t7-release-full-light] LAYOUT PASS
+2026-11-11T04:54:53.935 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-popup.png size=450x450
+2026-11-11T04:54:55.259 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-search.png size=450x450
+2026-11-11T04:54:55.264 [t7-release-full-light] search textLength=10 selected=0
+2026-11-11T04:54:56.652 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-empty.png size=450x450
+2026-11-11T04:54:56.654 [t7-release-full-light] empty-state captured textLength=16
+2026-11-11T04:54:58.864 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-group.png size=450x450
+2026-11-11T04:54:58.865 [t7-release-full-light] group view captured
+2026-11-11T04:55:00.233 [t7-release-full-light] keyboard selected=19 top=1
+2026-11-11T04:55:00.610 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-nav.png size=450x450
+2026-11-11T04:55:01.897 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-scrollbar.png size=450x450
+2026-11-11T04:55:03.181 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-description.png size=450x450
+2026-11-11T04:55:03.182 [t7-release-full-light] description toggle captured (F3)
+2026-11-11T04:55:03.995 [t7-release-full-light] screenshot-region=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-contextmenu.png size=419x621
+2026-11-11T04:55:03.996 [t7-release-full-light] context menu captured
+2026-11-11T04:55:11.005 [t7-release-full-light] -open visible=True -close visible=False
+2026-11-11T04:55:12.655 [t7-release-full-light] hotkey visible=True toggleVisible=False
+2026-11-11T04:55:17.047 [t7-release-full-light] enter selected=19 visibleAfterEnter=False clipboardLength=21
+2026-11-11T04:55:17.061 [t7-release-full-light] gdi-before-cycles gdi=120 user=103
+2026-11-11T04:56:18.285 [t7-release-full-light] gdi-after gdi=120 user=103 deltaGdi=105 deltaUser=76 cycleDeltaGdi=0 cycleDeltaUser=0
+2026-11-11T04:56:19.782 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-options-general.png size=1307x1005
+2026-11-11T04:56:20.808 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-options-keyboard.png size=1307x1005
+2026-11-11T04:56:21.781 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-options-types.png size=1307x1005
+2026-11-11T04:56:22.535 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-dialog-addtype.png size=515x821
+2026-11-11T04:56:22.902 [t7-release-full-light] Add Supported Type opened and cancelled
+2026-11-11T04:56:23.922 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-options-copybuffers.png size=1307x1005
+2026-11-11T04:56:24.912 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-options-friends.png size=1307x1005
+2026-11-11T04:56:25.910 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-options-stats.png size=1307x1005
+2026-11-11T04:56:26.909 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-options-about.png size=1307x1005
+2026-11-11T04:56:28.248 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-dialog-advanced.png size=1095x998
+2026-11-11T04:56:28.981 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-dialog-movetogroup.png size=594x476
+2026-11-11T04:56:29.718 [t7-release-full-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t7-release-full-light-dialog-groupname.png size=441x172
+2026-11-11T04:56:30.073 [t7-release-full-light] Group Name opened and cancelled
+2026-11-11T04:56:32.332 [t7-release-full-light] options apply/ok closed=True
+2026-11-11T04:56:32.334 [t7-release-full-light] gdi-end gdi=228 user=326
+2026-11-11T04:56:43.208 [t7-release-full-light] exit clean=True
+2026-11-11T04:56:43.234 [t7-release-full-light] log-scan clean
+2026-11-11T04:56:43.247 [t7-release-full-light] DONE

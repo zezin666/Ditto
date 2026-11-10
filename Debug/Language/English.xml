@@ -455,6 +455,7 @@
 		<Item English_Text = "Clear search" ID = "ClearSearchAction"></Item>
 		<Item English_Text = "Star clips to keep them handy here." ID = "NoStarredClipsHint"></Item>
 		<Item English_Text = "Clear filter" ID = "ClearFilterAction"></Item>
+		<Item English_Text = "-No Group-" ID = "NoGroup"></Item>
 
 	</Ditto_String_Table>
 	<Ditto_Options_Sheet>

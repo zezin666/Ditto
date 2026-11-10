@@ -95,3 +95,55 @@
 2026-11-11T03:47:20.203 [light] log-marker [ExitInstance] count=3
 2026-11-11T03:47:20.215 [light] log-scan clean (expected noise filtered)
 2026-11-11T03:47:20.225 [light] DONE
+2026-11-11T04:50:41.567 [t7-dark] BEGIN Theme=Modern Dark Build=Debug64 Rows=5000 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t6-t7-dark-bba7b32a2e614b9d80e95fdcd7f45e9f
+2026-11-11T04:50:47.410 [t7-dark] main=3870460
+2026-11-11T04:50:50.673 [t7-dark] popup-found dpi=144 listItems=5001
+2026-11-11T04:50:50.678 [t7-dark] tabStops groups=True back=True system=True options=True empty=True list=True
+2026-11-11T04:50:50.687 [t7-dark] tabChain=513,514,528,32805,517,513,514,528,32805,517,513,514
+2026-11-11T04:50:50.711 [t7-dark] list-visible=1325,821,1722,1207 edit=1388,1211,1605,1262
+2026-11-11T04:50:50.715 [t7-dark] LAYOUT PASS
+2026-11-11T04:50:51.117 [t7-dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t6-t7-dark-popup.png size=450x450
+2026-11-11T04:50:51.818 [t7-dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t6-t7-dark-footer-focus.png size=450x450
+2026-11-11T04:50:53.831 [t7-dark] empty visible=True tabStop=True
+2026-11-11T04:50:54.051 [t7-dark] empty-focus ok=True focus=6164080
+2026-11-11T04:50:54.758 [t7-dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t6-t7-dark-empty-focus.png size=450x450
+2026-11-11T04:50:56.765 [t7-dark] space-clear textLength=0 items=5001
+2026-11-11T04:50:58.996 [t7-dark] empty-focus-enter ok=True focus=6164080
+2026-11-11T04:51:01.000 [t7-dark] enter-clear textLength=0 items=5001
+2026-11-11T04:51:03.975 [t7-dark] UNVERIFIED search-history menu not found
+2026-11-11T04:51:06.717 [t7-dark] scroll400 ms=789 gdiBefore=83 gdiAfter=81 deltaGdi=-2 userBefore=71 userAfter=72 deltaUser=1 items=5001
+2026-11-11T04:51:07.803 [t7-dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t6-t7-dark-5k-list.png size=450x450
+2026-11-11T04:51:10.190 [t7-dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t6-t7-dark-color-swatch.png size=450x450
+2026-11-11T04:51:21.806 [t7-dark] exit clean=True
+2026-11-11T04:51:21.827 [t7-dark] log-marker [T3 list paint pass reused one Gdiplus::Graphics object] count=1
+2026-11-11T04:51:21.832 [t7-dark] log-marker [T3 UiDraw created translucent brush cache] count=1
+2026-11-11T04:51:21.837 [t7-dark] log-marker [T3 UiDraw purged translucent brush cache] count=1
+2026-11-11T04:51:21.842 [t7-dark] log-marker [ExitInstance] count=4
+2026-11-11T04:51:21.854 [t7-dark] log-scan clean (expected noise filtered)
+2026-11-11T04:51:21.865 [t7-dark] DONE
+2026-11-11T04:53:58.331 [t7-release-5k] BEGIN Theme=Modern Dark Build=Release64 Rows=5000 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t6-t7-release-5k-e6d0ef5ef2e742a38a1b617f86c872cf
+2026-11-11T04:54:03.653 [t7-release-5k] main=6426030
+2026-11-11T04:54:06.905 [t7-release-5k] popup-found dpi=144 listItems=5001
+2026-11-11T04:54:06.909 [t7-release-5k] tabStops groups=True back=True system=True options=True empty=True list=True
+2026-11-11T04:54:06.918 [t7-release-5k] tabChain=513,514,528,32805,517,513,514,528,32805,517,513,514
+2026-11-11T04:54:06.932 [t7-release-5k] list-visible=1325,821,1722,1207 edit=1388,1211,1605,1262
+2026-11-11T04:54:06.948 [t7-release-5k] LAYOUT PASS
+2026-11-11T04:54:07.345 [t7-release-5k] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t6-t7-release-5k-popup.png size=450x450
+2026-11-11T04:54:08.051 [t7-release-5k] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t6-t7-release-5k-footer-focus.png size=450x450
+2026-11-11T04:54:10.069 [t7-release-5k] empty visible=True tabStop=True
+2026-11-11T04:54:10.291 [t7-release-5k] empty-focus ok=True focus=5967486
+2026-11-11T04:54:10.962 [t7-release-5k] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t6-t7-release-5k-empty-focus.png size=450x450
+2026-11-11T04:54:12.980 [t7-release-5k] space-clear textLength=0 items=5001
+2026-11-11T04:54:15.216 [t7-release-5k] empty-focus-enter ok=True focus=5967486
+2026-11-11T04:54:17.222 [t7-release-5k] enter-clear textLength=0 items=5001
+2026-11-11T04:54:20.219 [t7-release-5k] UNVERIFIED search-history menu not found
+2026-11-11T04:54:22.648 [t7-release-5k] scroll400 ms=487 gdiBefore=83 gdiAfter=81 deltaGdi=-2 userBefore=71 userAfter=72 deltaUser=1 items=5001
+2026-11-11T04:54:23.740 [t7-release-5k] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t6-t7-release-5k-5k-list.png size=450x450
+2026-11-11T04:54:26.135 [t7-release-5k] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t6-t7-release-5k-color-swatch.png size=450x450
+2026-11-11T04:54:28.547 [t7-release-5k] exit clean=True
+2026-11-11T04:54:28.567 [t7-release-5k] log-marker [T3 list paint pass reused one Gdiplus::Graphics object] count=0
+2026-11-11T04:54:28.572 [t7-release-5k] log-marker [T3 UiDraw created translucent brush cache] count=0
+2026-11-11T04:54:28.577 [t7-release-5k] log-marker [T3 UiDraw purged translucent brush cache] count=1
+2026-11-11T04:54:28.583 [t7-release-5k] log-marker [ExitInstance] count=4
+2026-11-11T04:54:28.593 [t7-release-5k] log-scan clean (expected noise filtered)
+2026-11-11T04:54:28.605 [t7-release-5k] DONE

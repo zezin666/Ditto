@@ -1,0 +1,191 @@
+2026-11-11T04:37:03.251 [dark] BEGIN Theme=Modern Dark Build=Debug64 Rows=120 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t7-dark-e544609dc0a24c57a467a66209c5c326
+2026-11-11T04:37:20.823 [dark] nogroup-english=[]
+2026-11-11T04:37:25.055 [dark] nogroup-custom=[]
+2026-11-11T04:37:37.992 [dark] nogroup-deutsch-fallback=[]
+2026-11-11T04:37:39.725 [dark] popup-found dpi=144 listItems=0
+2026-11-11T04:37:39.728 [dark] UNVERIFIED group tree window not found
+2026-11-11T04:37:40.651 [dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-indicators-top.png size=450x450
+2026-11-11T04:37:41.651 [dark] scroll480 ms=484 gdiBefore=75 gdiAfter=73 deltaGdi=-2 userBefore=72 userAfter=70 deltaUser=-2 items=0
+2026-11-11T04:37:42.035 [dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-indicators-scrolled.png size=450x450
+2026-11-11T04:37:43.794 [dark] screenshot-region=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-contextmenu.png size=419x621
+2026-11-11T04:37:43.799 [dark] context menu captured
+2026-11-11T04:37:55.595 [dark] exit clean
+2026-11-11T04:37:55.603 [dark] log-marker [T3 list paint pass reused one Gdiplus::Graphics object] count=4
+2026-11-11T04:37:55.607 [dark] log-marker [T3 GdiImageDrawer shared Graphics draws: 1] count=0
+2026-11-11T04:37:55.610 [dark] log-marker [T3 GdiImageDrawer shared Graphics draws: 100] count=0
+2026-11-11T04:37:55.613 [dark] log-marker [T3 UiDraw created translucent brush cache] count=0
+2026-11-11T04:37:55.616 [dark] log-marker [T3 UiDraw alpha brush cache cap reached; clearing] count=0
+2026-11-11T04:37:55.625 [dark] log-marker [T3 UiDraw purged translucent brush cache] count=0
+2026-11-11T04:37:55.627 [dark] log-marker [ExitInstance] count=10
+2026-11-11T04:37:55.635 [dark] log-scan clean (expected noise filtered)
+2026-11-11T04:37:55.647 [dark] DONE
+2026-11-11T04:38:37.090 [dark] BEGIN Theme=Modern Dark Build=Debug64 Rows=120 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t7-dark-14fd4c43eb1146558750c5a870da9589
+2026-11-11T04:38:48.542 [dark] nogroup tree not found for English
+2026-11-11T04:38:51.050 [dark] nogroup-english=[nogroup tree not found for English]
+2026-11-11T04:38:58.313 [dark] nogroup tree not found for EnglishCustom
+2026-11-11T04:39:10.150 [dark] nogroup-custom=[nogroup tree not found for EnglishCustom]
+2026-11-11T04:39:17.333 [dark] nogroup tree not found for Deutsch
+2026-11-11T04:39:19.819 [dark] nogroup-deutsch-fallback=[nogroup tree not found for Deutsch]
+2026-11-11T04:39:32.942 [dark] list-load-wait items=0
+2026-11-11T04:39:33.661 [dark] popup-found dpi=144 listItems=0
+2026-11-11T04:39:33.676 [dark] UNVERIFIED group tree window not found
+2026-11-11T04:39:34.600 [dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-indicators-top.png size=450x450
+2026-11-11T04:39:35.580 [dark] scroll480 ms=472 gdiBefore=73 gdiAfter=73 deltaGdi=0 userBefore=67 userAfter=69 deltaUser=2 items=0
+2026-11-11T04:39:35.946 [dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-indicators-scrolled.png size=450x450
+2026-11-11T04:39:37.693 [dark] screenshot-region=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-contextmenu.png size=419x621
+2026-11-11T04:39:37.694 [dark] context menu captured
+2026-11-11T04:39:49.781 [dark] exit clean
+2026-11-11T04:39:49.789 [dark] log-marker [T3 list paint pass reused one Gdiplus::Graphics object] count=4
+2026-11-11T04:39:49.793 [dark] log-marker [T3 GdiImageDrawer shared Graphics draws: 1] count=0
+2026-11-11T04:39:49.796 [dark] log-marker [T3 GdiImageDrawer shared Graphics draws: 100] count=0
+2026-11-11T04:39:49.798 [dark] log-marker [T3 UiDraw created translucent brush cache] count=0
+2026-11-11T04:39:49.800 [dark] log-marker [T3 UiDraw alpha brush cache cap reached; clearing] count=0
+2026-11-11T04:39:49.803 [dark] log-marker [T3 UiDraw purged translucent brush cache] count=0
+2026-11-11T04:39:49.806 [dark] log-marker [ExitInstance] count=8
+2026-11-11T04:39:49.813 [dark] log-scan clean (expected noise filtered)
+2026-11-11T04:39:49.828 [dark] DONE
+2026-11-11T04:40:18.733 [dark] BEGIN Theme=Modern Dark Build=Debug64 Rows=120 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t7-dark-0af36a29e4114e6baa3aa5d15d57621a
+2026-11-11T04:40:30.274 [dark] nogroup tree not found for English
+2026-11-11T04:40:41.687 [dark] nogroup-english=[nogroup tree not found for English]
+2026-11-11T04:40:48.920 [dark] nogroup tree not found for EnglishCustom
+2026-11-11T04:41:00.507 [dark] nogroup-custom=[nogroup tree not found for EnglishCustom]
+2026-11-11T04:41:07.714 [dark] nogroup tree not found for Deutsch
+2026-11-11T04:41:19.119 [dark] nogroup-deutsch-fallback=[nogroup tree not found for Deutsch]
+2026-11-11T04:41:20.940 [dark] list-load-wait items=120
+2026-11-11T04:41:21.649 [dark] popup-found dpi=144 listItems=120
+2026-11-11T04:41:21.651 [dark] UNVERIFIED group tree window not found
+2026-11-11T04:41:22.585 [dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-indicators-top.png size=450x450
+2026-11-11T04:41:25.499 [dark] scroll480 ms=2396 gdiBefore=78 gdiAfter=76 deltaGdi=-2 userBefore=70 userAfter=71 deltaUser=1 items=120
+2026-11-11T04:41:25.876 [dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-indicators-scrolled.png size=450x450
+2026-11-11T04:41:27.645 [dark] screenshot-region=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-contextmenu.png size=419x621
+2026-11-11T04:41:27.647 [dark] context menu captured
+2026-11-11T04:41:39.551 [dark] exit clean
+2026-11-11T04:41:39.561 [dark] log-marker [T3 list paint pass reused one Gdiplus::Graphics object] count=4
+2026-11-11T04:41:39.565 [dark] log-marker [T3 GdiImageDrawer shared Graphics draws: 1] count=5
+2026-11-11T04:41:39.571 [dark] log-marker [T3 GdiImageDrawer shared Graphics draws: 100] count=1
+2026-11-11T04:41:39.576 [dark] log-marker [T3 UiDraw created translucent brush cache] count=6
+2026-11-11T04:41:39.580 [dark] log-marker [T3 UiDraw alpha brush cache cap reached; clearing] count=2
+2026-11-11T04:41:39.584 [dark] log-marker [T3 UiDraw purged translucent brush cache] count=4
+2026-11-11T04:41:39.589 [dark] log-marker [ExitInstance] count=9
+2026-11-11T04:41:39.600 [dark] log-scan clean (expected noise filtered)
+2026-11-11T04:41:39.615 [dark] DONE
+2026-11-11T04:44:15.338 [dark] BEGIN Theme=Modern Dark Build=Debug64 Rows=120 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t7-dark-d791fbecf68a48fe8cb1eb2922bf0e8f
+2026-11-11T04:44:23.981 [dark] nogroup-english=[-No Group-]
+2026-11-11T04:44:37.734 [dark] nogroup-custom=[-No Group-]
+2026-11-11T04:44:42.042 [dark] nogroup-deutsch-fallback=[-No Group-]
+2026-11-11T04:44:43.659 [dark] list-load-wait items=120
+2026-11-11T04:44:44.378 [dark] popup-found dpi=144 listItems=120
+2026-11-11T04:44:44.380 [dark] nogroup-runtime=[]
+2026-11-11T04:44:45.312 [dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-indicators-top.png size=450x450
+2026-11-11T04:44:48.086 [dark] scroll480 ms=2265 gdiBefore=78 gdiAfter=76 deltaGdi=-2 userBefore=70 userAfter=71 deltaUser=1 items=120
+2026-11-11T04:44:48.456 [dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-indicators-scrolled.png size=450x450
+2026-11-11T04:44:49.364 [dark] nogroup-runtime-after-show=[-No Group-] treeVisible=True
+2026-11-11T04:44:49.380 [dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-group-tree.png size=450x315
+2026-11-11T04:44:51.641 [dark] screenshot-region=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-contextmenu.png size=419x621
+2026-11-11T04:44:51.642 [dark] context menu captured
+2026-11-11T04:45:03.157 [dark] exit clean
+2026-11-11T04:45:03.166 [dark] log-marker [T3 list paint pass reused one Gdiplus::Graphics object] count=4
+2026-11-11T04:45:03.170 [dark] log-marker [T3 GdiImageDrawer shared Graphics draws: 1] count=5
+2026-11-11T04:45:03.175 [dark] log-marker [T3 GdiImageDrawer shared Graphics draws: 100] count=1
+2026-11-11T04:45:03.180 [dark] log-marker [T3 UiDraw created translucent brush cache] count=6
+2026-11-11T04:45:03.184 [dark] log-marker [T3 UiDraw alpha brush cache cap reached; clearing] count=2
+2026-11-11T04:45:03.189 [dark] log-marker [T3 UiDraw purged translucent brush cache] count=4
+2026-11-11T04:45:03.193 [dark] log-marker [ExitInstance] count=10
+2026-11-11T04:45:03.212 [dark] log-scan clean (expected noise filtered)
+2026-11-11T04:45:03.224 [dark] DONE
+2026-11-11T04:45:58.606 [dark] BEGIN Theme=Modern Dark Build=Debug64 Rows=120 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t7-dark-1eb7ff17ca4d484d8c40936d3ace9689
+2026-11-11T04:46:07.020 [dark] nogroup-english=[-No Group-]
+2026-11-11T04:46:20.081 [dark] nogroup-custom=[-No Group-]
+2026-11-11T04:46:24.489 [dark] nogroup-deutsch-fallback=[-No Group-]
+2026-11-11T04:46:26.215 [dark] list-load-wait items=120
+2026-11-11T04:46:26.928 [dark] popup-found dpi=144 listItems=120
+2026-11-11T04:46:26.930 [dark] nogroup-runtime=[]
+2026-11-11T04:46:27.856 [dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-indicators-top.png size=450x450
+2026-11-11T04:46:30.595 [dark] scroll480 ms=2229 gdiBefore=78 gdiAfter=76 deltaGdi=-2 userBefore=70 userAfter=71 deltaUser=1 items=120
+2026-11-11T04:46:30.967 [dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-indicators-scrolled.png size=450x450
+2026-11-11T04:46:31.884 [dark] nogroup-runtime-after-show=[-No Group-] treeVisible=True
+2026-11-11T04:46:31.896 [dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-group-tree.png size=450x315
+2026-11-11T04:46:34.148 [dark] screenshot-region=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-contextmenu.png size=419x621
+2026-11-11T04:46:34.150 [dark] context menu captured
+2026-11-11T04:46:45.824 [dark] exit clean
+2026-11-11T04:46:45.834 [dark] log-marker [T3 list paint pass reused one Gdiplus::Graphics object] count=4
+2026-11-11T04:46:45.838 [dark] log-marker [T3 GdiImageDrawer shared Graphics draws: 1] count=5
+2026-11-11T04:46:45.844 [dark] log-marker [T3 GdiImageDrawer shared Graphics draws: 100] count=1
+2026-11-11T04:46:45.848 [dark] log-marker [T3 UiDraw created translucent brush cache] count=6
+2026-11-11T04:46:45.852 [dark] log-marker [T3 UiDraw alpha brush cache cap reached; clearing] count=2
+2026-11-11T04:46:45.857 [dark] log-marker [T3 UiDraw purged translucent brush cache] count=4
+2026-11-11T04:46:45.861 [dark] log-marker [ExitInstance] count=10
+2026-11-11T04:46:45.874 [dark] log-scan clean (expected noise filtered)
+2026-11-11T04:46:45.885 [dark] DONE
+2026-11-11T04:48:05.114 [dark] BEGIN Theme=Modern Dark Build=Debug64 Rows=120 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t7-dark-d3439acc19c34e91a1c7efd77c3003fb
+2026-11-11T04:48:13.815 [dark] nogroup-english=[-No Group-]
+2026-11-11T04:48:17.953 [dark] nogroup-deutsch-custom=[Keine Gruppe (QA)]
+2026-11-11T04:48:22.237 [dark] nogroup-deutsch-fallback=[-No Group-]
+2026-11-11T04:48:23.752 [dark] list-load-wait items=120
+2026-11-11T04:48:24.473 [dark] popup-found dpi=144 listItems=120
+2026-11-11T04:48:24.475 [dark] nogroup-runtime=[]
+2026-11-11T04:48:25.393 [dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-indicators-top.png size=450x450
+2026-11-11T04:48:28.143 [dark] scroll480 ms=2240 gdiBefore=78 gdiAfter=76 deltaGdi=-2 userBefore=70 userAfter=71 deltaUser=1 items=120
+2026-11-11T04:48:28.512 [dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-indicators-scrolled.png size=450x450
+2026-11-11T04:48:29.419 [dark] nogroup-runtime-after-show=[-No Group-] treeVisible=True
+2026-11-11T04:48:29.431 [dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-group-tree.png size=450x315
+2026-11-11T04:48:31.691 [dark] screenshot-region=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-dark-contextmenu.png size=419x621
+2026-11-11T04:48:31.693 [dark] context menu captured
+2026-11-11T04:48:34.573 [dark] exit clean
+2026-11-11T04:48:34.583 [dark] log-marker [T3 list paint pass reused one Gdiplus::Graphics object] count=4
+2026-11-11T04:48:34.587 [dark] log-marker [T3 GdiImageDrawer shared Graphics draws: 1] count=5
+2026-11-11T04:48:34.592 [dark] log-marker [T3 GdiImageDrawer shared Graphics draws: 100] count=1
+2026-11-11T04:48:34.597 [dark] log-marker [T3 UiDraw created translucent brush cache] count=6
+2026-11-11T04:48:34.602 [dark] log-marker [T3 UiDraw alpha brush cache cap reached; clearing] count=2
+2026-11-11T04:48:34.606 [dark] log-marker [T3 UiDraw purged translucent brush cache] count=4
+2026-11-11T04:48:34.611 [dark] log-marker [ExitInstance] count=10
+2026-11-11T04:48:34.623 [dark] log-scan clean (expected noise filtered)
+2026-11-11T04:48:34.634 [dark] DONE
+2026-11-11T04:49:34.094 [light] BEGIN Theme=Modern Light Build=Debug64 Rows=120 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t7-light-9843a0738af24df5a743280a00843c1f
+2026-11-11T04:49:42.787 [light] nogroup-english=[-No Group-]
+2026-11-11T04:49:46.932 [light] nogroup-deutsch-custom=[Keine Gruppe (QA)]
+2026-11-11T04:49:51.257 [light] nogroup-deutsch-fallback=[-No Group-]
+2026-11-11T04:49:52.988 [light] list-load-wait items=120
+2026-11-11T04:49:53.701 [light] popup-found dpi=144 listItems=120
+2026-11-11T04:49:53.703 [light] nogroup-runtime=[]
+2026-11-11T04:49:54.621 [light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-light-indicators-top.png size=450x450
+2026-11-11T04:49:57.433 [light] scroll480 ms=2293 gdiBefore=78 gdiAfter=76 deltaGdi=-2 userBefore=71 userAfter=71 deltaUser=0 items=120
+2026-11-11T04:49:57.808 [light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-light-indicators-scrolled.png size=450x450
+2026-11-11T04:49:58.715 [light] nogroup-runtime-after-show=[-No Group-] treeVisible=True
+2026-11-11T04:49:58.733 [light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-light-group-tree.png size=450x315
+2026-11-11T04:50:01.000 [light] screenshot-region=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-light-contextmenu.png size=419x621
+2026-11-11T04:50:01.002 [light] context menu captured
+2026-11-11T04:50:03.969 [light] exit clean
+2026-11-11T04:50:03.979 [light] log-marker [T3 list paint pass reused one Gdiplus::Graphics object] count=4
+2026-11-11T04:50:03.984 [light] log-marker [T3 GdiImageDrawer shared Graphics draws: 1] count=5
+2026-11-11T04:50:03.988 [light] log-marker [T3 GdiImageDrawer shared Graphics draws: 100] count=1
+2026-11-11T04:50:03.993 [light] log-marker [T3 UiDraw created translucent brush cache] count=6
+2026-11-11T04:50:03.997 [light] log-marker [T3 UiDraw alpha brush cache cap reached; clearing] count=2
+2026-11-11T04:50:04.002 [light] log-marker [T3 UiDraw purged translucent brush cache] count=4
+2026-11-11T04:50:04.006 [light] log-marker [ExitInstance] count=10
+2026-11-11T04:50:04.017 [light] log-scan clean (expected noise filtered)
+2026-11-11T04:50:04.028 [light] DONE
+2026-11-11T04:52:31.621 [release-dark] BEGIN Theme=Modern Dark Build=Release64 Rows=120 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t7-release-dark-5e9bed6a4dc24dde97ca95e7c57eba4d
+2026-11-11T04:52:40.091 [release-dark] nogroup-english=[-No Group-]
+2026-11-11T04:52:53.217 [release-dark] nogroup-deutsch-custom=[Keine Gruppe (QA)]
+2026-11-11T04:52:57.276 [release-dark] nogroup-deutsch-fallback=[-No Group-]
+2026-11-11T04:52:59.030 [release-dark] list-load-wait items=120
+2026-11-11T04:52:59.740 [release-dark] popup-found dpi=144 listItems=120
+2026-11-11T04:52:59.742 [release-dark] nogroup-runtime=[]
+2026-11-11T04:53:00.663 [release-dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-release-dark-indicators-top.png size=450x450
+2026-11-11T04:53:03.021 [release-dark] scroll480 ms=1833 gdiBefore=78 gdiAfter=76 deltaGdi=-2 userBefore=70 userAfter=71 deltaUser=1 items=120
+2026-11-11T04:53:03.394 [release-dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-release-dark-indicators-scrolled.png size=450x450
+2026-11-11T04:53:04.306 [release-dark] nogroup-runtime-after-show=[-No Group-] treeVisible=True
+2026-11-11T04:53:04.320 [release-dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-release-dark-group-tree.png size=450x315
+2026-11-11T04:53:06.587 [release-dark] screenshot-region=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-release-dark-contextmenu.png size=419x621
+2026-11-11T04:53:06.589 [release-dark] context menu captured
+2026-11-11T04:53:09.472 [release-dark] exit clean
+2026-11-11T04:53:09.481 [release-dark] log-marker [T3 list paint pass reused one Gdiplus::Graphics object] count=0
+2026-11-11T04:53:09.486 [release-dark] log-marker [T3 GdiImageDrawer shared Graphics draws: 1] count=0
+2026-11-11T04:53:09.490 [release-dark] log-marker [T3 GdiImageDrawer shared Graphics draws: 100] count=0
+2026-11-11T04:53:09.494 [release-dark] log-marker [T3 UiDraw created translucent brush cache] count=0
+2026-11-11T04:53:09.499 [release-dark] log-marker [T3 UiDraw alpha brush cache cap reached; clearing] count=0
+2026-11-11T04:53:09.504 [release-dark] log-marker [T3 UiDraw purged translucent brush cache] count=4
+2026-11-11T04:53:09.508 [release-dark] log-marker [ExitInstance] count=10
+2026-11-11T04:53:09.519 [release-dark] log-scan clean (expected noise filtered)
+2026-11-11T04:53:09.531 [release-dark] DONE

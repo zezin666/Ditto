@@ -1,0 +1,24 @@
+2026-11-11T04:49:34.094 [light] BEGIN Theme=Modern Light Build=Debug64 Rows=120 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t7-light-9843a0738af24df5a743280a00843c1f
+2026-11-11T04:49:42.787 [light] nogroup-english=[-No Group-]
+2026-11-11T04:49:46.932 [light] nogroup-deutsch-custom=[Keine Gruppe (QA)]
+2026-11-11T04:49:51.257 [light] nogroup-deutsch-fallback=[-No Group-]
+2026-11-11T04:49:52.988 [light] list-load-wait items=120
+2026-11-11T04:49:53.701 [light] popup-found dpi=144 listItems=120
+2026-11-11T04:49:53.703 [light] nogroup-runtime=[]
+2026-11-11T04:49:54.621 [light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-light-indicators-top.png size=450x450
+2026-11-11T04:49:57.433 [light] scroll480 ms=2293 gdiBefore=78 gdiAfter=76 deltaGdi=-2 userBefore=71 userAfter=71 deltaUser=0 items=120
+2026-11-11T04:49:57.808 [light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-light-indicators-scrolled.png size=450x450
+2026-11-11T04:49:58.715 [light] nogroup-runtime-after-show=[-No Group-] treeVisible=True
+2026-11-11T04:49:58.733 [light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-light-group-tree.png size=450x315
+2026-11-11T04:50:01.000 [light] screenshot-region=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-light-contextmenu.png size=419x621
+2026-11-11T04:50:01.002 [light] context menu captured
+2026-11-11T04:50:03.969 [light] exit clean
+2026-11-11T04:50:03.979 [light] log-marker [T3 list paint pass reused one Gdiplus::Graphics object] count=4
+2026-11-11T04:50:03.984 [light] log-marker [T3 GdiImageDrawer shared Graphics draws: 1] count=5
+2026-11-11T04:50:03.988 [light] log-marker [T3 GdiImageDrawer shared Graphics draws: 100] count=1
+2026-11-11T04:50:03.993 [light] log-marker [T3 UiDraw created translucent brush cache] count=6
+2026-11-11T04:50:03.997 [light] log-marker [T3 UiDraw alpha brush cache cap reached; clearing] count=2
+2026-11-11T04:50:04.002 [light] log-marker [T3 UiDraw purged translucent brush cache] count=4
+2026-11-11T04:50:04.006 [light] log-marker [ExitInstance] count=10
+2026-11-11T04:50:04.017 [light] log-scan clean (expected noise filtered)
+2026-11-11T04:50:04.028 [light] DONE

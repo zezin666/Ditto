@@ -1,7 +1,7 @@
-# QA REPORT — T5 Integration + Full QA, T6 re-integration (Ditto UI Modernization)
+# QA REPORT — T5 Integration + Full QA, T6/T7 re-integrations (Ditto UI Modernization)
 
-Status: **T6 re-integration PASS with known limitations.**
-T6 integration commit: `b8eb52a` (code + QA evidence; the documentation update commit is one ahead).
+Status: **T7 final integration PASS with known limitations.**
+T6 integration commit: `b8eb52a`; T7 re-integration merge: `ec3d0f2` (T3 fix2 `3c4f7f6`).
 Branch: `taohy/ui-integration` (worktree `D:\orca\workspaces\Ditto\ui-integration`).
 Base: `taohy/ui-foundation` @ `f6e5118`.
 No merge to `master`, no push.
@@ -23,12 +23,13 @@ Toolchain: MSBuild 18.11.1, MSVC 19.51.36260, MFC v145, Windows SDK 26100.0.
 | T4b | `taohy/ui-dialogs` | `735e8b8` | `80f7abf98a210aa830b20d2ed7d4791484b84239` | none |
 | T2 follow-up | `taohy/ui-shell` | `43d89ee` | `0df7108` | none |
 | T3 follow-up | `taohy/ui-list` | `1a60e6f` | `78367e6` | none |
+| T3 fix2 (T7) | `taohy/ui-list` | `3c4f7f6` | `ec3d0f2` | none |
 
-The T2/T3 follow-up merges (T6 review fixes) are descendants of the earlier
+The T2/T3 follow-up merges (T6/T7 review fixes) are descendants of the earlier
 merge bases and also merged without textual conflicts; the only files touched
-by T5 in both rounds were `src/QPasteWnd.cpp` and the language XML.
+by T5 across rounds were `src/QPasteWnd.cpp` and the language XML.
 
-All four merges were textual clean merges (`git merge --no-ff`, merge commits preserved).
+All merges were textual clean merges (`git merge --no-ff`, merge commits preserved).
 A clean merge is not a semantic proof; runtime QA below exercises the seams.
 
 ## 2. Build
@@ -42,6 +43,8 @@ A clean merge is not a semantic proof; runtime QA below exercises the seams.
 | Debug\|x64 (final incremental, after fixes) | same | 0 | `docs/ui/t5-build-debug-2.log` | 0 | 0 |
 | Release\|x64 (T6 re-integration) | same | 0 | `docs/ui/t6-review-build-release.log` | 0 | 0 new (ToolTipEx C4244 gone) |
 | Debug\|x64 (T6 re-integration) | same | 0 | `docs/ui/t6-review-build-debug.log` | 0 | 0 new (ToolTipEx C4244 gone) |
+| Release\|x64 (T7 re-integration) | same | 0 | `docs/ui/t7-review-build-release.log` | 0 | 0 |
+| Debug\|x64 (T7 re-integration) | same | 0 | `docs/ui/t7-review-build-debug.log` | 0 | 0 |
 
 Warning triage (full build):
 - Third-party / vendored: `sqlite3mc_amalgamation.c` (C4996), QRCode, zlib-adjacent code, `EncryptDecrypt\NewRandom.cpp`.
@@ -49,10 +52,10 @@ Warning triage (full build):
 - New UI code in the first integration round: only `src/ToolTipEx.cpp` lines 283 and 1649 (`C4244 double→int`, T3).
   T3's follow-up build removes both; the T6 re-integration builds have **no new UI warnings**.
 
-Binaries (T6 re-integration):
-- `Release64\Ditto.exe` 6,060,544 bytes (2026-11-11 03:45).
-- `Debug64\Ditto.exe` 14,640,640 bytes (2026-11-11 03:45).
-- The T5-era hashes are superseded; older hashes remain in the T5 logs above.
+Binaries (T7 re-integration):
+- `Release64\Ditto.exe` 6,060,544 bytes (2026-11-11 04:35).
+- `Debug64\Ditto.exe` 14,642,176 bytes (2026-11-11 04:36).
+- Earlier hashes remain in the T5/T6 logs above.
 
 **Defender note:** Windows Defender (threat `2147737394`, the known unsigned-Release false positive) blocked launching freshly copied `Release64\Ditto.exe` at 02:11–02:12 and currently holds the source file for scanning. Defender was **not** disabled or modified. Result:
 - Release runtime is verified on the same integration code before the final two-line menu wiring, and on the final Release binary in the light pass at 02:09 (before the first block).
@@ -73,6 +76,7 @@ Binaries (T6 re-integration):
 | `ClearSearchAction` | Clear search |
 | `NoStarredClipsHint` | Star clips to keep them handy here. |
 | `ClearFilterAction` | Clear filter |
+| `NoGroup` | -No Group- |
 
 T3, T4a and T4b declared no new strings. Other languages fall back to these English defaults (verified visually with Deutsch).
 
@@ -137,6 +141,39 @@ regression.
 - Reproduction log: `docs/ui/t6-lvm-scroll-crash.log`.
 - Owner: pre-existing base/upstream list-view behavior. Not fixed here.
 
+## 4B. T7 re-review verification (targeted)
+
+Merge: T3 fix2 `taohy/ui-list` @ `3c4f7f6` -> `ec3d0f2` (clean, no conflicts).
+Harness: `tools/ui-qa/run-t7-targeted-qa.ps1` (120 indicator rows with unique
+RGBA + group; three NoGroup language scenarios), plus a re-run of
+`run-t6-targeted-qa.ps1` (5,001 rows) and the full integration harness on the
+new build. Debug64 and Release64 both exercised.
+Evidence: `docs/ui/t7-review-runtime-evidence.log`,
+`docs/ui/t7-review-runtime-{dark,light,release-dark}.log`.
+
+| Check | Result | Evidence |
+|---|---|---|
+| `NoGroup` key in English.xml | **PASS** | `<Item English_Text = "-No Group-" ID = "NoGroup"></Item>` added; only `Debug/Language/English.xml` changed, no existing ID touched. |
+| Group tree root, English | **PASS** | Runtime root text `-No Group-` (Debug64 and Release64, light and dark). |
+| Group tree root, localized | **PASS** | Temporary Deutsch.xml with `<Item ... ID="NoGroup">Keine Gruppe (QA)</Item>` -> root `Keine Gruppe (QA)`. |
+| Group tree root, fallback | **PASS** | Real Deutsch.xml (no key) -> root `-No Group-` (code default). |
+| Indicator rows with unique RGBA | **PASS** | 120 rows carrying `<noautodelete><shortcut><ingroup>` icons plus unique `rgba(r,g,b,a)` text; rendered in light/dark, `items=120`. |
+| Shared paint-pass Graphics for indicators | **PASS** | Debug markers `T3 GdiImageDrawer shared Graphics draws: 1` and `: 100` in the main 120-row process; `CGdiImageDrawer::Draw(Gdiplus::Graphics&)` only calls `DrawImage` (no temp CDC/MemDC/Graphics), and `CQListCtrl` passes the paint-pass `*graphics`. |
+| One Graphics per list paint pass | **PASS** | `T3 list paint pass reused one Gdiplus::Graphics object` (Debug). |
+| Alpha brush cache bounded at 64 | **PASS** | `T3 UiDraw alpha brush cache cap reached; clearing` twice in the main process; cache re-created; `T3 UiDraw purged translucent brush cache` before exit. |
+| GDI/user handles | **PASS** | 120-row/480 `WM_VSCROLL`: Debug 78->76 GDI, 70->71 USER; Release 78->76, 70->71. 5,001-row/400 messages: Debug 83->81, 71->72; Release 83->81, 71->72. |
+| Debug direct-`WM_VSCROLL` abort | **PASS after T3 fix** | Root cause was a Debug-only `ASSERT(FALSE)` in `CQListCtrl::PreTranslateMessage` for `WM_VSCROLL`, removed in `3c4f7f6`. The Debug 5,000-row `WM_VSCROLL` harness now completes. It was a debug assertion/message-box block, not a Release/product failure. |
+| T2/T3 seam | **PASS** | Region layout: visible list bottom 1207 < search edit top 1211; no clipping/overlap. |
+| Footer/empty tab stops + chain | **PASS** | `groups/back/system/options/empty/list = True`; chain `513,514,528,32805,517,...`. |
+| Empty-state Space and Enter | **PASS** | Both clear the search (`textLength=0`) and restore 5,001 rows. |
+| List Enter-to-paste | **PASS** | Popup hides; clipboard receives 21 chars (full Release harness). |
+| Dark menu call sites | **PASS (source)** | `QPasteWnd`, `GroupTree`, `SymbolEdit`, `ToolTipEx` call `CDarkMode::ApplyToMenus`; Windows-light + Ditto-dark menus remain light (best-effort). |
+| Release runtime | **PASS this round** | T7 dark (120 indicators), 5,001-row harness and the full light harness all ran from `Release64\Ditto.exe`; Defender did not block these copies. |
+
+Note: the group tree is created as a **top-level overlay window** (pre-existing
+`CreateEx` without `WS_CHILD`), so its root text is read with `TVM_GETITEMW`;
+this is pre-existing behavior, not a T2/T3/T7 regression.
+
 ## 5. Portable run setup and data safety
 
 - Every run used a fresh `%TEMP%\ditto-ui-t5-*` directory with `Ditto.exe`, `ICU_Loader.dll`, `Addins\`, `Debug\Language`, `Debug\Themes`, a `portable` marker, a scratch `Ditto.db` and a local `Ditto.Settings`.
@@ -158,6 +195,9 @@ German / Deutsch (Debug64, Modern Light, popup and list):
 
 T6 targeted captures (Debug64, 5,001 rows, 144 DPI):
 `artifacts/ui/after/t6-{dark,light}-{popup,footer-focus,empty-focus,5k-list,color-swatch}.png`
+
+T7 targeted captures (Debug64 and Release64, 120 indicator rows, 144 DPI):
+`artifacts/ui/after/t7-{dark,light,release-dark}-{indicators-top,indicators-scrolled,group-tree,contextmenu}.png`
 
 Additional Release dark popup/list captures from the penultimate final build:
 `artifacts/ui/after/after-dark-{popup,search,empty,group,nav,scrollbar,description,contextmenu}.png`
@@ -214,15 +254,16 @@ Observed:
 1. **Native menus and native list-view scrollbars stay light** when Ditto uses `Modern Dark` while the Windows app theme is light. This is the documented P0/P3 best-effort behavior (`CURRENT-STATE.md`, `DESIGN-SYSTEM.md §10`). Menu text remains readable and all commands are intact.
 2. **Options OK/Cancel captions are OS/MFC-localized** (Chinese here) even with `LanguageFile=English`. Identical in T4a's own evidence; pre-existing.
 3. `OptionsQuickPaste` and `OptionsUtilities` remain **disabled** in the property sheet (T0/P3 decision).
-4. **Final-binary Release dark runtime is UNVERIFIED** because Defender blocked the copied Release64 executable; Debug64 was used for the final dark and German passes. Release light runtime passed on the final build before the block.
+4. **Release runtime was verified in the T7 round** (120-indicator dark pass, 5,001-row harness and full light harness from `Release64\Ditto.exe`). Defender may still block future copies of the unsigned binary; it blocked earlier rounds. Do not disable Defender.
 5. 100 %/200 % DPI, high contrast, tray menu, IME candidate window, UAC paste, drag/drop, copy buffers, multiselect, Shift+Enter, Ctrl+number, history/regex search and add-in invocation are **UNVERIFIED**.
 6. The Deutsch empty state shows English T2 strings because only `English.xml` was updated, by design.
 7. **LVM_SCROLL crash (pre-existing):** a programmatic `LVM_SCROLL` to a 5,001-row list crashes in `COMCTL32.dll`; reproduces on the T1 foundation `f6e5118` and T3-only `1a60e6f`, so it predates the UI work. User scrolling (wheel/WM_VSCROLL) is stable. See section 4A and `docs/ui/t6-lvm-scroll-crash.log`.
-8. Group-tree and search-history menus were verified at source level only: the group tree is hidden in the default popup layout, and no search-history entry was present in the automated run.
+8. The group tree is a pre-existing top-level overlay window (missing `WS_CHILD`) rather than a popup child; the NoGroup check reads it via `TVM_GETITEMW`. Not changed by the UI modernization.
+9. Group-tree and search-history menus were verified at source level only: the group pane is an on-demand overlay, and no search-history entry was present in the automated run.
 
 ## 10. Review entry points
 
 - Branch/commits and build/run instructions: `docs/ui/REVIEW-GUIDE.md`.
-- Machine-readable run logs: `docs/ui/t5-runtime-evidence.log`, `docs/ui/t6-review-runtime-evidence.log`.
-- Targeted T6 harness: `tools/ui-qa/run-t6-targeted-qa.ps1`; LVM crash repro: `docs/ui/t6-lvm-scroll-crash.log`.
+- Machine-readable run logs: `docs/ui/t5-runtime-evidence.log`, `docs/ui/t6-review-runtime-evidence.log`, `docs/ui/t7-review-runtime-evidence.log`.
+- Targeted harnesses: `tools/ui-qa/run-t6-targeted-qa.ps1` (tab/empty/5k) and `tools/ui-qa/run-t7-targeted-qa.ps1` (indicators/NoGroup/cache); LVM crash repro: `docs/ui/t6-lvm-scroll-crash.log`.
 - Harness: `tools/ui-qa/run-integration-qa.ps1`, plus `probe-region.ps1` / `probe-windows.ps1` diagnostics.
