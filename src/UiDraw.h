@@ -26,6 +26,7 @@ namespace UiDraw
 	HFONT Font(const CString& family, int logicalPixels, int weight, int dpi, bool italic = false);
 	HBRUSH Brush(COLORREF color);
 	HPEN Pen(COLORREF color, int widthPixels);
+	// UI-thread only. Bounded cache; PurgeCaches clears it on theme/DPI/exit.
 	Gdiplus::SolidBrush* AlphaBrush(COLORREF color, int alpha);
 
 	CSize MeasureText(CDC* dc, const CString& text, const CString& family,

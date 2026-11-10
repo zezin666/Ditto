@@ -33,3 +33,10 @@ the dark text color was `0x00F5F3F2`; light text uses `TextPrimary`.
 The `t3-fix-light-*.png` and `t3-fix-dark-*.png` captures were regenerated from
 the final post-review Release binary after moving the translucent brush cache
 into `UiDraw` and sharing one `Graphics` object per list paint pass.
+
+## T7 targeted dataset
+
+`t3-t7-light-selected-image-color.png` was captured from a 120-row scratch
+dataset where every visible row had no-auto-delete, shortcut, and in-group
+icons plus a distinct translucent RGBA color. The same dataset drove the
+64-entry alpha-brush cap log and the 100th shared-Graphics icon draw.

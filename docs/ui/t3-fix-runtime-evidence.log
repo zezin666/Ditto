@@ -1,4 +1,4 @@
-T3 T6-fix runtime evidence 2026-11-11
+T3 T6/T7 runtime evidence 2026-11-11
 
 Final Release portable run:
   [03:26:32.675 - CP_Main.cpp 920] ExitInstance
@@ -10,13 +10,27 @@ Final Debug portable run:
   [03:19:58.055 - UiDraw.cpp 443] T3 UiDraw created translucent brush cache
 
 Final Release 5k-row scroll check:
-  Rows: 5014
-  GDI objects: 89 before -> 89 after
-  User objects: 66 before -> 66 after
-  1,000 synchronous line-scroll messages: 1,817 ms
-  Working set: 32.0 MB
+  Rows: 5134
+  GDI objects: 88 before -> 87 after
+  User objects: 63 before -> 62 after
+  1,000 synchronous line-scroll messages: 3,344 ms
+  Working set: 32.2 MB
+
+T7 targeted dataset:
+  120 rows, each with no-auto-delete + shortcut + in-group indicators
+  and a unique translucent RGBA value
+  [04:23:15.192 - GdiImageDrawer.cpp 129] T3 GdiImageDrawer shared Graphics draws: 1
+  [04:23:19.291 - GdiImageDrawer.cpp 129] T3 GdiImageDrawer shared Graphics draws: 100
+  [04:26:13.912 - UiDraw.cpp 441] T3 UiDraw alpha brush cache cap reached; clearing
+  [04:26:14.542 - UiDraw.cpp 441] T3 UiDraw alpha brush cache cap reached; clearing
+
+Debug automation note:
+  The direct WM_VSCROLL harness raised an MFC debug abort after the count-100
+  shared-Graphics log. The equivalent Release targeted-dataset run completed
+  all 1,000 scroll operations without a dialog or process failure.
 
 Post-review captures:
+  artifacts\ui\t3\t3-t7-light-selected-image-color.png
   artifacts\ui\t3\t3-fix-light-selected-image-color.png
   artifacts\ui\t3\t3-fix-light-hover.png
   artifacts\ui\t3\t3-fix-light-search-highlight.png

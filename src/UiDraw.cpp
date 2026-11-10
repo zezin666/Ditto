@@ -123,6 +123,8 @@ namespace
 		}
 	};
 
+	const size_t kAlphaBrushCacheLimit = 64;
+
 	std::map<FontKey, HFONT> g_fonts;
 	std::map<COLORREF, HBRUSH> g_brushes;
 	std::map<PenKey, HPEN> g_pens;
@@ -433,6 +435,14 @@ Gdiplus::SolidBrush* UiDraw::AlphaBrush(COLORREF color, int alpha)
 	auto it = g_gdiplusAlphaBrushes.find(key);
 	if (it != g_gdiplusAlphaBrushes.end())
 		return it->second.get();
+
+	if (g_gdiplusAlphaBrushes.size() >= kAlphaBrushCacheLimit)
+	{
+#ifdef _DEBUG
+		Log(_T("T3 UiDraw alpha brush cache cap reached; clearing"));
+#endif
+		g_gdiplusAlphaBrushes.clear();
+	}
 
 	std::unique_ptr<Gdiplus::SolidBrush> brush(new Gdiplus::SolidBrush(
 		ToColor(color, static_cast<BYTE>(alpha))));

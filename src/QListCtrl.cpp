@@ -651,20 +651,20 @@ void CQListCtrl::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
 			if (strSymbols.Find(_T("<noautodelete>")) >= 0)
 			{
 				CRect iconRect(rcText.left, iconTop, rcText.left + iconSize, iconTop + iconSize);
-				m_dontDeleteImage.Draw(pDC, *m_windowDpi, this, iconRect, false, false);
+				m_dontDeleteImage.Draw(*graphics, *m_windowDpi, iconRect, false, false);
 				rcText.left += iconSize + UiDraw::Scale(2, dpi);
 			}
 			if (strSymbols.Find(_T("<shortcut>")) >= 0)
 			{
 				CRect iconRect(rcText.left, iconTop, rcText.left + iconSize, iconTop + iconSize);
-				m_shortCutImage.Draw(pDC, *m_windowDpi, this, iconRect, false, false);
+				m_shortCutImage.Draw(*graphics, *m_windowDpi, iconRect, false, false);
 				rcText.left += iconSize + UiDraw::Scale(2, dpi);
 			}
 			if (drawInGroupIcon &&
 				strSymbols.Find(_T("<ingroup>")) >= 0)
 			{
 				CRect iconRect(rcText.left, iconTop, rcText.left + iconSize, iconTop + iconSize);
-				m_inFolderImage.Draw(pDC, *m_windowDpi, this, iconRect, false, false);
+				m_inFolderImage.Draw(*graphics, *m_windowDpi, iconRect, false, false);
 				rcText.left += iconSize + UiDraw::Scale(2, dpi);
 			}
 			if (strSymbols.Find(_T("<sticky>")) >= 0)
@@ -1599,7 +1599,6 @@ BOOL CQListCtrl::PreTranslateMessage(MSG* pMsg)
 		}
 
 	case WM_VSCROLL:
-		ASSERT(FALSE);
 		break;
 	} // end switch(pMsg->message)
 

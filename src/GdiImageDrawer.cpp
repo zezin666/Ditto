@@ -2,6 +2,7 @@
 #include "GdiImageDrawer.h"
 #include "MemDC.h"
 #include "CP_Main.h"
+#include "Misc.h"
 
 CGdiImageDrawer::CGdiImageDrawer()
 {
@@ -93,6 +94,41 @@ void CGdiImageDrawer::Draw(CDC* pScreenDC, CDPI &dpi, CWnd *pWnd, CRect rc, bool
 	int y = rc.top + (rc.Height() / 2) - (height / 2);
 
 	Draw(pScreenDC, dpi, pWnd, x, y, mouseHover, mouseDown);
+}
+
+void CGdiImageDrawer::Draw(Gdiplus::Graphics& graphics, CDPI& dpi, CRect rc,
+	bool mouseHover, bool mouseDown)
+{
+	UNREFERENCED_PARAMETER(mouseHover);
+
+	if (m_pStdImage == NULL || m_pStdImage->m_pBitmap == NULL)
+	{
+		return;
+	}
+
+	int width = m_pStdImage->m_pBitmap->GetWidth();
+	int height = m_pStdImage->m_pBitmap->GetHeight();
+	int x = rc.left + (rc.Width() / 2) - (width / 2);
+	int y = rc.top + (rc.Height() / 2) - (height / 2);
+
+	if (mouseDown)
+	{
+		int one = dpi.Scale(1);
+		x += one;
+		y += one;
+	}
+
+	graphics.DrawImage(*m_pStdImage, x, y, width, height);
+
+#ifdef _DEBUG
+	static int s_sharedGraphicsDrawCount = 0;
+	s_sharedGraphicsDrawCount++;
+	if (s_sharedGraphicsDrawCount == 1 || s_sharedGraphicsDrawCount == 100)
+	{
+		Log(StrF(_T("T3 GdiImageDrawer shared Graphics draws: %d"),
+			s_sharedGraphicsDrawCount));
+	}
+#endif
 }
 
 void CGdiImageDrawer::Draw(CDC* pScreenDC, CDPI &dpi, CWnd *pWnd, int posX, int posY, bool mouseHover, bool mouseDown, int forceWidth, int forceHeight)
