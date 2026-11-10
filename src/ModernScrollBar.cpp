@@ -555,6 +555,11 @@ void CModernScrollBar::ScrollToPosition(int thumbPos)
 
 void CModernScrollBar::Show(bool animate)
 {
+	// The popup shell currently calls Show(false) after positioning. Keep the
+	// public parameter for compatibility, but only the auto-hide fade-out is
+	// active; fade-in is intentionally not started from this path.
+	UNREFERENCED_PARAMETER(animate);
+
 	m_isVisible = true;
 	ShowWindow(SW_SHOWNA);
 	KillTimer(TIMER_AUTO_HIDE);
@@ -564,18 +569,8 @@ void CModernScrollBar::Show(bool animate)
 		SetTimer(TIMER_AUTO_HIDE, UiTheme().ScrollBarAutoHideMs(), NULL);
 	}
 
-	if (animate && AnimationsEnabled())
-	{
-		if (m_opacity < 1.0)
-		{
-			BeginFade(true);
-		}
-	}
-	else
-	{
-		KillTimer(TIMER_FADE);
-		m_opacity = 1.0;
-	}
+	KillTimer(TIMER_FADE);
+	m_opacity = 1.0;
 
 	UpdateScrollBar();
 }

@@ -280,7 +280,8 @@ BOOL CToolTipEx::Show(CPoint point)
 
 	if (m_imageViewer.m_pGdiplusBitmap)
 	{
-		int percent = (m_imageViewer.m_scale - 1.0) * 100.0;
+		int percent = static_cast<int>(
+			(m_imageViewer.m_scale - 1.0) * 100.0);
 		m_clipData = m_originalClipData + _T(" | ") + StrF(_T("%d x %d, %d%%"), m_imageViewer.m_pGdiplusBitmap->GetWidth(), m_imageViewer.m_pGdiplusBitmap->GetHeight(), percent);
 
 		//OutputDebugString(_T("Showing image editor\r\n"));
@@ -1332,7 +1333,10 @@ void CToolTipEx::OnOptions()
 		if (CGetSetOptions::GetWrapDescriptionText())
 			cmSubMenu->CheckMenuItem(ID_FIRST_WRAPTEXT, MF_CHECKED);
 		
-		cmSubMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RIGHTBUTTON, pp.x, pp.y, this, NULL);
+		CDarkMode::ApplyToMenus(GetSafeHwnd());
+		cmSubMenu->TrackPopupMenu(
+			TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RIGHTBUTTON,
+			pp.x, pp.y, this, NULL);
 	}
 }
 
@@ -1646,7 +1650,8 @@ LRESULT CToolTipEx::OnRefreshFooter(WPARAM wParam, LPARAM lParam)
 	m_clipData = m_originalClipData;
 	if (m_imageViewer.m_pGdiplusBitmap)
 	{
-		int percent = ((m_imageViewer.m_scale) * 100.0) + .5;	
+		int percent = static_cast<int>(
+			((m_imageViewer.m_scale) * 100.0) + 0.5);
 		m_clipData = m_originalClipData + _T(" | ") + StrF(_T("%d x %d, %d%%"), m_imageViewer.m_pGdiplusBitmap->GetWidth(), m_imageViewer.m_pGdiplusBitmap->GetHeight(), percent);
 	}
 

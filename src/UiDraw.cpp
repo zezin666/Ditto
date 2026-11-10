@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "UiDraw.h"
+#include "Misc.h"
 #include <algorithm>
 #include <cmath>
 #include <map>
@@ -109,10 +110,24 @@ namespace
 		}
 	};
 
+	struct AlphaBrushKey
+	{
+		COLORREF color;
+		int alpha;
+
+		bool operator<(const AlphaBrushKey& other) const
+		{
+			if (color != other.color)
+				return color < other.color;
+			return alpha < other.alpha;
+		}
+	};
+
 	std::map<FontKey, HFONT> g_fonts;
 	std::map<COLORREF, HBRUSH> g_brushes;
 	std::map<PenKey, HPEN> g_pens;
 	std::map<COLORREF, std::unique_ptr<Gdiplus::SolidBrush>> g_gdiplusBrushes;
+	std::map<AlphaBrushKey, std::unique_ptr<Gdiplus::SolidBrush>> g_gdiplusAlphaBrushes;
 	std::map<PenKey, std::unique_ptr<Gdiplus::Pen>> g_gdiplusPens;
 	std::map<RoundRectKey, std::unique_ptr<Gdiplus::GraphicsPath>> g_roundRects;
 	std::map<GlyphKey, std::unique_ptr<Gdiplus::Bitmap>> g_glyphs;
@@ -411,6 +426,27 @@ HPEN UiDraw::Pen(COLORREF color, int widthPixels)
 	return pen;
 }
 
+Gdiplus::SolidBrush* UiDraw::AlphaBrush(COLORREF color, int alpha)
+{
+	alpha = std::max(0, std::min(255, alpha));
+	AlphaBrushKey key = { color, alpha };
+	auto it = g_gdiplusAlphaBrushes.find(key);
+	if (it != g_gdiplusAlphaBrushes.end())
+		return it->second.get();
+
+	std::unique_ptr<Gdiplus::SolidBrush> brush(new Gdiplus::SolidBrush(
+		ToColor(color, static_cast<BYTE>(alpha))));
+	Gdiplus::SolidBrush* result = brush.get();
+#ifdef _DEBUG
+	if (g_gdiplusAlphaBrushes.empty())
+	{
+		Log(_T("T3 UiDraw created translucent brush cache"));
+	}
+#endif
+	g_gdiplusAlphaBrushes[key] = std::move(brush);
+	return result;
+}
+
 CSize UiDraw::MeasureText(CDC* dc, const CString& text, const CString& family,
 	int logicalPixels, int weight, int dpi, bool italic)
 {
@@ -479,10 +515,21 @@ void UiDraw::RoundedRect(CDC* dc, const CRect& rect, int radiusPixels,
 	RoundedRect(graphics, rect, radiusPixels, fillColor, borderColor, borderWidthPixels);
 }
 
+void UiDraw::FocusRing(Gdiplus::Graphics& graphics, const CRect& rect, int radiusPixels,
+	COLORREF color, int widthPixels)
+{
+	RoundedRect(graphics, rect, radiusPixels, CLR_INVALID, color,
+		std::max(1, widthPixels));
+}
+
 void UiDraw::FocusRing(CDC* dc, const CRect& rect, int radiusPixels,
 	COLORREF color, int widthPixels)
 {
-	RoundedRect(dc, rect, radiusPixels, CLR_INVALID, color, std::max(1, widthPixels));
+	if (dc == NULL || dc->GetSafeHdc() == NULL)
+		return;
+
+	Gdiplus::Graphics graphics(dc->GetSafeHdc());
+	FocusRing(graphics, rect, radiusPixels, color, widthPixels);
 }
 
 void UiDraw::DrawFallbackBorder(CDC* dc, const CRect& rect, COLORREF color)
@@ -564,6 +611,11 @@ void UiDraw::PurgeCaches()
 	g_pens.clear();
 
 	g_gdiplusBrushes.clear();
+	if (!g_gdiplusAlphaBrushes.empty())
+	{
+		Log(_T("T3 UiDraw purged translucent brush cache"));
+	}
+	g_gdiplusAlphaBrushes.clear();
 	g_gdiplusPens.clear();
 	g_roundRects.clear();
 	g_glyphs.clear();

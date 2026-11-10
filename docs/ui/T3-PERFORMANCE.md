@@ -4,7 +4,7 @@
 - Binary: `Release64\Ditto.exe`, Release x64
 - Runtime DPI: 144 DPI
 - Test profile: unique `%TEMP%\ditto-ui-t3-*` portable directory
-- Database: scratch Ditto DB, 5,013 `Main` rows
+- Database: scratch Ditto DB, 5,014 `Main` rows
 - Display: 4,480 x 1,600 virtual desktop reported by the test session
 
 ## GDI and user handle check
@@ -15,12 +15,12 @@ messages were sent (500 down, 500 up).
 
 | Measurement | Before | After | Delta |
 |---|---:|---:|---:|
-| GDI objects (`GetGuiResources(GR_GDIOBJECTS)`) | 87 | 87 | 0 |
-| User objects (`GetGuiResources(GR_USEROBJECTS)`) | 63 | 62 | -1 |
-| Working set | - | 31.9 MB | - |
+| GDI objects (`GetGuiResources(GR_GDIOBJECTS)`) | 89 | 89 | 0 |
+| User objects (`GetGuiResources(GR_USEROBJECTS)`) | 66 | 66 | 0 |
+| Working set | - | 32.0 MB | - |
 
-- 1,000 synchronous scroll messages completed in 2,761 ms, approximately
-  2.8 ms per message including the list update path.
+- 1,000 synchronous scroll messages completed in 1,817 ms, approximately
+  1.8 ms per message including the list update path.
 - No crash, assertion, or process exit occurred during the scroll run.
 - No per-scroll GDI/user handle growth was observed.
 
@@ -39,6 +39,20 @@ messages were sent (500 down, 500 up).
   keyboard focus still use the native owner-data list state path.
 - The modern scrollbar is double-buffered through `CMemDCEx`; rounded paths,
   brushes, and pens come from `UiDraw`.
+
+## T6 review fixes
+
+- All translucent color swatch brushes now live in `UiDraw` beside the other
+  GDI+ caches. `UiDraw::PurgeCaches()` clears them on theme/DPI changes and
+  from `CCP_MainApp::ExitInstance()` before `GdiplusShutdown`.
+- A final Release portable exit logged `ExitInstance` and then
+  `T3 UiDraw purged translucent brush cache`, and the process exited normally.
+- `CQListCtrl::OnCustomdrawList()` creates one `Gdiplus::Graphics` for
+  `CDDS_PREPAINT`, reuses it for every item decoration, and releases it on
+  `CDDS_POSTPAINT`. Row pills, glyphs, focus rings, swatches, and thumbnail
+  borders use the graphics overloads.
+- Debug runtime instrumentation logged
+  `T3 list paint pass reused one Gdiplus::Graphics object`.
 
 ## Runtime behavior checked
 

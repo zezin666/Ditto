@@ -26,6 +26,7 @@ namespace UiDraw
 	HFONT Font(const CString& family, int logicalPixels, int weight, int dpi, bool italic = false);
 	HBRUSH Brush(COLORREF color);
 	HPEN Pen(COLORREF color, int widthPixels);
+	Gdiplus::SolidBrush* AlphaBrush(COLORREF color, int alpha);
 
 	CSize MeasureText(CDC* dc, const CString& text, const CString& family,
 		int logicalPixels, int weight, int dpi, bool italic = false);
@@ -37,6 +38,8 @@ namespace UiDraw
 		COLORREF fillColor, COLORREF borderColor, int borderWidthPixels);
 	void RoundedRect(CDC* dc, const CRect& rect, int radiusPixels,
 		COLORREF fillColor, COLORREF borderColor, int borderWidthPixels);
+	void FocusRing(Gdiplus::Graphics& graphics, const CRect& rect, int radiusPixels,
+		COLORREF color, int widthPixels);
 	void FocusRing(CDC* dc, const CRect& rect, int radiusPixels,
 		COLORREF color, int widthPixels);
 	void DrawFallbackBorder(CDC* dc, const CRect& rect, COLORREF color);

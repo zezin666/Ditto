@@ -1,0 +1,29 @@
+T3 T6-fix runtime evidence 2026-11-11
+
+Final Release portable run:
+  [03:26:32.675 - CP_Main.cpp 920] ExitInstance
+  [03:26:32.676 - UiDraw.cpp 616] T3 UiDraw purged translucent brush cache
+  Process exited normally: True
+
+Final Debug portable run:
+  [03:19:58.016 - QListCtrl.cpp 471] T3 list paint pass reused one Gdiplus::Graphics object
+  [03:19:58.055 - UiDraw.cpp 443] T3 UiDraw created translucent brush cache
+
+Final Release 5k-row scroll check:
+  Rows: 5014
+  GDI objects: 89 before -> 89 after
+  User objects: 66 before -> 66 after
+  1,000 synchronous line-scroll messages: 1,817 ms
+  Working set: 32.0 MB
+
+Post-review captures:
+  artifacts\ui\t3\t3-fix-light-selected-image-color.png
+  artifacts\ui\t3\t3-fix-light-hover.png
+  artifacts\ui\t3\t3-fix-light-search-highlight.png
+  artifacts\ui\t3\t3-fix-light-scrollbar-hover.png
+  artifacts\ui\t3\t3-fix-light-description.png
+  artifacts\ui\t3\t3-fix-dark-selected-image-color.png
+  artifacts\ui\t3\t3-fix-dark-hover.png
+  artifacts\ui\t3\t3-fix-dark-search-highlight.png
+  artifacts\ui\t3\t3-fix-dark-scrollbar-hover.png
+  artifacts\ui\t3\t3-fix-dark-description.png
