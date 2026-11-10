@@ -1,0 +1,280 @@
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+适用于 .NET Framework MSBuild 版本 18.11.1-1.26513.3+940033be3
+生成启动时间为 2026/11/11 3:22:01。
+
+节点 1 上的项目“D:\orca\workspaces\Ditto\ui-list\CP_Main_10.sln”(默认目标)。
+ValidateSolutionConfiguration:
+  正在生成解决方案配置“Release|x64”。
+ValidateProjects:
+  在解决方案配置“Release|x64”中未选定生成项目“FocusHighlight”。
+项目“D:\orca\workspaces\Ditto\ui-list\CP_Main_10.sln”(1)正在节点 1 上生成“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj.metaproj”(2) (默认目标)。
+项目“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj.metaproj”(2)正在节点 1 上生成“D:\orca\workspaces\Ditto\ui-list\EncryptDecrypt\EncryptDecrypt.vcxproj”(3) (默认目标)。
+PrepareForBuild:
+  已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+InitializeBuildStatus:
+  正在创建“x64\Release\EncryptDecrypt.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+  正在对“x64\Release\EncryptDecrypt.tlog\unsuccessfulbuild”执行 Touch 任务。
+ClCompile:
+  所有输出均为最新。
+  所有输出均为最新。
+Lib:
+  所有输出均为最新。
+  正在将文件从“D:\orca\workspaces\Ditto\ui-list\EncryptDecrypt\Release64\EncryptDecrypt.pdb”复制到“D:\orca\workspaces\Ditto\ui-list\Release64\EncryptDecrypt.pdb”。
+  EncryptDecrypt.vcxproj -> D:\orca\workspaces\Ditto\ui-list\Release64\EncryptDecrypt.lib
+FinalizeBuildStatus:
+  正在删除文件“x64\Release\EncryptDecrypt.tlog\unsuccessfulbuild”。
+  正在对“x64\Release\EncryptDecrypt.tlog\EncryptDecrypt.lastbuildstate”执行 Touch 任务。
+已完成生成项目“D:\orca\workspaces\Ditto\ui-list\EncryptDecrypt\EncryptDecrypt.vcxproj”(默认目标)的操作。
+项目“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj.metaproj”(2)正在节点 1 上生成“D:\orca\workspaces\Ditto\ui-list\ICU_Loader\ICU_Loader.vcxproj”(4) (默认目标)。
+PrepareForBuild:
+  已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+InitializeBuildStatus:
+  正在创建“x64\Release\ICU_Loader.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+  正在对“x64\Release\ICU_Loader.tlog\unsuccessfulbuild”执行 Touch 任务。
+ClCompile:
+  所有输出均为最新。
+  所有输出均为最新。
+Link:
+  所有输出均为最新。
+  ICU_Loader.vcxproj -> D:\orca\workspaces\Ditto\ui-list\Release64\ICU_Loader.dll
+FinalizeBuildStatus:
+  正在删除文件“x64\Release\ICU_Loader.tlog\unsuccessfulbuild”。
+  正在对“x64\Release\ICU_Loader.tlog\ICU_Loader.lastbuildstate”执行 Touch 任务。
+已完成生成项目“D:\orca\workspaces\Ditto\ui-list\ICU_Loader\ICU_Loader.vcxproj”(默认目标)的操作。
+项目“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj.metaproj”(2)正在节点 1 上生成“D:\orca\workspaces\Ditto\ui-list\Addins\DittoUtil\DittoUtil.vcxproj”(5) (默认目标)。
+PrepareForBuild:
+  已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+InitializeBuildStatus:
+  正在创建“x64\Release\DittoUtil.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+  正在对“x64\Release\DittoUtil.tlog\unsuccessfulbuild”执行 Touch 任务。
+ClCompile:
+  所有输出均为最新。
+  所有输出均为最新。
+ResourceCompile:
+  所有输出均为最新。
+Link:
+  所有输出均为最新。
+  DittoUtil.vcxproj -> D:\orca\workspaces\Ditto\ui-list\Release64\Addins\DittoUtil.dll
+FinalizeBuildStatus:
+  正在删除文件“x64\Release\DittoUtil.tlog\unsuccessfulbuild”。
+  正在对“x64\Release\DittoUtil.tlog\DittoUtil.lastbuildstate”执行 Touch 任务。
+已完成生成项目“D:\orca\workspaces\Ditto\ui-list\Addins\DittoUtil\DittoUtil.vcxproj”(默认目标)的操作。
+项目“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj.metaproj”(2)正在节点 1 上生成“D:\orca\workspaces\Ditto\ui-list\focusdll\focus.vcxproj”(6) (默认目标)。
+PrepareForBuild:
+  已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+InitializeBuildStatus:
+  正在创建“x64\Release\focus.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+  正在对“x64\Release\focus.tlog\unsuccessfulbuild”执行 Touch 任务。
+ClCompile:
+  所有输出均为最新。
+Link:
+  所有输出均为最新。
+  focus.vcxproj -> D:\orca\workspaces\Ditto\ui-list\Release64\focus.dll
+FinalizeBuildStatus:
+  正在删除文件“x64\Release\focus.tlog\unsuccessfulbuild”。
+  正在对“x64\Release\focus.tlog\focus.lastbuildstate”执行 Touch 任务。
+已完成生成项目“D:\orca\workspaces\Ditto\ui-list\focusdll\focus.vcxproj”(默认目标)的操作。
+项目“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj.metaproj”(2)正在节点 1 上生成“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj”(7) (默认目标)。
+PrepareForBuild:
+  已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+InitializeBuildStatus:
+  正在创建“x64\Release\CP_Main.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+  正在对“x64\Release\CP_Main.tlog\unsuccessfulbuild”执行 Touch 任务。
+Midl:
+  所有输出均为最新。
+ClCompile:
+  所有输出均为最新。
+  C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\bin\HostX64\x64\CL.exe /c /I"D:\orca\workspaces\Ditto\ui-list\packages\libpng-msvc-x64.1.6.33.8807\build\native\../..//build/native/include" /I"D:\orca\workspaces\Ditto\ui-list\packages\zlib-msvc-x64.1.2.11.8900\build\native\../..//build/native/include" /Zi /nologo /W3 /WX- /diagnostics:column /O2 /Ob1 /D HAS_libpng /D HAS_zlib /D WIN64 /D NDEBUG /D _WINDOWS /D _MBCS /D AFTER_98 /D UNICODE /D HAVE_CONFIG_H /D _UNICODE /D UNICODE /D _AFXDLL /GF /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Yu"stdafx.h" /Fp".\Release64\CP_Main.pch" /FAs /Fa".\Release64\\" /Fo".\Release64\\" /Fd".\Release64\vc145.pdb" /external:W3 /Gd /TP /FC /errorReport:queue /bigobj src\QListCtrl.cpp src\UiDraw.cpp
+  QListCtrl.cpp
+  UiDraw.cpp
+  正在生成代码...
+  所有输出均为最新。
+  所有输出均为最新。
+ResourceCompile:
+  所有输出均为最新。
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\bin\HostX64\x64\link.exe /ERRORREPORT:QUEUE /OUT:"release64\Ditto.exe" /INCREMENTAL:NO /NOLOGO "D:\orca\workspaces\Ditto\ui-list\packages\libpng-msvc-x64.1.6.33.8807\build\native\../..//build/native/lib_release/libpng16.lib" "D:\orca\workspaces\Ditto\ui-list\packages\zlib-msvc-x64.1.2.11.8900\build\native\../..//build/native/lib_release/zlibstatic.lib" ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib Winmm.lib Version.lib Release64\EncryptDecrypt.lib Shlwapi.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:DeclareDPIAware.manifest /manifestinput:"C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\Include\Manifest\PerMonitorHighDPIAware.manifest" /DEBUG /PDB:".\Release64\Ditto.pdb" /MAP:".\Release64\Ditto.map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS /TLBID:1 /ENTRY:"wWinMainCRTStartup" /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\orca\workspaces\Ditto\ui-list\Release64\Ditto.lib" /MACHINE:X64 x64\Release\CP_Main.res
+  .\Release64\About.obj
+  .\Release64\Accels.obj
+  .\Release64\ActionEnums.obj
+  .\Release64\AddType.obj
+  .\Release64\AdvGeneral.obj
+  .\Release64\AlphaBlend.obj
+  .\Release64\AutoSendToClientThread.obj
+  .\Release64\BitmapHelper.obj
+  .\Release64\CF_HDropAggregator.obj
+  .\Release64\CF_TextAggregator.obj
+  .\Release64\CF_UnicodeTextAggregator.obj
+  .\Release64\ChaiScriptOnCopy.obj
+  .\Release64\ChaiScriptXml.obj
+  .\Release64\Client.obj
+  .\Release64\Clip.obj
+  .\Release64\ClipboardSaveRestore.obj
+  .\Release64\ClipboardViewer.obj
+  .\Release64\ClipCompare.obj
+  .\Release64\ClipEditThread.obj
+  .\Release64\ClipFormatQListCtrl.obj
+  .\Release64\ClipIds.obj
+  .\Release64\Clip_ImportExport.obj
+  .\Release64\ConvertRTFToText.obj
+  .\Release64\CopyProperties.obj
+  .\Release64\CopyThread.obj
+  .\Release64\CP_Main.obj
+  .\Release64\Crc32Dynamic.obj
+  .\Release64\CreateQRCodeImage.obj
+  .\Release64\CustomFriendsHelper.obj
+  .\Release64\DarkMode.obj
+  .\Release64\DatabaseUtilities.obj
+  .\Release64\DeleteClipData.obj
+  .\Release64\DialogResizer.obj
+  .\Release64\DimWnd.obj
+  .\Release64\DittoAddin.obj
+  .\Release64\DittoAddins.obj
+  .\Release64\DittoChaiScript.obj
+  .\Release64\DittoCopyBuffer.obj
+  .\Release64\DittoDropTarget.obj
+  .\Release64\DittoPopupWindow.obj
+  .\Release64\DittoRulerRichEditCtrl.obj
+  .\Release64\DittoWindow.obj
+  .\Release64\DPI.obj
+  .\Release64\DrawHTML.obj
+  .\Release64\EditFrameWnd.obj
+  .\Release64\EditWithButton.obj
+  .\Release64\EditWnd.obj
+  .\Release64\EventThread.obj
+  .\Release64\ExternalWindowTracker.obj
+  .\Release64\FileRecieve.obj
+  .\Release64\FileSend.obj
+  .\Release64\FileTransferProgressDlg.obj
+  .\Release64\FormatSQL.obj
+  .\Release64\FormattedTextDraw.obj
+  .\Release64\FriendDetails.obj
+  .\Release64\FriendPromptDlg.obj
+  .\Release64\GdiImageDrawer.obj
+  .\Release64\GdipButton.obj
+  .\Release64\GlobalClips.obj
+  .\Release64\GroupCombo.obj
+  .\Release64\GroupName.obj
+  .\Release64\GroupStatic.obj
+  .\Release64\GroupTree.obj
+  .\Release64\HListBox.obj
+  .\Release64\HotKeys.obj
+  .\Release64\HTMLFormatAggregator.obj
+  .\Release64\HyperLink.obj
+  .\Release64\ICU_String.obj
+  .\Release64\ImageFormatAggregator.obj
+  .\Release64\ImageHelper.obj
+  .\Release64\ImageViewer.obj
+  .\Release64\MagneticWnd.obj
+  .\Release64\MainFrm.obj
+  .\Release64\MainFrmThread.obj
+  .\Release64\MainTableFunctions.obj
+  .\Release64\Md5.obj
+  .\Release64\MessagePumpThread.obj
+  .\Release64\Misc.obj
+  .\Release64\ModernScrollBar.obj
+  .\Release64\MoveToGroupDlg.obj
+  .\Release64\MultiLanguage.obj
+  .\Release64\MyDropTarget.obj
+  .\Release64\NoDbFrameWnd.obj
+  .\Release64\NTray.obj
+  .\Release64\NumberEdit.obj
+  .\Release64\OleClipSource.obj
+  .\Release64\OptionFriends.obj
+  .\Release64\Options.obj
+  .\Release64\OptionsCopyBuffers.obj
+  .\Release64\OptionsGeneral.obj
+  .\Release64\OptionsKeyBoard.obj
+  .\Release64\OptionsQuickPaste.obj
+  .\Release64\OptionsSheet.obj
+  .\Release64\OptionsStats.obj
+  .\Release64\OptionsTypes.obj
+  .\Release64\OptionsUtilities.obj
+  .\Release64\Path.obj
+  .\Release64\PerfTimer.obj
+  .\Release64\Popup.obj
+  .\Release64\PowerManager.obj
+  .\Release64\ProcessPaste.obj
+  .\Release64\ProgressWnd.obj
+  .\Release64\QListCtrl.obj
+  .\Release64\QPasteWnd.obj
+  .\Release64\QPasteWndThread.obj
+  .\Release64\QRCodeViewer.obj
+  .\Release64\bitstream.obj
+  .\Release64\mask.obj
+  .\Release64\mmask.obj
+  .\Release64\mqrspec.obj
+  .\Release64\qrenc.obj
+  .\Release64\qrencode.obj
+  .\Release64\QRGenerator.obj
+  .\Release64\qrinput.obj
+  .\Release64\qrspec.obj
+  .\Release64\rscode.obj
+  .\Release64\rsecc.obj
+  .\Release64\split.obj
+  .\Release64\QuickPaste.obj
+  .\Release64\QuickPasteKeyboard.obj
+  .\Release64\RecieveFile.obj
+  .\Release64\RecieveSocket.obj
+  .\Release64\RegExFilterHelper.obj
+  .\Release64\RichEditCtrlEx.obj
+  .\Release64\RichTextAggregator.obj
+  .\Release64\ColourPicker.obj
+  .\Release64\ColourPopup.obj
+  .\Release64\StdioFileEx.obj
+  .\Release64\FontComboBox.obj
+  .\Release64\RRECToolbar.obj
+  .\Release64\RulerRichEdit.obj
+  .\Release64\RulerRichEditCtrl.obj
+  .\Release64\SizeComboBox.obj
+  .\Release64\StdGrfx.obj
+  .\Release64\TextFile.obj
+  .\Release64\SaveAnimation.obj
+  .\Release64\ScriptEditor.obj
+  .\Release64\ScrollHelper.obj
+  .\Release64\SearchEditBox.obj
+  .\Release64\SelectDB.obj
+  .\Release64\SendKeys.obj
+  .\Release64\SendMail.obj
+  .\Release64\SendSocket.obj
+  .\Release64\Server.obj
+  .\Release64\ShowTaskBarIcon.obj
+  .\Release64\SimpleBrowser.obj
+  .\Release64\SnapWindow.obj
+  .\Release64\SpecialPasteOptions.obj
+  .\Release64\CppSQLite3.obj
+  .\Release64\sqlite3mc_amalgamation.obj
+  .\Release64\StdAfx.obj
+  .\Release64\SymbolEdit.obj
+  .\Release64\SystemTray.obj
+  .\Release64\TabCtrl.obj
+  .\Release64\Theme.obj
+  .\Release64\tinystr.obj
+  .\Release64\tinyxml.obj
+  .\Release64\tinyxmlerror.obj
+  .\Release64\tinyxmlparser.obj
+  .\Release64\ToolTipEx.obj
+  .\Release64\TrayWnd.obj
+  .\Release64\UAC_Helper.obj
+  .\Release64\UAC_Thread.obj
+  .\Release64\UiDraw.obj
+  .\Release64\UiTheme.obj
+  .\Release64\UiWindow.obj
+  .\Release64\WildCardMatch.obj
+  .\Release64\WndEx.obj
+  CP_Main.vcxproj -> D:\orca\workspaces\Ditto\ui-list\Release64\Ditto.exe
+libpng-msvc_AfterBuild_redist_Release_x64:
+  正在将文件从“D:\orca\workspaces\Ditto\ui-list\packages\libpng-msvc-x64.1.6.33.8807\build\native\bin_release\libpng16.dll”复制到“D:\orca\workspaces\Ditto\ui-list\Release64\libpng16.dll”。
+FinalizeBuildStatus:
+  正在删除文件“x64\Release\CP_Main.tlog\unsuccessfulbuild”。
+  正在对“x64\Release\CP_Main.tlog\CP_Main.lastbuildstate”执行 Touch 任务。
+已完成生成项目“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj”(默认目标)的操作。
+已完成生成项目“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj.metaproj”(默认目标)的操作。
+已完成生成项目“D:\orca\workspaces\Ditto\ui-list\CP_Main_10.sln”(默认目标)的操作。
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:03.70

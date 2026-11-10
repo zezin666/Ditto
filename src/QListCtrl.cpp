@@ -43,41 +43,6 @@ static char THIS_FILE[] = __FILE__;
 static std::map<CString, COLORREF> g_colorNameMap;
 static CMutex g_colorNameMapMutex;
 
-struct AlphaBrushKey
-{
-	COLORREF color;
-	int alpha;
-
-	bool operator<(const AlphaBrushKey& other) const
-	{
-		if (color != other.color)
-			return color < other.color;
-		return alpha < other.alpha;
-	}
-};
-
-static std::map<AlphaBrushKey, std::unique_ptr<Gdiplus::SolidBrush>> g_alphaBrushes;
-
-static Gdiplus::SolidBrush* GetAlphaBrush(COLORREF color, int alpha)
-{
-	AlphaBrushKey key = { color, alpha };
-	auto it = g_alphaBrushes.find(key);
-	if (it != g_alphaBrushes.end())
-	{
-		return it->second.get();
-	}
-
-	std::unique_ptr<Gdiplus::SolidBrush> brush = std::make_unique<Gdiplus::SolidBrush>(
-		Gdiplus::Color(
-			static_cast<BYTE>(alpha),
-			GetRValue(color),
-			GetGValue(color),
-			GetBValue(color)));
-	Gdiplus::SolidBrush* result = brush.get();
-	g_alphaBrushes[key] = std::move(brush);
-	return result;
-}
-
 // Initializes the color map on first use
 void InitializeColorNameMap()
 {
@@ -258,6 +223,8 @@ CQListCtrl::CQListCtrl()
 
 CQListCtrl::~CQListCtrl()
 {
+	m_paintGraphics.reset();
+
 	if (m_pchTip != NULL)
 		delete m_pchTip;
 
@@ -489,13 +456,38 @@ void CQListCtrl::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
 	// beginning of the paint cycle.
 	if (CDDS_PREPAINT == pLVCD->nmcd.dwDrawStage)
 	{
-		*pResult = CDRF_NOTIFYITEMDRAW;
+		// A nested/reentrant paint can replace the previous wrapper safely; the
+		// normal path still has exactly one Graphics object per paint pass.
+		m_paintGraphics.reset();
+		m_paintGraphics = std::make_unique<Gdiplus::Graphics>(pLVCD->nmcd.hdc);
+		*pResult = CDRF_NOTIFYITEMDRAW | CDRF_NOTIFYPOSTPAINT;
+	}
+	else if (CDDS_POSTPAINT == pLVCD->nmcd.dwDrawStage)
+	{
+#ifdef _DEBUG
+		static bool s_loggedSharedPaintGraphics = false;
+		if (m_paintGraphics != NULL && !s_loggedSharedPaintGraphics)
+		{
+			Log(_T("T3 list paint pass reused one Gdiplus::Graphics object"));
+			s_loggedSharedPaintGraphics = true;
+		}
+#endif
+		m_paintGraphics.reset();
+		*pResult = CDRF_DODEFAULT;
 	}
 	else if (CDDS_ITEMPREPAINT == pLVCD->nmcd.dwDrawStage)
 	{
 		LVITEM   rItem;
 		int      nItem = static_cast<int>(pLVCD->nmcd.dwItemSpec);
 		CDC* pDC = CDC::FromHandle(pLVCD->nmcd.hdc);
+		std::unique_ptr<Gdiplus::Graphics> fallbackGraphics;
+		Gdiplus::Graphics* graphics = m_paintGraphics.get();
+		if (graphics == NULL)
+		{
+			fallbackGraphics =
+				std::make_unique<Gdiplus::Graphics>(pLVCD->nmcd.hdc);
+			graphics = fallbackGraphics.get();
+		}
 		BOOL bListHasFocus;
 		CRect rcItem;
 
@@ -558,7 +550,8 @@ void CQListCtrl::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
 		int rowRadius = UiDraw::Scale(theme.RadiusListItem(), dpi);
 		if (isSelected || isHovered)
 		{
-			UiDraw::RoundedRect(pDC, rowRect, rowRadius, rowFill, CLR_INVALID, 0);
+			UiDraw::RoundedRect(*graphics, rowRect, rowRadius,
+				rowFill, CLR_INVALID, 0);
 		}
 
 		CRect rcText(rowRect);
@@ -573,7 +566,7 @@ void CQListCtrl::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
 				rowRect.CenterPoint().y - accentHeight / 2,
 				rowRect.left + UiDraw::Scale(4, dpi) + max(1, accentWidth),
 				rowRect.CenterPoint().y - accentHeight / 2 + accentHeight);
-			UiDraw::RoundedRect(pDC, accentRect, max(1, accentWidth / 2),
+			UiDraw::RoundedRect(*graphics, accentRect, max(1, accentWidth / 2),
 				theme.Accent(), CLR_INVALID, 0);
 		}
 
@@ -589,7 +582,7 @@ void CQListCtrl::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
 				rowRect.CenterPoint().y - checkSize / 2,
 				statusRight,
 				rowRect.CenterPoint().y - checkSize / 2 + checkSize);
-			UiDraw::DrawGlyph(pDC, checkRect, UiDraw::Glyph::Check,
+			UiDraw::DrawGlyph(*graphics, checkRect, UiDraw::Glyph::Check,
 				theme.Pasted(), dpi, theme.IconStrokeTenths());
 
 			int barWidth = UiDraw::Scale(3, dpi);
@@ -600,7 +593,7 @@ void CQListCtrl::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
 				rowRect.CenterPoint().y - barHeight / 2,
 				barRight,
 				rowRect.CenterPoint().y - barHeight / 2 + barHeight);
-			UiDraw::RoundedRect(pDC, barRect, max(1, barWidth / 2),
+			UiDraw::RoundedRect(*graphics, barRect, max(1, barWidth / 2),
 				theme.Pasted(), CLR_INVALID, 0);
 
 			rcText.right = barRect.left - UiDraw::Scale(8, dpi);
@@ -651,7 +644,7 @@ void CQListCtrl::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
 			if (strSymbols.Find(_T("<group>")) >= 0)
 			{
 				CRect iconRect(rcText.left, iconTop, rcText.left + iconSize, iconTop + iconSize);
-				UiDraw::DrawGlyph(pDC, iconRect, UiDraw::Glyph::Folder,
+				UiDraw::DrawGlyph(*graphics, iconRect, UiDraw::Glyph::Folder,
 					theme.TextSecondary(), dpi, theme.IconStrokeTenths());
 				rcText.left += iconSize + UiDraw::Scale(2, dpi);
 			}
@@ -677,14 +670,14 @@ void CQListCtrl::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
 			if (strSymbols.Find(_T("<sticky>")) >= 0)
 			{
 				CRect iconRect(rcText.left, iconTop, rcText.left + iconSize, iconTop + iconSize);
-				UiDraw::DrawGlyph(pDC, iconRect, UiDraw::Glyph::Pin,
+				UiDraw::DrawGlyph(*graphics, iconRect, UiDraw::Glyph::Pin,
 					theme.Pinned(), dpi, theme.IconStrokeTenths());
 				rcText.left += iconSize + UiDraw::Scale(2, dpi);
 			}
 		}
 
-		DrawCopiedColorCode(csText, rcText, pDC);
-		DrawBitMap(nItem, rcText, pDC, csText);
+		DrawCopiedColorCode(csText, rcText, pDC, *graphics);
+		DrawBitMap(nItem, rcText, pDC, *graphics, csText);
 
 		int oldBkMode = pDC->SetBkMode(TRANSPARENT);
 		COLORREF oldTextColor = pDC->SetTextColor(rowTextColor);
@@ -713,7 +706,7 @@ void CQListCtrl::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
 			focusRect.DeflateRect(
 				max(1, UiDraw::Scale(1, dpi)),
 				max(1, UiDraw::Scale(1, dpi)));
-			UiDraw::FocusRing(pDC, focusRect, rowRadius,
+			UiDraw::FocusRing(*graphics, focusRect, rowRadius,
 				theme.FocusRing(), max(1, UiDraw::Scale(theme.FocusRingWidth(), dpi)));
 		}
 
@@ -973,7 +966,8 @@ void CQListCtrl::DrawSearchHighlight(CDC* pDC, const CString& text, const CRect&
 }
 
 
-void CQListCtrl::DrawCopiedColorCode(CString& csText, CRect& rcText, CDC* pDC)
+void CQListCtrl::DrawCopiedColorCode(CString& csText, CRect& rcText, CDC* pDC,
+	Gdiplus::Graphics& graphics)
 {
 	if (CGetSetOptions::m_bDrawCopiedColorCode == FALSE || csText.IsEmpty())
 		return;
@@ -1016,20 +1010,19 @@ void CQListCtrl::DrawCopiedColorCode(CString& csText, CRect& rcText, CDC* pDC)
 		{
 			DrawCheckerboard(pDC, swatchRect);
 
-			Gdiplus::Graphics graphics(pDC->GetSafeHdc());
 			graphics.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
 			graphics.FillRectangle(
-				GetAlphaBrush(color, alpha),
+				UiDraw::AlphaBrush(color, alpha),
 				Gdiplus::Rect(swatchRect.left, swatchRect.top,
 					swatchRect.Width(), swatchRect.Height()));
 		}
 		else
 		{
-			UiDraw::RoundedRect(pDC, swatchRect, radius,
+			UiDraw::RoundedRect(graphics, swatchRect, radius,
 				color, CLR_INVALID, 0);
 		}
 
-		UiDraw::RoundedRect(pDC, swatchRect, radius,
+		UiDraw::RoundedRect(graphics, swatchRect, radius,
 			CLR_INVALID, theme.Border(), 1);
 
 		rcText.left += boxSize + UiDraw::Scale(theme.FieldGap(), dpi);
@@ -1337,7 +1330,8 @@ BOOL CQListCtrl::DrawRtfText(int nItem, CRect& crRect, CDC* pDC)
 // DrawBitMap loads a DIB from the DB, draws a crRect thumbnail of the image
 //  to pDC and caches that thumbnail as a DIB in m_ThumbNails[ ItemID ].
 // ALL items are cached in m_ThumbNails (those without images are cached with NULL m_hgData)
-BOOL CQListCtrl::DrawBitMap(int nItem, CRect& crRect, CDC* pDC, const CString& csDescription)
+BOOL CQListCtrl::DrawBitMap(int nItem, CRect& crRect, CDC* pDC,
+	Gdiplus::Graphics& graphics, const CString& csDescription)
 {
 	if (CGetSetOptions::m_bDrawThumbnail == FALSE)
 		return FALSE;
@@ -1378,7 +1372,7 @@ BOOL CQListCtrl::DrawBitMap(int nItem, CRect& crRect, CDC* pDC, const CString& c
 			if (CBitmapHelper::DrawDIB(pDC, smallImage, thumbRect.left, thumbRect.top, nWidth))
 			{
 				pDC->RestoreDC(savedDc);
-				UiDraw::RoundedRect(pDC, thumbRect,
+				UiDraw::RoundedRect(graphics, thumbRect,
 					UiDraw::Scale(4, dpi), CLR_INVALID, theme.Border(), 1);
 				crRect.left += min(nWidth, maxWidth) + UiDraw::Scale(theme.FieldGap(), dpi);
 			}

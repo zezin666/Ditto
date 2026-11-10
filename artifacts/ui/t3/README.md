@@ -27,3 +27,9 @@ windows so overlay scrollbars and rich-edit content appear in the PNG output.
 The headless `PrintWindow` pass captures the description card shell but does
 not reliably include the RichEdit text layer. Runtime instrumentation confirmed
 the dark text color was `0x00F5F3F2`; light text uses `TextPrimary`.
+
+## T6 review rerun
+
+The `t3-fix-light-*.png` and `t3-fix-dark-*.png` captures were regenerated from
+the final post-review Release binary after moving the translucent brush cache
+into `UiDraw` and sharing one `Graphics` object per list paint pass.
