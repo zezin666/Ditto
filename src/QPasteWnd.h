@@ -21,6 +21,37 @@
 #include "Popup.h"
 #include "CustomFriendsHelper.h"
 #include "ModernScrollBar.h"
+#include "UiDraw.h"
+
+class CQuickPasteIconButton : public CButton
+{
+public:
+	CQuickPasteIconButton();
+
+	void SetGlyph(UiDraw::Glyph glyph);
+	void SetToolTipText(CString text);
+
+protected:
+	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg LRESULT OnMouseLeave(WPARAM wParam, LPARAM lParam);
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnKillFocus(CWnd* pNewWnd);
+
+	DECLARE_MESSAGE_MAP()
+
+private:
+	void EnsureToolTip();
+
+	UiDraw::Glyph m_glyph;
+	CString m_toolTipText;
+	CToolTipCtrl m_toolTip;
+	bool m_bHover;
+	bool m_bTracking;
+};
 
 class CMainTable
 {
@@ -140,10 +171,11 @@ public:
     CFont m_groupFont;
     CString m_Title;
     CGroupTree m_GroupTree;
-    CGdipButton m_ShowGroupsFolderBottom;
-    CGdipButton m_BackButton;
+    CQuickPasteIconButton m_ShowGroupsFolderBottom;
+    CQuickPasteIconButton m_BackButton;
 	CGroupStatic m_alwaysOnToWarningStatic;
-	CGdipButton m_systemMenu;
+	CQuickPasteIconButton m_systemMenu;
+	CQuickPasteIconButton m_optionsBottom;
 	CGroupStatic m_noSearchResultsStatic;
 
     long m_lRecordCount;

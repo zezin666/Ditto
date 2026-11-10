@@ -1,0 +1,43 @@
+T2 runtime verification
+Date: 2026-11-10
+Binary: Release64\Ditto.exe
+Harness: artifacts\ui\t2\run-t2-runtime.ps1
+Test data: unique portable directories under %TEMP%; scratch Ditto.db only
+
+Modern Light final run:
+  theme=Modern Light dpi=96 window=300x300 gdiBefore=75 gdiAfter=85
+  selection=0,2 clearTextLength=0 emptyTextLength=19
+  screenshot root=artifacts\ui\t2\t2-light-*.png
+
+Modern Dark final run:
+  theme=Modern Dark dpi=96 window=300x300 gdiBefore=75 gdiAfter=83
+  selection=0,2 clearTextLength=0 emptyTextLength=18 focusTextLength=8
+  screenshot root=artifacts\ui\t2\t2-dark-*.png
+
+Captured states:
+  t2-light-popup.png
+  t2-light-search-focus.png
+  t2-light-empty.png
+  t2-light-group.png
+  t2-dark-popup.png
+  t2-dark-search-focus.png
+  t2-dark-empty.png
+  t2-dark-group.png
+  t2-light-caption-top.png
+  t2-light-caption-bottom.png
+  t2-light-caption-left.png
+  t2-light-caption-right.png
+
+The harness also completed earlier Light and Dark passes at 144 DPI with
+450x450 windows; the final screenshots in this directory are the 96-DPI pass.
+
+Checks:
+  PASS  Portable startup and three clipboard captures per theme
+  PASS  Search focus, selection range, and clear-search action
+  PASS  Empty state and localized clear action
+  PASS  Group breadcrumb, ellipsis, and back button
+  PASS  Four caption positions
+  PASS  GDI count changed by +10 Light and +8 Dark across the test cycle
+  UNVERIFIED  Actual IME candidate/composition window
+  UNVERIFIED  200% DPI and physical Windows 10 fallback rendering
+  UNVERIFIED  Every configurable hotkey and every context-menu command

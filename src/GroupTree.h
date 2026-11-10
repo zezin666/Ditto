@@ -24,6 +24,7 @@ public:
 public:
 	void FillTree();
 	void SetNotificationWndEx(HWND hWnd)	{ m_NotificationWnd = hWnd;	}
+	void RefreshTheme();
 	bool m_bHide;
 	int m_selectedFolderID;
 	int GetSelectedTree();
@@ -70,6 +71,9 @@ protected:
 	afx_msg void OnKeydown(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnRclickQuickPaste(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
