@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ditto UI modernisation — mockups (T0)</title>
+<style>
+  :root{
+    --canvas:#F7F8FA; --surface:#FFFFFF; --surface-alt:#F1F3F6;
+    --border:#E3E6EC; --text:#1B1F24; --muted:#5C6470;
+    --accent:#2563EB; --selection:#E8F0FF; --hover:#F0F3F8;
+    --danger:#C43C3C; --pinned:#8A5A00; --pasted:#1F7A4D;
+    --radius:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--canvas);color:var(--text);font:14px/1.55 "Segoe UI",Tahoma,Arial,sans-serif}
+  header{padding:32px 40px 20px;background:var(--surface);border-bottom:1px solid var(--border)}
+  header h1{margin:0 0 6px;font-size:24px;font-weight:600;letter-spacing:-.2px}
+  header p{margin:4px 0;color:var(--muted);max-width:980px}
+  .badge{display:inline-block;margin-top:10px;padding:4px 10px;border-radius:999px;background:#FFF4E5;color:#8A5A00;font-size:12px;font-weight:600}
+  main{max-width:1180px;margin:0 auto;padding:28px 24px 64px}
+  section{margin:0 0 34px}
+  h2{font-size:18px;font-weight:600;margin:0 0 12px}
+  h3{font-size:15px;font-weight:600;margin:22px 0 8px}
+  p{color:var(--muted)}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+  .mockups{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:20px}
+  .mockup{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+  .mockup img{display:block;width:100%;height:auto;background:#E9ECF2}
+  .mockup .meta{padding:14px 16px}
+  .mockup .meta strong{display:block;font-size:14px;margin-bottom:4px}
+  .mockup .meta span{color:var(--muted);font-size:12px}
+  table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:top}
+  th{background:var(--surface-alt);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+  tr:last-child td{border-bottom:none}
+  code{font-family:Consolas,"Cascadia Mono",monospace;font-size:12px;background:var(--surface-alt);padding:1px 5px;border-radius:4px}
+  .swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+  .swatch{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface)}
+  .chip{width:22px;height:22px;border-radius:6px;border:1px solid rgba(0,0,0,.12);flex:none}
+  .swatch span{font-size:12px;color:var(--muted)}
+  .swatch b{font-size:12px;color:var(--text)}
+  .note{border-left:3px solid var(--accent);background:var(--selection);padding:12px 14px;border-radius:8px;color:var(--text);font-size:13px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:820px){.cols{grid-template-columns:1fr}}
+  ul{margin:6px 0 0 18px;padding:0}
+  li{margin:4px 0;color:var(--muted)}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  footer{padding:20px 40px;border-top:1px solid var(--border);color:var(--muted);font-size:12px;background:var(--surface)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Ditto UI modernisation — T0 mockups</h1>
+  <p>Frozen design-system reference for the quick-paste popup. These are <strong>mockups, not screenshots</strong>: T0 had no Windows C++ build toolchain, so no app could be built or captured. See <a href="../../docs/ui/ENVIRONMENT.md">docs/ui/ENVIRONMENT.md</a>.</p>
+  <p>Spec: <a href="../../docs/ui/DESIGN-SYSTEM.md">DESIGN-SYSTEM.md</a> · Current state: <a href="../../docs/ui/CURRENT-STATE.md">CURRENT-STATE.md</a> · Plan: <a href="../../docs/ui/IMPLEMENTATION-PLAN.md">IMPLEMENTATION-PLAN.md</a></p>
+  <span class="badge">BLOCKED: build toolchain missing — no before screenshots</span>
+</header>
+
+<main>
+  <section>
+    <h2>Mockups</h2>
+    <div class="mockups">
+      <div class="mockup">
+        <img src="main-popup-light.svg" alt="Light quick-paste popup mockup, 420 by 460 logical pixels at 96 DPI">
+        <div class="meta">
+          <strong>Light · 420×460 @ 96 DPI</strong>
+          <span>Default right caption, bottom search bar, selected + hover + pasted rows, pinned icon, image/colour clips.</span>
+        </div>
+      </div>
+      <div class="mockup">
+        <img src="main-popup-dark.svg" alt="Dark quick-paste popup mockup, 420 by 460 logical pixels at 96 DPI">
+        <div class="meta">
+          <strong>Dark · 420×460 @ 96 DPI</strong>
+          <span>Same anatomy; dark surfaces, validated accent fill with dark text, close-button hover, search match highlight.</span>
+        </div>
+      </div>
+      <div class="mockup">
+        <img src="main-popup-empty-light.svg" alt="Compact empty-state quick-paste popup mockup, 300 by 300 logical pixels at 96 DPI">
+        <div class="meta">
+          <strong>Light empty state · 300×300 @ 96 DPI</strong>
+          <span>Default-size compact case: no-results message, “Clear search” action, search keeps focus, nothing clips.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cols">
+    <div class="card">
+      <h2>What is frozen</h2>
+      <ul>
+        <li>Popup search stays in the bottom command bar (Ditto signature); bar 40px, search 34px.</li>
+        <li>Default caption position remains right (vertical); all four positions supported.</li>
+        <li>Default popup size stays 300×300; comfortable target 420×480; minimum 280×220.</li>
+        <li>Rows: 30px minimum pitch, 8px horizontal inset, 6px radius, 1px vertical inset.</li>
+        <li>Modern themes disable zebra; legacy themes keep their explicit odd/even colors.</li>
+        <li>Search highlight uses <code>HighlightBg</code>/<code>HighlightText</code>, not red text.</li>
+        <li>Pasted = 3px <code>Pasted</code> bar + check glyph; not a neon strip.</li>
+        <li>Dark primary buttons: <code>AccentFill #4C8DFF</code> + <code>AccentOn #0B1220</code>.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>What these mockups are not</h2>
+      <ul>
+        <li>Not a web-app prototype. The implementation is native MFC/GDI/GDI+.</li>
+        <li>Not pixel-verified. No 100/150/200% runtime screenshots exist.</li>
+        <li>Not final icons. T1 may draw vector glyphs or tinted rasters; existing IDs stay.</li>
+        <li>Not a license to change settings, command IDs, hotkeys, or language IDs.</li>
+        <li>Not evidence of IME, high-contrast, or screen-reader behavior — those need real tests.</li>
+      </ul>
+      <div class="note">T1–T4: implement tokens and states from the SVG anatomy, then capture real screenshots. If a mockup detail conflicts with native behavior (IME, focus, keyboard), native behavior wins.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Light tokens</h2>
+    <div class="swatches">
+      <div class="swatch"><span class="chip" style="background:#F7F8FA"></span><div><b>Canvas</b><br><span>#F7F8FA</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#FFFFFF"></span><div><b>Surface</b><br><span>#FFFFFF</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#F1F3F6"></span><div><b>SurfaceAlt</b><br><span>#F1F3F6</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#E3E6EC"></span><div><b>Border</b><br><span>#E3E6EC</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#1B1F24"></span><div><b>TextPrimary</b><br><span>#1B1F24 · 15.58:1</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#5C6470"></span><div><b>TextSecondary</b><br><span>#5C6470 · 5.63:1</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#2563EB"></span><div><b>Accent</b><br><span>#2563EB · 5.17:1</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#E8F0FF"></span><div><b>Selection</b><br><span>#E8F0FF</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#F0F3F8"></span><div><b>Hover</b><br><span>#F0F3F8</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#1F7A4D"></span><div><b>Pasted</b><br><span>#1F7A4D · 5.32:1</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#8A5A00"></span><div><b>Pinned</b><br><span>#8A5A00 · 5.93:1</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#C43C3C"></span><div><b>Danger</b><br><span>#C43C3C · 5.17:1</span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Dark tokens</h2>
+    <div class="swatches">
+      <div class="swatch"><span class="chip" style="background:#1B1C1F"></span><div><b>Canvas</b><br><span>#1B1C1F</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#24262A"></span><div><b>Surface</b><br><span>#24262A</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#2C2F34"></span><div><b>SurfaceAlt</b><br><span>#2C2F34</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#383B41"></span><div><b>Border</b><br><span>#383B41</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#F2F3F5"></span><div><b>TextPrimary</b><br><span>#F2F3F5 · 15.35:1</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#A7ADB7"></span><div><b>TextSecondary</b><br><span>#A7ADB7 · 7.55:1</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#6C9BFF"></span><div><b>Accent</b><br><span>#6C9BFF · 6.30:1</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#4C8DFF"></span><div><b>AccentFill</b><br><span>#4C8DFF · dark text 5.85:1</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#2E3A52"></span><div><b>Selection</b><br><span>#2E3A52</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#2F3238"></span><div><b>Hover</b><br><span>#2F3238</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#4CC38A"></span><div><b>Pasted</b><br><span>#4CC38A · 7.69:1</span></div></div>
+      <div class="swatch"><span class="chip" style="background:#E0A94A"></span><div><b>Pinned</b><br><span>#E0A94A · 8.07:1</span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Metric reference</h2>
+    <table>
+      <thead><tr><th>Token</th><th>96 DPI</th><th>150% (144 DPI)</th><th>200% (192 DPI)</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><code>RadiusWindow</code></td><td>12</td><td>18</td><td>24</td><td>DWM round on Win11; square on Win10</td></tr>
+        <tr><td><code>CaptionHeight</code></td><td>34</td><td>51</td><td>68</td><td>Width for left/right caption</td></tr>
+        <tr><td><code>BottomBarHeight</code></td><td>40</td><td>60</td><td>80</td><td>Contains 34px search</td></tr>
+        <tr><td><code>SearchHeight</code></td><td>34</td><td>51</td><td>68</td><td>Radius 8</td></tr>
+        <tr><td><code>ListRowHeight</code></td><td>30</td><td>45</td><td>60</td><td>Grows for 2–5 line modes</td></tr>
+        <tr><td><code>CaptionButtonSize</code></td><td>28</td><td>42</td><td>56</td><td>Glyph 16</td></tr>
+        <tr><td><code>ButtonHeight</code></td><td>30</td><td>45</td><td>60</td><td>Dialog/empty-state buttons</td></tr>
+        <tr><td><code>ScrollBarThumbWidth</code></td><td>6</td><td>9</td><td>12</td><td>10 hover width</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px">Borders use 1 physical px at all scales; focus rings and accent bars use logical scaling. Every value goes through <code>CDPI::Scale</code> at draw time.</p>
+  </section>
+
+  <section class="cols">
+    <div class="card">
+      <h2>Interaction states</h2>
+      <table>
+        <thead><tr><th>State</th><th>Fill</th><th>Text/icon</th><th>Cue</th></tr></thead>
+        <tbody>
+          <tr><td>Default</td><td>Surface / SurfaceAlt</td><td>TextPrimary</td><td>1px Border</td></tr>
+          <tr><td>Hover</td><td>Hover</td><td>TextPrimary</td><td>BorderStrong on inputs</td></tr>
+          <tr><td>Selected</td><td>Selection</td><td>SelectionText</td><td>3px Accent bar</td></tr>
+          <tr><td>Selected + focus</td><td>Selection</td><td>SelectionText</td><td>2px FocusRing</td></tr>
+          <tr><td>Focus only</td><td>unchanged</td><td>unchanged</td><td>2px FocusRing</td></tr>
+          <tr><td>Disabled</td><td>SurfaceAlt</td><td>TextDisabled</td><td>no hover</td></tr>
+          <tr><td>Pasted</td><td>—</td><td>—</td><td>3px Pasted bar + check</td></tr>
+          <tr><td>Disconnected</td><td>—</td><td>—</td><td>Danger dot + tooltip</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Accessibility checks</h2>
+      <ul>
+        <li>Body text ≥ 4.5:1; focus ring always visible; state never color-only.</li>
+        <li>Keyboard: arrows, PageUp/Down, Home/End, Enter, Shift+Enter, Ctrl+1..0, F3, Esc, Tab, F7, Delete, Alt+Enter.</li>
+        <li>High contrast uses system colors and <code>DrawFocusRect</code>; no alpha/tints.</li>
+        <li>IME: do not custom-draw composition. Test Chinese/Japanese before claiming success.</li>
+        <li>Icon-only buttons need a localized tooltip and accessible name.</li>
+        <li>Reduced motion: no fades if <code>SPI_GETCLIENTAREAANIMATION</code> is off.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Files</h2>
+    <table>
+      <thead><tr><th>Path</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td><code>main-popup-light.svg</code></td><td>Light 420×460, right caption, full anatomy and token legend.</td></tr>
+        <tr><td><code>main-popup-dark.svg</code></td><td>Dark 420×460, search match highlight, close hover, dark token legend.</td></tr>
+        <tr><td><code>main-popup-empty-light.svg</code></td><td>Compact 300×300 empty state and scaling notes.</td></tr>
+        <tr><td><code>../before/README.md</code></td><td>Why baseline screenshots are missing and how to capture them later.</td></tr>
+        <tr><td><code>../../docs/ui/DESIGN-SYSTEM.md</code></td><td>Frozen tokens, component specs, compatibility and accessibility rules.</td></tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+
+<footer>
+  T0 deliverable · 2026-11-10 · Branch <code>taohy/ui-design</code> · Base <code>a80fd3536bc407cac8cce43b5682022282ace983</code> · No app was built; mockups are design references only.
+</footer>
+</body>
+</html>

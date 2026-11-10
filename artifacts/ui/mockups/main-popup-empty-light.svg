@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="540" viewBox="0 0 760 540" font-family="Segoe UI, Tahoma, Arial, sans-serif">
+  <defs>
+    <clipPath id="winClipEmpty"><rect x="0" y="0" width="300" height="300" rx="12"/></clipPath>
+    <marker id="arrowE" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8A919C"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="760" height="540" fill="#E9ECF2"/>
+  <text x="30" y="28" font-size="15" font-weight="600" fill="#1B1F24">Ditto quick paste — EMPTY STATE · 300×300 logical px @ 96 DPI</text>
+  <text x="30" y="47" font-size="11" fill="#5C6470">Compact case: the default 300×300 window must remain fully usable. 1 SVG unit = 1 logical px at 96 DPI.</text>
+  <text x="30" y="62" font-size="11" fill="#5C6470">Right caption 34 · bottom bar 40 · search 34 · list viewport 266×260 · empty-state max text width 240</text>
+
+  <g transform="translate(40,100)">
+    <rect x="0" y="0" width="300" height="300" rx="12" fill="#F7F8FA"/>
+    <g clip-path="url(#winClipEmpty)">
+      <!-- caption -->
+      <rect x="266" y="0" width="34" height="300" fill="#F1F3F6"/>
+      <line x1="266" y1="0" x2="266" y2="300" stroke="#E3E6EC" stroke-width="1"/>
+      <rect x="269" y="3" width="28" height="28" rx="6" fill="none"/>
+      <g stroke="#5C6470" stroke-width="1.5" stroke-linecap="round" fill="none">
+        <path d="M279 13 L287 21 M287 13 L279 21"/>
+      </g>
+      <rect x="269" y="35" width="28" height="28" rx="6" fill="none"/>
+      <g stroke="#5C6470" stroke-width="1.5" stroke-linecap="round" fill="none">
+        <path d="M279 45 L287 49 L279 53"/>
+      </g>
+      <text transform="rotate(-90 283 190)" x="283" y="190" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#1B1F24">Ditto</text>
+      <circle cx="283" cy="280" r="3" fill="#2563EB"/>
+
+      <!-- empty state -->
+      <g stroke="#8A919C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <circle cx="133" cy="86" r="13"/>
+        <path d="M142 95 L152 105"/>
+        <path d="M124 105 L142 87" stroke="#8A919C"/>
+      </g>
+      <text x="133" y="140" text-anchor="middle" font-size="14" font-weight="600" fill="#1B1F24">No results</text>
+      <text x="133" y="161" text-anchor="middle" font-size="12" fill="#5C6470">There are no results for “xyz”</text>
+      <rect x="77" y="182" width="76" height="30" rx="6" fill="#F1F3F6" stroke="#E3E6EC" stroke-width="1"/>
+      <text x="115" y="201" text-anchor="middle" font-size="12" fill="#1B1F24">Clear search</text>
+
+      <!-- bottom bar -->
+      <rect x="0" y="260" width="266" height="40" fill="#F1F3F6"/>
+      <line x1="0" y1="260" x2="266" y2="260" stroke="#E3E6EC" stroke-width="1"/>
+      <rect x="6" y="266" width="28" height="28" rx="6" fill="#F0F3F8"/>
+      <g stroke="#5C6470" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M14 280 h5 l2 2 h6 v8 h-13 z"/>
+      </g>
+      <rect x="232" y="266" width="28" height="28" rx="6" fill="none"/>
+      <g fill="#5C6470"><circle cx="246" cy="276" r="1.6"/><circle cx="246" cy="280" r="1.6"/><circle cx="246" cy="284" r="1.6"/></g>
+
+      <!-- search -->
+      <rect x="42" y="263" width="182" height="34" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+      <g stroke="#5C6470" stroke-width="1.5" stroke-linecap="round" fill="none">
+        <circle cx="58" cy="279" r="6"/><path d="M62.5 283.5 L68 289"/>
+      </g>
+      <text x="76" y="285" font-size="13" fill="#1B1F24">xyz</text>
+      <g stroke="#5C6470" stroke-width="1.5" stroke-linecap="round" fill="none">
+        <path d="M204 276 l4 4 l4 -4 M208 280 l-4 4"/>
+      </g>
+    </g>
+    <rect x="0.5" y="0.5" width="299" height="299" rx="12" fill="none" stroke="#E3E6EC" stroke-width="1"/>
+  </g>
+
+  <g stroke="#8A919C" stroke-width="1" fill="none" marker-start="url(#arrowE)" marker-end="url(#arrowE)">
+    <line x1="40" y1="92" x2="340" y2="92"/>
+    <line x1="350" y1="100" x2="350" y2="400"/>
+    <line x1="306" y1="414" x2="340" y2="414"/>
+    <line x1="28" y1="360" x2="28" y2="400"/>
+    <line x1="28" y1="363" x2="28" y2="397"/>
+  </g>
+  <text x="190" y="86" text-anchor="middle" font-size="11" fill="#5C6470">300</text>
+  <text x="356" y="254" font-size="11" fill="#5C6470">300</text>
+  <text x="323" y="429" text-anchor="middle" font-size="11" fill="#5C6470">34</text>
+  <text x="34" y="384" font-size="11" fill="#5C6470">40</text>
+
+  <text x="400" y="112" font-size="13" font-weight="600" fill="#1B1F24">Compact anatomy</text>
+  <g font-size="11" fill="#5C6470">
+    <text x="400" y="134">● Content width 266 (300 − 34 caption)</text>
+    <text x="400" y="154">● List viewport 266 × 260 (above 40px bar)</text>
+    <text x="400" y="174">● Search width 182 at this size; text area ≈ 100px</text>
+    <text x="400" y="194">● Empty state: icon 40, title 14/600, body 12</text>
+    <text x="400" y="214">● Action button 30px high, min width 76</text>
+    <text x="400" y="234">● Text wraps at 240px; nothing clips at 300×300</text>
+    <text x="400" y="254">● Tab reaches “Clear search”; Enter activates</text>
+    <text x="400" y="274">● Esc still closes/hides the popup</text>
+    <text x="400" y="294">● Search keeps focus; list is empty</text>
+    <text x="400" y="314">● Same tokens as the 420×460 mockup</text>
+  </g>
+
+  <text x="400" y="350" font-size="13" font-weight="600" fill="#1B1F24">Scaling notes</text>
+  <g font-size="11" fill="#5C6470">
+    <text x="400" y="372">● 150%: 450×450 physical; tokens ×1.5</text>
+    <text x="400" y="392">● 200%: 600×600 physical; tokens ×2</text>
+    <text x="400" y="412">● Borders stay 1 physical px; focus ring scales</text>
+    <text x="400" y="432">● Row pitch/scrollbar/caption scale with CDPI</text>
+    <text x="400" y="452">● Minimum window 280×220 logical; clamp resize</text>
+    <text x="400" y="472">● Saved size is stored unscaled (existing behavior)</text>
+  </g>
+  <text x="400" y="506" font-size="10" fill="#8A919C">Mockup only. Not a screenshot; no app was built for T0.</text>
+</svg>

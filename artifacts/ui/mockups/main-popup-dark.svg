@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="620" viewBox="0 0 760 620" font-family="Segoe UI, Tahoma, Arial, sans-serif">
+  <defs>
+    <clipPath id="winClipDark"><rect x="0" y="0" width="420" height="460" rx="12"/></clipPath>
+    <marker id="arrowD" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6C727C"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="760" height="620" fill="#111214"/>
+  <text x="30" y="28" font-size="15" font-weight="600" fill="#F2F3F5">Ditto quick paste — DARK · 420×460 logical px @ 96 DPI</text>
+  <text x="30" y="47" font-size="11" fill="#A7ADB7">1 SVG unit = 1 logical px at 96 DPI. Multiply by DPI/96 at runtime. Mockup — not a screenshot.</text>
+  <text x="30" y="62" font-size="11" fill="#A7ADB7">Search “json” · hover row · selected row · pasted row · close button hover</text>
+
+  <g transform="translate(30,78)">
+    <rect x="0" y="0" width="420" height="460" rx="12" fill="#1B1C1F"/>
+    <g clip-path="url(#winClipDark)">
+      <!-- caption -->
+      <rect x="386" y="0" width="34" height="460" fill="#2C2F34"/>
+      <line x1="386" y1="0" x2="386" y2="460" stroke="#383B41" stroke-width="1"/>
+
+      <!-- close hover -->
+      <rect x="389" y="3" width="28" height="28" rx="6" fill="#C42B1C"/>
+      <g stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" fill="none">
+        <path d="M399 13 L407 21 M407 13 L399 21"/>
+      </g>
+      <rect x="389" y="35" width="28" height="28" rx="6" fill="none"/>
+      <g stroke="#A7ADB7" stroke-width="1.5" stroke-linecap="round" fill="none">
+        <path d="M399 45 L407 49 L399 53"/>
+      </g>
+
+      <text transform="rotate(-90 403 292)" x="403" y="292" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#F2F3F5">Ditto</text>
+      <circle cx="403" cy="430" r="3" fill="#6C9BFF"/>
+
+      <!-- row 1 selected -->
+      <rect x="8" y="8" width="370" height="28" rx="6" fill="#2E3A52"/>
+      <rect x="12" y="15" width="3" height="14" rx="1.5" fill="#6C9BFF"/>
+      <text x="16" y="26" font-size="11" fill="#A7ADB7">1</text>
+      <line x1="30" y1="15" x2="30" y2="29" stroke="#4A4E56" stroke-width="1"/>
+      <g stroke="#A7ADB7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M36 22 h4 l2 2 h5 v8 h-11 z"/>
+      </g>
+      <text x="58" y="27" font-size="13" fill="#F2F3F5">config.json — Ditto settings</text>
+
+      <!-- row 2 hover, pinned -->
+      <rect x="8" y="38" width="370" height="28" rx="6" fill="#2F3238"/>
+      <text x="16" y="56" font-size="11" fill="#A7ADB7">2</text>
+      <line x1="30" y1="45" x2="30" y2="59" stroke="#4A4E56" stroke-width="1"/>
+      <g fill="#E0A94A">
+        <path d="M44 43 l2.2 4.5 5 .7 -3.6 3.5 .9 5 -4.5 -2.4 -4.5 2.4 .9 -5 -3.6 -3.5 5 -.7 z"/>
+      </g>
+      <text x="58" y="57" font-size="13" fill="#F2F3F5">package.json — pinned</text>
+
+      <!-- row 3 pasted -->
+      <text x="16" y="86" font-size="11" fill="#A7ADB7">3</text>
+      <line x1="30" y1="75" x2="30" y2="89" stroke="#4A4E56" stroke-width="1"/>
+      <rect x="12" y="75" width="3" height="14" rx="1.5" fill="#4CC38A"/>
+      <g stroke="#4CC38A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M350 83 l3 3 6 -7"/>
+      </g>
+      <text x="58" y="87" font-family="Consolas, Cascadia Mono, monospace" font-size="12" fill="#F2F3F5">{ "theme": "Modern Dark" }</text>
+
+      <!-- row 4 image -->
+      <text x="16" y="116" font-size="11" fill="#A7ADB7">4</text>
+      <line x1="30" y1="105" x2="30" y2="119" stroke="#4A4E56" stroke-width="1"/>
+      <rect x="36" y="99" width="40" height="28" rx="4" fill="#24262A" stroke="#383B41" stroke-width="1"/>
+      <rect x="40" y="103" width="7" height="7" fill="#2C2F34"/>
+      <rect x="54" y="103" width="7" height="7" fill="#2C2F34"/>
+      <rect x="40" y="117" width="7" height="7" fill="#2C2F34"/>
+      <rect x="54" y="117" width="7" height="7" fill="#2C2F34"/>
+      <path d="M58 110 l8 10 h-16 z" fill="#6C727C"/>
+      <text x="86" y="117" font-size="13" fill="#F2F3F5">Screenshot 2026-11-10 142233.png</text>
+
+      <!-- row 5 colour -->
+      <text x="16" y="146" font-size="11" fill="#A7ADB7">5</text>
+      <line x1="30" y1="135" x2="30" y2="149" stroke="#4A4E56" stroke-width="1"/>
+      <rect x="36" y="129" width="16" height="16" rx="3" fill="#FF6B6B" stroke="#383B41" stroke-width="1"/>
+      <text x="58" y="147" font-family="Consolas, Cascadia Mono, monospace" font-size="12" fill="#F2F3F5">#FF6B6B</text>
+
+      <!-- row 6: json highlight -->
+      <text x="16" y="176" font-size="11" fill="#A7ADB7">6</text><line x1="30" y1="165" x2="30" y2="179" stroke="#4A4E56" stroke-width="1"/>
+      <rect x="109" y="162" width="29" height="16" rx="3" fill="#2E3A52"/>
+      <text x="58" y="177" font-family="Consolas, Cascadia Mono, monospace" font-size="12" fill="#F2F3F5">config.<tspan x="109" fill="#FFFFFF">json</tspan></text>
+
+      <!-- row 7: json highlight -->
+      <text x="16" y="206" font-size="11" fill="#A7ADB7">7</text><line x1="30" y1="195" x2="30" y2="209" stroke="#4A4E56" stroke-width="1"/>
+      <rect x="117" y="192" width="29" height="16" rx="3" fill="#2E3A52"/>
+      <text x="58" y="207" font-family="Consolas, Cascadia Mono, monospace" font-size="12" fill="#F2F3F5">package.<tspan x="118" fill="#FFFFFF">json</tspan></text>
+
+      <!-- row 8: json highlight -->
+      <text x="16" y="236" font-size="11" fill="#A7ADB7">8</text><line x1="30" y1="225" x2="30" y2="239" stroke="#4A4E56" stroke-width="1"/>
+      <rect x="57" y="222" width="29" height="16" rx="3" fill="#2E3A52"/>
+      <text x="58" y="237" font-family="Consolas, Cascadia Mono, monospace" font-size="12" fill="#FFFFFF">json</text>
+
+      <text x="16" y="266" font-size="11" fill="#A7ADB7">9</text><line x1="30" y1="255" x2="30" y2="269" stroke="#4A4E56" stroke-width="1"/>
+      <text x="58" y="267" font-size="13" fill="#F2F3F5">npm run build &amp;&amp; npm test</text>
+
+      <text x="16" y="296" font-size="11" fill="#A7ADB7">10</text><line x1="30" y1="285" x2="30" y2="299" stroke="#4A4E56" stroke-width="1"/>
+      <text x="58" y="297" font-size="13" fill="#F2F3F5">https://learn.microsoft.com/windows/apps/…</text>
+
+      <text x="16" y="326" font-size="11" fill="#A7ADB7">0</text><line x1="30" y1="315" x2="30" y2="329" stroke="#4A4E56" stroke-width="1"/>
+      <text x="58" y="327" font-size="13" fill="#F2F3F5">Ctrl+` to open</text>
+
+      <text x="16" y="356" font-size="11" fill="#A7ADB7">1</text><line x1="30" y1="345" x2="30" y2="359" stroke="#4A4E56" stroke-width="1"/>
+      <text x="58" y="357" font-size="13" fill="#F2F3F5">Pinned clip — always on top of the list</text>
+
+      <rect x="378" y="40" width="6" height="150" rx="3" fill="#4E535C"/>
+
+      <!-- bottom bar -->
+      <rect x="0" y="420" width="386" height="40" fill="#2C2F34"/>
+      <line x1="0" y1="420" x2="386" y2="420" stroke="#383B41" stroke-width="1"/>
+      <rect x="6" y="426" width="28" height="28" rx="6" fill="#2F3238"/>
+      <g stroke="#A7ADB7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M14 440 h5 l2 2 h6 v8 h-13 z"/>
+      </g>
+      <rect x="352" y="426" width="28" height="28" rx="6" fill="none"/>
+      <g fill="#A7ADB7"><circle cx="366" cy="436" r="1.6"/><circle cx="366" cy="440" r="1.6"/><circle cx="366" cy="444" r="1.6"/></g>
+
+      <!-- search with text -->
+      <rect x="42" y="423" width="302" height="34" rx="8" fill="#24262A" stroke="#6C9BFF" stroke-width="2"/>
+      <g stroke="#A7ADB7" stroke-width="1.5" stroke-linecap="round" fill="none">
+        <circle cx="58" cy="439" r="6"/><path d="M62.5 443.5 L68 449"/>
+      </g>
+      <text x="76" y="445" font-size="13" fill="#F2F3F5">json</text>
+      <line x1="112" y1="431" x2="112" y2="449" stroke="#6C9BFF" stroke-width="1"/>
+      <g stroke="#A7ADB7" stroke-width="1.5" stroke-linecap="round" fill="none">
+        <path d="M320 437 l4 4 l4 -4"/>
+        <path d="M334 437 l4 4 l4 -4 M338 441 l-4 4"/>
+      </g>
+    </g>
+    <rect x="0.5" y="0.5" width="419" height="459" rx="12" fill="none" stroke="#383B41" stroke-width="1"/>
+  </g>
+
+  <g stroke="#6C727C" stroke-width="1" fill="none" marker-start="url(#arrowD)" marker-end="url(#arrowD)">
+    <line x1="30" y1="70" x2="450" y2="70"/>
+    <line x1="460" y1="78" x2="460" y2="538"/>
+    <line x1="416" y1="552" x2="450" y2="552"/>
+    <line x1="18" y1="498" x2="18" y2="538"/>
+    <line x1="18" y1="86" x2="18" y2="114"/>
+  </g>
+  <text x="240" y="65" text-anchor="middle" font-size="11" fill="#A7ADB7">420</text>
+  <text x="466" y="312" font-size="11" fill="#A7ADB7">460</text>
+  <text x="433" y="567" text-anchor="middle" font-size="11" fill="#A7ADB7">34</text>
+  <text x="24" y="522" font-size="11" fill="#A7ADB7">40</text>
+  <text x="24" y="104" font-size="11" fill="#A7ADB7">30</text>
+
+  <text x="500" y="90" font-size="13" font-weight="600" fill="#F2F3F5">Dark tokens</text>
+  <g font-size="11" fill="#F2F3F5">
+    <rect x="500" y="102" width="14" height="14" rx="3" fill="#1B1C1F" stroke="#383B41"/><text x="522" y="113">Canvas #1B1C1F</text>
+    <rect x="500" y="124" width="14" height="14" rx="3" fill="#24262A" stroke="#383B41"/><text x="522" y="135">Surface #24262A</text>
+    <rect x="500" y="146" width="14" height="14" rx="3" fill="#2C2F34" stroke="#383B41"/><text x="522" y="157">SurfaceAlt #2C2F34</text>
+    <rect x="500" y="168" width="14" height="14" rx="3" fill="#383B41"/><text x="522" y="179">Border #383B41</text>
+    <rect x="500" y="190" width="14" height="14" rx="3" fill="#F2F3F5"/><text x="522" y="201">TextPrimary #F2F3F5</text>
+    <rect x="500" y="212" width="14" height="14" rx="3" fill="#A7ADB7"/><text x="522" y="223">TextSecondary #A7ADB7</text>
+    <rect x="500" y="234" width="14" height="14" rx="3" fill="#6C9BFF"/><text x="522" y="245">Accent #6C9BFF</text>
+    <rect x="500" y="256" width="14" height="14" rx="3" fill="#4C8DFF"/><text x="522" y="267">AccentFill #4C8DFF</text>
+    <rect x="500" y="278" width="14" height="14" rx="3" fill="#2E3A52" stroke="#4A4E56"/><text x="522" y="289">Selection #2E3A52</text>
+    <rect x="500" y="300" width="14" height="14" rx="3" fill="#2F3238" stroke="#383B41"/><text x="522" y="311">Hover #2F3238</text>
+    <rect x="500" y="322" width="14" height="14" rx="3" fill="#4CC38A"/><text x="522" y="333">Pasted #4CC38A</text>
+    <rect x="500" y="344" width="14" height="14" rx="3" fill="#E0A94A"/><text x="522" y="355">Pinned #E0A94A</text>
+  </g>
+
+  <text x="500" y="386" font-size="13" font-weight="600" fill="#F2F3F5">Anatomy</text>
+  <g font-size="11" fill="#A7ADB7">
+    <text x="500" y="406">● Close hover: CloseHoverBg #C42B1C, white X</text>
+    <text x="500" y="424">● Selected: Selection fill + 3px Accent bar</text>
+    <text x="500" y="442">● Hover: #2F3238, selection untouched</text>
+    <text x="500" y="460">● Pasted: 3px #4CC38A bar + check glyph</text>
+    <text x="500" y="478">● Search match: #2E3A52 bg + primary text</text>
+    <text x="500" y="496">● Focus ring: 2px #6C9BFF</text>
+    <text x="500" y="514">● No white text on light-blue accent fills</text>
+    <text x="500" y="532">● Scrollbar: #4E535C thumb on dark track</text>
+    <text x="500" y="550">● Caption/surface separation: 1px #383B41</text>
+  </g>
+  <text x="500" y="584" font-size="10" fill="#6C727C">Mockup only. Fonts render with the viewer's Segoe UI.</text>
+</svg>
