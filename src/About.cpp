@@ -7,6 +7,7 @@
 #include "cp_main.h"
 #include "About.h"
 #include "misc.h"
+#include "DPI.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -17,9 +18,35 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CAbout property page
 
-IMPLEMENT_DYNCREATE(CAbout, CPropertyPage)
+namespace
+{
+	void SetCurrentPageTabTitle(CWnd* pPage, const CString& title)
+	{
+		if (title.IsEmpty())
+			return;
 
-CAbout::CAbout() : CPropertyPage(CAbout::IDD)
+		CPropertySheet* pSheet = DYNAMIC_DOWNCAST(CPropertySheet, pPage->GetParent());
+		CTabCtrl* pTab = pSheet != NULL ? pSheet->GetTabControl() : NULL;
+		if (pSheet == NULL || pTab == NULL || pTab->GetSafeHwnd() == NULL)
+			return;
+
+		for (int index = 0; index < pSheet->GetPageCount(); ++index)
+		{
+			if (pSheet->GetPage(index) != pPage)
+				continue;
+
+			TCITEM item = { 0 };
+			item.mask = TCIF_TEXT;
+			item.pszText = const_cast<LPTSTR>(title.GetString());
+			pTab->SetItem(index, &item);
+			break;
+		}
+	}
+}
+
+IMPLEMENT_DYNCREATE(CAbout, CThemedPropertyPage)
+
+CAbout::CAbout() : CThemedPropertyPage(CAbout::IDD)
 {
 	m_csTitle = theApp.m_Language.GetString("AboutTitle", "About");
 	m_psp.pszTitle = m_csTitle;
@@ -36,7 +63,7 @@ CAbout::~CAbout()
 
 void CAbout::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
+	CThemedPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CAbout)
 	DDX_Control(pDX, IDC_STATIC_LINK, m_Link);
 	DDX_Control(pDX, IDC_HYPER_LINK, m_HyperLink);
@@ -45,7 +72,7 @@ void CAbout::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CAbout, CPropertyPage)
+BEGIN_MESSAGE_MAP(CAbout, CThemedPropertyPage)
 	//{{AFX_MSG_MAP(CAbout)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -55,7 +82,7 @@ END_MESSAGE_MAP()
 
 BOOL CAbout::OnInitDialog() 
 {
-	CPropertyPage::OnInitDialog();
+	CThemedPropertyPage::OnInitDialog();
 
 	m_List.AddString(_T("Ditto"));
 
@@ -106,24 +133,30 @@ BOOL CAbout::OnInitDialog()
 		m_List.AddString(_T("    ") + arr[i]);
 	}
 
+	CDPI dpi(m_hWnd);
+	const int padding = dpi.Scale(7);
+	const int gap = dpi.Scale(5);
+	const int linkHeight = dpi.Scale(18);
+
 	CRect rect;
 	GetClientRect(rect);
-	
-	rect.bottom -= 30;
-	
-	m_List.MoveWindow(rect);
+	rect.DeflateRect(padding, padding);
 
-	rect.top = rect.bottom + 10;
-	rect.bottom = rect.top + 30;
-	
-	m_HyperLink.MoveWindow(rect);
+	CRect homeRect(rect.left, rect.bottom - linkHeight, rect.right, rect.bottom);
+	CRect emailRect(rect.left, homeRect.top - linkHeight - gap,
+		rect.right, homeRect.top - gap);
+	CRect listRect(rect.left, rect.top, rect.right, emailRect.top - gap);
+
+	m_List.MoveWindow(listRect);
+	m_HyperLink.MoveWindow(emailRect);
+	m_Link.MoveWindow(homeRect);
 
 	m_HyperLink.SetURL(_T("mailto:sabrogden@gmail.com"));
 
-	rect.top = rect.bottom + 5;
-	rect.bottom = rect.top + 5;
-	m_Link.MoveWindow(rect);
 	m_Link.SetURL(_T("https://ditto-cp.sourceforge.io/"));
+
+	CThemedControls::FinishLayout(this);
+	SetCurrentPageTabTitle(this, m_csTitle);
 		
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE

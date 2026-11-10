@@ -17,9 +17,9 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // COptionsTypes property page
 
-IMPLEMENT_DYNCREATE(COptionsTypes, CPropertyPage)
+IMPLEMENT_DYNCREATE(COptionsTypes, CThemedPropertyPage)
 
-COptionsTypes::COptionsTypes() : CPropertyPage(COptionsTypes::IDD)
+COptionsTypes::COptionsTypes() : CThemedPropertyPage(COptionsTypes::IDD)
 {
 	m_csTitle = theApp.m_Language.GetString("SupportedTypesTitle", "Supported Types");
 	m_psp.pszTitle = m_csTitle;
@@ -37,14 +37,14 @@ COptionsTypes::~COptionsTypes()
 
 void COptionsTypes::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
+	CThemedPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(COptionsTypes)
 	DDX_Control(pDX, IDC_LIST1, m_List);
 	//}}AFX_DATA_MAP
 }
 
 
-BEGIN_MESSAGE_MAP(COptionsTypes, CPropertyPage)
+BEGIN_MESSAGE_MAP(COptionsTypes, CThemedPropertyPage)
 	//{{AFX_MSG_MAP(COptionsTypes)
 	ON_BN_CLICKED(IDC_DELETE, OnDelete)
 	ON_BN_CLICKED(IDC_ADD, OnAdd)
@@ -77,12 +77,12 @@ BOOL COptionsTypes::OnApply()
 		theApp.ReloadTypes();
 	}
 	
-	return CPropertyPage::OnApply();
+	return CThemedPropertyPage::OnApply();
 }
 
 BOOL COptionsTypes::OnInitDialog() 
 {
-	CPropertyPage::OnInitDialog();
+	CThemedPropertyPage::OnInitDialog();
 
 	try
 	{
@@ -110,6 +110,7 @@ BOOL COptionsTypes::OnInitDialog()
 	m_List.SetFocus();
 
 	theApp.m_Language.UpdateOptionSupportedTypes(this);
+	CThemedControls::FinishLayout(this);
 	
 	return FALSE;
 }

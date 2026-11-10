@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include "cp_main.h"
 #include "FileTransferProgressDlg.h"
+#include "ProgressWnd.h"
+#include "UiTheme.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -16,14 +18,14 @@ static char THIS_FILE[] = __FILE__;
 
 
 CFileTransferProgressDlg::CFileTransferProgressDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CFileTransferProgressDlg::IDD, pParent)
+	: CThemedDialog(CFileTransferProgressDlg::IDD, pParent)
 {
 	m_bCancelled = false;
 }
 
 void CFileTransferProgressDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CThemedDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CFileTransferProgressDlg)
 	DDX_Control(pDX, IDC_FILE_COPY, m_FileCopy);
 	DDX_Control(pDX, IDCANCEL, m_m_CancelButton);
@@ -35,7 +37,7 @@ void CFileTransferProgressDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CFileTransferProgressDlg, CDialog)
+BEGIN_MESSAGE_MAP(CFileTransferProgressDlg, CThemedDialog)
 	//{{AFX_MSG_MAP(CFileTransferProgressDlg)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -45,19 +47,32 @@ END_MESSAGE_MAP()
 
 void CFileTransferProgressDlg::PostNcDestroy() 
 {
-	CDialog::PostNcDestroy();
+	CThemedDialog::PostNcDestroy();
 
 	delete this;
 }
 
 BOOL CFileTransferProgressDlg::OnInitDialog() 
 {
-	CDialog::OnInitDialog();
+	CThemedDialog::OnInitDialog();
 
 	m_FileCopy.Open(IDR_FILE_COPY);
 	m_FileCopy.Play(0, -1, -1);
+	::SetWindowTheme(m_ProgressAllFiles.GetSafeHwnd(), L"", L"");
+	::SetWindowTheme(m_ProgressSingleFile.GetSafeHwnd(), L"", L"");
+	UiProgress::Prepare(m_ProgressAllFiles.GetSafeHwnd());
+	UiProgress::Prepare(m_ProgressSingleFile.GetSafeHwnd());
+	m_ProgressAllFiles.SendMessage(PBM_SETBARCOLOR, 0,
+		static_cast<LPARAM>(UiTheme().AccentFill()));
+	m_ProgressAllFiles.SendMessage(PBM_SETBKCOLOR, 0,
+		static_cast<LPARAM>(UiTheme().SurfaceAlt()));
+	m_ProgressSingleFile.SendMessage(PBM_SETBARCOLOR, 0,
+		static_cast<LPARAM>(UiTheme().AccentFill()));
+	m_ProgressSingleFile.SendMessage(PBM_SETBKCOLOR, 0,
+		static_cast<LPARAM>(UiTheme().SurfaceAlt()));
 	
 	SetNumFiles(0);
+	CThemedControls::FinishLayout(this);
 
 	::SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE|SWP_NOMOVE|SWP_SHOWWINDOW);
 

@@ -2,6 +2,11 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+namespace UiProgress
+{
+	void Prepare(HWND hWnd);
+}
+
 class CProgressWnd : public CWnd
 {
 // Construction/Destruction

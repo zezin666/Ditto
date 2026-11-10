@@ -7,11 +7,12 @@
 // OptionFriends.h : header file
 //
 #include "OptionsSheet.h"
+#include "Ui/ThemedDialog.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // COptionFriends dialog
 
-class COptionFriends : public CPropertyPage
+class COptionFriends : public CThemedPropertyPage
 {
 	DECLARE_DYNCREATE(COptionFriends)
 

@@ -16,7 +16,7 @@ static char THIS_FILE[] = __FILE__;
 
 
 CGroupName::CGroupName(CWnd* pParent /*=NULL*/)
-	: CDialog(CGroupName::IDD, pParent)
+	: CThemedDialog(CGroupName::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CGroupName)
 	m_csName = _T("");
@@ -26,14 +26,14 @@ CGroupName::CGroupName(CWnd* pParent /*=NULL*/)
 
 void CGroupName::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CThemedDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CGroupName)
 	DDX_Text(pDX, IDC_NAME, m_csName);
 	//}}AFX_DATA_MAP
 }
 
 
-BEGIN_MESSAGE_MAP(CGroupName, CDialog)
+BEGIN_MESSAGE_MAP(CGroupName, CThemedDialog)
 	//{{AFX_MSG_MAP(CGroupName)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -45,16 +45,18 @@ void CGroupName::OnOK()
 {
 	UpdateData(TRUE);
 	
-	CDialog::OnOK();
+	CThemedDialog::OnOK();
 }
 
 BOOL CGroupName::OnInitDialog() 
 {
-	CDialog::OnInitDialog();
+	CThemedDialog::OnInitDialog();
 
 	CWnd *pWnd = GetDlgItem(IDC_NAME);
 	if(pWnd)
 		pWnd->SetFocus();
+
+	CThemedControls::FinishLayout(this);
 		
 	return FALSE;
 }

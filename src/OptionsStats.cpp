@@ -8,6 +8,21 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+namespace
+{
+	void MoveGroupBoxBehindControls(CWnd* pDialog, UINT controlId)
+	{
+		HWND hWnd = ::GetDlgItem(pDialog->GetSafeHwnd(), controlId);
+		if (hWnd != NULL)
+		{
+			::SetWindowLongPtr(hWnd, GWL_STYLE,
+				::GetWindowLongPtr(hWnd, GWL_STYLE) | WS_CLIPSIBLINGS);
+			::SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, 0, 0,
+				SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+		}
+	}
+}
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -17,10 +32,10 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // COptionsStats dialog
 
-IMPLEMENT_DYNCREATE(COptionsStats, CPropertyPage)
+IMPLEMENT_DYNCREATE(COptionsStats, CThemedPropertyPage)
 
 COptionsStats::COptionsStats()
-	: CPropertyPage(COptionsStats::IDD)
+	: CThemedPropertyPage(COptionsStats::IDD)
 {
 	m_csTitle = theApp.m_Language.GetString("StatsTitle", "Stats");
 	m_psp.pszTitle = m_csTitle;
@@ -45,7 +60,7 @@ COptionsStats::COptionsStats()
 
 void COptionsStats::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
+	CThemedPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(COptionsStats)
 	DDX_Text(pDX, IDC_ALL_COPIES, m_eAllCopies);
 	DDX_Text(pDX, IDC_ALL_PASTES, m_eAllPastes);
@@ -63,7 +78,7 @@ void COptionsStats::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(COptionsStats, CPropertyPage)
+BEGIN_MESSAGE_MAP(COptionsStats, CThemedPropertyPage)
 	//{{AFX_MSG_MAP(COptionsStats)
 	ON_BN_CLICKED(IDC_RESET_COUNTS, OnResetCounts)
 	ON_BN_CLICKED(IDC_REMOVE_ALL, OnRemoveAll)
@@ -76,7 +91,7 @@ END_MESSAGE_MAP()
 
 BOOL COptionsStats::OnInitDialog() 
 {
-	CPropertyPage::OnInitDialog();
+	CThemedPropertyPage::OnInitDialog();
 
 	COleDateTime time((time_t) CGetSetOptions::GetTotalDate());
 	m_eAllDate = time.Format();
@@ -116,6 +131,10 @@ BOOL COptionsStats::OnInitDialog()
 	UpdateData(FALSE);
 
 	theApp.m_Language.UpdateOptionStats(this);
+	CThemedControls::FinishLayout(this);
+	MoveGroupBoxBehindControls(this, IDC_STATIC_1);
+	MoveGroupBoxBehindControls(this, IDC_STATIC_2);
+	MoveGroupBoxBehindControls(this, IDC_STATIC);
 		
 	return TRUE;
 }

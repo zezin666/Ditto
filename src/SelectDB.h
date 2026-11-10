@@ -10,7 +10,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // CSelectDB dialog
 
-class CSelectDB : public CDialog
+#include "Ui/ThemedDialog.h"
+
+class CSelectDB : public CThemedDialog
 {
 // Construction
 public:

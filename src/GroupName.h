@@ -10,7 +10,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // CGroupName dialog
 
-class CGroupName : public CDialog
+#include "Ui/ThemedDialog.h"
+
+class CGroupName : public CThemedDialog
 {
 // Construction
 public:

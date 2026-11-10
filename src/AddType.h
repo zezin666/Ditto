@@ -10,7 +10,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // CAddType dialog
 
-class CAddType : public CDialog
+#include "Ui/ThemedDialog.h"
+
+class CAddType : public CThemedDialog
 {
 // Construction
 public:

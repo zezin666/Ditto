@@ -10,7 +10,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // CMoveToGroupDlg dialog
 
-class CMoveToGroupDlg : public CDialog
+#include "Ui/ThemedDialog.h"
+
+class CMoveToGroupDlg : public CThemedDialog
 {
 // Construction
 public:
