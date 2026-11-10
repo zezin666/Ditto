@@ -388,6 +388,12 @@
     <ClCompile Include="src\UAC_Thread.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ui\ThemedControls.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ui\ThemedDialog.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\UiDraw.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -920,6 +926,15 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\UAC_Thread.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ui\ThemedControls.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ui\ThemedDialog.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ui\UiIds.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\UiDraw.h">

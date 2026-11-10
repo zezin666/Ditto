@@ -779,6 +779,8 @@
     <ClCompile Include="src\TrayWnd.cpp" />
     <ClCompile Include="src\UAC_Helper.cpp" />
     <ClCompile Include="src\UAC_Thread.cpp" />
+    <ClCompile Include="src\Ui\ThemedControls.cpp" />
+    <ClCompile Include="src\Ui\ThemedDialog.cpp" />
     <ClCompile Include="src\UiDraw.cpp" />
     <ClCompile Include="src\UiTheme.cpp" />
     <ClCompile Include="src\UiWindow.cpp" />
@@ -967,6 +969,9 @@
     <ClInclude Include="src\TrayWnd.h" />
     <ClInclude Include="src\UAC_Helper.h" />
     <ClInclude Include="src\UAC_Thread.h" />
+    <ClInclude Include="src\Ui\ThemedControls.h" />
+    <ClInclude Include="src\Ui\ThemedDialog.h" />
+    <ClInclude Include="src\Ui\UiIds.h" />
     <ClInclude Include="src\UiDraw.h" />
     <ClInclude Include="src\UiTheme.h" />
     <ClInclude Include="src\UiWindow.h" />

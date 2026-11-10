@@ -2,11 +2,12 @@
 
 #include "ChaiScriptXml.h"
 #include "DialogResizer.h"
+#include "Ui/ThemedDialog.h"
 
 
 // CScriptEditor dialog
 
-class CScriptEditor : public CDialogEx
+class CScriptEditor : public CThemedDialog
 {
 	DECLARE_DYNAMIC(CScriptEditor)
 

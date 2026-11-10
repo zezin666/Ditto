@@ -14,9 +14,9 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // COptionsKeyBoard property page
 
-IMPLEMENT_DYNCREATE(COptionsKeyBoard, CPropertyPage)
+IMPLEMENT_DYNCREATE(COptionsKeyBoard, CThemedPropertyPage)
 
-COptionsKeyBoard::COptionsKeyBoard() : CPropertyPage(COptionsKeyBoard::IDD)
+COptionsKeyBoard::COptionsKeyBoard() : CThemedPropertyPage(COptionsKeyBoard::IDD)
 {
 	m_csTitle = theApp.m_Language.GetString("KeyboardShortcutsTitle", "Keyboard Shortcuts");
 	m_psp.pszTitle = m_csTitle;
@@ -57,7 +57,7 @@ void COptionsKeyBoard::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_HOTKEY_COPYSAVECLIPBOARD, m_copyAndSaveClipboardCtrl);
 }
 
-BEGIN_MESSAGE_MAP(COptionsKeyBoard, CPropertyPage)
+BEGIN_MESSAGE_MAP(COptionsKeyBoard, CThemedPropertyPage)
 	//{{AFX_MSG_MAP(COptionsKeyBoard)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -67,7 +67,7 @@ END_MESSAGE_MAP()
 
 BOOL COptionsKeyBoard::OnInitDialog() 
 {
-	CPropertyPage::OnInitDialog();
+	CThemedPropertyPage::OnInitDialog();
 
 	m_CustomeKeysHelp.SetURL(_T("https://github.com/sabrogden/Ditto/wiki/Custom-Key-Strokes"));
 
@@ -103,18 +103,19 @@ BOOL COptionsKeyBoard::OnInitDialog()
 	m_HotKey.SetFocus();
 
 	theApp.m_Language.UpdateOptionShortcuts(this);	
+	CThemedControls::FinishLayout(this);
 		
 	return FALSE;
 }
 
 LRESULT COptionsKeyBoard::OnWizardNext() 
 {
-	return CPropertyPage::OnWizardNext();
+	return CThemedPropertyPage::OnWizardNext();
 }
 
 BOOL COptionsKeyBoard::OnWizardFinish() 
 {
-	return CPropertyPage::OnWizardFinish();
+	return CThemedPropertyPage::OnWizardFinish();
 }
 
 BOOL COptionsKeyBoard::OnApply()
@@ -164,11 +165,11 @@ BOOL COptionsKeyBoard::OnApply()
 	g_HotKeys.SaveAllKeys();
 	g_HotKeys.RegisterAll(true);
 	
-	return CPropertyPage::OnApply();
+	return CThemedPropertyPage::OnApply();
 }
 
 void COptionsKeyBoard::OnCancel() 
 {
 	g_HotKeys.RegisterAll( true );
-	CPropertyPage::OnCancel();
+	CThemedPropertyPage::OnCancel();
 }

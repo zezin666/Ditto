@@ -24,9 +24,9 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // COptionsGeneral property page
 
-IMPLEMENT_DYNCREATE(COptionsGeneral, CPropertyPage)
+IMPLEMENT_DYNCREATE(COptionsGeneral, CThemedPropertyPage)
 
-COptionsGeneral::COptionsGeneral() : CPropertyPage(COptionsGeneral::IDD)
+COptionsGeneral::COptionsGeneral() : CThemedPropertyPage(COptionsGeneral::IDD)
 {
 	m_csTitle = theApp.m_Language.GetString("GeneralTitle", "General");
 	m_psp.pszTitle = m_csTitle;
@@ -66,13 +66,12 @@ void COptionsGeneral::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(COptionsGeneral, CPropertyPage)
+BEGIN_MESSAGE_MAP(COptionsGeneral, CThemedPropertyPage)
 	//{{AFX_MSG_MAP(COptionsGeneral)
 	ON_BN_CLICKED(IDC_GET_PATH, OnGetPath)
 	ON_BN_CLICKED(IDC_BUTTON_ABOUT, OnButtonAbout)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BUTTON_ADVANCED, &COptionsGeneral::OnBnClickedButtonAdvanced)
-	ON_WM_CTLCOLOR()
 	ON_BN_CLICKED(IDC_BUTTON_THEME, &COptionsGeneral::OnBnClickedButtonTheme)
 	ON_BN_CLICKED(IDC_BUTTON_PREVIEW_THEME, &COptionsGeneral::OnBnClickedButtonPreviewTheme)
 	ON_CBN_SELCHANGE(IDC_COMBO_THEME, &COptionsGeneral::OnCbnSelchangeComboTheme)
@@ -88,12 +87,10 @@ END_MESSAGE_MAP()
 
 BOOL COptionsGeneral::OnInitDialog() 
 {
-	CPropertyPage::OnInitDialog();
+	CThemedPropertyPage::OnInitDialog();
 
 	CString url = _T("https://github.com/sabrogden/Ditto/wiki/Environment-Variables");
 
-	m_brush.CreateSolidBrush(RGB(251, 251, 251));
-	
 	m_pParent = (COptionsSheet *)GetParent();
 
 #ifndef _DEBUG
@@ -175,6 +172,7 @@ BOOL COptionsGeneral::OnInitDialog()
 	CString csPath = CGetSetOptions::GetDBPath(false);
 	m_ePath.SetWindowText(csPath);
 
+	CThemedControls::FinishLayout(this);
 	return TRUE;
 }
 
@@ -348,12 +346,12 @@ BOOL COptionsGeneral::OnApply()
 		m_pParent->m_themeChanged = TRUE;
 	}
 	
-	return CPropertyPage::OnApply();
+	return CThemedPropertyPage::OnApply();
 }
 
 BOOL COptionsGeneral::OnSetActive() 
 {	
-	return CPropertyPage::OnSetActive();
+	return CThemedPropertyPage::OnSetActive();
 }
 
 //void COptionsGeneral::OnSetDbPath() 
@@ -453,23 +451,6 @@ void COptionsGeneral::OnBnClickedButtonAdvanced()
 	adv.DoModal();
 }
 
-
-HBRUSH COptionsGeneral::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
-{
-	HBRUSH hbr = CPropertyPage::OnCtlColor(pDC, pWnd, nCtlColor);
-
-	
-
-	switch(nCtlColor)
-	{
-	case CTLCOLOR_DLG:     // dialog 
-	case CTLCOLOR_STATIC:  // static, checkbox, read-only edit, etc.
-		//pDC->SetBkColor(RGB(251, 251, 251));
-		//hbr = m_brush;
-		break;
-	}
-	return hbr;
-}
 
 void COptionsGeneral::FillThemes()
 {
@@ -709,6 +690,10 @@ void COptionsGeneral::OnBnClickedButtonPreviewTheme()
 
 void COptionsGeneral::OnCbnSelchangeComboTheme()
 {
+	RefreshThemeNow();
+	if (m_pParent != NULL)
+		m_pParent->RefreshThemeNow();
+
 	// If the Ditto window is currently visible, update the theme live
 	if (theApp.m_pMainFrame != NULL && theApp.m_pMainFrame->m_quickPaste.IsWindowVisibleEx())
 	{

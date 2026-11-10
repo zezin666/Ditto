@@ -2,8 +2,9 @@
 #include "afxpropertygridctrl.h"
 #include "DialogResizer.h"
 #include <afxcoll.h>
+#include "Ui/ThemedDialog.h"
 
-class CAdvGeneral : public CDialogEx
+class CAdvGeneral : public CThemedDialog
 {
 	DECLARE_DYNAMIC(CAdvGeneral)
 

@@ -9,11 +9,12 @@
 #include "DimWnd.h"
 #include "MoveToGroupDlg.h"
 #include "SQlite/CppSQLite3.h"
+#include "UiTheme.h"
 
-IMPLEMENT_DYNAMIC(CAdvGeneral, CDialogEx)
+IMPLEMENT_DYNAMIC(CAdvGeneral, CThemedDialog)
 
 CAdvGeneral::CAdvGeneral(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CAdvGeneral::IDD, pParent)
+	: CThemedDialog(CAdvGeneral::IDD, pParent)
 {
 
 }
@@ -30,7 +31,7 @@ void CAdvGeneral::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CAdvGeneral, CDialogEx)
+BEGIN_MESSAGE_MAP(CAdvGeneral, CThemedDialog)
 	ON_BN_CLICKED(IDOK, &CAdvGeneral::OnBnClickedOk)
 	ON_WM_SIZE()
 	ON_BN_CLICKED(IDC_BT_COMPACT_AND_REPAIR, &CAdvGeneral::OnBnClickedBtCompactAndRepair)
@@ -166,7 +167,7 @@ END_MESSAGE_MAP()
 
 BOOL CAdvGeneral::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	CThemedDialog::OnInitDialog();
 
 	m_propertyGrid.ModifyStyle(0, WS_CLIPCHILDREN);
 
@@ -193,6 +194,9 @@ BOOL CAdvGeneral::OnInitDialog()
 	m_propertyGrid.GetHeaderCtrl().SetItem(0, &hdItem);
 
 	m_propertyGrid.SetFont(this->GetFont());	
+	m_propertyGrid.SetCustomColors(UiTheme().Surface(), UiTheme().TextPrimary(),
+		UiTheme().SurfaceAlt(), UiTheme().TextPrimary(), UiTheme().Surface(),
+		UiTheme().TextSecondary(), UiTheme().Border());
 
 	pGroupTest->AddSubItem(new CMFCPropertyGridProperty(_T("Activate window delay (100ms default)"), (long)CGetSetOptions::SendKeysDelay(), _T(""), SETTING_ACTIVATE_WINDOW_DELAY));
 
@@ -378,6 +382,7 @@ BOOL CAdvGeneral::OnInitDialog()
 
 	regexFilterGroup->Expand(FALSE);
 
+	CThemedControls::FinishLayout(this);
 	return TRUE;
 }
 
