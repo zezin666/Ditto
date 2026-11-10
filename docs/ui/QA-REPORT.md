@@ -1,6 +1,7 @@
 # QA REPORT — T5 Integration + Full QA, T6 re-integration (Ditto UI Modernization)
 
 Status: **T6 re-integration PASS with known limitations.**
+T6 integration commit: `b8eb52a` (code + QA evidence; the documentation update commit is one ahead).
 Branch: `taohy/ui-integration` (worktree `D:\orca\workspaces\Ditto\ui-integration`).
 Base: `taohy/ui-foundation` @ `f6e5118`.
 No merge to `master`, no push.
