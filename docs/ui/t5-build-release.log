@@ -1,0 +1,500 @@
+适用于 .NET Framework MSBuild 版本 18.11.1-1.26513.3+940033be3
+
+  stdafx.cpp
+  StdAfx.cpp
+  focusdll.cpp
+  pch.cpp
+    正在创建库 D:\orca\workspaces\Ditto\ui-integration\Release64\focus.lib 和对象 D:\orca\workspaces\Ditto\ui-integration\Release64\focus.exp
+  focus.vcxproj -> D:\orca\workspaces\Ditto\ui-integration\Release64\focus.dll
+  Encryption.cpp
+  TextConvert.cpp
+  DialogResizer.cpp
+  DittoUtil.cpp
+  Exports.cpp
+  icu.cpp
+  PasteAnyAsText.cpp
+    正在创建库 D:\orca\workspaces\Ditto\ui-integration\Release64\ICU_Loader.lib 和对象 D:\orca\workspaces\Ditto\ui-integration\Release64\ICU_Loader.exp
+  正在生成代码
+  Previous IPDB not found, fall back to full compilation.
+  PasteImageAsHtmlImage.cpp
+  All 114 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  已完成代码的生成
+  ReadOnlyFlag.cpp
+  ICU_Loader.vcxproj -> D:\orca\workspaces\Ditto\ui-integration\Release64\ICU_Loader.dll
+  RemoveLineFeeds.cpp
+  SelectPasteFormat.cpp
+  MemUtil.cpp
+  正在生成代码...
+    正在创建库 D:\orca\workspaces\Ditto\ui-integration\Release64\Addins\DittoUtil.lib 和对象 D:\orca\workspaces\Ditto\ui-integration\Release64\Addins\DittoUtil.exp
+  DittoUtil.vcxproj -> D:\orca\workspaces\Ditto\ui-integration\Release64\Addins\DittoUtil.dll
+  NewRandom.cpp
+  rijndael.cpp
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(107,7): warning C4311: “类型强制转换”: 从“HWND”到“DWORD”的指针截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(107,7): warning C4302: “类型强制转换”: 从“HWND”到“DWORD”截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(110,7): warning C4311: “类型强制转换”: 从“HWND”到“DWORD”的指针截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(110,7): warning C4302: “类型强制转换”: 从“HWND”到“DWORD”截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(113,7): warning C4311: “类型强制转换”: 从“HWND”到“DWORD”的指针截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(113,7): warning C4302: “类型强制转换”: 从“HWND”到“DWORD”截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(118,7): warning C4311: “类型强制转换”: 从“HWND”到“DWORD”的指针截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(118,7): warning C4302: “类型强制转换”: 从“HWND”到“DWORD”截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(128,7): warning C4311: “类型强制转换”: 从“HANDLE”到“DWORD”的指针截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(128,7): warning C4302: “类型强制转换”: 从“HANDLE”到“DWORD”截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(131,7): warning C4311: “类型强制转换”: 从“HWND”到“DWORD”的指针截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(131,7): warning C4302: “类型强制转换”: 从“HWND”到“DWORD”截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(137,7): warning C4311: “类型强制转换”: 从“HANDLE”到“DWORD”的指针截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(137,7): warning C4302: “类型强制转换”: 从“HANDLE”到“DWORD”截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(140,7): warning C4311: “类型强制转换”: 从“HWND”到“DWORD”的指针截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(140,7): warning C4302: “类型强制转换”: 从“HWND”到“DWORD”截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(143,7): warning C4311: “类型强制转换”: 从“HWND”到“DWORD”的指针截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(143,7): warning C4302: “类型强制转换”: 从“HWND”到“DWORD”截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(146,7): warning C4311: “类型强制转换”: 从“HWND”到“DWORD”的指针截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(146,7): warning C4302: “类型强制转换”: 从“HWND”到“DWORD”截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(168,7): warning C4311: “类型强制转换”: 从“HWND”到“DWORD”的指针截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(168,7): warning C4302: “类型强制转换”: 从“HWND”到“DWORD”截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(171,7): warning C4311: “类型强制转换”: 从“HANDLE”到“DWORD”的指针截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\NewRandom.cpp(171,7): warning C4302: “类型强制转换”: 从“HANDLE”到“DWORD”截断 [D:\orca\workspaces\Ditto\ui-integration\EncryptDecrypt\EncryptDecrypt.vcxproj]
+  sha2.cpp
+  正在生成代码...
+  EncryptDecrypt.vcxproj -> D:\orca\workspaces\Ditto\ui-integration\Release64\EncryptDecrypt.lib
+  64 bit Processing .\CP_Main.idl
+  CP_Main.idl
+  64 bit Processing C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\oaidl.idl
+  oaidl.idl
+  64 bit Processing C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\objidl.idl
+  objidl.idl
+  64 bit Processing C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\unknwn.idl
+  unknwn.idl
+  64 bit Processing C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\wtypes.idl
+  wtypes.idl
+  64 bit Processing C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\wtypesbase.idl
+  wtypesbase.idl
+  64 bit Processing C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\basetsd.h
+  basetsd.h
+  64 bit Processing C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\guiddef.h
+  guiddef.h
+  64 bit Processing C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\ocidl.idl
+  ocidl.idl
+  64 bit Processing C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\oleidl.idl
+  oleidl.idl
+  64 bit Processing C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\servprov.idl
+  servprov.idl
+  64 bit Processing C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\urlmon.idl
+  urlmon.idl
+  64 bit Processing C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\msxml.idl
+  msxml.idl
+  64 bit Processing C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\oaidl.acf
+  oaidl.acf
+  64 bit Processing C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\um\ocidl.acf
+  ocidl.acf
+  StdAfx.cpp
+D:\orca\workspaces\Ditto\ui-integration\src\stdafx.h(41,9): warning C4278: “FindText”: 类型库“riched20.dll”中的标识符已经是宏；使用“rename”限定符 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“src/StdAfx.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\stdafx.h(41,9): warning C4192: 导入类型库“wireHWND”时自动排除“riched20.dll” [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“src/StdAfx.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\stdafx.h(41,9): warning C4192: 导入类型库“_RemotableHandle”时自动排除“riched20.dll” [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“src/StdAfx.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\stdafx.h(41,9): warning C4192: 导入类型库“__MIDL_IWinTypes_0009”时自动排除“riched20.dll” [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“src/StdAfx.cpp”)
+  
+  About.cpp
+  Accels.cpp
+  ActionEnums.cpp
+  AddType.cpp
+  AdvGeneral.cpp
+  AlphaBlend.cpp
+  AutoSendToClientThread.cpp
+  BitmapHelper.cpp
+  CF_HDropAggregator.cpp
+  CF_TextAggregator.cpp
+  CF_UnicodeTextAggregator.cpp
+  ChaiScriptOnCopy.cpp
+D:\orca\workspaces\Ditto\ui-integration\src\ChaiScriptOnCopy.cpp(22,9): warning C4927: 转换非法；隐式应用了多个用户定义的转换 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/ChaiScriptOnCopy.cpp”)
+      D:\orca\workspaces\Ditto\ui-integration\src\ChaiScriptOnCopy.cpp(22,9):
+      调用构造函数“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string(const _Elem *const )”时
+          with
+          [
+              _Elem=char
+          ]
+      C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xstring(818,5):
+      参见“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string”的声明
+  
+C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xutility(5094,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/ChaiScriptOnCopy.cpp”)
+      C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xutility(5094,18):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\orca\workspaces\Ditto\ui-integration\src\chaiscript\language\chaiscript_windows.hpp(78,16):
+          查看对正在编译的函数 模板 实例化“std::string chaiscript::detail::Loadable_Module::to_string<std::wstring>(const T &)”的引用
+          with
+          [
+              T=std::wstring
+          ]
+          D:\orca\workspaces\Ditto\ui-integration\src\chaiscript\language\chaiscript_windows.hpp(36,29):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xstring(862,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=std::+::_Size_type,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=std::+::_Size_type
+          ]
+          C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\include\xstring(1018,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=std::+::_Size_type,
+              _InIt=const wchar_t *,
+              _SizeTy=std::+::_Size_type
+          ]
+  
+  ChaiScriptXml.cpp
+  Client.cpp
+D:\orca\workspaces\Ditto\ui-integration\src\Client.cpp(164,9): warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Client.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\Client.cpp(167,24): warning C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Client.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\Client.cpp(207,40): warning C4244: “=”: 从“long”转换到“short”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Client.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\Client.cpp(257,15): warning C4101: “Convert”: 未引用的局部变量 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Client.cpp”)
+  
+  Clip.cpp
+D:\orca\workspaces\Ditto\ui-integration\src\Clip.cpp(1874,59): warning C4267: “参数”: 从“size_t”转换到“UINT”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Clip.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\Clip.cpp(1879,66): warning C4267: “参数”: 从“size_t”转换到“UINT”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Clip.cpp”)
+  
+  ClipboardSaveRestore.cpp
+  ClipboardViewer.cpp
+  ClipCompare.cpp
+  ClipEditThread.cpp
+  ClipFormatQListCtrl.cpp
+  正在生成代码...
+  正在编译...
+  ClipIds.cpp
+  Clip_ImportExport.cpp
+  ConvertRTFToText.cpp
+  CopyProperties.cpp
+  CopyThread.cpp
+  CP_Main.cpp
+  Crc32Dynamic.cpp
+  CreateQRCodeImage.cpp
+  CustomFriendsHelper.cpp
+  DarkMode.cpp
+  DatabaseUtilities.cpp
+  DeleteClipData.cpp
+D:\orca\workspaces\Ditto\ui-integration\src\DeleteClipData.cpp(1080,14): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/DeleteClipData.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\DeleteClipData.cpp(1089,14): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/DeleteClipData.cpp”)
+  
+  DialogResizer.cpp
+  DimWnd.cpp
+  DittoAddin.cpp
+  DittoAddins.cpp
+  DittoChaiScript.cpp
+  DittoCopyBuffer.cpp
+  DittoDropTarget.cpp
+  DittoPopupWindow.cpp
+  正在生成代码...
+  正在编译...
+  DittoRulerRichEditCtrl.cpp
+  DittoWindow.cpp
+  DPI.cpp
+  EditFrameWnd.cpp
+  EditWithButton.cpp
+D:\orca\workspaces\Ditto\ui-integration\src\EditWithButton.cpp(317,45): warning C4302: “类型强制转换”: 从“LPWSTR”到“WORD”截断 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/EditWithButton.cpp”)
+  
+  EditWnd.cpp
+  EventThread.cpp
+  ExternalWindowTracker.cpp
+  FileRecieve.cpp
+  FileSend.cpp
+  FileTransferProgressDlg.cpp
+  FormatSQL.cpp
+  FormattedTextDraw.cpp
+  FriendDetails.cpp
+  FriendPromptDlg.cpp
+  GdiImageDrawer.cpp
+  GdipButton.cpp
+  GlobalClips.cpp
+  GroupCombo.cpp
+  GroupName.cpp
+  正在生成代码...
+  正在编译...
+  GroupStatic.cpp
+  GroupTree.cpp
+  HListBox.cpp
+  HotKeys.cpp
+  HTMLFormatAggregator.cpp
+  HyperLink.cpp
+D:\orca\workspaces\Ditto\ui-integration\src\HyperLink.cpp(72,18): warning C4311: “类型强制转换”: 从“HINSTANCE”到“int”的指针截断 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/HyperLink.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\HyperLink.cpp(72,18): warning C4302: “类型强制转换”: 从“HINSTANCE”到“int”截断 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/HyperLink.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\HyperLink.cpp(403,9): warning C4311: “类型强制转换”: 从“HINSTANCE”到“UINT”的指针截断 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/HyperLink.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\HyperLink.cpp(403,9): warning C4302: “类型强制转换”: 从“HINSTANCE”到“UINT”截断 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/HyperLink.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\HyperLink.cpp(425,26): warning C4312: “类型强制转换”: 从“UINT”转换到更大的“HINSTANCE” [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/HyperLink.cpp”)
+  
+  ICU_String.cpp
+  ImageFormatAggregator.cpp
+  ImageHelper.cpp
+  ImageViewer.cpp
+D:\orca\workspaces\Ditto\ui-integration\src\ImageViewer.cpp(193,19): warning C4244: “=”: 从“double”转换到“LONG”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/ImageViewer.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\ImageViewer.cpp(194,19): warning C4244: “=”: 从“double”转换到“LONG”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/ImageViewer.cpp”)
+  
+  MagneticWnd.cpp
+  MainFrm.cpp
+  MainFrmThread.cpp
+  MainTableFunctions.cpp
+  Md5.cpp
+D:\orca\workspaces\Ditto\ui-integration\src\Md5.cpp(240,2): warning C5033: “register”不再为受支持的存储类 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Md5.cpp”)
+  
+  MessagePumpThread.cpp
+  Misc.cpp
+D:\orca\workspaces\Ditto\ui-integration\src\Misc.cpp(28,17): warning C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Misc.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\Misc.cpp(30,10): warning C4996: 'inet_ntoa': Use inet_ntop() or InetNtop() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Misc.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\Misc.cpp(622,5): warning C4996: 'GetVersionExW': 被声明为已否决 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Misc.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\Misc.cpp(671,5): warning C4996: 'GetVersionExW': 被声明为已否决 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Misc.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\Misc.cpp(1080,8): warning C4996: 'GetVersionExW': 被声明为已否决 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Misc.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\Misc.cpp(1549,23): warning C4244: “初始化”: 从“INT_PTR”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Misc.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\Misc.cpp(1709,10): warning C4005: “OUT”: 宏重定义 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Misc.cpp”)
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\minwindef.h(83,9):
+      参见“OUT”的前一个定义
+  
+D:\orca\workspaces\Ditto\ui-integration\src\Misc.cpp(1710,10): warning C4005: “IN”: 宏重定义 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Misc.cpp”)
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\minwindef.h(79,9):
+      参见“IN”的前一个定义
+  
+  ModernScrollBar.cpp
+  MoveToGroupDlg.cpp
+  MultiLanguage.cpp
+  正在生成代码...
+  正在编译...
+  MyDropTarget.cpp
+  NoDbFrameWnd.cpp
+  NTray.cpp
+  NumberEdit.cpp
+  OleClipSource.cpp
+  OptionFriends.cpp
+  Options.cpp
+D:\orca\workspaces\Ditto\ui-integration\src\Options.cpp(634,32): warning C4018: '<': 有符号/无符号不匹配 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Options.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\Options.cpp(680,32): warning C4018: '<': 有符号/无符号不匹配 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Options.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\Options.cpp(1594,11): warning C4996: 'wcstok': wcstok has been changed to conform with the ISO C standard, adding an extra context parameter. To use the legacy Microsoft wcstok, define _CRT_NON_CONFORMING_WCSTOK. [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Options.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\Options.cpp(1604,12): warning C4996: 'wcstok': wcstok has been changed to conform with the ISO C standard, adding an extra context parameter. To use the legacy Microsoft wcstok, define _CRT_NON_CONFORMING_WCSTOK. [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Options.cpp”)
+  
+  OptionsCopyBuffers.cpp
+  OptionsGeneral.cpp
+  OptionsKeyBoard.cpp
+  OptionsQuickPaste.cpp
+  OptionsSheet.cpp
+  OptionsStats.cpp
+  OptionsTypes.cpp
+  OptionsUtilities.cpp
+  Path.cpp
+  PerfTimer.cpp
+  Popup.cpp
+  PowerManager.cpp
+  ProcessPaste.cpp
+  正在生成代码...
+  正在编译...
+  ProgressWnd.cpp
+  QListCtrl.cpp
+  QPasteWnd.cpp
+  QPasteWndThread.cpp
+D:\orca\workspaces\Ditto\ui-integration\src\QPasteWndThread.cpp(114,42): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/QPasteWndThread.cpp”)
+  
+  QRCodeViewer.cpp
+  QRGenerator.cpp
+  QuickPaste.cpp
+  QuickPasteKeyboard.cpp
+  RecieveFile.cpp
+  RecieveSocket.cpp
+D:\orca\workspaces\Ditto\ui-integration\src\RecieveSocket.cpp(179,28): warning C4244: “参数”: 从“SOCKET”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/RecieveSocket.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\RecieveSocket.cpp(172,7): warning C4101: “res”: 未引用的局部变量 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/RecieveSocket.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\RecieveSocket.cpp(171,10): warning C4101: “readset”: 未引用的局部变量 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/RecieveSocket.cpp”)
+  
+  RegExFilterHelper.cpp
+  RichEditCtrlEx.cpp
+  RichTextAggregator.cpp
+  ColourPicker.cpp
+  ColourPopup.cpp
+  StdioFileEx.cpp
+  FontComboBox.cpp
+  RRECToolbar.cpp
+  RulerRichEdit.cpp
+  RulerRichEditCtrl.cpp
+  正在生成代码...
+  正在编译...
+  SizeComboBox.cpp
+  StdGrfx.cpp
+  TextFile.cpp
+  SaveAnimation.cpp
+  ScriptEditor.cpp
+  ScrollHelper.cpp
+  SearchEditBox.cpp
+  SelectDB.cpp
+  SendKeys.cpp
+D:\orca\workspaces\Ditto\ui-integration\src\SendKeys.cpp(282,25): warning C4996: 'GetVersion': 被声明为已否决 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/SendKeys.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\SendKeys.cpp(617,25): warning C4244: “参数”: 从“WORD”转换到“BYTE”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/SendKeys.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\SendKeys.cpp(623,25): warning C4244: “参数”: 从“WORD”转换到“BYTE”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/SendKeys.cpp”)
+  
+  SendMail.cpp
+  SendSocket.cpp
+  Server.cpp
+D:\orca\workspaces\Ditto\ui-integration\src\Server.cpp(48,27): warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Server.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\Server.cpp(79,19): warning C4996: 'inet_ntoa': Use inet_ntop() or InetNtop() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Server.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\Server.cpp(391,15): warning C4101: “Convert”: 未引用的局部变量 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/Server.cpp”)
+  
+  ShowTaskBarIcon.cpp
+  SimpleBrowser.cpp
+  SnapWindow.cpp
+  SpecialPasteOptions.cpp
+  CppSQLite3.cpp
+  SymbolEdit.cpp
+  SystemTray.cpp
+  TabCtrl.cpp
+  正在生成代码...
+  正在编译...
+  Theme.cpp
+  ToolTipEx.cpp
+D:\orca\workspaces\Ditto\ui-integration\src\ToolTipEx.cpp(283,15): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/ToolTipEx.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-integration\src\ToolTipEx.cpp(1649,15): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  (编译源文件“/src/ToolTipEx.cpp”)
+  
+  TrayWnd.cpp
+  UAC_Helper.cpp
+  UAC_Thread.cpp
+  ThemedControls.cpp
+  ThemedDialog.cpp
+  UiDraw.cpp
+  UiTheme.cpp
+  UiWindow.cpp
+  WildCardMatch.cpp
+  WndEx.cpp
+  正在生成代码...
+  DrawHTML.C
+D:\orca\workspaces\Ditto\ui-integration\src\DrawHTML.C(18,5): warning C4133: “初始化”: 从“unsigned short [2]”到“char *”的类型不兼容 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\DrawHTML.C(19,5): warning C4133: “初始化”: 从“unsigned short [2]”到“char *”的类型不兼容 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\DrawHTML.C(80,58): warning C4133: “函数”: 从“char *”到“const wchar_t *”的类型不兼容 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\DrawHTML.C(81,24): warning C4133: “函数”: 从“char *”到“const wchar_t *”的类型不兼容 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\DrawHTML.C(239,12): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\DrawHTML.C(397,20): warning C4133: “函数”: 从“char [2]”到“LPCWSTR”的类型不兼容 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  bitstream.c
+  mask.c
+  mmask.c
+  mqrspec.c
+  qrenc.c
+  qrencode.c
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\qrencode.c(679,56): warning C4267: “函数”: 从“size_t”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\qrencode.c(693,56): warning C4267: “函数”: 从“size_t”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\qrencode.c(851,37): warning C4267: “函数”: 从“size_t”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\qrencode.c(860,41): warning C4267: “函数”: 从“size_t”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  qrinput.c
+  qrspec.c
+  rscode.c
+  rsecc.c
+  split.c
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\split.c(98,10): warning C4244: “=”: 从“__int64”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\split.c(141,39): warning C4244: “函数”: 从“__int64”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\split.c(142,37): warning C4244: “函数”: 从“__int64”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\split.c(144,36): warning C4244: “函数”: 从“__int64”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\split.c(155,10): warning C4244: “=”: 从“__int64”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\split.c(182,10): warning C4244: “=”: 从“__int64”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\split.c(219,38): warning C4244: “函数”: 从“__int64”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\split.c(220,37): warning C4244: “函数”: 从“__int64”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\split.c(222,35): warning C4244: “函数”: 从“__int64”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\split.c(238,38): warning C4244: “函数”: 从“__int64”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\split.c(239,36): warning C4244: “函数”: 从“__int64”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\split.c(241,35): warning C4244: “函数”: 从“__int64”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\QRCode\split.c(252,10): warning C4244: “=”: 从“__int64”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  sqlite3mc_amalgamation.c
+D:\orca\workspaces\Ditto\ui-integration\src\sqlite\sqlite3mc_amalgamation.c(331763,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\sqlite\sqlite3mc_amalgamation.c(331766,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\sqlite\sqlite3mc_amalgamation.c(331768,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\sqlite\sqlite3mc_amalgamation.c(331770,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\sqlite\sqlite3mc_amalgamation.c(337369,5): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\sqlite\sqlite3mc_amalgamation.c(337389,7): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\sqlite\sqlite3mc_amalgamation.c(337761,11): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\sqlite\sqlite3mc_amalgamation.c(337764,13): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\sqlite\sqlite3mc_amalgamation.c(337765,13): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\sqlite\sqlite3mc_amalgamation.c(363422,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\sqlite\sqlite3mc_amalgamation.c(363435,7): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\sqlite\sqlite3mc_amalgamation.c(363496,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+D:\orca\workspaces\Ditto\ui-integration\src\sqlite\sqlite3mc_amalgamation.c(363499,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\orca\workspaces\Ditto\ui-integration\CP_Main.vcxproj]
+  正在生成代码...
+  tinystr.cpp
+  tinyxml.cpp
+  tinyxmlerror.cpp
+  tinyxmlparser.cpp
+  正在生成代码...
+  CP_Main.vcxproj -> D:\orca\workspaces\Ditto\ui-integration\Release64\Ditto.exe
+EXIT=0

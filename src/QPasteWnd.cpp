@@ -916,8 +916,14 @@ void CQPasteWnd::MoveControls()
 		m_lstHeader.ShowWindow(SW_SHOW);
 		m_noSearchResultsStatic.ShowWindow(SW_HIDE);
 
-		m_lstHeader.MoveWindow(0, topOfListBox, cx + extraSize,
-			max(0, bottomBarTop - topOfListBox));
+		// T3 requires the list window to extend past the clipped region by the
+		// native scrollbar size so the native horizontal scrollbar is hidden
+		// (the window region clips it). T2's footer geometry must preserve that.
+		int listHeight = max(0, bottomBarTop - topOfListBox);
+		if (hideNativeScrollbar)
+			listHeight += extraSize + 1;
+
+		m_lstHeader.MoveWindow(0, topOfListBox, cx + extraSize, listHeight);
 		
 		// Update modern scrollbar position and visibility (only if enabled)
 		if (CGetSetOptions::m_useModernScrollBar)
@@ -1928,6 +1934,7 @@ void CQPasteWnd::ShowRightClickMenu()
 			cmSubMenu->CheckMenuItem(ID_MENU_SHOWSTARREDCLIPS, MF_CHECKED);
 		}
 
+		CDarkMode::ApplyToMenus(GetSafeHwnd());
 		cmSubMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RIGHTBUTTON, pp.x, pp.y, this, NULL);
 	}
 }
@@ -7492,6 +7499,7 @@ void CQPasteWnd::OnSystemButton()
 
 		SetMenuChecks(cmSubMenu);
 
+		CDarkMode::ApplyToMenus(GetSafeHwnd());
 		cmSubMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RIGHTBUTTON, pp.x, pp.y, this, NULL);
 	}
 }
