@@ -1,0 +1,6 @@
+TRAP: System.ComponentModel.Win32Exception: An error occurred trying to start process 'C:\Users\zezin\AppData\Local\Temp\ditto-ui-t2-light-ab5995632c6b466c941201c849afafd9\Ditto.exe' with working directory 'D:\orca\workspaces\Ditto\ui-shell'. 无法成功完成操作，因为文件包含病毒或潜在的垃圾软件。
+Exception: D:\orca\workspaces\Ditto\ui-shell\artifacts\ui\t2\run-t2-runtime.ps1:23
+Line |
+  23 |      throw
+     |      ~~~~~
+     | ScriptHalted

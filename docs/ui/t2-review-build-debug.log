@@ -1,0 +1,206 @@
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+适用于 .NET Framework MSBuild 版本 18.11.1-1.26513.3+940033be3
+
+  ICU_Loader.vcxproj -> D:\orca\workspaces\Ditto\ui-shell\Debug64\ICU_Loader.dll
+  EncryptDecrypt.vcxproj -> D:\orca\workspaces\Ditto\ui-shell\Debug64\EncryptDecrypt.lib
+  focus.vcxproj -> D:\orca\workspaces\Ditto\ui-shell\Debug64\focus.dll
+  DittoUtil.vcxproj -> D:\orca\workspaces\Ditto\ui-shell\Debug64\Addins\DittoUtil.dll
+  About.cpp
+  ActionEnums.cpp
+  AddType.cpp
+  AdvGeneral.cpp
+  AutoSendToClientThread.cpp
+  BitmapHelper.cpp
+  CP_Main.cpp
+  Client.cpp
+  Clip.cpp
+D:\orca\workspaces\Ditto\ui-shell\src\Client.cpp(164,9): warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Client.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Client.cpp(167,24): warning C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Client.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Client.cpp(207,40): warning C4244: “=”: 从“long”转换到“short”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Client.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Client.cpp(257,15): warning C4101: “Convert”: 未引用的局部变量 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Client.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Clip.cpp(1874,59): warning C4267: “参数”: 从“size_t”转换到“UINT”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Clip.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Clip.cpp(1879,66): warning C4267: “参数”: 从“size_t”转换到“UINT”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Clip.cpp”)
+  
+  ClipEditThread.cpp
+  ClipFormatQListCtrl.cpp
+  ClipIds.cpp
+  Clip_ImportExport.cpp
+  ClipboardSaveRestore.cpp
+  ClipboardViewer.cpp
+  CopyProperties.cpp
+  CopyThread.cpp
+  CustomFriendsHelper.cpp
+  DatabaseUtilities.cpp
+  DeleteClipData.cpp
+D:\orca\workspaces\Ditto\ui-shell\src\DeleteClipData.cpp(991,14): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/DeleteClipData.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\DeleteClipData.cpp(1000,14): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/DeleteClipData.cpp”)
+  
+  正在生成代码...
+  正在编译...
+  DittoAddins.cpp
+  DittoChaiScript.cpp
+  DittoCopyBuffer.cpp
+  DittoDropTarget.cpp
+  DittoPopupWindow.cpp
+  DittoRulerRichEditCtrl.cpp
+  DittoWindow.cpp
+  EditFrameWnd.cpp
+  EditWithButton.cpp
+D:\orca\workspaces\Ditto\ui-shell\src\EditWithButton.cpp(317,45): warning C4302: “类型强制转换”: 从“LPWSTR”到“WORD”截断 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/EditWithButton.cpp”)
+  
+  EditWnd.cpp
+  ExternalWindowTracker.cpp
+  FileRecieve.cpp
+  FileSend.cpp
+  FileTransferProgressDlg.cpp
+  FormatSQL.cpp
+  FriendDetails.cpp
+  FriendPromptDlg.cpp
+  GdiImageDrawer.cpp
+  GdipButton.cpp
+  GlobalClips.cpp
+  正在生成代码...
+  正在编译...
+  GroupCombo.cpp
+  GroupName.cpp
+  GroupStatic.cpp
+  GroupTree.cpp
+  ImageViewer.cpp
+D:\orca\workspaces\Ditto\ui-shell\src\ImageViewer.cpp(198,19): warning C4244: “=”: 从“double”转换到“LONG”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/ImageViewer.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\ImageViewer.cpp(199,19): warning C4244: “=”: 从“double”转换到“LONG”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/ImageViewer.cpp”)
+  
+  MainFrm.cpp
+  MainFrmThread.cpp
+  MainTableFunctions.cpp
+  Misc.cpp
+D:\orca\workspaces\Ditto\ui-shell\src\Misc.cpp(28,17): warning C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Misc.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Misc.cpp(30,10): warning C4996: 'inet_ntoa': Use inet_ntop() or InetNtop() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Misc.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Misc.cpp(622,5): warning C4996: 'GetVersionExW': 被声明为已否决 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Misc.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Misc.cpp(671,5): warning C4996: 'GetVersionExW': 被声明为已否决 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Misc.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Misc.cpp(1080,8): warning C4996: 'GetVersionExW': 被声明为已否决 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Misc.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Misc.cpp(1549,23): warning C4244: “初始化”: 从“INT_PTR”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Misc.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Misc.cpp(1709,10): warning C4005: “OUT”: 宏重定义 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Misc.cpp”)
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\minwindef.h(83,9):
+      参见“OUT”的前一个定义
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Misc.cpp(1710,10): warning C4005: “IN”: 宏重定义 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Misc.cpp”)
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\minwindef.h(79,9):
+      参见“IN”的前一个定义
+  
+  ModernScrollBar.cpp
+  MoveToGroupDlg.cpp
+  MultiLanguage.cpp
+  MyDropTarget.cpp
+  NoDbFrameWnd.cpp
+  NumberEdit.cpp
+  OleClipSource.cpp
+  OptionFriends.cpp
+  Options.cpp
+D:\orca\workspaces\Ditto\ui-shell\src\Options.cpp(634,32): warning C4018: '<': 有符号/无符号不匹配 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Options.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Options.cpp(680,32): warning C4018: '<': 有符号/无符号不匹配 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Options.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Options.cpp(1594,11): warning C4996: 'wcstok': wcstok has been changed to conform with the ISO C standard, adding an extra context parameter. To use the legacy Microsoft wcstok, define _CRT_NON_CONFORMING_WCSTOK. [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Options.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Options.cpp(1604,12): warning C4996: 'wcstok': wcstok has been changed to conform with the ISO C standard, adding an extra context parameter. To use the legacy Microsoft wcstok, define _CRT_NON_CONFORMING_WCSTOK. [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Options.cpp”)
+  
+  OptionsCopyBuffers.cpp
+  OptionsGeneral.cpp
+  正在生成代码...
+  正在编译...
+  OptionsKeyBoard.cpp
+  OptionsQuickPaste.cpp
+  OptionsSheet.cpp
+  OptionsStats.cpp
+  OptionsTypes.cpp
+  OptionsUtilities.cpp
+  ProcessPaste.cpp
+  QListCtrl.cpp
+  QPasteWnd.cpp
+  QPasteWndThread.cpp
+D:\orca\workspaces\Ditto\ui-shell\src\QPasteWndThread.cpp(114,42): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/QPasteWndThread.cpp”)
+  
+  QRCodeViewer.cpp
+  QuickPaste.cpp
+  QuickPasteKeyboard.cpp
+  RecieveFile.cpp
+  RecieveSocket.cpp
+D:\orca\workspaces\Ditto\ui-shell\src\RecieveSocket.cpp(179,28): warning C4244: “参数”: 从“SOCKET”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/RecieveSocket.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\RecieveSocket.cpp(172,7): warning C4101: “res”: 未引用的局部变量 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/RecieveSocket.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\RecieveSocket.cpp(171,10): warning C4101: “readset”: 未引用的局部变量 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/RecieveSocket.cpp”)
+  
+  RegExFilterHelper.cpp
+  ScriptEditor.cpp
+  SearchEditBox.cpp
+  SelectDB.cpp
+  SendSocket.cpp
+  正在生成代码...
+  正在编译...
+  Server.cpp
+D:\orca\workspaces\Ditto\ui-shell\src\Server.cpp(48,27): warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Server.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Server.cpp(79,19): warning C4996: 'inet_ntoa': Use inet_ntop() or InetNtop() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Server.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\Server.cpp(391,15): warning C4101: “Convert”: 未引用的局部变量 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/Server.cpp”)
+  
+  ShowTaskBarIcon.cpp
+  SymbolEdit.cpp
+  Theme.cpp
+  ToolTipEx.cpp
+D:\orca\workspaces\Ditto\ui-shell\src\ToolTipEx.cpp(264,15): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/ToolTipEx.cpp”)
+  
+D:\orca\workspaces\Ditto\ui-shell\src\ToolTipEx.cpp(1543,15): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据 [D:\orca\workspaces\Ditto\ui-shell\CP_Main.vcxproj]
+  (编译源文件“/src/ToolTipEx.cpp”)
+  
+  TrayWnd.cpp
+  UAC_Thread.cpp
+  WndEx.cpp
+  正在生成代码...
+  CP_Main.vcxproj -> D:\orca\workspaces\Ditto\ui-shell\Debug64\Ditto.exe

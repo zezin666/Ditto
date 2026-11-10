@@ -341,6 +341,7 @@ bool CSymbolEdit::ShowSearchHistoryMenu()
 	ClientToScreen(&x);
 	x.y += windowRect.Height();
 
+	CDarkMode::ApplyToMenus(m_hWnd);
 	cmPopUp.TrackPopupMenu(TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RIGHTBUTTON, x.x, x.y, this, NULL);
 	
 	Invalidate();

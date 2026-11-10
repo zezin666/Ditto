@@ -42,7 +42,12 @@ BEGIN_MESSAGE_MAP(CGroupStatic, CStatic)
 	ON_WM_ERASEBKGND()
 	ON_WM_MOUSEMOVE()
 	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
+	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
+	ON_WM_GETDLGCODE()
+	ON_WM_KEYDOWN()
+	ON_WM_SETFOCUS()
+	ON_WM_KILLFOCUS()
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -295,6 +300,15 @@ void CGroupStatic::DrawEmptyState(CDC& dc, const CRect& rect)
 	UiDraw::DrawTextEllipsis(&dc, m_emptyAction, m_actionRect, theme.FontFamilyUi(),
 		theme.FontSizeBody(), FW_SEMIBOLD, theme.AccentOn(), currentDpi,
 		DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+	if (GetFocus() == this)
+	{
+		CRect focusRect(m_actionRect);
+		focusRect.InflateRect(dpi.Scale(theme.FocusRingWidth()),
+			dpi.Scale(theme.FocusRingWidth()));
+		UiDraw::FocusRing(&dc, focusRect, dpi.Scale(theme.ButtonRadius()),
+			theme.FocusRing(), dpi.Scale(theme.FocusRingWidth()));
+	}
 }
 
 BOOL CGroupStatic::OnEraseBkgnd(CDC* pDC)
@@ -335,6 +349,14 @@ LRESULT CGroupStatic::OnMouseLeave(WPARAM, LPARAM)
 	return 0;
 }
 
+void CGroupStatic::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	if (m_uiStyle == STYLE_EMPTY_STATE && m_actionRect.PtInRect(point))
+		SetFocus();
+
+	CStatic::OnLButtonDown(nFlags, point);
+}
+
 void CGroupStatic::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_uiStyle == STYLE_EMPTY_STATE && m_actionRect.PtInRect(point))
@@ -345,6 +367,39 @@ void CGroupStatic::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 
 	CStatic::OnLButtonUp(nFlags, point);
+}
+
+UINT CGroupStatic::OnGetDlgCode()
+{
+	if (m_uiStyle == STYLE_EMPTY_STATE)
+		return DLGC_WANTCHARS | DLGC_WANTARROWS;
+
+	return CStatic::OnGetDlgCode();
+}
+
+void CGroupStatic::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	if (m_uiStyle == STYLE_EMPTY_STATE &&
+		(nChar == VK_SPACE || nChar == VK_RETURN))
+	{
+		if (CWnd* parent = GetParent())
+			parent->SendMessage(NM_CANCEL_SEARCH, 0, 0);
+		return;
+	}
+
+	CStatic::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+void CGroupStatic::OnSetFocus(CWnd* pOldWnd)
+{
+	CStatic::OnSetFocus(pOldWnd);
+	Invalidate();
+}
+
+void CGroupStatic::OnKillFocus(CWnd* pNewWnd)
+{
+	CStatic::OnKillFocus(pNewWnd);
+	Invalidate();
 }
 
 void CGroupStatic::OnSize(UINT nType, int cx, int cy)

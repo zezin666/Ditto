@@ -13,3 +13,4 @@ integration time, preserving the exact key names and English defaults.
 | `ClearSearchAction` | `Clear search` | Search empty-state action |
 | `NoStarredClipsHint` | `Star clips to keep them handy here.` | Starred-only empty-state hint |
 | `ClearFilterAction` | `Clear filter` | Starred-only empty-state action |
+| `NoGroup` | `-No Group-` | Group tree root label |
