@@ -378,3 +378,93 @@
 2026-11-11T02:24:55.379 [de-light] exit clean=True
 2026-11-11T02:24:55.393 [de-light] log-scan clean
 2026-11-11T02:24:55.406 [de-light] DONE
+2026-11-11T03:48:14.361 [t6-light] BEGIN Theme=Modern Light Language=English Build=Debug64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t5-t6-light-72bef40337914e9cabac3ea5eea9dec4
+2026-11-11T03:48:20.169 [t6-light] main=2889816 mainhWndSetting=2889816
+2026-11-11T03:48:20.194 [t6-light] top-level-windows=[Afx:00007FF6FBFA0000:0|Ditto Clipboard Viewer|vis=False][TrayNotifyIconClass|CTrayNotifyIcon Helper Window|vis=False][Ditto|Ditto|vis=False][GDI+ Hook Window Class|GDI+ Window (Ditto.exe)|vis=False][IME|Default IME|vis=False][IME|Default IME|vis=False][IME|Default IME|vis=False]
+2026-11-11T03:48:32.778 [t6-light] gdi-before gdi=15 user=27
+2026-11-11T03:48:36.026 [t6-light] popup=867,466,1317,916 dpi=144 items=20 list=869,468,1305,894 edit=932,858,1149,909
+2026-11-11T03:48:36.028 [t6-light] options-button=1161,863,1203,905
+2026-11-11T03:48:36.031 [t6-light] list-visible=869,468,1266,854
+2026-11-11T03:48:36.032 [t6-light] LAYOUT PASS
+2026-11-11T03:48:36.412 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-popup.png size=450x450
+2026-11-11T03:48:37.736 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-search.png size=450x450
+2026-11-11T03:48:37.742 [t6-light] search textLength=10 selected=0
+2026-11-11T03:48:39.127 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-empty.png size=450x450
+2026-11-11T03:48:39.133 [t6-light] empty-state captured textLength=16
+2026-11-11T03:48:41.327 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-group.png size=450x450
+2026-11-11T03:48:41.329 [t6-light] group view captured
+2026-11-11T03:48:42.697 [t6-light] keyboard selected=19 top=1
+2026-11-11T03:48:43.070 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-nav.png size=450x450
+2026-11-11T03:48:44.360 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-scrollbar.png size=450x450
+2026-11-11T03:48:45.628 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-description.png size=450x450
+2026-11-11T03:48:45.630 [t6-light] description toggle captured (F3)
+2026-11-11T03:48:46.451 [t6-light] screenshot-region=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-contextmenu.png size=419x621
+2026-11-11T03:48:46.453 [t6-light] context menu captured
+2026-11-11T03:48:53.343 [t6-light] -open visible=True -close visible=False
+2026-11-11T03:48:54.996 [t6-light] hotkey visible=True toggleVisible=False
+2026-11-11T03:48:59.392 [t6-light] enter selected=19 visibleAfterEnter=False clipboardLength=21
+2026-11-11T03:48:59.405 [t6-light] gdi-before-cycles gdi=120 user=103
+2026-11-11T03:49:59.080 [t6-light] gdi-after gdi=120 user=103 deltaGdi=105 deltaUser=76 cycleDeltaGdi=0 cycleDeltaUser=0
+2026-11-11T03:50:00.562 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-options-general.png size=1307x1005
+2026-11-11T03:50:01.571 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-options-keyboard.png size=1307x1005
+2026-11-11T03:50:02.545 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-options-types.png size=1307x1005
+2026-11-11T03:50:03.305 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-dialog-addtype.png size=515x821
+2026-11-11T03:50:03.669 [t6-light] Add Supported Type opened and cancelled
+2026-11-11T03:50:04.683 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-options-copybuffers.png size=1307x1005
+2026-11-11T03:50:05.677 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-options-friends.png size=1307x1005
+2026-11-11T03:50:06.686 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-options-stats.png size=1307x1005
+2026-11-11T03:50:07.694 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-options-about.png size=1307x1005
+2026-11-11T03:50:09.029 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-dialog-advanced.png size=1095x998
+2026-11-11T03:50:09.769 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-dialog-movetogroup.png size=594x476
+2026-11-11T03:50:10.508 [t6-light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-light-dialog-groupname.png size=441x172
+2026-11-11T03:50:10.869 [t6-light] Group Name opened and cancelled
+2026-11-11T03:50:13.115 [t6-light] options apply/ok closed=True
+2026-11-11T03:50:13.117 [t6-light] gdi-end gdi=224 user=332
+2026-11-11T03:50:30.536 [t6-light] exit clean=True
+2026-11-11T03:50:30.560 [t6-light] log: [2026/11/11 03:48:31.677 - Clip.cpp 96] COleDataObjectEx::GetGlobalData("CF_UNICODETEXT"): ERROR: Invalid (NULL) data returned.
+2026-11-11T03:50:30.574 [t6-light] DONE
+2026-11-11T03:51:04.815 [t6-dark-full] BEGIN Theme=Modern Dark Language=English Build=Debug64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t5-t6-dark-full-1eb4413649c24d2bb02b2f51b8d4ce1e
+2026-11-11T03:51:10.914 [t6-dark-full] main=2756078 mainhWndSetting=2756078
+2026-11-11T03:51:10.918 [t6-dark-full] top-level-windows=[Afx:00007FF74F150000:0|Ditto Clipboard Viewer|vis=False][TrayNotifyIconClass|CTrayNotifyIcon Helper Window|vis=False][Ditto|Ditto|vis=False][GDI+ Hook Window Class|GDI+ Window (Ditto.exe)|vis=False][IME|Default IME|vis=False][IME|Default IME|vis=False][IME|Default IME|vis=False]
+2026-11-11T03:51:23.535 [t6-dark-full] gdi-before gdi=15 user=27
+2026-11-11T03:51:26.793 [t6-dark-full] popup=1323,819,1773,1269 dpi=144 items=20 list=1325,821,1761,1247 edit=1388,1211,1605,1262
+2026-11-11T03:51:26.795 [t6-dark-full] options-button=1617,1216,1659,1258
+2026-11-11T03:51:26.798 [t6-dark-full] list-visible=1325,821,1722,1207
+2026-11-11T03:51:26.799 [t6-dark-full] LAYOUT PASS
+2026-11-11T03:51:27.189 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-popup.png size=450x450
+2026-11-11T03:51:28.500 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-search.png size=450x450
+2026-11-11T03:51:28.508 [t6-dark-full] search textLength=10 selected=0
+2026-11-11T03:51:29.896 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-empty.png size=450x450
+2026-11-11T03:51:29.897 [t6-dark-full] empty-state captured textLength=16
+2026-11-11T03:51:32.096 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-group.png size=450x450
+2026-11-11T03:51:32.097 [t6-dark-full] group view captured
+2026-11-11T03:51:33.467 [t6-dark-full] keyboard selected=19 top=1
+2026-11-11T03:51:33.844 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-nav.png size=450x450
+2026-11-11T03:51:35.129 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-scrollbar.png size=450x450
+2026-11-11T03:51:36.400 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-description.png size=450x450
+2026-11-11T03:51:36.401 [t6-dark-full] description toggle captured (F3)
+2026-11-11T03:51:37.211 [t6-dark-full] screenshot-region=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-contextmenu.png size=419x621
+2026-11-11T03:51:37.212 [t6-dark-full] context menu captured
+2026-11-11T03:51:44.257 [t6-dark-full] -open visible=True -close visible=False
+2026-11-11T03:51:45.893 [t6-dark-full] hotkey visible=True toggleVisible=False
+2026-11-11T03:51:50.369 [t6-dark-full] enter selected=19 visibleAfterEnter=False clipboardLength=21
+2026-11-11T03:51:50.378 [t6-dark-full] gdi-before-cycles gdi=120 user=103
+2026-11-11T03:52:50.172 [t6-dark-full] gdi-after gdi=120 user=103 deltaGdi=105 deltaUser=76 cycleDeltaGdi=0 cycleDeltaUser=0
+2026-11-11T03:52:51.697 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-options-general.png size=1307x1005
+2026-11-11T03:52:52.779 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-options-keyboard.png size=1307x1005
+2026-11-11T03:52:53.749 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-options-types.png size=1307x1005
+2026-11-11T03:52:54.504 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-dialog-addtype.png size=515x821
+2026-11-11T03:52:54.870 [t6-dark-full] Add Supported Type opened and cancelled
+2026-11-11T03:52:55.872 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-options-copybuffers.png size=1307x1005
+2026-11-11T03:52:56.865 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-options-friends.png size=1307x1005
+2026-11-11T03:52:57.864 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-options-stats.png size=1307x1005
+2026-11-11T03:52:58.867 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-options-about.png size=1307x1005
+2026-11-11T03:53:00.229 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-dialog-advanced.png size=1095x998
+2026-11-11T03:53:00.961 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-dialog-movetogroup.png size=594x476
+2026-11-11T03:53:01.681 [t6-dark-full] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\after-t6-dark-full-dialog-groupname.png size=441x172
+2026-11-11T03:53:02.043 [t6-dark-full] Group Name opened and cancelled
+2026-11-11T03:53:04.302 [t6-dark-full] options apply/ok closed=True
+2026-11-11T03:53:04.305 [t6-dark-full] gdi-end gdi=224 user=332
+2026-11-11T03:53:21.736 [t6-dark-full] exit clean=True
+2026-11-11T03:53:21.752 [t6-dark-full] log-scan clean
+2026-11-11T03:53:21.766 [t6-dark-full] DONE

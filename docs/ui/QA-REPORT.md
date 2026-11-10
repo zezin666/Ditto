@@ -1,6 +1,6 @@
-# QA REPORT — T5 Integration + Full QA (Ditto UI Modernization)
+# QA REPORT — T5 Integration + Full QA, T6 re-integration (Ditto UI Modernization)
 
-Status: **Integration PASS with known limitations.**
+Status: **T6 re-integration PASS with known limitations.**
 Branch: `taohy/ui-integration` (worktree `D:\orca\workspaces\Ditto\ui-integration`).
 Base: `taohy/ui-foundation` @ `f6e5118`.
 No merge to `master`, no push.
@@ -20,6 +20,12 @@ Toolchain: MSBuild 18.11.1, MSVC 19.51.36260, MFC v145, Windows SDK 26100.0.
 | T3 | `taohy/ui-list` | `5ff555e` | `3f0712053d048b56c8ee87699eb6a9ec8d1ee36d` | none |
 | T4a | `taohy/ui-options-core` | `828f928` | `3c1d9812f19a600e5d9407f01e954c97b7cfb3e4` | none |
 | T4b | `taohy/ui-dialogs` | `735e8b8` | `80f7abf98a210aa830b20d2ed7d4791484b84239` | none |
+| T2 follow-up | `taohy/ui-shell` | `43d89ee` | `0df7108` | none |
+| T3 follow-up | `taohy/ui-list` | `1a60e6f` | `78367e6` | none |
+
+The T2/T3 follow-up merges (T6 review fixes) are descendants of the earlier
+merge bases and also merged without textual conflicts; the only files touched
+by T5 in both rounds were `src/QPasteWnd.cpp` and the language XML.
 
 All four merges were textual clean merges (`git merge --no-ff`, merge commits preserved).
 A clean merge is not a semantic proof; runtime QA below exercises the seams.
@@ -33,19 +39,24 @@ A clean merge is not a semantic proof; runtime QA below exercises the seams.
 | Debug\|x64 (full) | `MSBuild CP_Main_10.sln -p:Configuration=Debug -p:Platform=x64` | 0 | `docs/ui/t5-build-debug.log` | 0 | 95 warning lines |
 | Release\|x64 (final incremental, after fixes) | same | 0 | `docs/ui/t5-build-release-3.log` | 0 | 0 |
 | Debug\|x64 (final incremental, after fixes) | same | 0 | `docs/ui/t5-build-debug-2.log` | 0 | 0 |
+| Release\|x64 (T6 re-integration) | same | 0 | `docs/ui/t6-review-build-release.log` | 0 | 0 new (ToolTipEx C4244 gone) |
+| Debug\|x64 (T6 re-integration) | same | 0 | `docs/ui/t6-review-build-debug.log` | 0 | 0 new (ToolTipEx C4244 gone) |
 
 Warning triage (full build):
 - Third-party / vendored: `sqlite3mc_amalgamation.c` (C4996), QRCode, zlib-adjacent code, `EncryptDecrypt\NewRandom.cpp`.
 - Pre-existing first-party: `Misc.cpp`, `DrawHTML.C`, `Options.cpp`, `DeleteClipData.cpp`, `SendKeys.cpp`, `Client/Server`, etc.
-- New UI code: only `src/ToolTipEx.cpp` lines 283 and 1649 (`C4244 double→int`, T3). No new warnings from `src/Ui/**`, `QPasteWnd.cpp`, `SymbolEdit.cpp`, or the theme layer.
+- New UI code in the first integration round: only `src/ToolTipEx.cpp` lines 283 and 1649 (`C4244 double→int`, T3).
+  T3's follow-up build removes both; the T6 re-integration builds have **no new UI warnings**.
 
-Binaries:
-- `Release64\Ditto.exe` 6,059,520 bytes (final build 2026-11-11 02:05).
-- `Debug64\Ditto.exe` 14,633,472 bytes, SHA-256 `9c4eafc5c11d852a401a6d2de27838717a4103b7440e9bdd7b24af7b3141f5e1`.
+Binaries (T6 re-integration):
+- `Release64\Ditto.exe` 6,060,544 bytes (2026-11-11 03:45).
+- `Debug64\Ditto.exe` 14,640,640 bytes (2026-11-11 03:45).
+- The T5-era hashes are superseded; older hashes remain in the T5 logs above.
 
 **Defender note:** Windows Defender (threat `2147737394`, the known unsigned-Release false positive) blocked launching freshly copied `Release64\Ditto.exe` at 02:11–02:12 and currently holds the source file for scanning. Defender was **not** disabled or modified. Result:
 - Release runtime is verified on the same integration code before the final two-line menu wiring, and on the final Release binary in the light pass at 02:09 (before the first block).
 - Final **dark** and **German** runtime passes were executed with `Debug64`; **final-binary Release dark runtime is UNVERIFIED**.
+- The same false positive still blocks freshly copied Release binaries (latest detections 2026-11-11 03:04-03:34). The T6 targeted and full runtime passes therefore use `Debug64`; Release\|x64 still builds with 0 errors.
 
 ## 3. New strings merged (English only)
 
@@ -75,6 +86,56 @@ T3, T4a and T4b declared no new strings. Other languages fall back to these Engl
    `CDarkMode::ApplyToMenus(GetSafeHwnd())` is now called before the two popup `TrackPopupMenu` calls (list right-click and system menu). It is a safe no-op when uxtheme dark mode is unsupported or the Windows app theme is light; command IDs and menu contents are unchanged.
    With Windows in **light** mode the native menus still render light (documented P0 best-effort behavior). Readability is preserved.
 
+3. **Empty-state Enter was swallowed by the paste accelerator** (`src/QPasteWnd.cpp`).
+   T2's fix makes the empty-state Clear handle `Space`/`Enter`, but the popup's
+   `PreTranslateMessage`/`CheckActions` consumed `VK_RETURN` as the paste
+   action before the focused static received it. `PreTranslateMessage` now
+   lets `VK_RETURN` through when the empty-state static has focus.
+   Verified before/after: `enter-clear textLength=16` -> `textLength=0`
+   (dark and light), with focus confirmed by `GetGUIThreadInfo`.
+   Owner note: this is a T2 behavior fix; upstream T2 should carry it.
+
+## 4A. T6 review-fix verification (targeted)
+
+Harness: `tools/ui-qa/run-t6-targeted-qa.ps1` with a 5,001-row scratch DB
+(`rgba(37, 99, 235, 0.65)` color clip + group + 5,000 text rows).
+Runs: `t6-dark` and `t6-light`, both `Debug64` at 144 DPI.
+Evidence: `docs/ui/t6-review-runtime-evidence.log`,
+`docs/ui/t6-review-runtime-{dark,light}.log`.
+
+| Check | Result | Evidence |
+|---|---|---|
+| Footer/back/system/options/empty tab stops | **PASS** | `tabStops groups=True back=True system=True options=True empty=True list=True` |
+| Tab traversal chain | **PASS** | `tabChain=513,514,528,32805,517,...` (list, search, system, options, groups; back/empty appear when visible). |
+| Empty-state Space activates Clear | **PASS** | `space-clear textLength=0 items=5001` (dark and light). |
+| Empty-state Enter activates Clear | **PASS after fix** | Before the integration fix Enter was consumed by the paste accelerator (`textLength=16`); after `QPasteWnd::PreTranslateMessage` lets Enter reach the focused static: `enter-clear textLength=0 items=5001` (dark and light). |
+| Empty-state focus ring | **PASS** | `t6-{dark,light}-empty-focus.png`. |
+| Footer focus ring | **PASS** | `t6-{dark,light}-footer-focus.png` (cog has focus ring). |
+| High-contrast source path | **PASS (source)** | `CQPasteWnd::OnEraseBkgnd` and `CQPasteWnd::CtlColor` use `UiTheme().Canvas()` via the cached `UiDraw::Brush`; runtime HC remains UNVERIFIED. |
+| 5k-row list, one Graphics per paint pass | **PASS** | Debug log marker `T3 list paint pass reused one Gdiplus::Graphics object` count=1 in both themes. |
+| 5k-row GDI/user stability | **PASS** | 400 `WM_VSCROLL` messages in ~790 ms: delta GDI = -2, delta USER = +1, item count stays 5001. |
+| Alpha brush cache creation + purge before shutdown | **PASS** | `T3 UiDraw created translucent brush cache` count=1 and `T3 UiDraw purged translucent brush cache` count=1, with `ExitInstance` present, both themes. |
+| Dark menu calls | **PASS (source)** | `QPasteWnd.cpp` (list + system), `GroupTree.cpp`, `SymbolEdit.cpp`, `ToolTipEx.cpp` all call `CDarkMode::ApplyToMenus` before `TrackPopupMenu`. Windows-light + Ditto-dark menus still render light (best-effort). |
+| T2/T3 seam | **PASS** | Region-based layout: `list-visible` bottom 1253 < search edit top 1257; no overlap/clipping. |
+| Options/dialogs after re-merge | **PASS** | Full harness light/dark re-ran Options pages, Add Supported Type, Advanced Options, Move to Group, Group Name: open/close/Apply OK. |
+| Log scan | **PASS** | No new exceptions; expected benign lines filtered. |
+
+### Pre-existing list-view defect found during targeted QA (not a modernization regression)
+
+Sending `LVM_SCROLL` (`0x1010`) to the 5,001-row owner-data list crashes the
+process on the **first message** in both Release and Debug. Fault module
+`COMCTL32.dll`, exception `0xc0000005` (WER APPCRASH). It reproduces on the
+T3-only branch `1a60e6f` **and on the T1 foundation build `f6e5118`** (pre-T3
+list), so it predates the UI modernization and is **not** a T2/T3/T5 merge
+regression.
+
+- User-facing scroll paths are stable: 400 x `WM_VSCROLL` and 200 x
+  `WM_MOUSEWHEEL` complete without a crash and with stable GDI/user counts.
+- Ditto itself never sends `LVM_SCROLL` (no source references), so practical
+  exposure is limited to external automation/accessibility tools.
+- Reproduction log: `docs/ui/t6-lvm-scroll-crash.log`.
+- Owner: pre-existing base/upstream list-view behavior. Not fixed here.
+
 ## 5. Portable run setup and data safety
 
 - Every run used a fresh `%TEMP%\ditto-ui-t5-*` directory with `Ditto.exe`, `ICU_Loader.dll`, `Addins\`, `Debug\Language`, `Debug\Themes`, a `portable` marker, a scratch `Ditto.db` and a local `Ditto.Settings`.
@@ -94,6 +155,9 @@ Dark (Debug64, final build, 450×450 px) — final run has `LAYOUT PASS`, Enter 
 German / Deutsch (Debug64, Modern Light, popup and list):
 `artifacts/ui/after/after-de-light-{popup,search,empty,group,nav,scrollbar,description,contextmenu}.png`
 
+T6 targeted captures (Debug64, 5,001 rows, 144 DPI):
+`artifacts/ui/after/t6-{dark,light}-{popup,footer-focus,empty-focus,5k-list,color-swatch}.png`
+
 Additional Release dark popup/list captures from the penultimate final build:
 `artifacts/ui/after/after-dark-{popup,search,empty,group,nav,scrollbar,description,contextmenu}.png`
 
@@ -109,7 +173,7 @@ Observed:
 | Hotkey open / hide | **PASS** | Ctrl+` round trip: `visible=True`, second press `visible=False` (Release light/dark, Debug dark, Deutsch). |
 | `-open` / `-close` | **PASS** | `visible=True` / `visible=False` in every run. |
 | `-exit` | **PASS** | `exit clean=True`; no QA process left. |
-| Search input, clear, empty state | **PASS** (clear button from T2 evidence) | Text length 10, result selected; no-match text length 16; T2 harness verified the clear action. |
+| Search input, clear, empty state | **PASS** | Text length 10, result selected; no-match text length 16; empty-state Clear activates on Space **and Enter**, leaving the search empty and 5,001 rows loaded. |
 | Search history / find-as-you-type / regex settings | **UNVERIFIED** | Not exercised by the T5 harness. |
 | List Up/Down/PageUp/PageDown/Home/End | **PASS** | End/Home/PageUp/PageDown moved selection to 19, top index 1; captured. |
 | Enter paste | **PASS** (Release) | Popup hides, clipboard receives the selected clip (21 chars), 3/3 Release runs. One Debug64 run hit a harness clipboard race (`OpenClipboard 失败`); the next Debug64 run passed. |
@@ -130,7 +194,7 @@ Observed:
 | Dark/light restart persistence | **PASS** | Separate processes with `Theme2=Modern Light` / `Modern Dark` loaded the expected theme. |
 | Follow Windows theme | **UNVERIFIED** | Registry theme was not changed. |
 | Language: English + Deutsch, no clipping | **PASS** | Light and Deutsch captures; no clipped labels. |
-| High contrast | **UNVERIFIED** | Not enabled; code path reviewed only (`CDarkMode::IsHighContrast` / theme fallbacks). |
+| High contrast | **UNVERIFIED (runtime)** | Not enabled. Source path verified: popup erase/CtlColor and themed controls use `UiTheme().Canvas()`; `CDarkMode::IsHighContrast()` guards native theming. |
 | DPI 150 % (144 dpi) | **PASS** | 300×300 logical popup measured 450×450 physical; controls DPI-scaled; no clipping. |
 | DPI 100 % / 200 % | **UNVERIFIED** | This host runs at 150 %. T2 exercised 96 dpi for the shell; T4a/T4b captured at 96/144. |
 
@@ -140,6 +204,8 @@ Observed:
 - **Dark horizontal scrollbar:** PASS after fix. The native white bar is gone; the custom overlay thumb uses the dark theme color. Captured `after-dark-debug-scrollbar.png`.
 - **GDI / USER objects:** one-time growth on first popup open: 15→119 GDI, 27→103 USER (fonts, theme caches, scrollbar/overlay controls). Over 12 `-open`/`-close` cycles: **ΔGDI = 0, ΔUSER = 0** in every final run (one earlier Debug64 run measured −2/−4). No leak.
 - **T4a/T4b after merge:** Options sheet, Advanced Options, Add Supported Type, Move to Group, Group Name, Friends, Stats, Copy Buffers, About all opened and closed; Apply/OK persisted to the portable settings; no crash.
+- **T6 5k-row paint/cache:** PASS (see section 4A). One shared `Gdiplus::Graphics` per paint pass; translucent brush cache created once and purged before `GdiplusShutdown`; GDI/user counts stable over 400 scroll messages.
+- **LVM_SCROLL crash:** FAIL on the T1 foundation (`f6e5118`) and T3-only builds too; pre-existing, not a T2/T3/T5 regression (see section 4A); user scroll paths pass.
 - **Logs:** no new exceptions. Expected/benign lines: `Error finding the section Ditto_Options_Quick_Paste` (page intentionally disabled), `CF_UNICODETEXT ... NULL` for image-only test clips, and Debug-only harness artifacts (`OpenClipboard 失败`, `BAD DESCRIPTION` on synthetic clips).
 
 ## 9. Known limitations / UNVERIFIED
@@ -150,9 +216,12 @@ Observed:
 4. **Final-binary Release dark runtime is UNVERIFIED** because Defender blocked the copied Release64 executable; Debug64 was used for the final dark and German passes. Release light runtime passed on the final build before the block.
 5. 100 %/200 % DPI, high contrast, tray menu, IME candidate window, UAC paste, drag/drop, copy buffers, multiselect, Shift+Enter, Ctrl+number, history/regex search and add-in invocation are **UNVERIFIED**.
 6. The Deutsch empty state shows English T2 strings because only `English.xml` was updated, by design.
+7. **LVM_SCROLL crash (pre-existing):** a programmatic `LVM_SCROLL` to a 5,001-row list crashes in `COMCTL32.dll`; reproduces on the T1 foundation `f6e5118` and T3-only `1a60e6f`, so it predates the UI work. User scrolling (wheel/WM_VSCROLL) is stable. See section 4A and `docs/ui/t6-lvm-scroll-crash.log`.
+8. Group-tree and search-history menus were verified at source level only: the group tree is hidden in the default popup layout, and no search-history entry was present in the automated run.
 
 ## 10. Review entry points
 
 - Branch/commits and build/run instructions: `docs/ui/REVIEW-GUIDE.md`.
-- Machine-readable run log: `docs/ui/t5-runtime-evidence.log`.
+- Machine-readable run logs: `docs/ui/t5-runtime-evidence.log`, `docs/ui/t6-review-runtime-evidence.log`.
+- Targeted T6 harness: `tools/ui-qa/run-t6-targeted-qa.ps1`; LVM crash repro: `docs/ui/t6-lvm-scroll-crash.log`.
 - Harness: `tools/ui-qa/run-integration-qa.ps1`, plus `probe-region.ps1` / `probe-windows.ps1` diagnostics.

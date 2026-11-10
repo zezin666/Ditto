@@ -3281,6 +3281,13 @@ BOOL CQPasteWnd::PreTranslateMessage(MSG* pMsg)
 	}
 	break;
 	default:
+		// The empty-state Clear action handles Enter itself. Let the focused
+		// static receive the key instead of letting the paste accelerator eat it.
+		if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN &&
+			::GetFocus() == m_noSearchResultsStatic.GetSafeHwnd())
+		{
+			return CWndEx::PreTranslateMessage(pMsg);
+		}
 		if (CheckActions(pMsg))
 		{
 			return TRUE;

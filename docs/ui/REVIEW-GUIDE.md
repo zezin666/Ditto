@@ -1,4 +1,4 @@
-# REVIEW GUIDE — Ditto UI Modernization (T5 integration)
+# REVIEW GUIDE — Ditto UI Modernization (T5 integration + T6 re-integration)
 
 This is the entry point for reviewing the integrated UI work. It describes the
 branch, how to build and run it, where the evidence lives, and what is still
@@ -19,14 +19,18 @@ Merge commits (newest first):
 | T4a options core | `taohy/ui-options-core` @ `828f928` | `3c1d981` |
 | T3 list/scrollbars | `taohy/ui-list` @ `5ff555e` | `3f07120` |
 | T2 shell | `taohy/ui-shell` @ `6c0d2c4` | `0beb80b` |
+| T3 follow-up (T6 fixes) | `taohy/ui-list` @ `1a60e6f` | `78367e6` |
+| T2 follow-up (T6 fixes) | `taohy/ui-shell` @ `43d89ee` | `0df7108` |
 
 T5 integration changes on top of the merges:
 
 - `src/QPasteWnd.cpp` — restore T3's clipped native-scrollbar extent in T2's
-  footer layout; wire best-effort dark native menus.
+  footer layout; wire best-effort dark native menus; let `VK_RETURN` reach the
+  focused empty-state Clear button (T2's Enter path was consumed by the paste
+  accelerator).
 - `Debug/Language/English.xml` — the eight T2 string keys.
 - `docs/ui/QA-REPORT.md`, `docs/ui/REVIEW-GUIDE.md`, `docs/ui/t5-*.log`,
-  `artifacts/ui/after/**`, `tools/ui-qa/**`.
+  `docs/ui/t6-review-*.log`, `artifacts/ui/after/**`, `tools/ui-qa/**`.
 
 ## 2. Build
 
@@ -48,9 +52,10 @@ Build evidence:
 - `docs/ui/t5-restore.log`
 - `docs/ui/t5-build-release.log` / `docs/ui/t5-build-release-3.log`
 - `docs/ui/t5-build-debug.log` / `docs/ui/t5-build-debug-2.log`
+- `docs/ui/t6-review-build-release.log` / `docs/ui/t6-review-build-debug.log`
 
-Final builds: **0 errors**. New UI code adds no warnings (only two pre-existing
-`C4244` in `ToolTipEx.cpp`).
+Final builds: **0 errors**. The T6 re-integration builds add no new warnings;
+T3's follow-up removed the two `C4244` warnings in `ToolTipEx.cpp`.
 
 > Defender: the unsigned Release binary triggers the known
 > `Trojan:Win32/Bearfoos.A!ml` false positive when copied to `%TEMP%`.
@@ -94,6 +99,20 @@ measures window layout via `GetWindowRgn`, runs GDI cycles, opens Options and
 the main dialogs, restores the HKCU Run value, and logs to
 `docs/ui/t5-runtime-evidence.log`.
 
+The T6 review-fix checks live in `tools/ui-qa/run-t6-targeted-qa.ps1`:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -STA -File tools/ui-qa/run-t6-targeted-qa.ps1 `
+  -Theme "Modern Dark" -Prefix "dark" -Build "Debug64" -Rows 5000
+```
+
+It seeds a 5,000-row DB plus an alpha-color clip, checks tab stops and the tab
+chain, activates the empty-state Clear with Space and Enter, captures focus
+rings, measures GDI/user handles across 400 `WM_VSCROLL` messages, verifies the
+`T3 list paint pass reused one Gdiplus::Graphics object` and translucent-brush
+cache create/purge markers, and logs to
+`docs/ui/t6-review-runtime-evidence.log`.
+
 ## 4. What to review
 
 1. `docs/ui/QA-REPORT.md` — status, merges, build, regression matrix,
@@ -103,6 +122,8 @@ the main dialogs, restores the HKCU Run value, and logs to
    - `after-dark-debug-*` — Debug64, Modern Dark, 150 % DPI.
    - `after-de-light-*` — Deutsch, Modern Light.
    - `after-dark-*` — Release, Modern Dark (penultimate build; popup/list only).
+   - `t6-{dark,light}-*` — T6 targeted checks: tab focus, empty-state focus
+     ring, 5k list, alpha color swatch (Debug64, 5,001 rows).
 3. Diff scope: `git diff f6e5118...HEAD -- src/`. Focus on:
    - `src/QPasteWnd.cpp::MoveControls` — the T2/T3 layout seam.
    - `src/Ui/**` — shared themed controls/dialogs (T4a).
@@ -119,9 +140,15 @@ the main dialogs, restores the HKCU Run value, and logs to
 - Options OK/Cancel captions follow the OS/MFC locale on this host (Chinese),
   independent of `LanguageFile`; pre-existing.
 - `OptionsQuickPaste` / `OptionsUtilities` stay out of the property sheet.
-- Unverified: 100 %/200 % DPI, high contrast, tray menu, IME, UAC, drag/drop,
-  copy buffers, multiselect, Shift+Enter, Ctrl+number, history/regex search,
-  add-in invocation, final-binary Release dark runtime (Defender block).
+- Unverified: 100 %/200 % DPI, high contrast runtime, tray menu, IME, UAC,
+  drag/drop, copy buffers, multiselect, Shift+Enter, Ctrl+number,
+  history/regex search, add-in invocation, final-binary Release runtime
+  (Defender block).
+- **Pre-existing list-view defect:** programmatic `LVM_SCROLL` on a
+  5,001-row list crashes in `COMCTL32.dll`; reproduces on the T1 foundation
+  `f6e5118` and T3-only `1a60e6f`, so it is not a UI-modernization
+  regression. User scrolling (`WM_VSCROLL`, mouse wheel) is stable. Repro:
+  `docs/ui/t6-lvm-scroll-crash.log`.
 
 ## 6. Re-running the evidence
 
@@ -132,6 +159,8 @@ powershell -File tools/ui-qa/run-integration-qa.ps1 -Theme "Modern Light" -Prefi
 powershell -File tools/ui-qa/run-integration-qa.ps1 -Theme "Modern Dark" -Prefix dark-debug -Build Debug64 -SeedGroup
 # German
 powershell -File tools/ui-qa/run-integration-qa.ps1 -Theme "Modern Light" -Prefix de-light -Build Debug64 -Language Deutsch -SeedGroup -SkipOptions
+# T6 targeted checks (tab path, empty-state keyboard, 5k rows, cache markers)
+powershell -File tools/ui-qa/run-t6-targeted-qa.ps1 -Theme "Modern Dark" -Prefix dark -Build Debug64 -Rows 5000
 ```
 
 Each run appends to `docs/ui/t5-runtime-evidence.log` and overwrites the
