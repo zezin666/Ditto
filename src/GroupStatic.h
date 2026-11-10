@@ -16,6 +16,13 @@ class CGroupStatic : public CStatic
 public:
 	CGroupStatic();
 
+	enum UiStyle
+	{
+		STYLE_DEFAULT,
+		STYLE_GROUP_HEADER,
+		STYLE_EMPTY_STATE
+	};
+
 // Attributes
 public:
 
@@ -27,6 +34,11 @@ public:
 	void SetFont( int nPointSize, LPCTSTR lpszFaceName, CDC* pDC = NULL );
 	void SetFont(CFont *pFont)				{ CStatic::SetFont(pFont);		}
 	void SetToggleCursor(bool toggle)		{ m_toggleCursorToHand = toggle; }
+	virtual void SetWindowText(LPCTSTR text);
+	void SetUiStyle(UiStyle style);
+	void SetEmptyState(const CString& title, const CString& detail, const CString& action);
+	void RefreshTheme();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -46,12 +58,30 @@ protected:
 	CBrush   m_brush;
 	CString  m_strBuff;        // Holds the static controls contents before & after the control is displayed
 	bool m_toggleCursorToHand;
+	UiStyle m_uiStyle;
+	CString m_emptyTitle;
+	CString m_emptyDetail;
+	CString m_emptyAction;
+	CRect m_actionRect;
+	bool m_bActionHover;
+	bool m_bTracking;
+	CToolTipCtrl m_toolTip;
+
+	void UpdateToolTip();
+	void DrawGroupHeader(CDC& dc, const CRect& rect);
+	void DrawEmptyState(CDC& dc, const CRect& rect);
 
 
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(CGroupStatic)
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	afx_msg void OnPaint();
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg LRESULT OnMouseLeave(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
