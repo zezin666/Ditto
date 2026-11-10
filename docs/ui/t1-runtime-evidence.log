@@ -1,0 +1,23 @@
+T1 runtime verification 2026-11-10T21:59:15
+Release executable: C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\Release64\Ditto.exe
+Debug executable: C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\Debug64\Ditto.exe
+
+Modern Light: PASS print=True dpi=144 size=300x300 screenshot=C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\artifacts\ui\t1\t1-modern-light.png run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t1-final2-Modern-Light-d767ca994e04434ca956220b5bae1545
+  [2026/11/10 21:58:43.055 - Theme.cpp 278] Loading Theme C:\Users\zezin\AppData\Local\Temp\ditto-ui-t1-final2-Modern-Light-d767ca994e04434ca956220b5bae1545\Themes\Modern Light.xml
+Modern Dark: PASS print=True dpi=144 size=300x300 screenshot=C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\artifacts\ui\t1\t1-modern-dark.png run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t1-final2-Modern-Dark-fa451a882fe545baa0e3590ad3de6bc6
+  [2026/11/10 21:58:57.899 - Theme.cpp 278] Loading Theme C:\Users\zezin\AppData\Local\Temp\ditto-ui-t1-final2-Modern-Dark-fa451a882fe545baa0e3590ad3de6bc6\Themes\Modern Dark.xml
+Classic: PASS print=True dpi=144 size=300x300 screenshot=C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\artifacts\ui\t1\t1-classic-legacy.png run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t1-final2-Classic-26baad89ef214a4b98ebb9c01bb111e3
+  [2026/11/10 21:59:12.611 - Theme.cpp 278] Loading Theme C:\Users\zezin\AppData\Local\Temp\ditto-ui-t1-final2-Classic-26baad89ef214a4b98ebb9c01bb111e3\Themes\Classic.xml
+Classic theme loaded without process exit; all screenshots were rendered from the final Release64 binary.
+
+Default-path verification:
+FollowLight: PASS print=True dpi=144 theme='' screenshot=C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\artifacts\ui\t1\t1-default-follow-light.png run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t1-default-FollowLight-810f98753a9d4aa08b18f7e97c94f52f
+  [2026/11/10 22:02:05.335 - Theme.cpp 252] Loading default ditto values for themes
+DarkerDitto: PASS print=True dpi=144 theme='DarkerDitto' screenshot=C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\artifacts\ui\t1\t1-darker-ditto.png run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t1-default-DarkerDitto-16e48bb2f1eb42eabbc4358f35dc9d6c
+  [2026/11/10 22:02:19.643 - Theme.cpp 278] Loading Theme C:\Users\zezin\AppData\Local\Temp\ditto-ui-t1-default-DarkerDitto-16e48bb2f1eb42eabbc4358f35dc9d6c\Themes\DarkerDitto.xml
+
+Compatibility checks:
+All 14 theme XML files parsed with System.Xml: PASS
+Classic old-theme load: PASS (process remained alive, theme rendered)
+Missing/empty semantic new-key log hits for Classic: 0
+PNG decode check: 175 PNG files, 0 invalid

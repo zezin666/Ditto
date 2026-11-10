@@ -1,0 +1,11 @@
+适用于 .NET Framework MSBuild 版本 18.11.1-1.26513.3+940033be3
+
+  focus.vcxproj -> C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\Release64\focus.dll
+  ICU_Loader.vcxproj -> C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\Release64\ICU_Loader.dll
+  EncryptDecrypt.vcxproj -> C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\Release64\EncryptDecrypt.lib
+  DittoUtil.vcxproj -> C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\Release64\Addins\DittoUtil.dll
+  DarkMode.cpp
+  Theme.cpp
+  UiDraw.cpp
+  正在生成代码...
+  CP_Main.vcxproj -> C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\Release64\Ditto.exe

@@ -1,0 +1,40 @@
+MSBuild 自动检测: 使用来自 "C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\MSBuild\Current\bin" 的 msbuild 版本 "18.11.1.51303"。
+Restoring NuGet package libpng-msvc-x64.1.6.33.8807.
+Restoring NuGet package zlib-msvc-x64.1.2.11.8900.
+Restoring NuGet package zlib-msvc-x86.1.2.11.8900.
+Restoring NuGet package libpng-msvc-x86.1.6.33.8807.
+  GET https://api.nuget.org/v3-flatcontainer/libpng-msvc-x64/1.6.33.8807/libpng-msvc-x64.1.6.33.8807.nupkg
+  GET https://api.nuget.org/v3-flatcontainer/libpng-msvc-x86/1.6.33.8807/libpng-msvc-x86.1.6.33.8807.nupkg
+  GET https://api.nuget.org/v3-flatcontainer/zlib-msvc-x64/1.2.11.8900/zlib-msvc-x64.1.2.11.8900.nupkg
+  GET https://api.nuget.org/v3-flatcontainer/zlib-msvc-x86/1.2.11.8900/zlib-msvc-x86.1.2.11.8900.nupkg
+  OK https://api.nuget.org/v3-flatcontainer/libpng-msvc-x64/1.6.33.8807/libpng-msvc-x64.1.6.33.8807.nupkg 239ms
+  OK https://api.nuget.org/v3-flatcontainer/libpng-msvc-x86/1.6.33.8807/libpng-msvc-x86.1.6.33.8807.nupkg 522ms
+  OK https://api.nuget.org/v3-flatcontainer/zlib-msvc-x86/1.2.11.8900/zlib-msvc-x86.1.2.11.8900.nupkg 943ms
+  OK https://api.nuget.org/v3-flatcontainer/zlib-msvc-x64/1.2.11.8900/zlib-msvc-x64.1.2.11.8900.nupkg 976ms
+Installed zlib-msvc-x86 1.2.11.8900 from https://api.nuget.org/v3/index.json to C:\Users\zezin\.nuget\packages\zlib-msvc-x86\1.2.11.8900 with content hash 8jpYJhU0WRcZsO/zALnwWVHlguri2+JAzkHCMzQJmqkAc73U/q/gLtm/0eqbVf9cz4R12xhtGpnt/Ney9URIcA==.
+Installed libpng-msvc-x86 1.6.33.8807 from https://api.nuget.org/v3/index.json to C:\Users\zezin\.nuget\packages\libpng-msvc-x86\1.6.33.8807 with content hash KrjCEeppWCcpIiasI5jVtFm5NoS1MuXZfMtg9FBB6fBRU2VfIl/KXstgfqu6JCnc01kjDuG4xG3ERNkN1outbw==.
+Adding package 'zlib-msvc-x86.1.2.11.8900' to folder 'C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\packages'
+Adding package 'libpng-msvc-x86.1.6.33.8807' to folder 'C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\packages'
+Added package 'zlib-msvc-x86.1.2.11.8900' to folder 'C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\packages'
+Added package 'libpng-msvc-x86.1.6.33.8807' to folder 'C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\packages'
+Installed libpng-msvc-x64 1.6.33.8807 from https://api.nuget.org/v3/index.json to C:\Users\zezin\.nuget\packages\libpng-msvc-x64\1.6.33.8807 with content hash dlaGOiqVQuJDWY1piN+7W4n4Qb7nXqYboK/dOaMFV+SBnspTj0eeq0Du94ckcQuYdifYui1vMTCB4QYXTQMsvQ==.
+Adding package 'libpng-msvc-x64.1.6.33.8807' to folder 'C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\packages'
+Added package 'libpng-msvc-x64.1.6.33.8807' to folder 'C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\packages'
+Installed zlib-msvc-x64 1.2.11.8900 from https://api.nuget.org/v3/index.json to C:\Users\zezin\.nuget\packages\zlib-msvc-x64\1.2.11.8900 with content hash O2Ed4zXdaigZUPyShbva09hM5TD5/1Id0kGjmHDvD7VrhTGJLGd4TDbVrPnsJ4PRWcGlBItV9m+DcZc5bhzc5Q==.
+Adding package 'zlib-msvc-x64.1.2.11.8900' to folder 'C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\packages'
+Added package 'zlib-msvc-x64.1.2.11.8900' to folder 'C:\Users\zezin\orca\workspaces\Ditto\ui-foundation\packages'
+  GET https://api.nuget.org/v3/vulnerabilities/index.json
+  OK https://api.nuget.org/v3/vulnerabilities/index.json 201ms
+  GET https://api.nuget.org/v3/vulnerabilities/vulnerability.base.json
+  GET https://api.nuget.org/v3/vulnerabilities/vulnerability.update.json
+  OK https://api.nuget.org/v3/vulnerabilities/vulnerability.update.json 158ms
+  OK https://api.nuget.org/v3/vulnerabilities/vulnerability.base.json 191ms
+
+使用的 NuGet 配置文件:
+    C:\Users\zezin\AppData\Roaming\NuGet\NuGet.Config
+
+使用的源:
+    https://api.nuget.org/v3/index.json
+
+已安装:
+    packages.config projects 的 4 包

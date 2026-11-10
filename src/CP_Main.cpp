@@ -15,6 +15,9 @@
 #include "MainTableFunctions.h"
 #include "ShowTaskBarIcon.h"
 #include "NoDbFrameWnd.h"
+#include "DarkMode.h"
+#include "UiDraw.h"
+#include "UiTheme.h"
 #include <clocale>
 
 #ifdef _DEBUG
@@ -216,7 +219,9 @@ BOOL CCP_MainApp::InitInstance()
 	DittoCommandLineInfo cmdInfo;
 	ParseCommandLine(cmdInfo);
 
+	CDarkMode::Initialize();
 	CGetSetOptions::LoadSettings();
+	CUiTheme::Instance().Refresh(CGetSetOptions::m_Theme);
 
 	theApp.m_activeWnd.TrackActiveWnd(false);
 
@@ -927,6 +932,8 @@ int CCP_MainApp::ExitInstance()
 		delete m_pUacPasteThread;
 	}
 
+	UiDraw::PurgeCaches();
+	CDarkMode::Shutdown();
 	Gdiplus::GdiplusShutdown(m_gdiplusToken);
 
 	return CWinApp::ExitInstance();
