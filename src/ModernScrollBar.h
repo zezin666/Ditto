@@ -69,6 +69,10 @@ protected:
 	// Scroll list to position based on thumb drag
 	void ScrollToPosition(int thumbPos);
 
+	bool AnimationsEnabled() const;
+	void BeginFade(bool fadeIn);
+	static COLORREF BlendColor(COLORREF foreground, COLORREF background, double opacity);
+
 private:
 	CListCtrl* m_pListCtrl;
 	CWnd* m_pParentWnd;
@@ -93,7 +97,15 @@ private:
 	int m_dragStartScrollPos;
 	bool m_isVisible;
 	bool m_trackingMouse;
+	double m_opacity;
+	double m_fadeStartOpacity;
+	DWORD m_fadeStartTick;
+	bool m_fadeIn;
 	
 	// Timer
-	enum { TIMER_AUTO_HIDE = 1 };
+	enum
+	{
+		TIMER_AUTO_HIDE = 1,
+		TIMER_FADE = 2
+	};
 };

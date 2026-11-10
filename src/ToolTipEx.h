@@ -110,6 +110,7 @@ protected:
 protected:
 	CString GetFieldFromString(CString ref, int nIndex, TCHAR ch);	
 	BOOL IsCursorInToolTip();
+	void ApplyThemeColors();
 	void HighlightSearchText();	
 	void ApplyWordWrap();
 	void SaveWindowSize();
@@ -138,6 +139,7 @@ public:
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnPaint();	
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnFirstHidedescriptionwindowonm();
 	afx_msg void OnFirstWraptext();
 	afx_msg void OnNcLButtonDblClk(UINT nHitTest, CPoint point);
