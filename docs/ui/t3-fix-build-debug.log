@@ -1,7 +1,7 @@
 'vswhere.exe' is not recognized as an internal or external command,
 operable program or batch file.
 适用于 .NET Framework MSBuild 版本 18.11.1-1.26513.3+940033be3
-生成启动时间为 2026/11/11 3:23:40。
+生成启动时间为 2026/11/11 4:30:28。
 
 节点 1 上的项目“D:\orca\workspaces\Ditto\ui-list\CP_Main_10.sln”(默认目标)。
 ValidateSolutionConfiguration:
@@ -274,4 +274,4 @@ FinalizeBuildStatus:
     0 个警告
     0 个错误
 
-已用时间 00:00:02.53
+已用时间 00:00:02.82

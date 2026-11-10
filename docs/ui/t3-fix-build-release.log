@@ -1,7 +1,7 @@
 'vswhere.exe' is not recognized as an internal or external command,
 operable program or batch file.
 适用于 .NET Framework MSBuild 版本 18.11.1-1.26513.3+940033be3
-生成启动时间为 2026/11/11 3:22:01。
+生成启动时间为 2026/11/11 4:29:43。
 
 节点 1 上的项目“D:\orca\workspaces\Ditto\ui-list\CP_Main_10.sln”(默认目标)。
 ValidateSolutionConfiguration:
@@ -85,10 +85,8 @@ Midl:
   所有输出均为最新。
 ClCompile:
   所有输出均为最新。
-  C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\bin\HostX64\x64\CL.exe /c /I"D:\orca\workspaces\Ditto\ui-list\packages\libpng-msvc-x64.1.6.33.8807\build\native\../..//build/native/include" /I"D:\orca\workspaces\Ditto\ui-list\packages\zlib-msvc-x64.1.2.11.8900\build\native\../..//build/native/include" /Zi /nologo /W3 /WX- /diagnostics:column /O2 /Ob1 /D HAS_libpng /D HAS_zlib /D WIN64 /D NDEBUG /D _WINDOWS /D _MBCS /D AFTER_98 /D UNICODE /D HAVE_CONFIG_H /D _UNICODE /D UNICODE /D _AFXDLL /GF /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Yu"stdafx.h" /Fp".\Release64\CP_Main.pch" /FAs /Fa".\Release64\\" /Fo".\Release64\\" /Fd".\Release64\vc145.pdb" /external:W3 /Gd /TP /FC /errorReport:queue /bigobj src\QListCtrl.cpp src\UiDraw.cpp
-  QListCtrl.cpp
+  C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\bin\HostX64\x64\CL.exe /c /I"D:\orca\workspaces\Ditto\ui-list\packages\libpng-msvc-x64.1.6.33.8807\build\native\../..//build/native/include" /I"D:\orca\workspaces\Ditto\ui-list\packages\zlib-msvc-x64.1.2.11.8900\build\native\../..//build/native/include" /Zi /nologo /W3 /WX- /diagnostics:column /O2 /Ob1 /D HAS_libpng /D HAS_zlib /D WIN64 /D NDEBUG /D _WINDOWS /D _MBCS /D AFTER_98 /D UNICODE /D HAVE_CONFIG_H /D _UNICODE /D UNICODE /D _AFXDLL /GF /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Yu"stdafx.h" /Fp".\Release64\CP_Main.pch" /FAs /Fa".\Release64\\" /Fo".\Release64\\" /Fd".\Release64\vc145.pdb" /external:W3 /Gd /TP /FC /errorReport:queue /bigobj src\UiDraw.cpp
   UiDraw.cpp
-  正在生成代码...
   所有输出均为最新。
   所有输出均为最新。
 ResourceCompile:
@@ -277,4 +275,4 @@ FinalizeBuildStatus:
     0 个警告
     0 个错误
 
-已用时间 00:00:03.70
+已用时间 00:00:02.86
