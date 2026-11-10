@@ -2,6 +2,7 @@
 
 Status: **T7 final integration PASS with known limitations.**
 T6 integration commit: `b8eb52a`; T7 re-integration merge: `ec3d0f2` (T3 fix2 `3c4f7f6`).
+T7 integration commit: `6f9e245` (code + QA evidence; the documentation update commit is one ahead).
 Branch: `taohy/ui-integration` (worktree `D:\orca\workspaces\Ditto\ui-integration`).
 Base: `taohy/ui-foundation` @ `f6e5118`.
 No merge to `master`, no push.

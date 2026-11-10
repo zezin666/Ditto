@@ -10,6 +10,7 @@ unverified.
 - Base: `taohy/ui-foundation` @ `f6e5118`
 - Worktree used: `D:\orca\workspaces\Ditto\ui-integration`
 - T6 re-integration commit: `b8eb52a`; T7 re-integration merge: `ec3d0f2` (T3 fix2 `3c4f7f6`).
+- T7 integration commit: `6f9e245` (code + QA evidence; a documentation-only commit may follow).
 - Not merged to `master`; not pushed.
 
 Merge commits (newest first):
