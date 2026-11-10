@@ -12,11 +12,12 @@
 #include "NumberEdit.h"
 #include "afxwin.h"
 #include "HyperLink.h"
+#include "Ui/ThemedDialog.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // COptionsGeneral dialog
 
-class COptionsGeneral : public CPropertyPage
+class COptionsGeneral : public CThemedPropertyPage
 {
 	DECLARE_DYNCREATE(COptionsGeneral)
 
@@ -67,7 +68,6 @@ protected:
 	
 	COptionsSheet *m_pParent;
 	CString m_csTitle;
-	CBrush m_brush;
 	LOGFONT m_LogFont;
 	CFont m_envVarFont;
 	CString m_originalEnvVariables;
@@ -86,7 +86,6 @@ protected:
 
 public:
 	afx_msg void OnBnClickedButtonAdvanced();
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnBnClickedButtonTheme();
 	afx_msg void OnBnClickedButtonPreviewTheme();
 	afx_msg void OnCbnSelchangeComboTheme();

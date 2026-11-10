@@ -1,0 +1,8 @@
+T4a persistence verification 2026-11-11T00:02:12.5428864+08:00
+run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-persist-e6efd870b5814fe0bf29666fb2dd5610 process=2564 main=12849054
+set SendPaste requested=0 actual=0
+CANCEL before=[] after=[]
+set SendPaste requested=0 actual=0
+OK saved=[0]
+RESTART check=0
+PASS persistence cancel/save/restart

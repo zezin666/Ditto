@@ -10,10 +10,10 @@
 
 // CQuickPasteKeyboard dialog
 
-IMPLEMENT_DYNAMIC(CQuickPasteKeyboard, CPropertyPage)
+IMPLEMENT_DYNAMIC(CQuickPasteKeyboard, CThemedPropertyPage)
 
 CQuickPasteKeyboard::CQuickPasteKeyboard()
-	: CPropertyPage(CQuickPasteKeyboard::IDD)
+	: CThemedPropertyPage(CQuickPasteKeyboard::IDD)
 {
 	m_csTitle = theApp.m_Language.GetString("QuickPasteKeyboardTitle", "Quick Paste Keyboard");
 	m_psp.pszTitle = m_csTitle;
@@ -36,7 +36,7 @@ void CQuickPasteKeyboard::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CQuickPasteKeyboard, CPropertyPage)
+BEGIN_MESSAGE_MAP(CQuickPasteKeyboard, CThemedPropertyPage)
 	ON_NOTIFY(LVN_ITEMACTIVATE, IDC_LIST1, &CQuickPasteKeyboard::OnLvnItemActivateList1)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST1, &CQuickPasteKeyboard::OnLvnItemchangedList1)
 	ON_BN_CLICKED(IDC_ASSIGN, &CQuickPasteKeyboard::OnBnClickedAssign)
@@ -63,7 +63,7 @@ END_MESSAGE_MAP()
 
 BOOL CQuickPasteKeyboard::OnInitDialog()
 {
-	CPropertyPage::OnInitDialog();
+	CThemedPropertyPage::OnInitDialog();
 
 	InitListCtrlCols();
 	LoadItems();
@@ -98,6 +98,7 @@ BOOL CQuickPasteKeyboard::OnInitDialog()
 	//SetWindowText(_T("Quick Paste Shortcuts"));
 
 	theApp.m_Language.UpdateOptionQuickPasteKeyboard(this);
+	CThemedControls::FinishLayout(this);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -419,7 +420,7 @@ BOOL CQuickPasteKeyboard::OnApply()
 		}
 	}
 
-	return CPropertyPage::OnApply();
+	return CThemedPropertyPage::OnApply();
 }
 
 void CQuickPasteKeyboard::OnCbnSelchangeComboAllAssigned()
@@ -804,7 +805,7 @@ BOOL CQuickPasteKeyboard::PreTranslateMessage(MSG* pMsg)
 		break;
 	}
 
-	return CPropertyPage::PreTranslateMessage(pMsg);
+	return CThemedPropertyPage::PreTranslateMessage(pMsg);
 }
 
 
@@ -828,7 +829,7 @@ BOOL CQuickPasteKeyboard::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResul
 	}
 
 
-	return CPropertyPage::OnNotify(wParam, lParam, pResult);
+	return CThemedPropertyPage::OnNotify(wParam, lParam, pResult);
 }
 
 
@@ -859,7 +860,7 @@ BOOL CQuickPasteKeyboard::OnCommand(WPARAM wParam, LPARAM lParam)
 		}
 	}
 
-	return CPropertyPage::OnCommand(wParam, lParam);
+	return CThemedPropertyPage::OnCommand(wParam, lParam);
 }
 
 
@@ -883,7 +884,7 @@ void CQuickPasteKeyboard::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	// TODO: Add your message handler code here and/or call default
 
-	CPropertyPage::OnKeyUp(nChar, nRepCnt, nFlags);
+	CThemedPropertyPage::OnKeyUp(nChar, nRepCnt, nFlags);
 }
 
 

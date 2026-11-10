@@ -25,10 +25,10 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // COptionsSheet
 
-IMPLEMENT_DYNAMIC(COptionsSheet, CPropertySheet)
+IMPLEMENT_DYNAMIC(COptionsSheet, CThemedPropertySheet)
 
 COptionsSheet::COptionsSheet(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
-	:CPropertySheet(pszCaption, pParentWnd, iSelectPage)
+	:CThemedPropertySheet(pszCaption, pParentWnd, iSelectPage)
 {
 	m_themeChanged = FALSE;
 	m_pKeyBoardOptions = NULL;
@@ -88,7 +88,7 @@ COptionsSheet::~COptionsSheet()
 	delete m_pQuickPasteShortCuts;	
 }
 
-BEGIN_MESSAGE_MAP(COptionsSheet, CPropertySheet)
+BEGIN_MESSAGE_MAP(COptionsSheet, CThemedPropertySheet)
 	//{{AFX_MSG_MAP(COptionsSheet)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
 	ON_WM_DESTROY()
@@ -118,11 +118,12 @@ BOOL COptionsSheet::OnInitDialog()
 	HICON b = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR_MAINFRAME), IMAGE_ICON, 64, 64, LR_SHARED);
 	SetIcon(b, TRUE);
 
-	BOOL bResult = CPropertySheet::OnInitDialog();
+	BOOL bResult = CThemedPropertySheet::OnInitDialog();
 
 	SetWindowText(_T("Options"));
 
 	theApp.m_Language.UpdateOptionsSheet(this);
+	RefreshThemeNow();
 
 	::ShowWindow(::GetDlgItem(m_hWnd, ID_APPLY_NOW), SW_HIDE);
 
