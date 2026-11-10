@@ -1,0 +1,1220 @@
+2026-11-11T00:27:51.5127363+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-3fb2154cf38347658f62c8e33620e3f9
+2026-11-11T00:27:58.7368186+08:00 main=13504582
+2026-11-11T00:28:01.9406087+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:28:02.9351472+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:28:03.5716124+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:28:04.9695172+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:28:05.9819628+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:28:12.6124863+08:00 FAIL Theme=Modern Light Language=English error=Friend Details dialog was not found
+2026-11-11T00:28:53.6750747+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-d4154b04ce4d48f4ab8170dfe2179a55
+2026-11-11T00:29:00.8947934+08:00 main=13109788
+2026-11-11T00:29:04.1266257+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:29:05.1090108+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:29:05.7647970+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:29:07.1529511+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:29:08.1587944+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:29:35.0841348+08:00 FAIL Theme=Modern Light Language=English error=Friend Details dialog was not found
+2026-11-11T00:30:03.7050144+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-f66eb5cb5e8441e8a4e47fff54ce1a26
+2026-11-11T00:30:10.9392788+08:00 main=5838214
+2026-11-11T00:30:14.1448784+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:30:15.1199468+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:30:15.7645293+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:30:17.1645090+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:30:18.1767845+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:30:42.0332599+08:00 friends list=3675748 itemRect=0,0,0,0 rectResult=0
+2026-11-11T00:30:48.8401283+08:00 FAIL Theme=Modern Light Language=English error=Friend Details dialog was not found
+2026-11-11T00:31:12.6882799+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-56ab19f3bbe849b7a98aec5832bca45f
+2026-11-11T00:31:19.8377188+08:00 main=16388800
+2026-11-11T00:31:22.9951234+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:31:23.9704824+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:31:24.6538733+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:31:26.0701152+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:31:27.0884552+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:31:51.8829333+08:00 friends list=7542290 itemRect=0,0,0,0 rectResult=0
+2026-11-11T00:31:58.6979016+08:00 FAIL Theme=Modern Light Language=English error=Friend Details dialog was not found
+2026-11-11T00:32:21.2902817+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-6a17a848705f4f6180e269f390b5e384
+2026-11-11T00:32:28.5153742+08:00 main=5769744
+2026-11-11T00:32:31.7292238+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:32:32.7069372+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:32:33.3547519+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:32:34.7526676+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:32:35.7546501+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:33:00.3972770+08:00 friends class= count=0 text=[]
+2026-11-11T00:33:00.4115581+08:00 friends list=5969286 itemRect=0,0,0,0 rectResult=0
+2026-11-11T00:33:07.2395877+08:00 FAIL Theme=Modern Light Language=English error=Friend Details dialog was not found
+2026-11-11T00:33:35.5339702+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-c43e92381d8e425d9a30a8835ef22ad3
+2026-11-11T00:33:42.7903024+08:00 main=6034822
+2026-11-11T00:33:45.9393122+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:33:46.9269944+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:33:47.5811218+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:33:48.9584184+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:33:49.9531306+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:34:09.7826126+08:00 friends class= count=0 text=[]
+2026-11-11T00:34:09.7966042+08:00 friends list=3544698 itemRect=0,0,0,0 rectResult=0
+2026-11-11T00:34:16.5990817+08:00 FAIL Theme=Modern Light Language=English error=Friend Details dialog was not found
+2026-11-11T00:34:42.8171677+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-b13d3ee9cf1b4d8cba48dd5decfd93ad
+2026-11-11T00:34:50.0523486+08:00 main=3610234
+2026-11-11T00:34:53.1329481+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:34:54.1148832+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:34:54.7644799+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:34:56.1474658+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:34:57.1426047+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:34:57.1690308+08:00 friends before class=SysListView32 count=15
+2026-11-11T00:35:16.8772167+08:00 friends class= count=0 text=[]
+2026-11-11T00:35:16.8905870+08:00 friends list=6295432 itemRect=0,0,0,0 rectResult=0
+2026-11-11T00:35:23.7011039+08:00 FAIL Theme=Modern Light Language=English error=Friend Details dialog was not found
+2026-11-11T00:35:52.2302837+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-cd90c0e7a2dd4ed48ee59997aa994fb4
+2026-11-11T00:35:59.4531622+08:00 main=6360968
+2026-11-11T00:36:02.5441735+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:36:03.5216179+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:36:04.1704184+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:36:05.5585057+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:36:06.5639015+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:36:06.5901531+08:00 friends list=4986492 count=15
+2026-11-11T00:38:03.7991351+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-ee3e605427e446f6aaa21791e19e7c0f
+2026-11-11T00:38:11.0371494+08:00 main=28905376
+2026-11-11T00:38:14.4108407+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:38:15.3873641+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:38:16.0377226+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:38:17.4254110+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:38:18.4274043+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:38:18.4530006+08:00 friends list=8460046 count=15
+2026-11-11T00:38:19.5202819+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T00:38:20.8797918+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T00:38:21.8607875+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T00:38:23.1302814+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T00:38:23.7215787+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T00:38:41.1272251+08:00 FAIL Theme=Modern Light Language=English error=Copy Properties dialog was not found
+2026-11-11T00:39:16.1985900+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-b79df2b988944351a629aed0b9a75593
+2026-11-11T00:39:23.4236610+08:00 main=7342644
+2026-11-11T00:39:28.5514524+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:39:29.5376328+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:39:30.1882656+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:39:31.5937301+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:39:32.5993177+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:39:32.6251147+08:00 friends list=7148666 count=15
+2026-11-11T00:39:33.6775072+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T00:39:35.0395849+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T00:39:36.0367950+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T00:39:37.2914427+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T00:39:37.8879551+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T00:39:46.9600957+08:00 FAIL Theme=Modern Light Language=English error=Copy Properties dialog was not found
+2026-11-11T00:40:58.8384970+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-c05bd6160480461892d0927637f13eda
+2026-11-11T00:41:06.0729914+08:00 main=11866362
+2026-11-11T00:41:11.2398938+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:41:12.2369512+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:41:12.8886246+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:41:14.3039869+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:41:15.3147892+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:41:15.3260333+08:00 friends list=5641298 count=15
+2026-11-11T00:41:16.3779689+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T00:41:17.7483248+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T00:41:18.7435489+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T00:41:20.0136314+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T00:41:20.6105408+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T00:41:29.7262409+08:00 FAIL Theme=Modern Light Language=English error=Copy Properties dialog was not found
+2026-11-11T00:42:06.9834250+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-7cbde5ba972e45ddacaf355cffeeb0a2
+2026-11-11T00:42:14.1941281+08:00 main=13570230
+2026-11-11T00:42:19.3615876+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:42:20.3430069+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:42:20.9879420+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:42:22.3812275+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:42:23.4000709+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:42:23.4122418+08:00 friends list=10032232 count=15
+2026-11-11T00:42:24.4720313+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T00:42:25.8264318+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T00:42:26.8106674+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T00:42:28.0796183+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T00:42:28.6711030+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T00:42:37.7552870+08:00 FAIL Theme=Modern Light Language=English error=Copy Properties dialog was not found
+2026-11-11T00:43:01.8887211+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-5afb265cbcea4c17bbeabf8b25063a8d
+2026-11-11T00:43:09.1051578+08:00 main=12325128
+2026-11-11T00:43:14.3503372+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:43:15.3320458+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:43:15.9814095+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:43:17.3866666+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:43:18.4161741+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:43:18.4286920+08:00 friends list=8786886 count=15
+2026-11-11T00:43:19.4999829+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T00:43:20.8613138+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T00:43:21.8381021+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T00:43:23.0857219+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T00:43:23.6657968+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T00:43:32.7756221+08:00 FAIL Theme=Modern Light Language=English error=Copy Properties dialog was not found
+2026-11-11T00:43:57.5926360+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-2b217aa5083f45d59088a0c617f9c244
+2026-11-11T00:44:04.8175363+08:00 main=12780810
+2026-11-11T00:44:09.9576393+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:44:10.9394339+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:44:11.5986960+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:44:13.0162735+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:44:14.0277499+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:44:14.0395203+08:00 friends list=23531396 count=15
+2026-11-11T00:44:15.1008800+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T00:44:16.4488808+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T00:44:17.4214152+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T00:44:18.7096403+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T00:44:19.3010071+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T00:44:22.1150043+08:00 copy properties quickPaste=0 class= window=False
+2026-11-11T00:44:28.3996490+08:00 FAIL Theme=Modern Light Language=English error=Copy Properties dialog was not found
+2026-11-11T00:45:00.7849915+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-40a234e6aad3437a9a986bf10dfa21dd
+2026-11-11T00:45:07.9872781+08:00 main=76026072
+2026-11-11T00:45:13.1444243+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:45:14.1356507+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:45:14.7931529+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:45:16.1987386+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:45:17.2102130+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:45:17.2217931+08:00 friends list=11736266 count=15
+2026-11-11T00:45:18.2780449+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T00:45:19.6475902+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T00:45:20.6401563+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T00:45:21.9245284+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T00:45:22.5160366+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T00:45:25.3086591+08:00 copy properties quickPaste=0 class= window=False
+2026-11-11T00:45:31.5962715+08:00 FAIL Theme=Modern Light Language=English error=Copy Properties dialog was not found
+2026-11-11T00:47:19.1056657+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-86015aca6332494d862b5b09cc894413
+2026-11-11T00:47:26.3919353+08:00 main=10883264
+2026-11-11T00:47:31.5630611+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:47:32.5493677+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:47:33.1987020+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:47:34.6092001+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:47:35.6151577+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:47:35.6273482+08:00 friends list=6428164 count=15
+2026-11-11T00:47:36.6835727+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T00:47:38.0653811+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T00:47:39.0425412+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T00:47:40.3031168+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T00:47:40.8996206+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T00:47:43.7291622+08:00 copy properties quickPaste=0 class= window=False
+2026-11-11T00:47:50.0570887+08:00 FAIL Theme=Modern Light Language=English error=Copy Properties dialog was not found
+2026-11-11T00:48:51.5175664+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-4c2f8064634b411fab9e32478707177f
+2026-11-11T00:48:58.7573960+08:00 main=14815666
+2026-11-11T00:49:03.4903456+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-light.png size=663x696 print=True
+2026-11-11T00:49:04.4957148+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light.png size=537x263 print=True
+2026-11-11T00:49:05.8566855+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:49:06.8385621+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:49:07.4878259+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:49:08.8971092+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:49:09.9105932+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:49:09.9230591+08:00 friends list=7738490 count=15
+2026-11-11T00:49:10.9611978+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T00:49:12.3159891+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T00:49:13.3104482+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T00:49:14.5803119+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T00:49:15.1722202+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T00:49:23.2785656+08:00 FAIL Theme=Modern Light Language=English error=Delete Clip Data dialog was not found
+2026-11-11T00:50:06.0095498+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-d83c998c905446d08118d6cc3b480d08
+2026-11-11T00:50:13.2269143+08:00 main=20058162
+2026-11-11T00:50:15.9878056+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-light.png size=1779x795 print=True
+2026-11-11T00:50:20.9336673+08:00 UNVERIFIED ProgressWnd could not be captured before completion
+2026-11-11T00:50:24.2382461+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-light.png size=663x696 print=True
+2026-11-11T00:50:25.2342979+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light.png size=537x263 print=True
+2026-11-11T00:50:26.6015884+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:50:27.6014406+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:50:28.2496852+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:50:29.6588780+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:50:30.6485101+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:50:30.6603777+08:00 friends list=7738070 count=15
+2026-11-11T00:50:31.7062353+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T00:50:33.1005783+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T00:50:34.1065936+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T00:50:35.3587275+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T00:50:35.9498005+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T00:50:37.7555103+08:00 PASS Theme=Modern Light Language=English processAlive=True
+2026-11-11T00:50:49.5344181+08:00 BEGIN Theme=Modern Dark Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-dark-77b80585b25b4dd6b95ef45d4d0c75d3
+2026-11-11T00:50:56.7465290+08:00 main=11866042
+2026-11-11T00:50:59.4970307+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-dark.png size=1779x795 print=True
+2026-11-11T00:51:04.4462372+08:00 UNVERIFIED ProgressWnd could not be captured before completion
+2026-11-11T00:51:07.7275055+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-dark.png size=663x696 print=True
+2026-11-11T00:51:08.7291267+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-dark.png size=537x263 print=True
+2026-11-11T00:51:10.0943560+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-dark.png size=1289x996 print=True
+2026-11-11T00:51:11.0926617+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-dark.png size=1289x996 print=True
+2026-11-11T00:51:11.7443151+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-dark.png size=497x812 print=True
+2026-11-11T00:51:13.1475040+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-dark.png size=1289x996 print=True
+2026-11-11T00:51:14.1550113+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-dark.png size=1289x996 print=True
+2026-11-11T00:51:14.1661683+08:00 friends list=21236524 count=15
+2026-11-11T00:51:15.2128083+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-dark.png size=461x235 print=True
+2026-11-11T00:51:16.5760143+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-dark.png size=1289x996 print=True
+2026-11-11T00:51:17.5557977+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-dark.png size=1289x996 print=True
+2026-11-11T00:51:18.8194599+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-dark.png size=576x467 print=True
+2026-11-11T00:51:19.4109281+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-dark.png size=423x163 print=True
+2026-11-11T00:51:21.2143137+08:00 PASS Theme=Modern Dark Language=English processAlive=True
+2026-11-11T00:54:25.7241810+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-26db72a45f9b477983616d28b10e28cd
+2026-11-11T00:54:32.9476882+08:00 main=11997114
+2026-11-11T00:54:35.6968680+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-light.png size=1779x795 print=True
+2026-11-11T00:54:38.9881519+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-light.png size=663x696 print=True
+2026-11-11T00:54:39.9958217+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light.png size=537x263 print=True
+2026-11-11T00:54:41.3717711+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:54:42.3611050+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:54:42.9999214+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:54:44.4046198+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:54:45.3995136+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:54:45.4111602+08:00 friends list=7869456 count=15
+2026-11-11T00:54:46.4513117+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T00:54:46.4610654+08:00 friend detail child id=1016 class=Edit visible=True rect=1273,735,1460,774 text=[]
+2026-11-11T00:54:46.4696869+08:00 friend detail child id=1017 class=Edit visible=True rect=1264,780,1599,819 text=[]
+2026-11-11T00:54:46.4767394+08:00 friend detail child id=1015 class=Button visible=True rect=1264,704,1555,728 text=[Send All Copies to this friend]
+2026-11-11T00:54:46.4845913+08:00 friend detail child id=1 class=Button visible=True rect=1358,825,1472,869 text=[OK]
+2026-11-11T00:54:46.4914842+08:00 friend detail child id=2 class=Button visible=True rect=1477,825,1591,869 text=[Cancel]
+2026-11-11T00:54:46.4988891+08:00 friend detail child id=2052 class=Static visible=True rect=1174,742,1267,761 text=[IP/Name]
+2026-11-11T00:54:46.5062938+08:00 friend detail child id=2053 class=Static visible=True rect=1174,784,1258,803 text=[Description]
+2026-11-11T00:54:47.8589049+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T00:54:48.8494361+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T00:54:50.1029471+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T00:54:50.6940852+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T00:54:52.5111093+08:00 PASS Theme=Modern Light Language=English processAlive=True
+2026-11-11T00:56:44.0970414+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-95d99d7805da4291b4a2d8b32c42b64d
+2026-11-11T00:56:51.2812155+08:00 main=12062658
+2026-11-11T00:56:59.5685909+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-light.png size=1779x795 print=True
+2026-11-11T00:57:03.6754142+08:00 UNVERIFIED ProgressWnd could not be captured before completion
+2026-11-11T00:57:06.9952822+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-light.png size=663x696 print=True
+2026-11-11T00:57:08.0235623+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light.png size=537x263 print=True
+2026-11-11T00:57:09.4281982+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:57:10.4052523+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T00:57:11.0496008+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T00:57:11.8209908+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light-screen.png size=497x812
+2026-11-11T00:57:13.2101426+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T00:57:14.2108892+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T00:57:14.2216340+08:00 friends list=8655802 count=15
+2026-11-11T00:57:15.2683857+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T00:57:16.0118674+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light-screen.png size=461x235
+2026-11-11T00:57:16.0211215+08:00 friend detail child id=1016 class=Edit visible=True rect=1273,735,1460,774 text=[]
+2026-11-11T00:57:16.0287342+08:00 friend detail child id=1017 class=Edit visible=True rect=1264,780,1599,819 text=[]
+2026-11-11T00:57:16.0539232+08:00 friend detail child id=1015 class=Button visible=True rect=1264,704,1555,728 text=[Send All Copies to this friend]
+2026-11-11T00:57:16.0721292+08:00 friend detail child id=1 class=Button visible=True rect=1358,825,1472,869 text=[OK]
+2026-11-11T00:57:16.1019085+08:00 friend detail child id=2 class=Button visible=True rect=1477,825,1591,869 text=[Cancel]
+2026-11-11T00:57:16.1275380+08:00 friend detail child id=2052 class=Static visible=True rect=1174,742,1267,761 text=[IP/Name]
+2026-11-11T00:57:16.1541602+08:00 friend detail child id=2053 class=Static visible=True rect=1174,784,1258,803 text=[Description]
+2026-11-11T00:57:17.5055851+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T00:57:18.4894494+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T00:57:19.7525603+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T00:57:20.3454523+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T00:57:22.1485138+08:00 PASS Theme=Modern Light Language=English processAlive=True
+2026-11-11T01:01:30.9180557+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-e2626611ec2048099857218848320a53
+2026-11-11T01:01:38.1259893+08:00 main=18222314
+2026-11-11T01:01:49.5931371+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-light.png size=1779x795 print=True
+2026-11-11T01:01:53.6122450+08:00 UNVERIFIED ProgressWnd could not be captured before completion
+2026-11-11T01:01:56.9015908+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-light.png size=663x696 print=True
+2026-11-11T01:01:57.9240405+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light.png size=537x263 print=True
+2026-11-11T01:01:58.6799908+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light-screen.png size=537x263
+2026-11-11T01:02:00.0725650+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T01:02:01.0546736+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T01:02:01.6999089+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T01:02:02.4387383+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light-screen.png size=497x812
+2026-11-11T01:02:03.8524727+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T01:02:04.6015796+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light-screen.png size=1289x996
+2026-11-11T01:02:05.6334168+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T01:02:05.6446105+08:00 friends list=9442256 count=15
+2026-11-11T01:02:06.6897899+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T01:02:07.4280551+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light-screen.png size=461x235
+2026-11-11T01:02:07.4378124+08:00 friend detail child id=1016 class=Edit visible=True rect=1279,735,1460,774 text=[]
+2026-11-11T01:02:07.4541011+08:00 friend detail child id=1017 class=Edit visible=True rect=1281,780,1599,819 text=[]
+2026-11-11T01:02:07.4711993+08:00 friend detail child id=1015 class=Button visible=True rect=1264,704,1555,728 text=[Send All Copies to this friend]
+2026-11-11T01:02:07.4955030+08:00 friend detail child id=1 class=Button visible=True rect=1358,825,1472,869 text=[OK]
+2026-11-11T01:02:07.5251206+08:00 friend detail child id=2 class=Button visible=True rect=1477,825,1591,869 text=[Cancel]
+2026-11-11T01:02:07.5539630+08:00 friend detail child id=2052 class=Static visible=True rect=1174,742,1267,761 text=[IP/Name]
+2026-11-11T01:02:07.5825882+08:00 friend detail child id=2053 class=Static visible=True rect=1174,784,1269,803 text=[Description]
+2026-11-11T01:02:08.9725075+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T01:02:09.7086368+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light-screen.png size=1289x996
+2026-11-11T01:02:10.7117280+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T01:02:11.4729401+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light-screen.png size=1289x996
+2026-11-11T01:02:12.7645899+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T01:02:13.3565108+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T01:02:15.1518315+08:00 PASS Theme=Modern Light Language=English processAlive=True
+2026-11-11T01:04:10.9175410+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-ac484f18295e439692e68f8e0b14c800
+2026-11-11T01:04:18.1488095+08:00 main=20843720
+2026-11-11T01:04:29.5814948+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-light.png size=1779x795 print=True
+2026-11-11T01:04:33.6443634+08:00 UNVERIFIED ProgressWnd could not be captured before completion
+2026-11-11T01:04:36.9342863+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-light.png size=663x696 print=True
+2026-11-11T01:04:37.9402476+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light.png size=537x263 print=True
+2026-11-11T01:04:38.6948132+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light-screen.png size=537x263
+2026-11-11T01:04:40.0571190+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T01:04:41.0445356+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T01:04:41.6889429+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T01:04:42.4182039+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light-screen.png size=497x812
+2026-11-11T01:04:43.8286136+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T01:04:44.5701902+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light-screen.png size=1289x996
+2026-11-11T01:04:45.5952246+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T01:04:45.6063318+08:00 friends list=8131600 count=15
+2026-11-11T01:04:46.6575815+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T01:04:47.4018692+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light-screen.png size=461x235
+2026-11-11T01:04:47.4128842+08:00 friend detail child id=1016 class=Edit visible=True rect=1279,735,1460,774 text=[]
+2026-11-11T01:04:47.4424018+08:00 friend detail child id=1017 class=Edit visible=True rect=1281,780,1599,819 text=[]
+2026-11-11T01:04:47.4689891+08:00 friend detail child id=1015 class=Button visible=True rect=1264,704,1555,728 text=[Send All Copies to this friend]
+2026-11-11T01:04:47.4905644+08:00 friend detail child id=1 class=Button visible=True rect=1358,825,1472,869 text=[OK]
+2026-11-11T01:04:47.5084493+08:00 friend detail child id=2 class=Button visible=True rect=1477,825,1591,869 text=[Cancel]
+2026-11-11T01:04:47.5369732+08:00 friend detail child id=2052 class=Static visible=True rect=1174,742,1267,761 text=[IP/Name]
+2026-11-11T01:04:47.5557050+08:00 friend detail child id=2053 class=Static visible=True rect=1174,784,1269,803 text=[Description]
+2026-11-11T01:04:48.9388170+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T01:04:49.6919922+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light-screen.png size=1289x996
+2026-11-11T01:04:50.6846006+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T01:04:51.4451298+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light-screen.png size=1289x996
+2026-11-11T01:04:52.7479516+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T01:04:53.3394569+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T01:04:55.1503545+08:00 PASS Theme=Modern Light Language=English processAlive=True
+2026-11-11T01:05:54.3552153+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-85ea2ea1c3c340ac9d50cf9c9bee7ef5
+2026-11-11T01:06:01.5564957+08:00 main=30933030
+2026-11-11T01:06:13.0203607+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-light.png size=1779x795 print=True
+2026-11-11T01:06:17.0574414+08:00 UNVERIFIED ProgressWnd could not be captured before completion
+2026-11-11T01:06:20.3667328+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-light.png size=663x696 print=True
+2026-11-11T01:06:21.3857886+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light.png size=537x263 print=True
+2026-11-11T01:06:22.1268548+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light-screen.png size=537x263
+2026-11-11T01:06:23.4838863+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T01:06:24.4621083+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T01:06:25.1025796+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T01:06:25.8367618+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light-screen.png size=497x812
+2026-11-11T01:06:27.2567421+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T01:06:28.0018104+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light-screen.png size=1289x996
+2026-11-11T01:06:29.0340874+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T01:06:29.0456749+08:00 friends list=10884200 count=15
+2026-11-11T01:06:30.1007453+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T01:06:30.8350188+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light-screen.png size=461x235
+2026-11-11T01:06:30.8446252+08:00 friend detail child id=1016 class=Edit visible=True rect=1279,735,1460,774 text=[]
+2026-11-11T01:06:30.8515533+08:00 friend detail child id=1017 class=Edit visible=True rect=1281,780,1599,819 text=[]
+2026-11-11T01:06:30.8760906+08:00 friend detail child id=1015 class=Button visible=True rect=1264,704,1570,728 text=[Send All Copies to this friend]
+2026-11-11T01:06:30.8939239+08:00 friend detail child id=1 class=Button visible=True rect=1358,825,1472,869 text=[OK]
+2026-11-11T01:06:30.9256979+08:00 friend detail child id=2 class=Button visible=True rect=1477,825,1591,869 text=[Cancel]
+2026-11-11T01:06:30.9561546+08:00 friend detail child id=2052 class=Static visible=True rect=1174,742,1267,761 text=[IP/Name]
+2026-11-11T01:06:30.9899045+08:00 friend detail child id=2053 class=Static visible=True rect=1174,784,1269,803 text=[Description]
+2026-11-11T01:06:32.3653149+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T01:06:33.1042550+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light-screen.png size=1289x996
+2026-11-11T01:06:34.1165799+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T01:06:34.8609673+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light-screen.png size=1289x996
+2026-11-11T01:06:36.1307530+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T01:06:36.7117545+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T01:06:38.5092645+08:00 PASS Theme=Modern Light Language=English processAlive=True
+2026-11-11T01:08:56.9318000+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-f9859fd8fc66448992c9e5ebc8b0edcb
+2026-11-11T01:09:04.1575490+08:00 main=10752076
+2026-11-11T01:09:15.6263607+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-light.png size=1779x795 print=True
+2026-11-11T01:09:19.6521460+08:00 UNVERIFIED ProgressWnd could not be captured before completion
+2026-11-11T01:09:22.9563304+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-light.png size=702x696 print=True
+2026-11-11T01:09:23.9574800+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light.png size=537x263 print=True
+2026-11-11T01:09:24.7036212+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light-screen.png size=537x263
+2026-11-11T01:09:26.0680527+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T01:09:27.0334898+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T01:09:27.6734958+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T01:09:28.4010131+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light-screen.png size=497x812
+2026-11-11T01:09:29.8122179+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T01:09:30.5670632+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light-screen.png size=1289x996
+2026-11-11T01:09:30.5908732+08:00 copy buffer child id=2082 class=msctls_hotkey32 visible=True rect=932,400,1152,442 text=[]
+2026-11-11T01:09:30.6218216+08:00 copy buffer child id=2085 class=Button visible=True rect=1161,400,1235,442 text=[Win]
+2026-11-11T01:09:30.6505092+08:00 copy buffer child id=2083 class=msctls_hotkey32 visible=True rect=932,448,1152,493 text=[]
+2026-11-11T01:09:30.6803793+08:00 copy buffer child id=2086 class=Button visible=True rect=1161,448,1235,490 text=[Win]
+2026-11-11T01:09:30.7044555+08:00 copy buffer child id=2084 class=msctls_hotkey32 visible=True rect=1367,448,1587,493 text=[]
+2026-11-11T01:09:30.7200658+08:00 copy buffer child id=2087 class=Button visible=True rect=1595,448,1686,490 text=[Win]
+2026-11-11T01:09:30.7378248+08:00 copy buffer child id=1042 class=Button visible=True rect=1246,397,1466,439 text=[Play Sound on Copy]
+2026-11-11T01:09:30.7583277+08:00 copy buffer child id=2089 class=msctls_hotkey32 visible=True rect=932,550,1152,592 text=[]
+2026-11-11T01:09:30.7862450+08:00 copy buffer child id=2090 class=Button visible=True rect=1161,550,1235,592 text=[Win]
+2026-11-11T01:09:30.8161173+08:00 copy buffer child id=2091 class=msctls_hotkey32 visible=True rect=932,598,1152,643 text=[]
+2026-11-11T01:09:30.8337167+08:00 copy buffer child id=2092 class=Button visible=True rect=1161,598,1235,640 text=[Win]
+2026-11-11T01:09:30.8606815+08:00 copy buffer child id=2095 class=msctls_hotkey32 visible=True rect=1367,598,1587,643 text=[]
+2026-11-11T01:09:30.8902702+08:00 copy buffer child id=2096 class=Button visible=True rect=1595,598,1686,640 text=[Win]
+2026-11-11T01:09:30.9152960+08:00 copy buffer child id=1043 class=Button visible=True rect=1246,550,1466,592 text=[Play Sound on Copy]
+2026-11-11T01:09:30.9342381+08:00 copy buffer child id=2099 class=msctls_hotkey32 visible=True rect=932,700,1152,742 text=[]
+2026-11-11T01:09:30.9584657+08:00 copy buffer child id=2100 class=Button visible=True rect=1161,700,1235,742 text=[Win]
+2026-11-11T01:09:30.9807740+08:00 copy buffer child id=2101 class=msctls_hotkey32 visible=True rect=932,748,1152,793 text=[]
+2026-11-11T01:09:31.0053432+08:00 copy buffer child id=2102 class=Button visible=True rect=1161,748,1235,790 text=[Win]
+2026-11-11T01:09:31.0286619+08:00 copy buffer child id=2105 class=msctls_hotkey32 visible=True rect=1367,748,1587,793 text=[]
+2026-11-11T01:09:31.0458495+08:00 copy buffer child id=2106 class=Button visible=True rect=1595,748,1686,790 text=[Win]
+2026-11-11T01:09:31.0675028+08:00 copy buffer child id=1044 class=Button visible=True rect=1246,700,1466,742 text=[Play Sound on Copy]
+2026-11-11T01:09:31.0856541+08:00 copy buffer child id=2079 class=Static visible=True rect=811,400,927,442 text=[Copy]
+2026-11-11T01:09:31.1080771+08:00 copy buffer child id=2080 class=Static visible=True rect=811,448,929,490 text=[Paste]
+2026-11-11T01:09:31.1374382+08:00 copy buffer child id=2081 class=Static visible=True rect=1246,445,1364,487 text=[Cut]
+2026-11-11T01:09:31.1579090+08:00 copy buffer child id=2093 class=Static visible=True rect=811,550,927,592 text=[Copy]
+2026-11-11T01:09:31.1767816+08:00 copy buffer child id=2094 class=Static visible=True rect=811,598,929,640 text=[Paste]
+2026-11-11T01:09:31.1993901+08:00 copy buffer child id=2097 class=Static visible=True rect=1246,598,1364,640 text=[Cut]
+2026-11-11T01:09:31.2159499+08:00 copy buffer child id=2103 class=Static visible=True rect=811,700,927,742 text=[Copy]
+2026-11-11T01:09:31.2395487+08:00 copy buffer child id=2104 class=Static visible=True rect=811,748,929,790 text=[Paste]
+2026-11-11T01:09:31.2601586+08:00 copy buffer child id=2107 class=Static visible=True rect=1246,748,1364,790 text=[Cut]
+2026-11-11T01:09:31.2867095+08:00 copy buffer child id=2109 class=msctls_hotkey32 visible=True rect=932,859,1152,901 text=[]
+2026-11-11T01:09:31.3125853+08:00 copy buffer child id=2110 class=Button visible=True rect=1161,859,1235,901 text=[Win]
+2026-11-11T01:09:31.3429688+08:00 copy buffer child id=2111 class=msctls_hotkey32 visible=True rect=932,907,1152,952 text=[]
+2026-11-11T01:09:31.3738875+08:00 copy buffer child id=2112 class=Button visible=True rect=1161,907,1235,949 text=[Win]
+2026-11-11T01:09:31.3967849+08:00 copy buffer child id=2113 class=msctls_hotkey32 visible=True rect=1367,907,1587,952 text=[]
+2026-11-11T01:09:31.4145796+08:00 copy buffer child id=2114 class=Button visible=True rect=1595,907,1686,949 text=[Win]
+2026-11-11T01:09:31.4373757+08:00 copy buffer child id=1045 class=Button visible=True rect=1246,859,1466,901 text=[Play Sound on Copy]
+2026-11-11T01:09:31.4647571+08:00 copy buffer child id=2115 class=Static visible=True rect=811,859,927,901 text=[Copy]
+2026-11-11T01:09:31.4831664+08:00 copy buffer child id=2116 class=Static visible=True rect=811,907,929,949 text=[Paste]
+2026-11-11T01:09:31.5086320+08:00 copy buffer child id=2117 class=Static visible=True rect=1246,907,1364,949 text=[Cut]
+2026-11-11T01:09:31.5244191+08:00 copy buffer child id=2119 class=msctls_hotkey32 visible=True rect=932,1021,1152,1063 text=[]
+2026-11-11T01:09:31.5443101+08:00 copy buffer child id=2120 class=Button visible=True rect=1161,1021,1235,1063 text=[Win]
+2026-11-11T01:09:31.5620112+08:00 copy buffer child id=2121 class=msctls_hotkey32 visible=True rect=932,1069,1152,1114 text=[]
+2026-11-11T01:09:31.5772980+08:00 copy buffer child id=2122 class=Button visible=True rect=1161,1069,1235,1111 text=[Win]
+2026-11-11T01:09:31.6051954+08:00 copy buffer child id=2123 class=msctls_hotkey32 visible=True rect=1367,1069,1587,1114 text=[]
+2026-11-11T01:09:31.6262638+08:00 copy buffer child id=2124 class=Button visible=True rect=1595,1069,1686,1111 text=[Win]
+2026-11-11T01:09:31.6444473+08:00 copy buffer child id=1046 class=Button visible=True rect=1246,1021,1466,1063 text=[Play Sound on Copy]
+2026-11-11T01:09:31.6733050+08:00 copy buffer child id=2125 class=Static visible=True rect=811,1021,927,1063 text=[Copy]
+2026-11-11T01:09:31.7052371+08:00 copy buffer child id=2126 class=Static visible=True rect=811,1069,929,1111 text=[Paste]
+2026-11-11T01:09:31.7262631+08:00 copy buffer child id=2127 class=Static visible=True rect=1246,1069,1364,1111 text=[Cut]
+2026-11-11T01:09:31.7522291+08:00 copy buffer child id=2088 class=Button visible=True rect=778,373,1782,514 text=[Copy Buffer 1]
+2026-11-11T01:09:31.7707816+08:00 copy buffer child id=2098 class=Button visible=True rect=778,523,1782,664 text=[Copy Buffer 2]
+2026-11-11T01:09:31.7892199+08:00 copy buffer child id=2108 class=Button visible=True rect=778,673,1782,823 text=[Copy Buffer 3]
+2026-11-11T01:09:31.8148212+08:00 copy buffer child id=2118 class=Button visible=True rect=778,832,1782,982 text=[Copy Buffer 4]
+2026-11-11T01:09:31.8334538+08:00 copy buffer child id=2128 class=Button visible=True rect=778,991,1782,1141 text=[Copy Buffer 5]
+2026-11-11T01:09:32.8636505+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T01:09:32.8750180+08:00 friends list=5903430 count=15
+2026-11-11T01:09:33.9179503+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T01:09:34.6525950+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light-screen.png size=461x235
+2026-11-11T01:09:34.6611357+08:00 friend detail child id=1016 class=Edit visible=True rect=1279,735,1460,774 text=[]
+2026-11-11T01:09:34.6683160+08:00 friend detail child id=1017 class=Edit visible=True rect=1281,780,1599,819 text=[]
+2026-11-11T01:09:34.6768229+08:00 friend detail child id=1015 class=Button visible=True rect=1264,704,1570,728 text=[Send All Copies to this friend]
+2026-11-11T01:09:34.7064190+08:00 friend detail child id=1 class=Button visible=True rect=1358,825,1472,869 text=[OK]
+2026-11-11T01:09:34.7318359+08:00 friend detail child id=2 class=Button visible=True rect=1477,825,1591,869 text=[Cancel]
+2026-11-11T01:09:34.7641439+08:00 friend detail child id=2052 class=Static visible=True rect=1174,742,1267,761 text=[IP/Name]
+2026-11-11T01:09:34.7819498+08:00 friend detail child id=2053 class=Static visible=True rect=1174,784,1269,803 text=[Description]
+2026-11-11T01:09:36.1661232+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T01:09:36.9043114+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light-screen.png size=1289x996
+2026-11-11T01:09:37.9137951+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T01:09:38.6638691+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light-screen.png size=1289x996
+2026-11-11T01:09:39.9707634+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T01:09:40.5671745+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T01:09:42.3641520+08:00 PASS Theme=Modern Light Language=English processAlive=True
+2026-11-11T01:12:29.9450812+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-537b7561cced4e63ae48e388385de8ac
+2026-11-11T01:12:37.1710124+08:00 main=13304060
+2026-11-11T01:12:48.6608549+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-light.png size=1779x795 print=True
+2026-11-11T01:12:51.9507781+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-light.png size=702x696 print=True
+2026-11-11T01:12:52.9630258+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light.png size=537x263 print=True
+2026-11-11T01:12:53.7076712+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light-screen.png size=537x263
+2026-11-11T01:12:55.0727032+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T01:12:56.0438526+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T01:12:56.6891336+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T01:12:57.4273412+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light-screen.png size=497x812
+2026-11-11T01:12:58.8169098+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T01:12:59.5533863+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light-screen.png size=1289x996
+2026-11-11T01:12:59.5780375+08:00 copy buffer child id=2082 class=msctls_hotkey32 visible=True rect=932,400,1152,442 text=[]
+2026-11-11T01:12:59.5962848+08:00 copy buffer child id=2085 class=Button visible=True rect=1161,400,1250,442 text=[Win]
+2026-11-11T01:12:59.6261144+08:00 copy buffer child id=2083 class=msctls_hotkey32 visible=True rect=932,448,1152,493 text=[]
+2026-11-11T01:12:59.6503349+08:00 copy buffer child id=2086 class=Button visible=True rect=1161,448,1250,490 text=[Win]
+2026-11-11T01:12:59.6763568+08:00 copy buffer child id=2084 class=msctls_hotkey32 visible=True rect=1382,448,1602,493 text=[]
+2026-11-11T01:12:59.6928828+08:00 copy buffer child id=2087 class=Button visible=True rect=1610,448,1701,490 text=[Win]
+2026-11-11T01:12:59.7250249+08:00 copy buffer child id=1042 class=Button visible=True rect=1261,397,1492,439 text=[Play Sound on Copy]
+2026-11-11T01:12:59.7435278+08:00 copy buffer child id=2089 class=msctls_hotkey32 visible=True rect=932,550,1152,592 text=[]
+2026-11-11T01:12:59.7683669+08:00 copy buffer child id=2090 class=Button visible=True rect=1161,550,1250,592 text=[Win]
+2026-11-11T01:12:59.8008833+08:00 copy buffer child id=2091 class=msctls_hotkey32 visible=True rect=932,598,1152,643 text=[]
+2026-11-11T01:12:59.8238485+08:00 copy buffer child id=2092 class=Button visible=True rect=1161,598,1250,640 text=[Win]
+2026-11-11T01:12:59.8493160+08:00 copy buffer child id=2095 class=msctls_hotkey32 visible=True rect=1382,598,1602,643 text=[]
+2026-11-11T01:12:59.8803296+08:00 copy buffer child id=2096 class=Button visible=True rect=1610,598,1701,640 text=[Win]
+2026-11-11T01:12:59.9114325+08:00 copy buffer child id=1043 class=Button visible=True rect=1261,550,1492,592 text=[Play Sound on Copy]
+2026-11-11T01:12:59.9268598+08:00 copy buffer child id=2099 class=msctls_hotkey32 visible=True rect=932,700,1152,742 text=[]
+2026-11-11T01:12:59.9570148+08:00 copy buffer child id=2100 class=Button visible=True rect=1161,700,1250,742 text=[Win]
+2026-11-11T01:12:59.9862179+08:00 copy buffer child id=2101 class=msctls_hotkey32 visible=True rect=932,748,1152,793 text=[]
+2026-11-11T01:13:00.0201392+08:00 copy buffer child id=2102 class=Button visible=True rect=1161,748,1250,790 text=[Win]
+2026-11-11T01:13:00.0514502+08:00 copy buffer child id=2105 class=msctls_hotkey32 visible=True rect=1382,748,1602,793 text=[]
+2026-11-11T01:13:00.0803616+08:00 copy buffer child id=2106 class=Button visible=True rect=1610,748,1701,790 text=[Win]
+2026-11-11T01:13:00.1115109+08:00 copy buffer child id=1044 class=Button visible=True rect=1261,700,1492,742 text=[Play Sound on Copy]
+2026-11-11T01:13:00.1343961+08:00 copy buffer child id=2079 class=Static visible=True rect=811,400,927,442 text=[Copy]
+2026-11-11T01:13:00.1652510+08:00 copy buffer child id=2080 class=Static visible=True rect=811,448,929,490 text=[Paste]
+2026-11-11T01:13:00.1935277+08:00 copy buffer child id=2081 class=Static visible=True rect=1261,445,1379,487 text=[Cut]
+2026-11-11T01:13:00.2252397+08:00 copy buffer child id=2093 class=Static visible=True rect=811,550,927,592 text=[Copy]
+2026-11-11T01:13:00.2522913+08:00 copy buffer child id=2094 class=Static visible=True rect=811,598,929,640 text=[Paste]
+2026-11-11T01:13:00.2737962+08:00 copy buffer child id=2097 class=Static visible=True rect=1261,598,1379,640 text=[Cut]
+2026-11-11T01:13:00.3013817+08:00 copy buffer child id=2103 class=Static visible=True rect=811,700,927,742 text=[Copy]
+2026-11-11T01:13:00.3315372+08:00 copy buffer child id=2104 class=Static visible=True rect=811,748,929,790 text=[Paste]
+2026-11-11T01:13:00.3542521+08:00 copy buffer child id=2107 class=Static visible=True rect=1261,748,1379,790 text=[Cut]
+2026-11-11T01:13:00.3844189+08:00 copy buffer child id=2109 class=msctls_hotkey32 visible=True rect=932,859,1152,901 text=[]
+2026-11-11T01:13:00.4054514+08:00 copy buffer child id=2110 class=Button visible=True rect=1161,859,1250,901 text=[Win]
+2026-11-11T01:13:00.4236932+08:00 copy buffer child id=2111 class=msctls_hotkey32 visible=True rect=932,907,1152,952 text=[]
+2026-11-11T01:13:00.4504881+08:00 copy buffer child id=2112 class=Button visible=True rect=1161,907,1250,949 text=[Win]
+2026-11-11T01:13:00.4778115+08:00 copy buffer child id=2113 class=msctls_hotkey32 visible=True rect=1382,907,1602,952 text=[]
+2026-11-11T01:13:00.5087106+08:00 copy buffer child id=2114 class=Button visible=True rect=1610,907,1701,949 text=[Win]
+2026-11-11T01:13:00.5321009+08:00 copy buffer child id=1045 class=Button visible=True rect=1261,859,1492,901 text=[Play Sound on Copy]
+2026-11-11T01:13:00.5613032+08:00 copy buffer child id=2115 class=Static visible=True rect=811,859,927,901 text=[Copy]
+2026-11-11T01:13:00.5873173+08:00 copy buffer child id=2116 class=Static visible=True rect=811,907,929,949 text=[Paste]
+2026-11-11T01:13:00.6106656+08:00 copy buffer child id=2117 class=Static visible=True rect=1261,907,1379,949 text=[Cut]
+2026-11-11T01:13:00.6409985+08:00 copy buffer child id=2119 class=msctls_hotkey32 visible=True rect=932,1021,1152,1063 text=[]
+2026-11-11T01:13:00.6697264+08:00 copy buffer child id=2120 class=Button visible=True rect=1161,1021,1250,1063 text=[Win]
+2026-11-11T01:13:00.7018413+08:00 copy buffer child id=2121 class=msctls_hotkey32 visible=True rect=932,1069,1152,1114 text=[]
+2026-11-11T01:13:00.7341885+08:00 copy buffer child id=2122 class=Button visible=True rect=1161,1069,1250,1111 text=[Win]
+2026-11-11T01:13:00.7542169+08:00 copy buffer child id=2123 class=msctls_hotkey32 visible=True rect=1382,1069,1602,1114 text=[]
+2026-11-11T01:13:00.7809954+08:00 copy buffer child id=2124 class=Button visible=True rect=1610,1069,1701,1111 text=[Win]
+2026-11-11T01:13:00.8156523+08:00 copy buffer child id=1046 class=Button visible=True rect=1261,1021,1492,1063 text=[Play Sound on Copy]
+2026-11-11T01:13:00.8432187+08:00 copy buffer child id=2125 class=Static visible=True rect=811,1021,927,1063 text=[Copy]
+2026-11-11T01:13:00.8659522+08:00 copy buffer child id=2126 class=Static visible=True rect=811,1069,929,1111 text=[Paste]
+2026-11-11T01:13:00.8961828+08:00 copy buffer child id=2127 class=Static visible=True rect=1261,1069,1379,1111 text=[Cut]
+2026-11-11T01:13:00.9232609+08:00 copy buffer child id=2088 class=Button visible=True rect=778,373,1782,514 text=[Copy Buffer 1]
+2026-11-11T01:13:00.9515108+08:00 copy buffer child id=2098 class=Button visible=True rect=778,523,1782,664 text=[Copy Buffer 2]
+2026-11-11T01:13:00.9753830+08:00 copy buffer child id=2108 class=Button visible=True rect=778,673,1782,823 text=[Copy Buffer 3]
+2026-11-11T01:13:01.0015980+08:00 copy buffer child id=2118 class=Button visible=True rect=778,832,1782,982 text=[Copy Buffer 4]
+2026-11-11T01:13:01.0291031+08:00 copy buffer child id=2128 class=Button visible=True rect=778,991,1782,1141 text=[Copy Buffer 5]
+2026-11-11T01:13:02.0571936+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T01:13:02.0710443+08:00 friends list=9704400 count=15
+2026-11-11T01:13:03.1399480+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T01:13:03.8756266+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light-screen.png size=461x235
+2026-11-11T01:13:03.8831415+08:00 friend detail child id=1016 class=Edit visible=True rect=1279,735,1460,774 text=[]
+2026-11-11T01:13:03.8909279+08:00 friend detail child id=1017 class=Edit visible=True rect=1281,780,1599,819 text=[]
+2026-11-11T01:13:03.8974875+08:00 friend detail child id=1015 class=Button visible=True rect=1264,704,1570,728 text=[Send All Copies to this friend]
+2026-11-11T01:13:03.9052225+08:00 friend detail child id=1 class=Button visible=True rect=1358,825,1472,869 text=[OK]
+2026-11-11T01:13:03.9232759+08:00 friend detail child id=2 class=Button visible=True rect=1477,825,1591,869 text=[Cancel]
+2026-11-11T01:13:03.9416176+08:00 friend detail child id=2052 class=Static visible=True rect=1174,742,1267,761 text=[IP/Name]
+2026-11-11T01:13:03.9580956+08:00 friend detail child id=2053 class=Static visible=True rect=1174,784,1269,803 text=[Description]
+2026-11-11T01:13:05.3754658+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T01:13:06.1109907+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light-screen.png size=1289x996
+2026-11-11T01:13:07.1215648+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T01:13:07.8669263+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light-screen.png size=1289x996
+2026-11-11T01:13:09.1535875+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T01:13:09.7504436+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T01:13:11.5378456+08:00 PASS Theme=Modern Light Language=English processAlive=True
+2026-11-11T01:14:31.6255662+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-8f1dd665f6b1471ab9667a453ceeb19d
+2026-11-11T01:14:38.8429901+08:00 main=15273976
+2026-11-11T01:14:50.2772805+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-light.png size=1779x795 print=True
+2026-11-11T01:14:53.5573307+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-light.png size=717x696 print=True
+2026-11-11T01:14:54.5631231+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light.png size=537x263 print=True
+2026-11-11T01:14:55.3096282+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light-screen.png size=537x263
+2026-11-11T01:14:56.6737363+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T01:14:57.6622966+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T01:14:58.3064810+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T01:14:59.0449584+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light-screen.png size=497x812
+2026-11-11T01:15:00.4787634+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T01:15:01.2245676+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light-screen.png size=1289x996
+2026-11-11T01:15:01.2535542+08:00 copy buffer child id=2082 class=msctls_hotkey32 visible=True rect=932,400,1152,442 text=[]
+2026-11-11T01:15:01.2709854+08:00 copy buffer child id=2085 class=Button visible=True rect=1161,400,1250,442 text=[Win]
+2026-11-11T01:15:01.2975497+08:00 copy buffer child id=2083 class=msctls_hotkey32 visible=True rect=932,448,1152,493 text=[]
+2026-11-11T01:15:01.3282512+08:00 copy buffer child id=2086 class=Button visible=True rect=1161,448,1250,490 text=[Win]
+2026-11-11T01:15:01.3579901+08:00 copy buffer child id=2084 class=msctls_hotkey32 visible=True rect=1382,448,1602,493 text=[]
+2026-11-11T01:15:01.3888449+08:00 copy buffer child id=2087 class=Button visible=True rect=1610,448,1701,490 text=[Win]
+2026-11-11T01:15:01.4182510+08:00 copy buffer child id=1042 class=Button visible=True rect=1261,397,1492,439 text=[Play Sound on Copy]
+2026-11-11T01:15:01.4468342+08:00 copy buffer child id=2089 class=msctls_hotkey32 visible=True rect=932,550,1152,592 text=[]
+2026-11-11T01:15:01.4714867+08:00 copy buffer child id=2090 class=Button visible=True rect=1161,550,1250,592 text=[Win]
+2026-11-11T01:15:01.5085398+08:00 copy buffer child id=2091 class=msctls_hotkey32 visible=True rect=932,598,1152,643 text=[]
+2026-11-11T01:15:01.5252854+08:00 copy buffer child id=2092 class=Button visible=True rect=1161,598,1250,640 text=[Win]
+2026-11-11T01:15:01.5427543+08:00 copy buffer child id=2095 class=msctls_hotkey32 visible=True rect=1382,598,1602,643 text=[]
+2026-11-11T01:15:01.5718412+08:00 copy buffer child id=2096 class=Button visible=True rect=1610,598,1701,640 text=[Win]
+2026-11-11T01:15:01.6050214+08:00 copy buffer child id=1043 class=Button visible=True rect=1261,550,1492,592 text=[Play Sound on Copy]
+2026-11-11T01:15:01.6262070+08:00 copy buffer child id=2099 class=msctls_hotkey32 visible=True rect=932,700,1152,742 text=[]
+2026-11-11T01:15:01.6506114+08:00 copy buffer child id=2100 class=Button visible=True rect=1161,700,1250,742 text=[Win]
+2026-11-11T01:15:01.6802794+08:00 copy buffer child id=2101 class=msctls_hotkey32 visible=True rect=932,748,1152,793 text=[]
+2026-11-11T01:15:01.7113212+08:00 copy buffer child id=2102 class=Button visible=True rect=1161,748,1250,790 text=[Win]
+2026-11-11T01:15:01.7345854+08:00 copy buffer child id=2105 class=msctls_hotkey32 visible=True rect=1382,748,1602,793 text=[]
+2026-11-11T01:15:01.7543017+08:00 copy buffer child id=2106 class=Button visible=True rect=1610,748,1701,790 text=[Win]
+2026-11-11T01:15:01.7803810+08:00 copy buffer child id=1044 class=Button visible=True rect=1261,700,1492,742 text=[Play Sound on Copy]
+2026-11-11T01:15:01.8043271+08:00 copy buffer child id=2079 class=Static visible=True rect=811,400,927,442 text=[Copy]
+2026-11-11T01:15:01.8254505+08:00 copy buffer child id=2080 class=Static visible=True rect=811,448,929,490 text=[Paste]
+2026-11-11T01:15:01.8485682+08:00 copy buffer child id=2081 class=Static visible=True rect=1261,445,1379,487 text=[Cut]
+2026-11-11T01:15:01.8788166+08:00 copy buffer child id=2093 class=Static visible=True rect=811,550,927,592 text=[Copy]
+2026-11-11T01:15:01.9081895+08:00 copy buffer child id=2094 class=Static visible=True rect=811,598,929,640 text=[Paste]
+2026-11-11T01:15:01.9283111+08:00 copy buffer child id=2097 class=Static visible=True rect=1261,598,1379,640 text=[Cut]
+2026-11-11T01:15:01.9598166+08:00 copy buffer child id=2103 class=Static visible=True rect=811,700,927,742 text=[Copy]
+2026-11-11T01:15:01.9910910+08:00 copy buffer child id=2104 class=Static visible=True rect=811,748,929,790 text=[Paste]
+2026-11-11T01:15:02.0079444+08:00 copy buffer child id=2107 class=Static visible=True rect=1261,748,1379,790 text=[Cut]
+2026-11-11T01:15:02.0256620+08:00 copy buffer child id=2109 class=msctls_hotkey32 visible=True rect=932,859,1152,901 text=[]
+2026-11-11T01:15:02.0431746+08:00 copy buffer child id=2110 class=Button visible=True rect=1161,859,1250,901 text=[Win]
+2026-11-11T01:15:02.0703855+08:00 copy buffer child id=2111 class=msctls_hotkey32 visible=True rect=932,907,1152,952 text=[]
+2026-11-11T01:15:02.0893701+08:00 copy buffer child id=2112 class=Button visible=True rect=1161,907,1250,949 text=[Win]
+2026-11-11T01:15:02.1169033+08:00 copy buffer child id=2113 class=msctls_hotkey32 visible=True rect=1382,907,1602,952 text=[]
+2026-11-11T01:15:02.1347697+08:00 copy buffer child id=2114 class=Button visible=True rect=1610,907,1701,949 text=[Win]
+2026-11-11T01:15:02.1528749+08:00 copy buffer child id=1045 class=Button visible=True rect=1261,859,1492,901 text=[Play Sound on Copy]
+2026-11-11T01:15:02.1846920+08:00 copy buffer child id=2115 class=Static visible=True rect=811,859,927,901 text=[Copy]
+2026-11-11T01:15:02.2026954+08:00 copy buffer child id=2116 class=Static visible=True rect=811,907,929,949 text=[Paste]
+2026-11-11T01:15:02.2456782+08:00 copy buffer child id=2117 class=Static visible=True rect=1261,907,1379,949 text=[Cut]
+2026-11-11T01:15:02.2615346+08:00 copy buffer child id=2119 class=msctls_hotkey32 visible=True rect=932,1021,1152,1063 text=[]
+2026-11-11T01:15:02.2812601+08:00 copy buffer child id=2120 class=Button visible=True rect=1161,1021,1250,1063 text=[Win]
+2026-11-11T01:15:02.2946570+08:00 copy buffer child id=2121 class=msctls_hotkey32 visible=True rect=932,1069,1152,1114 text=[]
+2026-11-11T01:15:02.3130793+08:00 copy buffer child id=2122 class=Button visible=True rect=1161,1069,1250,1111 text=[Win]
+2026-11-11T01:15:02.3348986+08:00 copy buffer child id=2123 class=msctls_hotkey32 visible=True rect=1382,1069,1602,1114 text=[]
+2026-11-11T01:15:02.3599746+08:00 copy buffer child id=2124 class=Button visible=True rect=1610,1069,1701,1111 text=[Win]
+2026-11-11T01:15:02.3867854+08:00 copy buffer child id=1046 class=Button visible=True rect=1261,1021,1492,1063 text=[Play Sound on Copy]
+2026-11-11T01:15:02.4063487+08:00 copy buffer child id=2125 class=Static visible=True rect=811,1021,927,1063 text=[Copy]
+2026-11-11T01:15:02.4249333+08:00 copy buffer child id=2126 class=Static visible=True rect=811,1069,929,1111 text=[Paste]
+2026-11-11T01:15:02.4508006+08:00 copy buffer child id=2127 class=Static visible=True rect=1261,1069,1379,1111 text=[Cut]
+2026-11-11T01:15:02.4646524+08:00 copy buffer child id=2088 class=Button visible=True rect=778,373,1782,514 text=[Copy Buffer 1]
+2026-11-11T01:15:02.4952168+08:00 copy buffer child id=2098 class=Button visible=True rect=778,523,1782,664 text=[Copy Buffer 2]
+2026-11-11T01:15:02.5124663+08:00 copy buffer child id=2108 class=Button visible=True rect=778,673,1782,823 text=[Copy Buffer 3]
+2026-11-11T01:15:02.5318169+08:00 copy buffer child id=2118 class=Button visible=True rect=778,832,1782,982 text=[Copy Buffer 4]
+2026-11-11T01:15:02.5563333+08:00 copy buffer child id=2128 class=Button visible=True rect=778,991,1782,1141 text=[Copy Buffer 5]
+2026-11-11T01:15:03.5932158+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T01:15:03.6066403+08:00 friends list=6820946 count=15
+2026-11-11T01:15:04.6569417+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T01:15:05.4054144+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light-screen.png size=461x235
+2026-11-11T01:15:05.4134396+08:00 friend detail child id=1016 class=Edit visible=True rect=1279,735,1460,774 text=[]
+2026-11-11T01:15:05.4197424+08:00 friend detail child id=1017 class=Edit visible=True rect=1281,780,1599,819 text=[]
+2026-11-11T01:15:05.4291158+08:00 friend detail child id=1015 class=Button visible=True rect=1264,704,1570,728 text=[Send All Copies to this friend]
+2026-11-11T01:15:05.4456035+08:00 friend detail child id=1 class=Button visible=True rect=1358,825,1472,869 text=[OK]
+2026-11-11T01:15:05.4753376+08:00 friend detail child id=2 class=Button visible=True rect=1477,825,1591,869 text=[Cancel]
+2026-11-11T01:15:05.4939479+08:00 friend detail child id=2052 class=Static visible=True rect=1174,742,1267,761 text=[IP/Name]
+2026-11-11T01:15:05.5241507+08:00 friend detail child id=2053 class=Static visible=True rect=1174,784,1269,803 text=[Description]
+2026-11-11T01:15:06.9061447+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T01:15:07.6567061+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light-screen.png size=1289x996
+2026-11-11T01:15:08.6708771+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T01:15:09.4278022+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light-screen.png size=1289x996
+2026-11-11T01:15:10.7205256+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T01:15:11.3123137+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T01:15:13.1158988+08:00 PASS Theme=Modern Light Language=English processAlive=True
+2026-11-11T01:16:07.0535338+08:00 BEGIN Theme=Modern Dark Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-dark-21cc27240bba404083f54470e2e066cd
+2026-11-11T01:16:14.2573266+08:00 main=15207402
+2026-11-11T01:16:25.7055319+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-dark.png size=1779x795 print=True
+2026-11-11T01:16:27.0191061+08:00 FAIL Theme=Modern Dark Language=English error=调用“.ctor”并传入“2”个参数时发生异常：“Parameter is not valid.”
+2026-11-11T01:17:02.9448200+08:00 BEGIN Theme=Modern Dark Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-dark-b08f1c36302642198b82a581e30c00b0
+2026-11-11T01:17:10.1302821+08:00 main=20646726
+2026-11-11T01:17:21.6147797+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-dark.png size=1779x795 print=True
+2026-11-11T01:17:24.1807049+08:00 UNVERIFIED ProgressWnd disappeared before capture: invalid window size 0x0
+2026-11-11T01:17:27.4895695+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-dark.png size=717x696 print=True
+2026-11-11T01:17:28.4963894+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-dark.png size=537x263 print=True
+2026-11-11T01:17:29.2477998+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-dark-screen.png size=537x263
+2026-11-11T01:17:30.7348039+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-dark.png size=1289x996 print=True
+2026-11-11T01:17:31.7172399+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-dark.png size=1289x996 print=True
+2026-11-11T01:17:32.3680879+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-dark.png size=497x812 print=True
+2026-11-11T01:17:33.1042178+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-dark-screen.png size=497x812
+2026-11-11T01:17:34.5377237+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-dark.png size=1289x996 print=True
+2026-11-11T01:17:35.2699237+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-dark-screen.png size=1289x996
+2026-11-11T01:17:35.3022899+08:00 copy buffer child id=2082 class=msctls_hotkey32 visible=True rect=932,400,1152,442 text=[]
+2026-11-11T01:17:35.3312292+08:00 copy buffer child id=2085 class=Button visible=True rect=1161,400,1250,442 text=[Win]
+2026-11-11T01:17:35.3606320+08:00 copy buffer child id=2083 class=msctls_hotkey32 visible=True rect=932,448,1152,493 text=[]
+2026-11-11T01:17:35.3897493+08:00 copy buffer child id=2086 class=Button visible=True rect=1161,448,1250,490 text=[Win]
+2026-11-11T01:17:35.4200162+08:00 copy buffer child id=2084 class=msctls_hotkey32 visible=True rect=1382,448,1602,493 text=[]
+2026-11-11T01:17:35.4451628+08:00 copy buffer child id=2087 class=Button visible=True rect=1610,448,1701,490 text=[Win]
+2026-11-11T01:17:35.4729759+08:00 copy buffer child id=1042 class=Button visible=True rect=1261,397,1492,439 text=[Play Sound on Copy]
+2026-11-11T01:17:35.4921199+08:00 copy buffer child id=2089 class=msctls_hotkey32 visible=True rect=932,550,1152,592 text=[]
+2026-11-11T01:17:35.5223304+08:00 copy buffer child id=2090 class=Button visible=True rect=1161,550,1250,592 text=[Win]
+2026-11-11T01:17:35.5459627+08:00 copy buffer child id=2091 class=msctls_hotkey32 visible=True rect=932,598,1152,643 text=[]
+2026-11-11T01:17:35.5787377+08:00 copy buffer child id=2092 class=Button visible=True rect=1161,598,1250,640 text=[Win]
+2026-11-11T01:17:35.6122481+08:00 copy buffer child id=2095 class=msctls_hotkey32 visible=True rect=1382,598,1602,643 text=[]
+2026-11-11T01:17:35.6308446+08:00 copy buffer child id=2096 class=Button visible=True rect=1610,598,1701,640 text=[Win]
+2026-11-11T01:17:35.6587470+08:00 copy buffer child id=1043 class=Button visible=True rect=1261,550,1492,592 text=[Play Sound on Copy]
+2026-11-11T01:17:35.6802265+08:00 copy buffer child id=2099 class=msctls_hotkey32 visible=True rect=932,700,1152,742 text=[]
+2026-11-11T01:17:35.7106549+08:00 copy buffer child id=2100 class=Button visible=True rect=1161,700,1250,742 text=[Win]
+2026-11-11T01:17:35.7266446+08:00 copy buffer child id=2101 class=msctls_hotkey32 visible=True rect=932,748,1152,793 text=[]
+2026-11-11T01:17:35.7515689+08:00 copy buffer child id=2102 class=Button visible=True rect=1161,748,1250,790 text=[Win]
+2026-11-11T01:17:35.7780404+08:00 copy buffer child id=2105 class=msctls_hotkey32 visible=True rect=1382,748,1602,793 text=[]
+2026-11-11T01:17:35.7991472+08:00 copy buffer child id=2106 class=Button visible=True rect=1610,748,1701,790 text=[Win]
+2026-11-11T01:17:35.8306549+08:00 copy buffer child id=1044 class=Button visible=True rect=1261,700,1492,742 text=[Play Sound on Copy]
+2026-11-11T01:17:35.8643196+08:00 copy buffer child id=2079 class=Static visible=True rect=811,400,927,442 text=[Copy]
+2026-11-11T01:17:35.8958930+08:00 copy buffer child id=2080 class=Static visible=True rect=811,448,929,490 text=[Paste]
+2026-11-11T01:17:35.9282260+08:00 copy buffer child id=2081 class=Static visible=True rect=1261,445,1379,487 text=[Cut]
+2026-11-11T01:17:35.9562724+08:00 copy buffer child id=2093 class=Static visible=True rect=811,550,927,592 text=[Copy]
+2026-11-11T01:17:35.9857685+08:00 copy buffer child id=2094 class=Static visible=True rect=811,598,929,640 text=[Paste]
+2026-11-11T01:17:36.0101620+08:00 copy buffer child id=2097 class=Static visible=True rect=1261,598,1379,640 text=[Cut]
+2026-11-11T01:17:36.0293739+08:00 copy buffer child id=2103 class=Static visible=True rect=811,700,927,742 text=[Copy]
+2026-11-11T01:17:36.0444768+08:00 copy buffer child id=2104 class=Static visible=True rect=811,748,929,790 text=[Paste]
+2026-11-11T01:17:36.0642151+08:00 copy buffer child id=2107 class=Static visible=True rect=1261,748,1379,790 text=[Cut]
+2026-11-11T01:17:36.0906572+08:00 copy buffer child id=2109 class=msctls_hotkey32 visible=True rect=932,859,1152,901 text=[]
+2026-11-11T01:17:36.1053848+08:00 copy buffer child id=2110 class=Button visible=True rect=1161,859,1250,901 text=[Win]
+2026-11-11T01:17:36.1205961+08:00 copy buffer child id=2111 class=msctls_hotkey32 visible=True rect=932,907,1152,952 text=[]
+2026-11-11T01:17:36.1339237+08:00 copy buffer child id=2112 class=Button visible=True rect=1161,907,1250,949 text=[Win]
+2026-11-11T01:17:36.1547904+08:00 copy buffer child id=2113 class=msctls_hotkey32 visible=True rect=1382,907,1602,952 text=[]
+2026-11-11T01:17:36.1760311+08:00 copy buffer child id=2114 class=Button visible=True rect=1610,907,1701,949 text=[Win]
+2026-11-11T01:17:36.1963332+08:00 copy buffer child id=1045 class=Button visible=True rect=1261,859,1492,901 text=[Play Sound on Copy]
+2026-11-11T01:17:36.2156127+08:00 copy buffer child id=2115 class=Static visible=True rect=811,859,927,901 text=[Copy]
+2026-11-11T01:17:36.2503651+08:00 copy buffer child id=2116 class=Static visible=True rect=811,907,929,949 text=[Paste]
+2026-11-11T01:17:36.2774550+08:00 copy buffer child id=2117 class=Static visible=True rect=1261,907,1379,949 text=[Cut]
+2026-11-11T01:17:36.3068847+08:00 copy buffer child id=2119 class=msctls_hotkey32 visible=True rect=932,1021,1152,1063 text=[]
+2026-11-11T01:17:36.3295319+08:00 copy buffer child id=2120 class=Button visible=True rect=1161,1021,1250,1063 text=[Win]
+2026-11-11T01:17:36.3632265+08:00 copy buffer child id=2121 class=msctls_hotkey32 visible=True rect=932,1069,1152,1114 text=[]
+2026-11-11T01:17:36.3915270+08:00 copy buffer child id=2122 class=Button visible=True rect=1161,1069,1250,1111 text=[Win]
+2026-11-11T01:17:36.4202406+08:00 copy buffer child id=2123 class=msctls_hotkey32 visible=True rect=1382,1069,1602,1114 text=[]
+2026-11-11T01:17:36.4522245+08:00 copy buffer child id=2124 class=Button visible=True rect=1610,1069,1701,1111 text=[Win]
+2026-11-11T01:17:36.4798601+08:00 copy buffer child id=1046 class=Button visible=True rect=1261,1021,1492,1063 text=[Play Sound on Copy]
+2026-11-11T01:17:36.5096109+08:00 copy buffer child id=2125 class=Static visible=True rect=811,1021,927,1063 text=[Copy]
+2026-11-11T01:17:36.5374170+08:00 copy buffer child id=2126 class=Static visible=True rect=811,1069,929,1111 text=[Paste]
+2026-11-11T01:17:36.5637856+08:00 copy buffer child id=2127 class=Static visible=True rect=1261,1069,1379,1111 text=[Cut]
+2026-11-11T01:17:36.5933780+08:00 copy buffer child id=2088 class=Button visible=True rect=778,373,1782,514 text=[Copy Buffer 1]
+2026-11-11T01:17:36.6144521+08:00 copy buffer child id=2098 class=Button visible=True rect=778,523,1782,664 text=[Copy Buffer 2]
+2026-11-11T01:17:36.6345248+08:00 copy buffer child id=2108 class=Button visible=True rect=778,673,1782,823 text=[Copy Buffer 3]
+2026-11-11T01:17:36.6532882+08:00 copy buffer child id=2118 class=Button visible=True rect=778,832,1782,982 text=[Copy Buffer 4]
+2026-11-11T01:17:36.6768677+08:00 copy buffer child id=2128 class=Button visible=True rect=778,991,1782,1141 text=[Copy Buffer 5]
+2026-11-11T01:17:37.6996590+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-dark.png size=1289x996 print=True
+2026-11-11T01:17:37.7121649+08:00 friends list=22286330 count=15
+2026-11-11T01:17:38.7575800+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-dark.png size=461x235 print=True
+2026-11-11T01:17:39.4795865+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-dark-screen.png size=461x235
+2026-11-11T01:17:39.4879248+08:00 friend detail child id=1016 class=Edit visible=True rect=1279,735,1460,774 text=[]
+2026-11-11T01:17:39.4945337+08:00 friend detail child id=1017 class=Edit visible=True rect=1281,780,1599,819 text=[]
+2026-11-11T01:17:39.5010393+08:00 friend detail child id=1015 class=Button visible=True rect=1264,704,1570,728 text=[Send All Copies to this friend]
+2026-11-11T01:17:39.5088516+08:00 friend detail child id=1 class=Button visible=True rect=1358,825,1472,869 text=[OK]
+2026-11-11T01:17:39.5322482+08:00 friend detail child id=2 class=Button visible=True rect=1477,825,1591,869 text=[Cancel]
+2026-11-11T01:17:39.5603129+08:00 friend detail child id=2052 class=Static visible=True rect=1174,742,1267,761 text=[IP/Name]
+2026-11-11T01:17:39.5852744+08:00 friend detail child id=2053 class=Static visible=True rect=1174,784,1269,803 text=[Description]
+2026-11-11T01:17:40.9790476+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-dark.png size=1289x996 print=True
+2026-11-11T01:17:41.7230736+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-dark-screen.png size=1289x996
+2026-11-11T01:17:42.7506714+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-dark.png size=1289x996 print=True
+2026-11-11T01:17:43.5064871+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-dark-screen.png size=1289x996
+2026-11-11T01:17:44.7935230+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-dark.png size=576x467 print=True
+2026-11-11T01:17:45.3841520+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-dark.png size=423x163 print=True
+2026-11-11T01:17:47.1687647+08:00 PASS Theme=Modern Dark Language=English processAlive=True
+2026-11-11T01:19:26.4133164+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-13ed4fdf2aac4a53af6f0ea29db02f9c
+2026-11-11T01:19:33.6343339+08:00 main=13111334
+2026-11-11T01:19:45.0657273+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-light.png size=1779x795 print=True
+2026-11-11T01:19:45.8253147+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-light-screen.png size=1779x795
+2026-11-11T01:19:49.1407309+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-light.png size=717x696 print=True
+2026-11-11T01:19:49.8863549+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-light-screen.png size=717x696
+2026-11-11T01:19:50.9301201+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light.png size=537x263 print=True
+2026-11-11T01:19:51.6567174+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light-screen.png size=537x263
+2026-11-11T01:19:53.0354544+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T01:19:54.0010883+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T01:19:54.6454322+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T01:19:55.3863581+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light-screen.png size=497x812
+2026-11-11T01:19:56.7903344+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T01:19:57.5417782+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light-screen.png size=1289x996
+2026-11-11T01:19:57.5781752+08:00 copy buffer child id=2082 class=msctls_hotkey32 visible=True rect=932,400,1152,442 text=[]
+2026-11-11T01:19:57.6048244+08:00 copy buffer child id=2085 class=Button visible=True rect=1161,400,1250,442 text=[Win]
+2026-11-11T01:19:57.6400701+08:00 copy buffer child id=2083 class=msctls_hotkey32 visible=True rect=932,448,1152,493 text=[]
+2026-11-11T01:19:57.6735224+08:00 copy buffer child id=2086 class=Button visible=True rect=1161,448,1250,490 text=[Win]
+2026-11-11T01:19:57.7007777+08:00 copy buffer child id=2084 class=msctls_hotkey32 visible=True rect=1382,448,1602,493 text=[]
+2026-11-11T01:19:57.7199476+08:00 copy buffer child id=2087 class=Button visible=True rect=1610,448,1701,490 text=[Win]
+2026-11-11T01:19:57.7392389+08:00 copy buffer child id=1042 class=Button visible=True rect=1261,397,1492,439 text=[Play Sound on Copy]
+2026-11-11T01:19:57.7596595+08:00 copy buffer child id=2089 class=msctls_hotkey32 visible=True rect=932,550,1152,592 text=[]
+2026-11-11T01:19:57.7861604+08:00 copy buffer child id=2090 class=Button visible=True rect=1161,550,1250,592 text=[Win]
+2026-11-11T01:19:57.8064821+08:00 copy buffer child id=2091 class=msctls_hotkey32 visible=True rect=932,598,1152,643 text=[]
+2026-11-11T01:19:57.8226729+08:00 copy buffer child id=2092 class=Button visible=True rect=1161,598,1250,640 text=[Win]
+2026-11-11T01:19:57.8392829+08:00 copy buffer child id=2095 class=msctls_hotkey32 visible=True rect=1382,598,1602,643 text=[]
+2026-11-11T01:19:57.8678638+08:00 copy buffer child id=2096 class=Button visible=True rect=1610,598,1701,640 text=[Win]
+2026-11-11T01:19:57.8942140+08:00 copy buffer child id=1043 class=Button visible=True rect=1261,550,1492,592 text=[Play Sound on Copy]
+2026-11-11T01:19:57.9126305+08:00 copy buffer child id=2099 class=msctls_hotkey32 visible=True rect=932,700,1152,742 text=[]
+2026-11-11T01:19:57.9329991+08:00 copy buffer child id=2100 class=Button visible=True rect=1161,700,1250,742 text=[Win]
+2026-11-11T01:19:57.9585351+08:00 copy buffer child id=2101 class=msctls_hotkey32 visible=True rect=932,748,1152,793 text=[]
+2026-11-11T01:19:57.9816588+08:00 copy buffer child id=2102 class=Button visible=True rect=1161,748,1250,790 text=[Win]
+2026-11-11T01:19:58.0148674+08:00 copy buffer child id=2105 class=msctls_hotkey32 visible=True rect=1382,748,1602,793 text=[]
+2026-11-11T01:19:58.0413565+08:00 copy buffer child id=2106 class=Button visible=True rect=1610,748,1701,790 text=[Win]
+2026-11-11T01:19:58.0722354+08:00 copy buffer child id=1044 class=Button visible=True rect=1261,700,1492,742 text=[Play Sound on Copy]
+2026-11-11T01:19:58.0913692+08:00 copy buffer child id=2079 class=Static visible=True rect=811,400,927,442 text=[Copy]
+2026-11-11T01:19:58.1169166+08:00 copy buffer child id=2080 class=Static visible=True rect=811,448,929,490 text=[Paste]
+2026-11-11T01:19:58.1449745+08:00 copy buffer child id=2081 class=Static visible=True rect=1261,445,1379,487 text=[Cut]
+2026-11-11T01:19:58.1727396+08:00 copy buffer child id=2093 class=Static visible=True rect=811,550,927,592 text=[Copy]
+2026-11-11T01:19:58.1956349+08:00 copy buffer child id=2094 class=Static visible=True rect=811,598,929,640 text=[Paste]
+2026-11-11T01:19:58.2190504+08:00 copy buffer child id=2097 class=Static visible=True rect=1261,598,1379,640 text=[Cut]
+2026-11-11T01:19:58.2497955+08:00 copy buffer child id=2103 class=Static visible=True rect=811,700,927,742 text=[Copy]
+2026-11-11T01:19:58.2682484+08:00 copy buffer child id=2104 class=Static visible=True rect=811,748,929,790 text=[Paste]
+2026-11-11T01:19:58.2935652+08:00 copy buffer child id=2107 class=Static visible=True rect=1261,748,1379,790 text=[Cut]
+2026-11-11T01:19:58.3221592+08:00 copy buffer child id=2109 class=msctls_hotkey32 visible=True rect=932,859,1152,901 text=[]
+2026-11-11T01:19:58.3516085+08:00 copy buffer child id=2110 class=Button visible=True rect=1161,859,1250,901 text=[Win]
+2026-11-11T01:19:58.3827806+08:00 copy buffer child id=2111 class=msctls_hotkey32 visible=True rect=932,907,1152,952 text=[]
+2026-11-11T01:19:58.4077549+08:00 copy buffer child id=2112 class=Button visible=True rect=1161,907,1250,949 text=[Win]
+2026-11-11T01:19:58.4377128+08:00 copy buffer child id=2113 class=msctls_hotkey32 visible=True rect=1382,907,1602,952 text=[]
+2026-11-11T01:19:58.4599033+08:00 copy buffer child id=2114 class=Button visible=True rect=1610,907,1701,949 text=[Win]
+2026-11-11T01:19:58.4893853+08:00 copy buffer child id=1045 class=Button visible=True rect=1261,859,1492,901 text=[Play Sound on Copy]
+2026-11-11T01:19:58.5059686+08:00 copy buffer child id=2115 class=Static visible=True rect=811,859,927,901 text=[Copy]
+2026-11-11T01:19:58.5240314+08:00 copy buffer child id=2116 class=Static visible=True rect=811,907,929,949 text=[Paste]
+2026-11-11T01:19:58.5472387+08:00 copy buffer child id=2117 class=Static visible=True rect=1261,907,1379,949 text=[Cut]
+2026-11-11T01:19:58.5829794+08:00 copy buffer child id=2119 class=msctls_hotkey32 visible=True rect=932,1021,1152,1063 text=[]
+2026-11-11T01:19:58.6063440+08:00 copy buffer child id=2120 class=Button visible=True rect=1161,1021,1250,1063 text=[Win]
+2026-11-11T01:19:58.6336380+08:00 copy buffer child id=2121 class=msctls_hotkey32 visible=True rect=932,1069,1152,1114 text=[]
+2026-11-11T01:19:58.6598321+08:00 copy buffer child id=2122 class=Button visible=True rect=1161,1069,1250,1111 text=[Win]
+2026-11-11T01:19:58.6924228+08:00 copy buffer child id=2123 class=msctls_hotkey32 visible=True rect=1382,1069,1602,1114 text=[]
+2026-11-11T01:19:58.7196604+08:00 copy buffer child id=2124 class=Button visible=True rect=1610,1069,1701,1111 text=[Win]
+2026-11-11T01:19:58.7364234+08:00 copy buffer child id=1046 class=Button visible=True rect=1261,1021,1492,1063 text=[Play Sound on Copy]
+2026-11-11T01:19:58.7625821+08:00 copy buffer child id=2125 class=Static visible=True rect=811,1021,927,1063 text=[Copy]
+2026-11-11T01:19:58.7865179+08:00 copy buffer child id=2126 class=Static visible=True rect=811,1069,929,1111 text=[Paste]
+2026-11-11T01:19:58.8111019+08:00 copy buffer child id=2127 class=Static visible=True rect=1261,1069,1379,1111 text=[Cut]
+2026-11-11T01:19:58.8405335+08:00 copy buffer child id=2088 class=Button visible=True rect=778,373,1782,514 text=[Copy Buffer 1]
+2026-11-11T01:19:58.8723986+08:00 copy buffer child id=2098 class=Button visible=True rect=778,523,1782,664 text=[Copy Buffer 2]
+2026-11-11T01:19:58.8941251+08:00 copy buffer child id=2108 class=Button visible=True rect=778,673,1782,823 text=[Copy Buffer 3]
+2026-11-11T01:19:58.9252625+08:00 copy buffer child id=2118 class=Button visible=True rect=778,832,1782,982 text=[Copy Buffer 4]
+2026-11-11T01:19:58.9478039+08:00 copy buffer child id=2128 class=Button visible=True rect=778,991,1782,1141 text=[Copy Buffer 5]
+2026-11-11T01:20:00.0048887+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T01:20:00.0193151+08:00 friends list=9900998 count=15
+2026-11-11T01:20:01.0847509+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T01:20:01.8222581+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light-screen.png size=461x235
+2026-11-11T01:20:01.8305496+08:00 friend detail child id=1016 class=Edit visible=True rect=1279,735,1460,774 text=[]
+2026-11-11T01:20:01.8392930+08:00 friend detail child id=1017 class=Edit visible=True rect=1281,780,1599,819 text=[]
+2026-11-11T01:20:01.8465935+08:00 friend detail child id=1015 class=Button visible=True rect=1264,704,1570,728 text=[Send All Copies to this friend]
+2026-11-11T01:20:01.8536450+08:00 friend detail child id=1 class=Button visible=True rect=1358,825,1472,869 text=[OK]
+2026-11-11T01:20:01.8644289+08:00 friend detail child id=2 class=Button visible=True rect=1477,825,1591,869 text=[Cancel]
+2026-11-11T01:20:01.8805578+08:00 friend detail child id=2052 class=Static visible=True rect=1174,742,1267,761 text=[IP/Name]
+2026-11-11T01:20:01.8984321+08:00 friend detail child id=2053 class=Static visible=True rect=1174,784,1269,803 text=[Description]
+2026-11-11T01:20:03.2833208+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T01:20:04.0251197+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light-screen.png size=1289x996
+2026-11-11T01:20:05.0355247+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T01:20:05.7804076+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light-screen.png size=1289x996
+2026-11-11T01:20:07.0594036+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T01:20:07.6566673+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T01:20:08.3913604+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light-screen.png size=423x163
+2026-11-11T01:20:10.1964044+08:00 PASS Theme=Modern Light Language=English processAlive=True
+2026-11-11T01:20:46.4926443+08:00 BEGIN Theme=Modern Dark Language=English Build=Debug64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-debug-dark-c68cba2567804334b6533f02b2140a3e
+2026-11-11T01:20:53.6849771+08:00 main=16452260
+2026-11-11T01:21:05.1704811+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-debug-dark.png size=1779x795 print=True
+2026-11-11T01:21:05.9309366+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-debug-dark-screen.png size=1779x795
+2026-11-11T01:21:08.5039314+08:00 UNVERIFIED ProgressWnd disappeared before capture: invalid window size 0x0
+2026-11-11T01:21:11.7856419+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-debug-dark.png size=717x696 print=True
+2026-11-11T01:21:12.5244258+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-debug-dark-screen.png size=717x696
+2026-11-11T01:21:13.5309381+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-debug-dark.png size=537x263 print=True
+2026-11-11T01:21:14.2569227+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-debug-dark-screen.png size=537x263
+2026-11-11T01:21:15.6014931+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-debug-dark.png size=1289x996 print=True
+2026-11-11T01:21:16.5851293+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-debug-dark.png size=1289x996 print=True
+2026-11-11T01:21:17.2351684+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-debug-dark.png size=497x812 print=True
+2026-11-11T01:21:17.9709260+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-debug-dark-screen.png size=497x812
+2026-11-11T01:21:19.4227091+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-debug-dark.png size=1289x996 print=True
+2026-11-11T01:21:20.1494171+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-debug-dark-screen.png size=1289x996
+2026-11-11T01:21:20.1809982+08:00 copy buffer child id=2082 class=msctls_hotkey32 visible=True rect=932,400,1152,442 text=[]
+2026-11-11T01:21:20.2049045+08:00 copy buffer child id=2085 class=Button visible=True rect=1161,400,1250,442 text=[Win]
+2026-11-11T01:21:20.2355210+08:00 copy buffer child id=2083 class=msctls_hotkey32 visible=True rect=932,448,1152,493 text=[]
+2026-11-11T01:21:20.2545582+08:00 copy buffer child id=2086 class=Button visible=True rect=1161,448,1250,490 text=[Win]
+2026-11-11T01:21:20.2740324+08:00 copy buffer child id=2084 class=msctls_hotkey32 visible=True rect=1382,448,1602,493 text=[]
+2026-11-11T01:21:20.3008872+08:00 copy buffer child id=2087 class=Button visible=True rect=1610,448,1701,490 text=[Win]
+2026-11-11T01:21:20.3219065+08:00 copy buffer child id=1042 class=Button visible=True rect=1261,397,1492,439 text=[Play Sound on Copy]
+2026-11-11T01:21:20.3411734+08:00 copy buffer child id=2089 class=msctls_hotkey32 visible=True rect=932,550,1152,592 text=[]
+2026-11-11T01:21:20.3743666+08:00 copy buffer child id=2090 class=Button visible=True rect=1161,550,1250,592 text=[Win]
+2026-11-11T01:21:20.3919132+08:00 copy buffer child id=2091 class=msctls_hotkey32 visible=True rect=932,598,1152,643 text=[]
+2026-11-11T01:21:20.4107663+08:00 copy buffer child id=2092 class=Button visible=True rect=1161,598,1250,640 text=[Win]
+2026-11-11T01:21:20.4332459+08:00 copy buffer child id=2095 class=msctls_hotkey32 visible=True rect=1382,598,1602,643 text=[]
+2026-11-11T01:21:20.4591866+08:00 copy buffer child id=2096 class=Button visible=True rect=1610,598,1701,640 text=[Win]
+2026-11-11T01:21:20.4821192+08:00 copy buffer child id=1043 class=Button visible=True rect=1261,550,1492,592 text=[Play Sound on Copy]
+2026-11-11T01:21:20.5047892+08:00 copy buffer child id=2099 class=msctls_hotkey32 visible=True rect=932,700,1152,742 text=[]
+2026-11-11T01:21:20.5270249+08:00 copy buffer child id=2100 class=Button visible=True rect=1161,700,1250,742 text=[Win]
+2026-11-11T01:21:20.5455239+08:00 copy buffer child id=2101 class=msctls_hotkey32 visible=True rect=932,748,1152,793 text=[]
+2026-11-11T01:21:20.5749885+08:00 copy buffer child id=2102 class=Button visible=True rect=1161,748,1250,790 text=[Win]
+2026-11-11T01:21:20.6106745+08:00 copy buffer child id=2105 class=msctls_hotkey32 visible=True rect=1382,748,1602,793 text=[]
+2026-11-11T01:21:20.6382393+08:00 copy buffer child id=2106 class=Button visible=True rect=1610,748,1701,790 text=[Win]
+2026-11-11T01:21:20.6618399+08:00 copy buffer child id=1044 class=Button visible=True rect=1261,700,1492,742 text=[Play Sound on Copy]
+2026-11-11T01:21:20.6896906+08:00 copy buffer child id=2079 class=Static visible=True rect=811,400,927,442 text=[Copy]
+2026-11-11T01:21:20.7200809+08:00 copy buffer child id=2080 class=Static visible=True rect=811,448,929,490 text=[Paste]
+2026-11-11T01:21:20.7378872+08:00 copy buffer child id=2081 class=Static visible=True rect=1261,445,1379,487 text=[Cut]
+2026-11-11T01:21:20.7515670+08:00 copy buffer child id=2093 class=Static visible=True rect=811,550,927,592 text=[Copy]
+2026-11-11T01:21:20.7760196+08:00 copy buffer child id=2094 class=Static visible=True rect=811,598,929,640 text=[Paste]
+2026-11-11T01:21:20.7953727+08:00 copy buffer child id=2097 class=Static visible=True rect=1261,598,1379,640 text=[Cut]
+2026-11-11T01:21:20.8258207+08:00 copy buffer child id=2103 class=Static visible=True rect=811,700,927,742 text=[Copy]
+2026-11-11T01:21:20.8508254+08:00 copy buffer child id=2104 class=Static visible=True rect=811,748,929,790 text=[Paste]
+2026-11-11T01:21:20.8688304+08:00 copy buffer child id=2107 class=Static visible=True rect=1261,748,1379,790 text=[Cut]
+2026-11-11T01:21:20.8870587+08:00 copy buffer child id=2109 class=msctls_hotkey32 visible=True rect=932,859,1152,901 text=[]
+2026-11-11T01:21:20.9126633+08:00 copy buffer child id=2110 class=Button visible=True rect=1161,859,1250,901 text=[Win]
+2026-11-11T01:21:20.9336521+08:00 copy buffer child id=2111 class=msctls_hotkey32 visible=True rect=932,907,1152,952 text=[]
+2026-11-11T01:21:20.9515718+08:00 copy buffer child id=2112 class=Button visible=True rect=1161,907,1250,949 text=[Win]
+2026-11-11T01:21:20.9728110+08:00 copy buffer child id=2113 class=msctls_hotkey32 visible=True rect=1382,907,1602,952 text=[]
+2026-11-11T01:21:21.0095868+08:00 copy buffer child id=2114 class=Button visible=True rect=1610,907,1701,949 text=[Win]
+2026-11-11T01:21:21.0372063+08:00 copy buffer child id=1045 class=Button visible=True rect=1261,859,1492,901 text=[Play Sound on Copy]
+2026-11-11T01:21:21.0590939+08:00 copy buffer child id=2115 class=Static visible=True rect=811,859,927,901 text=[Copy]
+2026-11-11T01:21:21.0877264+08:00 copy buffer child id=2116 class=Static visible=True rect=811,907,929,949 text=[Paste]
+2026-11-11T01:21:21.1167708+08:00 copy buffer child id=2117 class=Static visible=True rect=1261,907,1379,949 text=[Cut]
+2026-11-11T01:21:21.1435464+08:00 copy buffer child id=2119 class=msctls_hotkey32 visible=True rect=932,1021,1152,1063 text=[]
+2026-11-11T01:21:21.1682786+08:00 copy buffer child id=2120 class=Button visible=True rect=1161,1021,1250,1063 text=[Win]
+2026-11-11T01:21:21.1972477+08:00 copy buffer child id=2121 class=msctls_hotkey32 visible=True rect=932,1069,1152,1114 text=[]
+2026-11-11T01:21:21.2161379+08:00 copy buffer child id=2122 class=Button visible=True rect=1161,1069,1250,1111 text=[Win]
+2026-11-11T01:21:21.2487933+08:00 copy buffer child id=2123 class=msctls_hotkey32 visible=True rect=1382,1069,1602,1114 text=[]
+2026-11-11T01:21:21.2697584+08:00 copy buffer child id=2124 class=Button visible=True rect=1610,1069,1701,1111 text=[Win]
+2026-11-11T01:21:21.2918470+08:00 copy buffer child id=1046 class=Button visible=True rect=1261,1021,1492,1063 text=[Play Sound on Copy]
+2026-11-11T01:21:21.3272793+08:00 copy buffer child id=2125 class=Static visible=True rect=811,1021,927,1063 text=[Copy]
+2026-11-11T01:21:21.3631195+08:00 copy buffer child id=2126 class=Static visible=True rect=811,1069,929,1111 text=[Paste]
+2026-11-11T01:21:21.3967618+08:00 copy buffer child id=2127 class=Static visible=True rect=1261,1069,1379,1111 text=[Cut]
+2026-11-11T01:21:21.4268484+08:00 copy buffer child id=2088 class=Button visible=True rect=778,373,1782,514 text=[Copy Buffer 1]
+2026-11-11T01:21:21.4462081+08:00 copy buffer child id=2098 class=Button visible=True rect=778,523,1782,664 text=[Copy Buffer 2]
+2026-11-11T01:21:21.4794562+08:00 copy buffer child id=2108 class=Button visible=True rect=778,673,1782,823 text=[Copy Buffer 3]
+2026-11-11T01:21:21.4942827+08:00 copy buffer child id=2118 class=Button visible=True rect=778,832,1782,982 text=[Copy Buffer 4]
+2026-11-11T01:21:21.5194120+08:00 copy buffer child id=2128 class=Button visible=True rect=778,991,1782,1141 text=[Copy Buffer 5]
+2026-11-11T01:21:22.5466503+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-debug-dark.png size=1289x996 print=True
+2026-11-11T01:21:22.5594526+08:00 friends list=15995964 count=15
+2026-11-11T01:21:23.6196309+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-debug-dark.png size=461x235 print=True
+2026-11-11T01:21:24.3582260+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-debug-dark-screen.png size=461x235
+2026-11-11T01:21:24.3669302+08:00 friend detail child id=1016 class=Edit visible=True rect=1279,735,1460,774 text=[]
+2026-11-11T01:21:24.3750628+08:00 friend detail child id=1017 class=Edit visible=True rect=1281,780,1599,819 text=[]
+2026-11-11T01:21:24.3833109+08:00 friend detail child id=1015 class=Button visible=True rect=1264,704,1570,728 text=[Send All Copies to this friend]
+2026-11-11T01:21:24.4150777+08:00 friend detail child id=1 class=Button visible=True rect=1358,825,1472,869 text=[OK]
+2026-11-11T01:21:24.4353885+08:00 friend detail child id=2 class=Button visible=True rect=1477,825,1591,869 text=[Cancel]
+2026-11-11T01:21:24.4551059+08:00 friend detail child id=2052 class=Static visible=True rect=1174,742,1267,761 text=[IP/Name]
+2026-11-11T01:21:24.4660065+08:00 friend detail child id=2053 class=Static visible=True rect=1174,784,1269,803 text=[Description]
+2026-11-11T01:21:25.8240674+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-debug-dark.png size=1289x996 print=True
+2026-11-11T01:21:26.5652455+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-debug-dark-screen.png size=1289x996
+2026-11-11T01:21:27.5937850+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-debug-dark.png size=1289x996 print=True
+2026-11-11T01:21:28.3457432+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-debug-dark-screen.png size=1289x996
+2026-11-11T01:21:29.6213088+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-debug-dark.png size=576x467 print=True
+2026-11-11T01:21:30.2905716+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-debug-dark.png size=423x163 print=True
+2026-11-11T01:21:31.0172570+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-debug-dark-screen.png size=423x163
+2026-11-11T01:21:32.8332603+08:00 PASS Theme=Modern Dark Language=English processAlive=True
+2026-11-11T01:21:48.2517003+08:00 BEGIN Theme=Modern Dark Language=English Build=Debug64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-debug-dark-9a89aee8ac9d43cdb9eac7796907c3e8
+2026-11-11T01:21:55.4696057+08:00 main=10226228
+2026-11-11T01:22:06.8937307+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-debug-dark.png size=1779x795 print=True
+2026-11-11T01:22:07.6540523+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-debug-dark-screen.png size=1779x795
+2026-11-11T01:22:08.3435641+08:00 delete rows=242 selected=1
+2026-11-11T01:22:10.2458250+08:00 UNVERIFIED ProgressWnd disappeared before capture: invalid window size 0x0
+2026-11-11T01:22:13.5577284+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-debug-dark.png size=717x696 print=True
+2026-11-11T01:22:14.2926823+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-debug-dark-screen.png size=717x696
+2026-11-11T01:22:15.3193434+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-debug-dark.png size=537x263 print=True
+2026-11-11T01:22:16.0580990+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-debug-dark-screen.png size=537x263
+2026-11-11T01:22:17.4174393+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-debug-dark.png size=1289x996 print=True
+2026-11-11T01:22:18.4067552+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-debug-dark.png size=1289x996 print=True
+2026-11-11T01:22:19.0618533+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-debug-dark.png size=497x812 print=True
+2026-11-11T01:22:19.8012163+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-debug-dark-screen.png size=497x812
+2026-11-11T01:22:21.2167584+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-debug-dark.png size=1289x996 print=True
+2026-11-11T01:22:21.9468785+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-debug-dark-screen.png size=1289x996
+2026-11-11T01:22:21.9685807+08:00 copy buffer child id=2082 class=msctls_hotkey32 visible=True rect=932,400,1152,442 text=[]
+2026-11-11T01:22:21.9954086+08:00 copy buffer child id=2085 class=Button visible=True rect=1161,400,1250,442 text=[Win]
+2026-11-11T01:22:22.0226441+08:00 copy buffer child id=2083 class=msctls_hotkey32 visible=True rect=932,448,1152,493 text=[]
+2026-11-11T01:22:22.0481220+08:00 copy buffer child id=2086 class=Button visible=True rect=1161,448,1250,490 text=[Win]
+2026-11-11T01:22:22.0705138+08:00 copy buffer child id=2084 class=msctls_hotkey32 visible=True rect=1382,448,1602,493 text=[]
+2026-11-11T01:22:22.1022676+08:00 copy buffer child id=2087 class=Button visible=True rect=1610,448,1701,490 text=[Win]
+2026-11-11T01:22:22.1230912+08:00 copy buffer child id=1042 class=Button visible=True rect=1261,397,1492,439 text=[Play Sound on Copy]
+2026-11-11T01:22:22.1567294+08:00 copy buffer child id=2089 class=msctls_hotkey32 visible=True rect=932,550,1152,592 text=[]
+2026-11-11T01:22:22.1761955+08:00 copy buffer child id=2090 class=Button visible=True rect=1161,550,1250,592 text=[Win]
+2026-11-11T01:22:22.2095003+08:00 copy buffer child id=2091 class=msctls_hotkey32 visible=True rect=932,598,1152,643 text=[]
+2026-11-11T01:22:22.2352644+08:00 copy buffer child id=2092 class=Button visible=True rect=1161,598,1250,640 text=[Win]
+2026-11-11T01:22:22.2552668+08:00 copy buffer child id=2095 class=msctls_hotkey32 visible=True rect=1382,598,1602,643 text=[]
+2026-11-11T01:22:22.2862139+08:00 copy buffer child id=2096 class=Button visible=True rect=1610,598,1701,640 text=[Win]
+2026-11-11T01:22:22.3177518+08:00 copy buffer child id=1043 class=Button visible=True rect=1261,550,1492,592 text=[Play Sound on Copy]
+2026-11-11T01:22:22.3487572+08:00 copy buffer child id=2099 class=msctls_hotkey32 visible=True rect=932,700,1152,742 text=[]
+2026-11-11T01:22:22.3810873+08:00 copy buffer child id=2100 class=Button visible=True rect=1161,700,1250,742 text=[Win]
+2026-11-11T01:22:22.4150474+08:00 copy buffer child id=2101 class=msctls_hotkey32 visible=True rect=932,748,1152,793 text=[]
+2026-11-11T01:22:22.4384928+08:00 copy buffer child id=2102 class=Button visible=True rect=1161,748,1250,790 text=[Win]
+2026-11-11T01:22:22.4511870+08:00 copy buffer child id=2105 class=msctls_hotkey32 visible=True rect=1382,748,1602,793 text=[]
+2026-11-11T01:22:22.4835892+08:00 copy buffer child id=2106 class=Button visible=True rect=1610,748,1701,790 text=[Win]
+2026-11-11T01:22:22.5173194+08:00 copy buffer child id=1044 class=Button visible=True rect=1261,700,1492,742 text=[Play Sound on Copy]
+2026-11-11T01:22:22.5387163+08:00 copy buffer child id=2079 class=Static visible=True rect=811,400,927,442 text=[Copy]
+2026-11-11T01:22:22.5579297+08:00 copy buffer child id=2080 class=Static visible=True rect=811,448,929,490 text=[Paste]
+2026-11-11T01:22:22.5855311+08:00 copy buffer child id=2081 class=Static visible=True rect=1261,445,1379,487 text=[Cut]
+2026-11-11T01:22:22.6045954+08:00 copy buffer child id=2093 class=Static visible=True rect=811,550,927,592 text=[Copy]
+2026-11-11T01:22:22.6372710+08:00 copy buffer child id=2094 class=Static visible=True rect=811,598,929,640 text=[Paste]
+2026-11-11T01:22:22.6653972+08:00 copy buffer child id=2097 class=Static visible=True rect=1261,598,1379,640 text=[Cut]
+2026-11-11T01:22:22.6965391+08:00 copy buffer child id=2103 class=Static visible=True rect=811,700,927,742 text=[Copy]
+2026-11-11T01:22:22.7203422+08:00 copy buffer child id=2104 class=Static visible=True rect=811,748,929,790 text=[Paste]
+2026-11-11T01:22:22.7408689+08:00 copy buffer child id=2107 class=Static visible=True rect=1261,748,1379,790 text=[Cut]
+2026-11-11T01:22:22.7676769+08:00 copy buffer child id=2109 class=msctls_hotkey32 visible=True rect=932,859,1152,901 text=[]
+2026-11-11T01:22:22.7928224+08:00 copy buffer child id=2110 class=Button visible=True rect=1161,859,1250,901 text=[Win]
+2026-11-11T01:22:22.8279545+08:00 copy buffer child id=2111 class=msctls_hotkey32 visible=True rect=932,907,1152,952 text=[]
+2026-11-11T01:22:22.8470954+08:00 copy buffer child id=2112 class=Button visible=True rect=1161,907,1250,949 text=[Win]
+2026-11-11T01:22:22.8677836+08:00 copy buffer child id=2113 class=msctls_hotkey32 visible=True rect=1382,907,1602,952 text=[]
+2026-11-11T01:22:22.8972459+08:00 copy buffer child id=2114 class=Button visible=True rect=1610,907,1701,949 text=[Win]
+2026-11-11T01:22:22.9309896+08:00 copy buffer child id=1045 class=Button visible=True rect=1261,859,1492,901 text=[Play Sound on Copy]
+2026-11-11T01:22:22.9500321+08:00 copy buffer child id=2115 class=Static visible=True rect=811,859,927,901 text=[Copy]
+2026-11-11T01:22:22.9845610+08:00 copy buffer child id=2116 class=Static visible=True rect=811,907,929,949 text=[Paste]
+2026-11-11T01:22:23.0156830+08:00 copy buffer child id=2117 class=Static visible=True rect=1261,907,1379,949 text=[Cut]
+2026-11-11T01:22:23.0402892+08:00 copy buffer child id=2119 class=msctls_hotkey32 visible=True rect=932,1021,1152,1063 text=[]
+2026-11-11T01:22:23.0727896+08:00 copy buffer child id=2120 class=Button visible=True rect=1161,1021,1250,1063 text=[Win]
+2026-11-11T01:22:23.0974310+08:00 copy buffer child id=2121 class=msctls_hotkey32 visible=True rect=932,1069,1152,1114 text=[]
+2026-11-11T01:22:23.1274687+08:00 copy buffer child id=2122 class=Button visible=True rect=1161,1069,1250,1111 text=[Win]
+2026-11-11T01:22:23.1631395+08:00 copy buffer child id=2123 class=msctls_hotkey32 visible=True rect=1382,1069,1602,1114 text=[]
+2026-11-11T01:22:23.1802777+08:00 copy buffer child id=2124 class=Button visible=True rect=1610,1069,1701,1111 text=[Win]
+2026-11-11T01:22:23.1994216+08:00 copy buffer child id=1046 class=Button visible=True rect=1261,1021,1492,1063 text=[Play Sound on Copy]
+2026-11-11T01:22:23.2235188+08:00 copy buffer child id=2125 class=Static visible=True rect=811,1021,927,1063 text=[Copy]
+2026-11-11T01:22:23.2569606+08:00 copy buffer child id=2126 class=Static visible=True rect=811,1069,929,1111 text=[Paste]
+2026-11-11T01:22:23.2781647+08:00 copy buffer child id=2127 class=Static visible=True rect=1261,1069,1379,1111 text=[Cut]
+2026-11-11T01:22:23.2919708+08:00 copy buffer child id=2088 class=Button visible=True rect=778,373,1782,514 text=[Copy Buffer 1]
+2026-11-11T01:22:23.3191556+08:00 copy buffer child id=2098 class=Button visible=True rect=778,523,1782,664 text=[Copy Buffer 2]
+2026-11-11T01:22:23.3446860+08:00 copy buffer child id=2108 class=Button visible=True rect=778,673,1782,823 text=[Copy Buffer 3]
+2026-11-11T01:22:23.3773222+08:00 copy buffer child id=2118 class=Button visible=True rect=778,832,1782,982 text=[Copy Buffer 4]
+2026-11-11T01:22:23.4019473+08:00 copy buffer child id=2128 class=Button visible=True rect=778,991,1782,1141 text=[Copy Buffer 5]
+2026-11-11T01:22:24.4226255+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-debug-dark.png size=1289x996 print=True
+2026-11-11T01:22:24.4343411+08:00 friends list=16061500 count=15
+2026-11-11T01:22:25.4910879+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-debug-dark.png size=461x235 print=True
+2026-11-11T01:22:26.2296337+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-debug-dark-screen.png size=461x235
+2026-11-11T01:22:26.2379408+08:00 friend detail child id=1016 class=Edit visible=True rect=1279,735,1460,774 text=[]
+2026-11-11T01:22:26.2464211+08:00 friend detail child id=1017 class=Edit visible=True rect=1281,780,1599,819 text=[]
+2026-11-11T01:22:26.2538868+08:00 friend detail child id=1015 class=Button visible=True rect=1264,704,1570,728 text=[Send All Copies to this friend]
+2026-11-11T01:22:26.2614588+08:00 friend detail child id=1 class=Button visible=True rect=1358,825,1472,869 text=[OK]
+2026-11-11T01:22:26.2684041+08:00 friend detail child id=2 class=Button visible=True rect=1477,825,1591,869 text=[Cancel]
+2026-11-11T01:22:26.2889565+08:00 friend detail child id=2052 class=Static visible=True rect=1174,742,1267,761 text=[IP/Name]
+2026-11-11T01:22:26.3088521+08:00 friend detail child id=2053 class=Static visible=True rect=1174,784,1269,803 text=[Description]
+2026-11-11T01:22:27.6739141+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-debug-dark.png size=1289x996 print=True
+2026-11-11T01:22:28.4130959+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-debug-dark-screen.png size=1289x996
+2026-11-11T01:22:29.4424059+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-debug-dark.png size=1289x996 print=True
+2026-11-11T01:22:30.1860628+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-debug-dark-screen.png size=1289x996
+2026-11-11T01:22:31.4880266+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-debug-dark.png size=576x467 print=True
+2026-11-11T01:22:32.0737974+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-debug-dark.png size=423x163 print=True
+2026-11-11T01:22:32.8024835+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-debug-dark-screen.png size=423x163
+2026-11-11T01:22:34.5935121+08:00 PASS Theme=Modern Dark Language=English processAlive=True
+2026-11-11T01:22:59.0663325+08:00 BEGIN Theme=Modern Dark Language=English Build=Debug64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-debug-progress-0df1ab3636b84ddb9fd358c25ee5c3e6
+2026-11-11T01:23:06.2911488+08:00 main=58393468
+2026-11-11T01:23:17.7838469+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-debug-progress.png size=1779x795 print=True
+2026-11-11T01:23:18.5412167+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-debug-progress-screen.png size=1779x795
+2026-11-11T01:23:18.8566229+08:00 delete rows=242 selected=242
+2026-11-11T01:23:19.5248779+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-progress-wnd-debug-progress.png size=589x221 print=True
+2026-11-11T01:23:20.1580938+08:00 PASS Theme=Modern Dark Language=English delete-only=True
+2026-11-11T01:24:28.7340598+08:00 BEGIN Theme=Modern Dark Language=English Build=Debug64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-debug-progress-671e873af2174da09302da3413ea2aed
+2026-11-11T01:24:35.9646801+08:00 main=17632864
+2026-11-11T01:24:47.4157186+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-debug-progress.png size=1779x795 print=True
+2026-11-11T01:24:48.1987934+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-debug-progress-screen.png size=1779x795
+2026-11-11T01:24:48.5211219+08:00 delete rows=242 selected=242
+2026-11-11T01:24:49.2078522+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-progress-wnd-debug-progress.png size=589x221 print=True
+2026-11-11T01:24:49.9481462+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-progress-wnd-debug-progress-screen.png size=589x221
+2026-11-11T01:24:50.5702124+08:00 PASS Theme=Modern Dark Language=English delete-only=True
+2026-11-11T01:26:11.7302435+08:00 BEGIN Theme=Modern Dark Language=English Build=Debug64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-debug-progress-0a9a36092f094d789e5627438b2c5edb
+2026-11-11T01:26:18.9468573+08:00 main=46730154
+2026-11-11T01:26:30.4108582+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-debug-progress.png size=1779x795 print=True
+2026-11-11T01:26:31.1728547+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-debug-progress-screen.png size=1779x795
+2026-11-11T01:26:31.4927934+08:00 delete rows=242 selected=242
+2026-11-11T01:26:32.1532079+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-progress-wnd-debug-progress.png size=589x221 print=True
+2026-11-11T01:26:32.9058625+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-progress-wnd-debug-progress-screen.png size=589x221
+2026-11-11T01:26:33.5586505+08:00 PASS Theme=Modern Dark Language=English delete-only=True
+2026-11-11T01:27:42.5597842+08:00 BEGIN Theme=Modern Dark Language=English Build=Debug64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-debug-progress-5cad8c634be74c5184ddf93cd76f5853
+2026-11-11T01:27:49.7728958+08:00 main=26021988
+2026-11-11T01:28:01.2043025+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-debug-progress.png size=1779x795 print=True
+2026-11-11T01:28:01.9816444+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-debug-progress-screen.png size=1779x795
+2026-11-11T01:28:02.2900341+08:00 delete rows=242 selected=242
+2026-11-11T01:28:02.9522840+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-progress-wnd-debug-progress.png size=589x221 print=True
+2026-11-11T01:28:03.6801167+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-progress-wnd-debug-progress-screen.png size=589x221
+2026-11-11T01:28:04.2947211+08:00 PASS Theme=Modern Dark Language=English delete-only=True
+2026-11-11T01:30:19.5931480+08:00 BEGIN Theme=Modern Dark Language=English Build=Debug64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-debug-progress-489165fca5c642168c3a069659263bff
+2026-11-11T01:30:26.7821347+08:00 main=21106768
+2026-11-11T01:30:38.2242830+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-debug-progress.png size=1779x795 print=True
+2026-11-11T01:30:38.9915021+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-debug-progress-screen.png size=1779x795
+2026-11-11T01:30:39.3094528+08:00 delete rows=242 selected=242
+2026-11-11T01:30:39.9746182+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-progress-wnd-debug-progress.png size=589x221 print=True
+2026-11-11T01:30:40.7019665+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-progress-wnd-debug-progress-screen.png size=589x221
+2026-11-11T01:30:41.3180650+08:00 PASS Theme=Modern Dark Language=English delete-only=True
+2026-11-11T01:31:04.3307934+08:00 BEGIN Theme=Modern Light Language=English Build=Debug64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-debug-progress-light-9e39b40de243439186e51bbac5cd6746
+2026-11-11T01:31:11.5430281+08:00 main=17498364
+2026-11-11T01:31:22.9750402+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-debug-progress-light.png size=1779x795 print=True
+2026-11-11T01:31:23.7527852+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-debug-progress-light-screen.png size=1779x795
+2026-11-11T01:31:24.0586732+08:00 delete rows=242 selected=242
+2026-11-11T01:31:24.7137863+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-progress-wnd-debug-progress-light.png size=589x221 print=True
+2026-11-11T01:31:25.4560044+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-progress-wnd-debug-progress-light-screen.png size=589x221
+2026-11-11T01:31:26.1059891+08:00 PASS Theme=Modern Light Language=English delete-only=True
+2026-11-11T01:32:35.0676282+08:00 BEGIN Theme=Modern Light Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-light-304f360323204c96954f163944ca41f7
+2026-11-11T01:32:42.3006313+08:00 main=34279524
+2026-11-11T01:32:53.7814161+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-light.png size=1779x795 print=True
+2026-11-11T01:32:54.5548258+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-light-screen.png size=1779x795
+2026-11-11T01:32:57.8756960+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-light.png size=717x696 print=True
+2026-11-11T01:32:58.6180828+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-light-screen.png size=717x696
+2026-11-11T01:32:59.6202053+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light.png size=537x263 print=True
+2026-11-11T01:33:00.3578173+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-light-screen.png size=537x263
+2026-11-11T01:33:01.7233354+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T01:33:02.7172489+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-light.png size=1289x996 print=True
+2026-11-11T01:33:03.3678070+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light.png size=497x812 print=True
+2026-11-11T01:33:04.1249640+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-light-screen.png size=497x812
+2026-11-11T01:33:05.5685727+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light.png size=1289x996 print=True
+2026-11-11T01:33:06.3173487+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-light-screen.png size=1289x996
+2026-11-11T01:33:06.3378184+08:00 copy buffer child id=2082 class=msctls_hotkey32 visible=True rect=932,400,1152,442 text=[]
+2026-11-11T01:33:06.3647100+08:00 copy buffer child id=2085 class=Button visible=True rect=1161,400,1250,442 text=[Win]
+2026-11-11T01:33:06.3886257+08:00 copy buffer child id=2083 class=msctls_hotkey32 visible=True rect=932,448,1152,493 text=[]
+2026-11-11T01:33:06.4114539+08:00 copy buffer child id=2086 class=Button visible=True rect=1161,448,1250,490 text=[Win]
+2026-11-11T01:33:06.4317658+08:00 copy buffer child id=2084 class=msctls_hotkey32 visible=True rect=1382,448,1602,493 text=[]
+2026-11-11T01:33:06.4634286+08:00 copy buffer child id=2087 class=Button visible=True rect=1610,448,1701,490 text=[Win]
+2026-11-11T01:33:06.4956636+08:00 copy buffer child id=1042 class=Button visible=True rect=1261,397,1492,439 text=[Play Sound on Copy]
+2026-11-11T01:33:06.5242467+08:00 copy buffer child id=2089 class=msctls_hotkey32 visible=True rect=932,550,1152,592 text=[]
+2026-11-11T01:33:06.5478994+08:00 copy buffer child id=2090 class=Button visible=True rect=1161,550,1250,592 text=[Win]
+2026-11-11T01:33:06.5815542+08:00 copy buffer child id=2091 class=msctls_hotkey32 visible=True rect=932,598,1152,643 text=[]
+2026-11-11T01:33:06.6158715+08:00 copy buffer child id=2092 class=Button visible=True rect=1161,598,1250,640 text=[Win]
+2026-11-11T01:33:06.6468080+08:00 copy buffer child id=2095 class=msctls_hotkey32 visible=True rect=1382,598,1602,643 text=[]
+2026-11-11T01:33:06.6781392+08:00 copy buffer child id=2096 class=Button visible=True rect=1610,598,1701,640 text=[Win]
+2026-11-11T01:33:06.7102083+08:00 copy buffer child id=1043 class=Button visible=True rect=1261,550,1492,592 text=[Play Sound on Copy]
+2026-11-11T01:33:06.7344810+08:00 copy buffer child id=2099 class=msctls_hotkey32 visible=True rect=932,700,1152,742 text=[]
+2026-11-11T01:33:06.7652229+08:00 copy buffer child id=2100 class=Button visible=True rect=1161,700,1250,742 text=[Win]
+2026-11-11T01:33:06.7994053+08:00 copy buffer child id=2101 class=msctls_hotkey32 visible=True rect=932,748,1152,793 text=[]
+2026-11-11T01:33:06.8353758+08:00 copy buffer child id=2102 class=Button visible=True rect=1161,748,1250,790 text=[Win]
+2026-11-11T01:33:06.8640245+08:00 copy buffer child id=2105 class=msctls_hotkey32 visible=True rect=1382,748,1602,793 text=[]
+2026-11-11T01:33:06.8856124+08:00 copy buffer child id=2106 class=Button visible=True rect=1610,748,1701,790 text=[Win]
+2026-11-11T01:33:06.9205456+08:00 copy buffer child id=1044 class=Button visible=True rect=1261,700,1492,742 text=[Play Sound on Copy]
+2026-11-11T01:33:06.9583596+08:00 copy buffer child id=2079 class=Static visible=True rect=811,400,927,442 text=[Copy]
+2026-11-11T01:33:06.9885789+08:00 copy buffer child id=2080 class=Static visible=True rect=811,448,929,490 text=[Paste]
+2026-11-11T01:33:07.0198743+08:00 copy buffer child id=2081 class=Static visible=True rect=1261,445,1379,487 text=[Cut]
+2026-11-11T01:33:07.0406794+08:00 copy buffer child id=2093 class=Static visible=True rect=811,550,927,592 text=[Copy]
+2026-11-11T01:33:07.0600727+08:00 copy buffer child id=2094 class=Static visible=True rect=811,598,929,640 text=[Paste]
+2026-11-11T01:33:07.0922593+08:00 copy buffer child id=2097 class=Static visible=True rect=1261,598,1379,640 text=[Cut]
+2026-11-11T01:33:07.1208048+08:00 copy buffer child id=2103 class=Static visible=True rect=811,700,927,742 text=[Copy]
+2026-11-11T01:33:07.1339068+08:00 copy buffer child id=2104 class=Static visible=True rect=811,748,929,790 text=[Paste]
+2026-11-11T01:33:07.1584736+08:00 copy buffer child id=2107 class=Static visible=True rect=1261,748,1379,790 text=[Cut]
+2026-11-11T01:33:07.1767122+08:00 copy buffer child id=2109 class=msctls_hotkey32 visible=True rect=932,859,1152,901 text=[]
+2026-11-11T01:33:07.2066703+08:00 copy buffer child id=2110 class=Button visible=True rect=1161,859,1250,901 text=[Win]
+2026-11-11T01:33:07.2360381+08:00 copy buffer child id=2111 class=msctls_hotkey32 visible=True rect=932,907,1152,952 text=[]
+2026-11-11T01:33:07.2701295+08:00 copy buffer child id=2112 class=Button visible=True rect=1161,907,1250,949 text=[Win]
+2026-11-11T01:33:07.3063173+08:00 copy buffer child id=2113 class=msctls_hotkey32 visible=True rect=1382,907,1602,952 text=[]
+2026-11-11T01:33:07.3295185+08:00 copy buffer child id=2114 class=Button visible=True rect=1610,907,1701,949 text=[Win]
+2026-11-11T01:33:07.3589585+08:00 copy buffer child id=1045 class=Button visible=True rect=1261,859,1492,901 text=[Play Sound on Copy]
+2026-11-11T01:33:07.3935832+08:00 copy buffer child id=2115 class=Static visible=True rect=811,859,927,901 text=[Copy]
+2026-11-11T01:33:07.4182043+08:00 copy buffer child id=2116 class=Static visible=True rect=811,907,929,949 text=[Paste]
+2026-11-11T01:33:07.4451135+08:00 copy buffer child id=2117 class=Static visible=True rect=1261,907,1379,949 text=[Cut]
+2026-11-11T01:33:07.4769191+08:00 copy buffer child id=2119 class=msctls_hotkey32 visible=True rect=932,1021,1152,1063 text=[]
+2026-11-11T01:33:07.5117614+08:00 copy buffer child id=2120 class=Button visible=True rect=1161,1021,1250,1063 text=[Win]
+2026-11-11T01:33:07.5387594+08:00 copy buffer child id=2121 class=msctls_hotkey32 visible=True rect=932,1069,1152,1114 text=[]
+2026-11-11T01:33:07.5566468+08:00 copy buffer child id=2122 class=Button visible=True rect=1161,1069,1250,1111 text=[Win]
+2026-11-11T01:33:07.5754276+08:00 copy buffer child id=2123 class=msctls_hotkey32 visible=True rect=1382,1069,1602,1114 text=[]
+2026-11-11T01:33:07.5955443+08:00 copy buffer child id=2124 class=Button visible=True rect=1610,1069,1701,1111 text=[Win]
+2026-11-11T01:33:07.6271516+08:00 copy buffer child id=1046 class=Button visible=True rect=1261,1021,1492,1063 text=[Play Sound on Copy]
+2026-11-11T01:33:07.6595774+08:00 copy buffer child id=2125 class=Static visible=True rect=811,1021,927,1063 text=[Copy]
+2026-11-11T01:33:07.6955832+08:00 copy buffer child id=2126 class=Static visible=True rect=811,1069,929,1111 text=[Paste]
+2026-11-11T01:33:07.7262103+08:00 copy buffer child id=2127 class=Static visible=True rect=1261,1069,1379,1111 text=[Cut]
+2026-11-11T01:33:07.7578662+08:00 copy buffer child id=2088 class=Button visible=True rect=778,373,1782,514 text=[Copy Buffer 1]
+2026-11-11T01:33:07.7913720+08:00 copy buffer child id=2098 class=Button visible=True rect=778,523,1782,664 text=[Copy Buffer 2]
+2026-11-11T01:33:07.8282652+08:00 copy buffer child id=2108 class=Button visible=True rect=778,673,1782,823 text=[Copy Buffer 3]
+2026-11-11T01:33:07.8542924+08:00 copy buffer child id=2118 class=Button visible=True rect=778,832,1782,982 text=[Copy Buffer 4]
+2026-11-11T01:33:07.8900438+08:00 copy buffer child id=2128 class=Button visible=True rect=778,991,1782,1141 text=[Copy Buffer 5]
+2026-11-11T01:33:08.9367532+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-light.png size=1289x996 print=True
+2026-11-11T01:33:08.9497154+08:00 friends list=16979138 count=15
+2026-11-11T01:33:09.9967988+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light.png size=461x235 print=True
+2026-11-11T01:33:10.7327774+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-light-screen.png size=461x235
+2026-11-11T01:33:10.7417640+08:00 friend detail child id=1016 class=Edit visible=True rect=1279,735,1460,774 text=[]
+2026-11-11T01:33:10.7489443+08:00 friend detail child id=1017 class=Edit visible=True rect=1281,780,1599,819 text=[]
+2026-11-11T01:33:10.7573599+08:00 friend detail child id=1015 class=Button visible=True rect=1264,704,1570,728 text=[Send All Copies to this friend]
+2026-11-11T01:33:10.7648147+08:00 friend detail child id=1 class=Button visible=True rect=1358,825,1472,869 text=[OK]
+2026-11-11T01:33:10.7724918+08:00 friend detail child id=2 class=Button visible=True rect=1477,825,1591,869 text=[Cancel]
+2026-11-11T01:33:10.7798527+08:00 friend detail child id=2052 class=Static visible=True rect=1174,742,1267,761 text=[IP/Name]
+2026-11-11T01:33:10.8022273+08:00 friend detail child id=2053 class=Static visible=True rect=1174,784,1269,803 text=[Description]
+2026-11-11T01:33:12.1910074+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light.png size=1289x996 print=True
+2026-11-11T01:33:12.9177571+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-light-screen.png size=1289x996
+2026-11-11T01:33:13.9400395+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light.png size=1289x996 print=True
+2026-11-11T01:33:14.6781792+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-light-screen.png size=1289x996
+2026-11-11T01:33:15.9883737+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-light.png size=576x467 print=True
+2026-11-11T01:33:16.5791220+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light.png size=423x163 print=True
+2026-11-11T01:33:17.3150474+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-light-screen.png size=423x163
+2026-11-11T01:33:19.1160371+08:00 PASS Theme=Modern Light Language=English processAlive=True
+2026-11-11T01:33:32.3354726+08:00 BEGIN Theme=Modern Dark Language=English Build=Release64 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4b-dark-1b6db632198a434795e6de7ee430c12a
+2026-11-11T01:33:39.5650478+08:00 main=17304228
+2026-11-11T01:33:51.0055562+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-dark.png size=1779x795 print=True
+2026-11-11T01:33:51.7815418+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-delete-clip-data-dark-screen.png size=1779x795
+2026-11-11T01:33:55.1132922+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-dark.png size=717x696 print=True
+2026-11-11T01:33:55.8370604+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-copy-properties-dark-screen.png size=717x696
+2026-11-11T01:33:56.8586969+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-dark.png size=537x263 print=True
+2026-11-11T01:33:57.5998648+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-prompt-dark-screen.png size=537x263
+2026-11-11T01:33:58.9603375+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-dark.png size=1289x996 print=True
+2026-11-11T01:33:59.9366326+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-types-dark.png size=1289x996 print=True
+2026-11-11T01:34:00.5854369+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-dark.png size=497x812 print=True
+2026-11-11T01:34:01.3128747+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-add-type-dark-screen.png size=497x812
+2026-11-11T01:34:02.7003812+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-dark.png size=1289x996 print=True
+2026-11-11T01:34:03.4398313+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-copy-buffers-dark-screen.png size=1289x996
+2026-11-11T01:34:03.4641730+08:00 copy buffer child id=2082 class=msctls_hotkey32 visible=True rect=932,400,1152,442 text=[]
+2026-11-11T01:34:03.4962754+08:00 copy buffer child id=2085 class=Button visible=True rect=1161,400,1250,442 text=[Win]
+2026-11-11T01:34:03.5265668+08:00 copy buffer child id=2083 class=msctls_hotkey32 visible=True rect=932,448,1152,493 text=[]
+2026-11-11T01:34:03.5386353+08:00 copy buffer child id=2086 class=Button visible=True rect=1161,448,1250,490 text=[Win]
+2026-11-11T01:34:03.5617922+08:00 copy buffer child id=2084 class=msctls_hotkey32 visible=True rect=1382,448,1602,493 text=[]
+2026-11-11T01:34:03.5767725+08:00 copy buffer child id=2087 class=Button visible=True rect=1610,448,1701,490 text=[Win]
+2026-11-11T01:34:03.6086162+08:00 copy buffer child id=1042 class=Button visible=True rect=1261,397,1492,439 text=[Play Sound on Copy]
+2026-11-11T01:34:03.6425179+08:00 copy buffer child id=2089 class=msctls_hotkey32 visible=True rect=932,550,1152,592 text=[]
+2026-11-11T01:34:03.6788274+08:00 copy buffer child id=2090 class=Button visible=True rect=1161,550,1250,592 text=[Win]
+2026-11-11T01:34:03.7116365+08:00 copy buffer child id=2091 class=msctls_hotkey32 visible=True rect=932,598,1152,643 text=[]
+2026-11-11T01:34:03.7384170+08:00 copy buffer child id=2092 class=Button visible=True rect=1161,598,1250,640 text=[Win]
+2026-11-11T01:34:03.7681192+08:00 copy buffer child id=2095 class=msctls_hotkey32 visible=True rect=1382,598,1602,643 text=[]
+2026-11-11T01:34:03.8022724+08:00 copy buffer child id=2096 class=Button visible=True rect=1610,598,1701,640 text=[Win]
+2026-11-11T01:34:03.8319905+08:00 copy buffer child id=1043 class=Button visible=True rect=1261,550,1492,592 text=[Play Sound on Copy]
+2026-11-11T01:34:03.8624104+08:00 copy buffer child id=2099 class=msctls_hotkey32 visible=True rect=932,700,1152,742 text=[]
+2026-11-11T01:34:03.8830532+08:00 copy buffer child id=2100 class=Button visible=True rect=1161,700,1250,742 text=[Win]
+2026-11-11T01:34:03.9092298+08:00 copy buffer child id=2101 class=msctls_hotkey32 visible=True rect=932,748,1152,793 text=[]
+2026-11-11T01:34:03.9330996+08:00 copy buffer child id=2102 class=Button visible=True rect=1161,748,1250,790 text=[Win]
+2026-11-11T01:34:03.9570902+08:00 copy buffer child id=2105 class=msctls_hotkey32 visible=True rect=1382,748,1602,793 text=[]
+2026-11-11T01:34:03.9797692+08:00 copy buffer child id=2106 class=Button visible=True rect=1610,748,1701,790 text=[Win]
+2026-11-11T01:34:04.0016441+08:00 copy buffer child id=1044 class=Button visible=True rect=1261,700,1492,742 text=[Play Sound on Copy]
+2026-11-11T01:34:04.0320882+08:00 copy buffer child id=2079 class=Static visible=True rect=811,400,927,442 text=[Copy]
+2026-11-11T01:34:04.0562703+08:00 copy buffer child id=2080 class=Static visible=True rect=811,448,929,490 text=[Paste]
+2026-11-11T01:34:04.0867507+08:00 copy buffer child id=2081 class=Static visible=True rect=1261,445,1379,487 text=[Cut]
+2026-11-11T01:34:04.1198164+08:00 copy buffer child id=2093 class=Static visible=True rect=811,550,927,592 text=[Copy]
+2026-11-11T01:34:04.1440054+08:00 copy buffer child id=2094 class=Static visible=True rect=811,598,929,640 text=[Paste]
+2026-11-11T01:34:04.1763917+08:00 copy buffer child id=2097 class=Static visible=True rect=1261,598,1379,640 text=[Cut]
+2026-11-11T01:34:04.2048647+08:00 copy buffer child id=2103 class=Static visible=True rect=811,700,927,742 text=[Copy]
+2026-11-11T01:34:04.2243567+08:00 copy buffer child id=2104 class=Static visible=True rect=811,748,929,790 text=[Paste]
+2026-11-11T01:34:04.2446660+08:00 copy buffer child id=2107 class=Static visible=True rect=1261,748,1379,790 text=[Cut]
+2026-11-11T01:34:04.2760711+08:00 copy buffer child id=2109 class=msctls_hotkey32 visible=True rect=932,859,1152,901 text=[]
+2026-11-11T01:34:04.3086767+08:00 copy buffer child id=2110 class=Button visible=True rect=1161,859,1250,901 text=[Win]
+2026-11-11T01:34:04.3282370+08:00 copy buffer child id=2111 class=msctls_hotkey32 visible=True rect=932,907,1152,952 text=[]
+2026-11-11T01:34:04.3630230+08:00 copy buffer child id=2112 class=Button visible=True rect=1161,907,1250,949 text=[Win]
+2026-11-11T01:34:04.3814046+08:00 copy buffer child id=2113 class=msctls_hotkey32 visible=True rect=1382,907,1602,952 text=[]
+2026-11-11T01:34:04.4180806+08:00 copy buffer child id=2114 class=Button visible=True rect=1610,907,1701,949 text=[Win]
+2026-11-11T01:34:04.4583001+08:00 copy buffer child id=1045 class=Button visible=True rect=1261,859,1492,901 text=[Play Sound on Copy]
+2026-11-11T01:34:04.4776104+08:00 copy buffer child id=2115 class=Static visible=True rect=811,859,927,901 text=[Copy]
+2026-11-11T01:34:04.5160306+08:00 copy buffer child id=2116 class=Static visible=True rect=811,907,929,949 text=[Paste]
+2026-11-11T01:34:04.5442286+08:00 copy buffer child id=2117 class=Static visible=True rect=1261,907,1379,949 text=[Cut]
+2026-11-11T01:34:04.5653133+08:00 copy buffer child id=2119 class=msctls_hotkey32 visible=True rect=932,1021,1152,1063 text=[]
+2026-11-11T01:34:04.5940494+08:00 copy buffer child id=2120 class=Button visible=True rect=1161,1021,1250,1063 text=[Win]
+2026-11-11T01:34:04.6200298+08:00 copy buffer child id=2121 class=msctls_hotkey32 visible=True rect=932,1069,1152,1114 text=[]
+2026-11-11T01:34:04.6561526+08:00 copy buffer child id=2122 class=Button visible=True rect=1161,1069,1250,1111 text=[Win]
+2026-11-11T01:34:04.6898804+08:00 copy buffer child id=2123 class=msctls_hotkey32 visible=True rect=1382,1069,1602,1114 text=[]
+2026-11-11T01:34:04.7123329+08:00 copy buffer child id=2124 class=Button visible=True rect=1610,1069,1701,1111 text=[Win]
+2026-11-11T01:34:04.7438658+08:00 copy buffer child id=1046 class=Button visible=True rect=1261,1021,1492,1063 text=[Play Sound on Copy]
+2026-11-11T01:34:04.7732467+08:00 copy buffer child id=2125 class=Static visible=True rect=811,1021,927,1063 text=[Copy]
+2026-11-11T01:34:04.8088077+08:00 copy buffer child id=2126 class=Static visible=True rect=811,1069,929,1111 text=[Paste]
+2026-11-11T01:34:04.8414650+08:00 copy buffer child id=2127 class=Static visible=True rect=1261,1069,1379,1111 text=[Cut]
+2026-11-11T01:34:04.8783704+08:00 copy buffer child id=2088 class=Button visible=True rect=778,373,1782,514 text=[Copy Buffer 1]
+2026-11-11T01:34:04.9099224+08:00 copy buffer child id=2098 class=Button visible=True rect=778,523,1782,664 text=[Copy Buffer 2]
+2026-11-11T01:34:04.9498706+08:00 copy buffer child id=2108 class=Button visible=True rect=778,673,1782,823 text=[Copy Buffer 3]
+2026-11-11T01:34:04.9854133+08:00 copy buffer child id=2118 class=Button visible=True rect=778,832,1782,982 text=[Copy Buffer 4]
+2026-11-11T01:34:05.0090364+08:00 copy buffer child id=2128 class=Button visible=True rect=778,991,1782,1141 text=[Copy Buffer 5]
+2026-11-11T01:34:06.0202044+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-friends-dark.png size=1289x996 print=True
+2026-11-11T01:34:06.0335346+08:00 friends list=17241250 count=15
+2026-11-11T01:34:07.0863264+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-dark.png size=461x235 print=True
+2026-11-11T01:34:07.8202824+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-friend-details-dark-screen.png size=461x235
+2026-11-11T01:34:07.8289038+08:00 friend detail child id=1016 class=Edit visible=True rect=1279,735,1460,774 text=[]
+2026-11-11T01:34:07.8372265+08:00 friend detail child id=1017 class=Edit visible=True rect=1281,780,1599,819 text=[]
+2026-11-11T01:34:07.8451872+08:00 friend detail child id=1015 class=Button visible=True rect=1264,704,1570,728 text=[Send All Copies to this friend]
+2026-11-11T01:34:07.8531372+08:00 friend detail child id=1 class=Button visible=True rect=1358,825,1472,869 text=[OK]
+2026-11-11T01:34:07.8819677+08:00 friend detail child id=2 class=Button visible=True rect=1477,825,1591,869 text=[Cancel]
+2026-11-11T01:34:07.9027078+08:00 friend detail child id=2052 class=Static visible=True rect=1174,742,1267,761 text=[IP/Name]
+2026-11-11T01:34:07.9200233+08:00 friend detail child id=2053 class=Static visible=True rect=1174,784,1269,803 text=[Description]
+2026-11-11T01:34:09.3178047+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-dark.png size=1289x996 print=True
+2026-11-11T01:34:10.0741473+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-stats-dark-screen.png size=1289x996
+2026-11-11T01:34:11.0918295+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-dark.png size=1289x996 print=True
+2026-11-11T01:34:11.8569438+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-options-about-dark-screen.png size=1289x996
+2026-11-11T01:34:13.1771906+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-move-to-group-dark.png size=576x467 print=True
+2026-11-11T01:34:13.7686726+08:00 screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-dark.png size=423x163 print=True
+2026-11-11T01:34:14.4986944+08:00 screen screenshot=D:\orca\workspaces\Ditto\ui-dialogs\artifacts\ui\t4b\t4b-group-name-dark-screen.png size=423x163
+2026-11-11T01:34:16.2975491+08:00 PASS Theme=Modern Dark Language=English processAlive=True

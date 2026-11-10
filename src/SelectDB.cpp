@@ -16,7 +16,7 @@ static char THIS_FILE[] = __FILE__;
 
 
 CSelectDB::CSelectDB(CWnd* pParent /*=NULL*/)
-	: CDialog(CSelectDB::IDD, pParent)
+	: CThemedDialog(CSelectDB::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CSelectDB)
 	//}}AFX_DATA_INIT
@@ -25,14 +25,14 @@ CSelectDB::CSelectDB(CWnd* pParent /*=NULL*/)
 
 void CSelectDB::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CThemedDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSelectDB)
 	DDX_Control(pDX, IDC_PATH, m_ePath);
 	//}}AFX_DATA_MAP
 }
 
 
-BEGIN_MESSAGE_MAP(CSelectDB, CDialog)
+BEGIN_MESSAGE_MAP(CSelectDB, CThemedDialog)
 	//{{AFX_MSG_MAP(CSelectDB)
 	ON_BN_CLICKED(IDC_SELECT, OnSelect)
 	ON_BN_CLICKED(IDC_USE_DEFAULT, OnUseDefault)
@@ -44,11 +44,13 @@ END_MESSAGE_MAP()
 
 BOOL CSelectDB::OnInitDialog() 
 {
-	CDialog::OnInitDialog();
+	CThemedDialog::OnInitDialog();
 	
 	m_ePath.SetWindowText(CGetSetOptions::GetDBPath(FALSE));
 	
 	m_ePath.SetFocus();
+
+	CThemedControls::FinishLayout(this);
 	
 	return FALSE;
 }
@@ -60,7 +62,7 @@ void CSelectDB::OnOK()
 
 	CGetSetOptions::SetDBPath(csPath);
 		
-	CDialog::OnOK();
+	CThemedDialog::OnOK();
 }
 
 void CSelectDB::OnSelect() 

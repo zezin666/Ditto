@@ -1,10 +1,11 @@
 #pragma once
 #include "afxwin.h"
 #include "DialogResizer.h"
+#include "Ui/ThemedDialog.h"
 
 // CFriendPromptDlg dialog
 
-class CFriendPromptDlg : public CDialogEx
+class CFriendPromptDlg : public CThemedDialog
 {
 	DECLARE_DYNAMIC(CFriendPromptDlg)
 
@@ -25,7 +26,6 @@ protected:
 
 	CString m_name;
 	CString m_desc;
-	CBrush m_brush;
 	bool m_save;
 	bool m_clearList;
 

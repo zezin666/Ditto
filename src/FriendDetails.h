@@ -10,7 +10,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // CFriendDetails dialog
 
-class CFriendDetails : public CDialog
+#include "Ui/ThemedDialog.h"
+
+class CFriendDetails : public CThemedDialog
 {
 // Construction
 public:

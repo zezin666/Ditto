@@ -7,11 +7,12 @@
 // FileTransferProgressDlg.h : header file
 //
 #include "../resource.h"
+#include "Ui/ThemedDialog.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CFileTransferProgressDlg dialog
 
-class CFileTransferProgressDlg : public CDialog
+class CFileTransferProgressDlg : public CThemedDialog
 {
 // Construction
 public:

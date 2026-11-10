@@ -4,13 +4,78 @@
 #include "stdafx.h"
 #include "CP_Main.h"
 #include "OptionsCopyBuffers.h"
+#include "DPI.h"
+#include "UiDraw.h"
+#include "UiTheme.h"
+#include <algorithm>
 
+namespace
+{
+	void MoveGroupBoxBehindControls(CWnd* pDialog, UINT controlId)
+	{
+		HWND hWnd = ::GetDlgItem(pDialog->GetSafeHwnd(), controlId);
+		if (hWnd != NULL)
+		{
+			::SetWindowLongPtr(hWnd, GWL_STYLE,
+				::GetWindowLongPtr(hWnd, GWL_STYLE) | WS_CLIPSIBLINGS);
+			::SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, 0, 0,
+				SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+		}
+	}
+
+	void FitCheckBoxToText(CWnd* pDialog, UINT controlId)
+	{
+		CWnd* pControl = pDialog->GetDlgItem(controlId);
+		if (pControl == NULL || pControl->GetSafeHwnd() == NULL)
+			return;
+
+		CString text;
+		pControl->GetWindowText(text);
+		CDPI dpi(pDialog->GetSafeHwnd());
+		CClientDC dc(pControl);
+		const CSize textSize = UiDraw::MeasureText(&dc, text,
+			UiTheme().FontFamilyUi(), UiTheme().FontSizeBody(), FW_NORMAL,
+			dpi.GetDPI());
+		const int desiredWidth = std::max<int>(0,
+			dpi.Scale(16 + 8 + 12) + textSize.cx);
+
+		CRect controlRect;
+		pControl->GetWindowRect(controlRect);
+		pDialog->ScreenToClient(controlRect);
+		if (desiredWidth <= controlRect.Width())
+			return;
+
+		const int delta = desiredWidth - controlRect.Width();
+		HWND child = ::GetWindow(pDialog->GetSafeHwnd(), GW_CHILD);
+		while (child != NULL)
+		{
+			if (child != pControl->GetSafeHwnd())
+			{
+				CRect siblingRect;
+				::GetWindowRect(child, &siblingRect);
+				pDialog->ScreenToClient(siblingRect);
+				if (siblingRect.top < controlRect.bottom &&
+					siblingRect.bottom > controlRect.top &&
+					siblingRect.left >= controlRect.right)
+				{
+					::SetWindowPos(child, NULL, siblingRect.left + delta,
+						siblingRect.top, 0, 0,
+						SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+				}
+			}
+			child = ::GetWindow(child, GW_HWNDNEXT);
+		}
+
+		pControl->SetWindowPos(NULL, 0, 0, desiredWidth, controlRect.Height(),
+			SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+	}
+}
 
 // COptionsCopyBuffers dialog
 
-IMPLEMENT_DYNCREATE(COptionsCopyBuffers, CPropertyPage)
+IMPLEMENT_DYNCREATE(COptionsCopyBuffers, CThemedPropertyPage)
 
-COptionsCopyBuffers::COptionsCopyBuffers() : CPropertyPage(COptionsCopyBuffers::IDD)
+COptionsCopyBuffers::COptionsCopyBuffers() : CThemedPropertyPage(COptionsCopyBuffers::IDD)
 {
 	m_csTitle = theApp.m_Language.GetString("CopyBuffers", "Copy Buffers");
 	m_psp.pszTitle = m_csTitle;
@@ -23,7 +88,7 @@ COptionsCopyBuffers::~COptionsCopyBuffers()
 
 void COptionsCopyBuffers::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CThemedPropertyPage::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_COPY_1, m_CopyBuffer1);
 	DDX_Control(pDX, IDC_PASTE_1, m_PasteBuffer1);
 	DDX_Control(pDX, IDC_CUT_1, m_CutBuffer1);
@@ -44,12 +109,12 @@ void COptionsCopyBuffers::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(COptionsCopyBuffers, CPropertyPage)
+BEGIN_MESSAGE_MAP(COptionsCopyBuffers, CThemedPropertyPage)
 END_MESSAGE_MAP()
 
 BOOL COptionsCopyBuffers::OnInitDialog()
 {
-	CPropertyPage::OnInitDialog();
+	CThemedPropertyPage::OnInitDialog();
 
 	CCopyBufferItem Item;
 	
@@ -84,6 +149,21 @@ BOOL COptionsCopyBuffers::OnInitDialog()
 	CheckDlgButton(IDC_PLAY_SOUND_5, Item.m_bPlaySoundOnCopy);
 
 	theApp.m_Language.UpdateOptionCopyBuffers(this);
+	CThemedControls::FinishLayout(this);
+	MoveGroupBoxBehindControls(this, IDC_BUFFER_GROUP_1);
+	MoveGroupBoxBehindControls(this, IDC_BUFFER_GROUP_2);
+	MoveGroupBoxBehindControls(this, IDC_BUFFER_GROUP_3);
+	MoveGroupBoxBehindControls(this, IDC_BUFFER_GROUP_4);
+	MoveGroupBoxBehindControls(this, IDC_BUFFER_GROUP_5);
+	const UINT checkBoxes[] = {
+		IDC_WIN_COPY_1, IDC_WIN_PASTE_1, IDC_WIN_CUT_1, IDC_PLAY_SOUND_1,
+		IDC_WIN_COPY_2, IDC_WIN_PASTE_2, IDC_WIN_CUT_2, IDC_PLAY_SOUND_2,
+		IDC_WIN_COPY_3, IDC_WIN_PASTE_3, IDC_WIN_CUT_3, IDC_PLAY_SOUND_3,
+		IDC_WIN_COPY_4, IDC_WIN_PASTE_4, IDC_WIN_CUT_4, IDC_PLAY_SOUND_4,
+		IDC_WIN_COPY_5, IDC_WIN_PASTE_5, IDC_WIN_CUT_5, IDC_PLAY_SOUND_5
+	};
+	for (UINT controlId : checkBoxes)
+		FitCheckBoxToText(this, controlId);
 
 	return TRUE;
 }
@@ -153,6 +233,6 @@ BOOL COptionsCopyBuffers::OnApply()
 	g_HotKeys.SaveAllKeys();
 	g_HotKeys.RegisterAll(true);
 
-	return CPropertyPage::OnApply();
+	return CThemedPropertyPage::OnApply();
 }
 
