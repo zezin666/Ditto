@@ -219,10 +219,21 @@ protected:
 	afx_msg BOOL OnToolTipText(UINT id, NMHDR * pNMHDR, LRESULT * pResult);
 	afx_msg void MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnMouseLeave();
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt);
+protected:
+	void DrawSearchHighlight(CDC* pDC, const CString& text, const CRect& rect);
+	void CreateCheckerboardBrush();
+	int m_hoverRow;
+	bool m_trackingHover;
+	CBrush m_checkerboardBrush;
+	int m_checkerboardDpi;
+	COLORREF m_checkerboardColor1;
+	COLORREF m_checkerboardColor2;
 };
 
 /////////////////////////////////////////////////////////////////////////////
