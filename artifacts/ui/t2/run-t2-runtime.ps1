@@ -2,11 +2,14 @@ param(
 	[Parameter(Mandatory = $true)]
 	[string]$Theme,
 	[Parameter(Mandatory = $true)]
-	[string]$Suffix
+	[string]$Suffix,
+	[ValidateSet("Release", "Debug")]
+	[string]$Configuration = "Release"
 )
 
 $ErrorActionPreference = "Stop"
 $repo = "D:\orca\workspaces\Ditto\ui-shell"
+$binaryDir = if ($Configuration -eq "Release") { "Release64" } else { "Debug64" }
 $artifactDir = Join-Path $repo "artifacts\ui\t2"
 $run = Join-Path $env:TEMP ("ditto-ui-t2-" + $Suffix + "-" + [guid]::NewGuid().ToString("N"))
 $dbPath = Join-Path $run "Ditto.db"
@@ -61,10 +64,10 @@ function Send-SearchText {
 	[T2Win32]::SendMessage($Popup, 0x0111, $command, $Edit) | Out-Null
 }
 
-function Focus-SearchEdit {
+function Focus-Control {
 	param(
 		[IntPtr]$Popup,
-		[IntPtr]$Edit
+		[IntPtr]$Control
 	)
 
 	$processId = [uint32]0
@@ -73,17 +76,49 @@ function Focus-SearchEdit {
 	[T2Win32]::AttachThreadInput($currentThread, $targetThread, $true) | Out-Null
 	try {
 		[T2Win32]::SetForegroundWindow($Popup) | Out-Null
-		[T2Win32]::SetFocus($Edit) | Out-Null
+		[T2Win32]::SetFocus($Control) | Out-Null
 	}
 	finally {
 		[T2Win32]::AttachThreadInput($currentThread, $targetThread, $false) | Out-Null
 	}
 }
 
+function Focus-SearchEdit {
+	param(
+		[IntPtr]$Popup,
+		[IntPtr]$Edit
+	)
+
+	Focus-Control $Popup $Edit
+}
+
+function Get-TabChain {
+	param(
+		[IntPtr]$Popup,
+		[IntPtr]$Start,
+		[int]$Maximum = 12
+	)
+
+	[System.Collections.Generic.List[int]]$ids = New-Object 'System.Collections.Generic.List[int]'
+	[IntPtr]$current = $Start
+	for ($i = 0; $i -lt $Maximum; $i++)
+	{
+		[IntPtr]$next = [T2Win32]::GetNextDlgTabItem($Popup, $current, $false)
+		if ($next -eq [IntPtr]::Zero -or $next -eq $Start)
+		{
+			break
+		}
+		$ids.Add([T2Win32]::GetDlgCtrlID($next))
+		$current = $next
+	}
+
+	return $ids
+}
+
 New-Item -ItemType Directory -Path $run | Out-Null
-Copy-Item (Join-Path $repo "Release64\Ditto.exe") $run
-Copy-Item (Join-Path $repo "Release64\ICU_Loader.dll") $run
-Copy-Item (Join-Path $repo "Release64\Addins") $run -Recurse
+Copy-Item (Join-Path $repo "$binaryDir\Ditto.exe") $run
+Copy-Item (Join-Path $repo "$binaryDir\ICU_Loader.dll") $run
+Copy-Item (Join-Path $repo "$binaryDir\Addins") $run -Recurse
 Copy-Item (Join-Path $repo "Debug\Language") $run -Recurse
 Copy-Item (Join-Path $repo "Debug\Themes") $run -Recurse
 New-Item -ItemType File -Path (Join-Path $run "portable") | Out-Null
@@ -122,6 +157,8 @@ public static class T2Win32
 	[DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr hwnd, out T2RECT rect);
 	[DllImport("user32.dll")] public static extern uint GetDpiForWindow(IntPtr hwnd);
 	[DllImport("user32.dll")] public static extern int GetDlgCtrlID(IntPtr hwnd);
+	[DllImport("user32.dll")] public static extern IntPtr GetNextDlgTabItem(IntPtr dialog, IntPtr control, bool previous);
+	[DllImport("user32.dll", EntryPoint = "GetWindowLongPtrW")] public static extern IntPtr GetWindowLongPtr(IntPtr hwnd, int index);
 	[DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hwnd);
 	[DllImport("user32.dll")] public static extern IntPtr SetFocus(IntPtr hwnd);
 	[DllImport("user32.dll")] public static extern bool AttachThreadInput(uint currentThread, uint targetThread, bool attach);
@@ -254,6 +291,25 @@ if ($edit -eq [IntPtr]::Zero)
 	throw "Search edit was not found"
 }
 
+$list = [T2Win32]::FindChildById($popup, 0x201)
+$groupButton = [T2Win32]::FindChildById($popup, 0x205)
+$backButton = [T2Win32]::FindChildById($popup, 0x207)
+$systemButton = [T2Win32]::FindChildById($popup, 0x210)
+$optionsButton = [T2Win32]::FindChildById($popup, 0x8025)
+$emptyAction = [T2Win32]::FindChildById($popup, 0x211)
+
+$baseTabIds = Get-TabChain $popup $edit
+$tabStopMask = 0x00010000
+$groupTabStop = ([T2Win32]::GetWindowLongPtr($groupButton, -16).ToInt64() -band $tabStopMask) -ne 0
+$backTabStop = ([T2Win32]::GetWindowLongPtr($backButton, -16).ToInt64() -band $tabStopMask) -ne 0
+$systemTabStop = ([T2Win32]::GetWindowLongPtr($systemButton, -16).ToInt64() -band $tabStopMask) -ne 0
+$optionsTabStop = ([T2Win32]::GetWindowLongPtr($optionsButton, -16).ToInt64() -band $tabStopMask) -ne 0
+
+Focus-Control $popup $groupButton
+Start-Sleep -Milliseconds 300
+Save-WindowCapture $popup (Join-Path $artifactDir ("t2-$Suffix-review-footer-tab.png"))
+Focus-Control $popup $edit
+
 $editRect = New-Object T2RECT
 [T2Win32]::GetWindowRect($edit, [ref]$editRect) | Out-Null
 $editLocalX = [Math]::Floor(($editRect.Right - $editRect.Left) / 2)
@@ -299,16 +355,13 @@ Focus-SearchEdit $popup $edit
 Start-Sleep -Seconds 2
 Save-WindowCapture $popup (Join-Path $artifactDir ("t2-$Suffix-empty.png"))
 
-$editDpi = [T2Win32]::GetDpiForWindow($edit)
-$editWidth = $editRect.Right - $editRect.Left
-$editHeight = $editRect.Bottom - $editRect.Top
-$clearInset = [Math]::Round(8 * $editDpi / 96.0)
-$clearButtonSize = [Math]::Round(28 * $editDpi / 96.0)
-$clearX = $editWidth - $clearInset - [Math]::Floor($clearButtonSize / 2)
-$clearY = [Math]::Floor($editHeight / 2)
-$clearPoint = [IntPtr](($clearY -shl 16) -bor ($clearX -band 0xFFFF))
-[T2Win32]::SendMessage($edit, 0x0201, [IntPtr]1, $clearPoint) | Out-Null
-[T2Win32]::SendMessage($edit, 0x0202, [IntPtr]::Zero, $clearPoint) | Out-Null
+$emptyTabIds = Get-TabChain $popup $edit
+$emptyTabStop = ([T2Win32]::GetWindowLongPtr($emptyAction, -16).ToInt64() -band $tabStopMask) -ne 0
+Focus-Control $popup $emptyAction
+Start-Sleep -Milliseconds 300
+Save-WindowCapture $popup (Join-Path $artifactDir ("t2-$Suffix-review-empty-keyboard.png"))
+[T2Win32]::PostMessage($emptyAction, 0x0100, [IntPtr]0x20, [IntPtr]::Zero) | Out-Null
+[T2Win32]::PostMessage($emptyAction, 0x0101, [IntPtr]0x20, [IntPtr]::Zero) | Out-Null
 Start-Sleep -Seconds 1
 $lengthAfterClear = [T2Win32]::SendMessage($edit, 0x000E, [IntPtr]::Zero, [IntPtr]::Zero).ToInt32()
 
@@ -318,7 +371,13 @@ Start-Sleep -Seconds 1
 Start-Sleep -Seconds 2
 Save-WindowCapture $popup (Join-Path $artifactDir ("t2-$Suffix-group.png"))
 
-$list = [T2Win32]::FindChildById($popup, 0x201)
+$groupTabIds = Get-TabChain $popup $edit
+if ($backButton -ne [IntPtr]::Zero -and [T2Win32]::IsWindowVisible($backButton)) {
+	Focus-Control $popup $backButton
+	Start-Sleep -Milliseconds 300
+	Save-WindowCapture $popup (Join-Path $artifactDir ("t2-$Suffix-review-back-tab.png"))
+}
+
 if ($list -ne [IntPtr]::Zero)
 {
 	foreach ($key in @(0x28, 0x22, 0x24, 0x26))
@@ -369,8 +428,8 @@ $dpi = [T2Win32]::GetDpiForWindow($popup)
 [T2Win32]::PostMessage($popup, 0x0100, [IntPtr]0x1B, [IntPtr]::Zero) | Out-Null
 Start-Sleep -Milliseconds 250
 $visibleAfterEscape = [T2Win32]::IsWindowVisible($popup)
-$summary = "theme={0} dpi={1} window={2}x{3} gdiBefore={4} gdiAfter={5} run={6}" -f `
-	$Theme, $dpi, ($windowRect.Right - $windowRect.Left), `
+$summary = "config={0} theme={1} dpi={2} window={3}x{4} gdiBefore={5} gdiAfter={6} run={7}" -f `
+	$Configuration, $Theme, $dpi, ($windowRect.Right - $windowRect.Left), `
 	($windowRect.Bottom - $windowRect.Top), $gdiBefore, $gdiAfter, $run
 $summary += " visibleAfterEscape={0}" -f $visibleAfterEscape
 $summary += " edit={0},{1},{2},{3}" -f `
@@ -381,6 +440,11 @@ $summary += " selection={0},{1}" -f $selectionStart, $selectionEnd
 $summary += " clearTextLength={0}" -f $lengthAfterClear
 $summary += " emptyTextLength={0}" -f $emptyTextLength
 $summary += " focusTextLength={0}" -f $focusTextLength
+$summary += " tabStops=group:{0},back:{1},system:{2},options:{3},empty:{4}" -f `
+	$groupTabStop, $backTabStop, $systemTabStop, $optionsTabStop, $emptyTabStop
+$summary += " baseTabIds={0}" -f ($baseTabIds -join ',')
+$summary += " emptyTabIds={0}" -f ($emptyTabIds -join ',')
+$summary += " groupTabIds={0}" -f ($groupTabIds -join ',')
 
 & $exe -exit | Out-Null
 $process.WaitForExit(5000) | Out-Null

@@ -15,6 +15,30 @@ using a scratch database under `%TEMP%`.
 | Caption positions | `ID_VIEWCAPTIONBARON_TOP/BOTTOM/LEFT/RIGHT` all relaid out and captured |
 | Clipboard refresh | Three clips were captured and displayed in each theme |
 | Theme refresh | Modern Light and Modern Dark were launched from separate portable profiles |
+## T6 Review Follow-up
+
+Source changes now keep `WS_TABSTOP` on the groups, back, system-menu, and
+options buttons and add `WS_TABSTOP`, `WM_GETDLGCODE`, focus rendering, and
+`Space`/`Enter` handling to the empty-state action.
+
+The Debug portable harness verified:
+
+- `WS_TABSTOP=true` for groups, back, system menu, options, and empty state.
+- Base `GetNextDlgTabItem` chain: system menu, options, groups, list.
+- Group-state chain adds the visible back button.
+- Empty-state chain adds the empty-state action.
+- Focusing groups/back/empty state paints the themed focus ring.
+- `Space` on the focused empty-state action clears the search
+  (`WM_GETTEXTLENGTH=0`).
+
+Targeted screenshots:
+
+- `artifacts/ui/t2/t2-light-review-footer-tab.png`
+- `artifacts/ui/t2/t2-light-review-empty-keyboard.png`
+- `artifacts/ui/t2/t2-light-review-back-tab.png`
+- `artifacts/ui/t2/t2-dark-review-footer-tab.png`
+- `artifacts/ui/t2/t2-dark-review-empty-keyboard.png`
+- `artifacts/ui/t2/t2-dark-review-back-tab.png`
 
 Unchanged paths retained by code inspection: global hotkey dispatch, search
 history menu, autocomplete setup, Enter search/paste, list context menu,

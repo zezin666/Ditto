@@ -188,7 +188,8 @@ void CGroupTree::FillTree()
 	DeleteAllItems();
 	m_bSendAllready = false;
 
-	HTREEITEM hItem = InsertItem(_T("-No Group-"), TVI_ROOT);
+	HTREEITEM hItem = InsertItem(theApp.m_Language.GetString(
+		_T("NoGroup"), _T("-No Group-")), TVI_ROOT);
 	SetItemData(hItem, -1);
 
 	SetItemState(hItem, TVIS_EXPANDED, TVIS_EXPANDED);
@@ -390,6 +391,7 @@ void CGroupTree::OnRclickQuickPaste(NMHDR *pNMHDR, LRESULT *pResult)
 
 		theApp.m_Language.UpdateGroupsRightClickMenu(cmSubMenu);
 		
+		CDarkMode::ApplyToMenus(m_hWnd);
 		cmSubMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RIGHTBUTTON, pp.x, pp.y, this, NULL);
 	}
 

@@ -616,25 +616,21 @@ int CQPasteWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_ShowGroupsFolderBottom.SetGlyph(UiDraw::Glyph::Folder);
 	m_ShowGroupsFolderBottom.ShowWindow(SW_SHOW);
 	m_ShowGroupsFolderBottom.SetToolTipText(theApp.m_Language.GetString(_T("GroupsTooltip"), _T("Groups")));
-	m_ShowGroupsFolderBottom.ModifyStyle(WS_TABSTOP, 0);
 
 	m_BackButton.Create(NULL, WS_CHILD | BS_OWNERDRAW | WS_TABSTOP, CRect(0, 0, 0, 0), this, ID_BACK_BUTTON);
 	m_BackButton.SetGlyph(UiDraw::Glyph::ChevronLeft);
 	m_BackButton.SetToolTipText(theApp.m_Language.GetString(_T("BackTooltip"), _T("Back")));
-	m_BackButton.ModifyStyle(WS_TABSTOP, 0);
 	m_BackButton.ShowWindow(SW_SHOW);
 
 	m_systemMenu.Create(NULL, WS_CHILD | BS_OWNERDRAW | WS_TABSTOP, CRect(0, 0, 0, 0), this, ID_SYSTEM_BUTTON);
 	m_systemMenu.SetGlyph(UiDraw::Glyph::SystemMenu);
 	m_systemMenu.SetToolTipText(theApp.m_Language.GetString(_T("SystemMenuTooltip"), _T("Menu")));
-	m_systemMenu.ModifyStyle(WS_TABSTOP, 0);
 	m_systemMenu.ShowWindow(SW_SHOW);
 
 	m_optionsBottom.Create(NULL, WS_CHILD | BS_OWNERDRAW | WS_TABSTOP,
 		CRect(0, 0, 0, 0), this, ID_MENU_OPTIONS);
 	m_optionsBottom.SetGlyph(UiDraw::Glyph::Cog);
 	m_optionsBottom.SetToolTipText(theApp.m_Language.GetString(_T("OptionsTooltip"), _T("Options")));
-	m_optionsBottom.ModifyStyle(WS_TABSTOP, 0);
 	m_optionsBottom.ShowWindow(SW_SHOW);
 
 	m_stGroup.Create(_T(""), WS_CHILD | WS_VISIBLE, CRect(0, 0, 0, 0), this, ID_GROUP_TEXT);
@@ -675,7 +671,7 @@ int CQPasteWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_alwaysOnToWarningStatic.SetToggleCursor(true);
 	m_alwaysOnToWarningStatic.SetFont(&m_groupFont);
 
-	m_noSearchResultsStatic.Create(onTopMsg, WS_CHILD | SS_NOTIFY,
+	m_noSearchResultsStatic.Create(onTopMsg, WS_CHILD | WS_TABSTOP | SS_NOTIFY,
 		CRect(0, 0, 0, 0), this, ID_NO_SEARCH_RESULTS);
 	m_noSearchResultsStatic.SetUiStyle(CGroupStatic::STYLE_EMPTY_STATE);
 
@@ -6951,16 +6947,11 @@ BOOL CQPasteWnd::OnEraseBkgnd(CDC* pDC)
 {
 	CRect rect;
 	GetClientRect(&rect);
-	CBrush myBrush(CGetSetOptions::m_Theme.MainWindowBG());    // dialog background color
-	CBrush* pOld = pDC->SelectObject(&myBrush);
+	HBRUSH canvasBrush = UiDraw::Brush(UiTheme().Canvas());
+	HBRUSH oldBrush = (HBRUSH)pDC->SelectObject(canvasBrush);
 	BOOL bRes = pDC->PatBlt(0, 0, rect.Width(), rect.Height(), PATCOPY);
-	pDC->SelectObject(pOld);    // restore old brush
-	return bRes;                       // CDialog::OnEraseBkgnd(pDC);
-
-	//return TRUE;
-	// TODO: Add your message handler code here and/or call default
-
-	//return CWndEx::OnEraseBkgnd(pDC);
+	pDC->SelectObject(oldBrush);
+	return bRes;
 }
 
 void CQPasteWnd::OnQuickoptionsShowintaskbar()

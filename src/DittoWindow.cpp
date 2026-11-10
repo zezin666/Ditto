@@ -245,9 +245,13 @@ void CDittoWindow::DoNcPaint(CWnd *pWnd)
 	auto drawButton = [&](CRect buttonRect, UiDraw::Glyph glyph, bool hover,
 		bool pressed, bool buttonEnabled, bool closeButton)
 	{
+		CRect glyphRect(buttonRect.CenterPoint().x - iconSize / 2,
+			buttonRect.CenterPoint().y - iconSize / 2,
+			buttonRect.CenterPoint().x + (iconSize + 1) / 2,
+			buttonRect.CenterPoint().y + (iconSize + 1) / 2);
 		if (!buttonEnabled)
 		{
-			UiDraw::DrawGlyph(&dc, buttonRect, glyph, theme.TextDisabled(),
+			UiDraw::DrawGlyph(&dc, glyphRect, glyph, theme.TextDisabled(),
 				m_dpi.GetDPI(), theme.IconStrokeTenths());
 			return;
 		}
@@ -271,10 +275,6 @@ void CDittoWindow::DoNcPaint(CWnd *pWnd)
 				background, CLR_INVALID, 0);
 		}
 
-		CRect glyphRect(buttonRect.CenterPoint().x - iconSize / 2,
-			buttonRect.CenterPoint().y - iconSize / 2,
-			buttonRect.CenterPoint().x + (iconSize + 1) / 2,
-			buttonRect.CenterPoint().y + (iconSize + 1) / 2);
 		UiDraw::DrawGlyph(&dc, glyphRect, glyph, foreground, m_dpi.GetDPI(),
 			theme.IconStrokeTenths());
 	};
