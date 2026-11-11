@@ -12,13 +12,92 @@
 #include "../resource.h"
 #include "CopyProperties.h"
 #include "DimWnd.h"
+#include "DPI.h"
+#include "UiDraw.h"
+#include "UiTheme.h"
+
+namespace
+{
+	void MoveGroupBoxBehindControls(CWnd* pDialog, UINT controlId)
+	{
+		HWND hWnd = ::GetDlgItem(pDialog->GetSafeHwnd(), controlId);
+		if (hWnd != NULL)
+		{
+			::SetWindowLongPtr(hWnd, GWL_STYLE,
+				::GetWindowLongPtr(hWnd, GWL_STYLE) | WS_CLIPSIBLINGS);
+			::SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, 0, 0,
+				SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+		}
+	}
+
+	void FitCheckBoxToText(CWnd* pDialog, UINT controlId)
+	{
+		CWnd* pControl = pDialog->GetDlgItem(controlId);
+		if (pControl == NULL || pControl->GetSafeHwnd() == NULL)
+			return;
+
+		CString text;
+		pControl->GetWindowText(text);
+		CDPI dpi(pDialog->GetSafeHwnd());
+		CClientDC dc(pControl);
+		const CSize textSize = UiDraw::MeasureText(&dc, text,
+			UiTheme().FontFamilyUi(), UiTheme().FontSizeBody(), FW_NORMAL,
+			dpi.GetDPI());
+		CRect controlRect;
+		pControl->GetWindowRect(controlRect);
+		pDialog->ScreenToClient(controlRect);
+		const int desiredWidth = std::max<int>(controlRect.Width(),
+			dpi.Scale(16 + 8 + 12) + textSize.cx);
+		pControl->SetWindowPos(NULL, 0, 0, desiredWidth, controlRect.Height(),
+			SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+	}
+
+	void FitStaticLabel(CWnd* pDialog, UINT labelId, UINT valueId)
+	{
+		CWnd* pLabel = pDialog->GetDlgItem(labelId);
+		CWnd* pValue = pDialog->GetDlgItem(valueId);
+		if (pLabel == NULL || pValue == NULL)
+			return;
+
+		CString text;
+		pLabel->GetWindowText(text);
+		CClientDC dc(pLabel);
+		CFont* pFont = pLabel->GetFont();
+		CFont* pOldFont = pFont != NULL ? dc.SelectObject(pFont) : NULL;
+		const CSize textSize = dc.GetTextExtent(text);
+		if (pOldFont != NULL)
+			dc.SelectObject(pOldFont);
+
+		CRect labelRect;
+		pLabel->GetWindowRect(labelRect);
+		pDialog->ScreenToClient(labelRect);
+		CDPI dpi(pDialog->GetSafeHwnd());
+		const int desiredWidth = std::max<int>(labelRect.Width(),
+			textSize.cx + dpi.Scale(3));
+		if (desiredWidth <= labelRect.Width())
+			return;
+
+		CRect valueRect;
+		pValue->GetWindowRect(valueRect);
+		pDialog->ScreenToClient(valueRect);
+		const int desiredLeft = labelRect.left + desiredWidth + dpi.Scale(5);
+		const int delta = std::max<int>(0, desiredLeft - valueRect.left);
+		pLabel->SetWindowPos(NULL, 0, 0, desiredWidth, labelRect.Height(),
+			SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+		if (delta > 0)
+		{
+			pValue->SetWindowPos(NULL, valueRect.left + delta, valueRect.top,
+				0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+		}
+	}
+}
 
 // CDeleteClipData dialog
 
-IMPLEMENT_DYNAMIC(CDeleteClipData, CDialog)
+IMPLEMENT_DYNAMIC(CDeleteClipData, CThemedDialog)
 
 CDeleteClipData::CDeleteClipData(CWnd* pParent /*=NULL*/)
-	: CDialog(CDeleteClipData::IDD, pParent)
+	: CThemedDialog(CDeleteClipData::IDD, pParent)
 	, m_pDescriptionWindow(nullptr)
 	, m_clipTitle(_T(""))
 	, m_filterByClipTitle(FALSE)
@@ -48,7 +127,7 @@ CDeleteClipData::~CDeleteClipData()
 
 void CDeleteClipData::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CThemedDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST2, m_clipList);
 	DDX_Text(pDX, IDC_EDIT_CLIP_TITLE, m_clipTitle);
 	DDX_Check(pDX, IDC_CHECK_CLIP_TITLE, m_filterByClipTitle);
@@ -70,7 +149,7 @@ void CDeleteClipData::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CDeleteClipData, CDialog)
+BEGIN_MESSAGE_MAP(CDeleteClipData, CThemedDialog)
 	ON_WM_CLOSE()
 	ON_WM_SIZE()
 	ON_WM_NCDESTROY()
@@ -94,9 +173,18 @@ END_MESSAGE_MAP()
 
 BOOL CDeleteClipData::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	CThemedDialog::OnInitDialog();
 
 	theApp.m_Language.UpdateDeleteClipData(this);
+	CThemedControls::FinishLayout(this);
+	MoveGroupBoxBehindControls(this, IDC_STATIC_GROUP_SEARCH);
+	FitCheckBoxToText(this, IDC_CHECK_CLIP_TITLE);
+	FitCheckBoxToText(this, IDC_CHECK_CREATE_DATE);
+	FitCheckBoxToText(this, IDC_CHECK_LAST_USE_DATE);
+	FitCheckBoxToText(this, IDC_CHECK_DATA_FORMAT);
+	FitStaticLabel(this, IDC_STATIC_DB_SIZE_TEXT, IDC_STATIC_DB_SIZE);
+	FitStaticLabel(this, IDC_STATIC_SELECTED_SIZE_TEXT, IDC_STATIC_SELECTED_SIZE);
+	FitStaticLabel(this, IDC_STATIC_SELECTED_SIZE_TEXT2, IDC_STATIC_SELECTED_COUNT);
 
 	m_Resize.SetParent(m_hWnd);
 	m_Resize.AddControl(IDC_LIST2, DR_SizeHeight | DR_SizeWidth);
@@ -136,14 +224,15 @@ void CDeleteClipData::SetDbSize()
 void CDeleteClipData::InitListCtrlCols()
 {
 	m_clipList.SetExtendedStyle(LVS_EX_FULLROWSELECT);
+	CDPI dpi(m_clipList.GetSafeHwnd());
 
-	m_clipList.InsertColumn(0, theApp.m_Language.GetDeleteClipDataString("ID", "ID"), LVCFMT_LEFT, 50);
-	m_clipList.InsertColumn(1, theApp.m_Language.GetDeleteClipDataString("Title", "Title"), LVCFMT_LEFT, 350);
-	m_clipList.InsertColumn(2, theApp.m_Language.GetDeleteClipDataString("QuickPasteText", "Quick Paste Text"), LVCFMT_LEFT, 200);
-	m_clipList.InsertColumn(3, theApp.m_Language.GetDeleteClipDataString("Created", "Created"), LVCFMT_LEFT, 150);
-	m_clipList.InsertColumn(4, theApp.m_Language.GetDeleteClipDataString("LastUsed", "Last Used"), LVCFMT_LEFT, 150);
-	m_clipList.InsertColumn(5, theApp.m_Language.GetDeleteClipDataString("Format", "Format"), LVCFMT_LEFT, 150);
-	m_clipList.InsertColumn(6, theApp.m_Language.GetDeleteClipDataString("DataSize", "Data Size"), LVCFMT_LEFT, 100);
+	m_clipList.InsertColumn(0, theApp.m_Language.GetDeleteClipDataString("ID", "ID"), LVCFMT_LEFT, dpi.Scale(50));
+	m_clipList.InsertColumn(1, theApp.m_Language.GetDeleteClipDataString("Title", "Title"), LVCFMT_LEFT, dpi.Scale(350));
+	m_clipList.InsertColumn(2, theApp.m_Language.GetDeleteClipDataString("QuickPasteText", "Quick Paste Text"), LVCFMT_LEFT, dpi.Scale(200));
+	m_clipList.InsertColumn(3, theApp.m_Language.GetDeleteClipDataString("Created", "Created"), LVCFMT_LEFT, dpi.Scale(150));
+	m_clipList.InsertColumn(4, theApp.m_Language.GetDeleteClipDataString("LastUsed", "Last Used"), LVCFMT_LEFT, dpi.Scale(150));
+	m_clipList.InsertColumn(5, theApp.m_Language.GetDeleteClipDataString("Format", "Format"), LVCFMT_LEFT, dpi.Scale(150));
+	m_clipList.InsertColumn(6, theApp.m_Language.GetDeleteClipDataString("DataSize", "Data Size"), LVCFMT_LEFT, dpi.Scale(100));
 }
 
 void CDeleteClipData::LoadItems()
@@ -221,14 +310,14 @@ void CDeleteClipData::CloseDescriptionWindow()
 
 void CDeleteClipData::OnSize(UINT nType, int cx, int cy)
 {
-	CDialog::OnSize(nType, cx, cy);
+	CThemedDialog::OnSize(nType, cx, cy);
 
 	m_Resize.MoveControls(CSize(cx, cy));
 }
 
 void CDeleteClipData::OnNcDestroy()
 {
-	CDialog::OnNcDestroy();
+	CThemedDialog::OnNcDestroy();
 	::PostMessage(m_hWndParent, WM_DELETE_CLIPS_CLOSED, 0, 0);
 }
 
@@ -697,7 +786,7 @@ void CDeleteClipData::OnTimer(UINT_PTR nIDEvent)
 		break;
 	}
 
-	CDialog::OnTimer(nIDEvent);
+	CThemedDialog::OnTimer(nIDEvent);
 }
 
 
@@ -875,7 +964,7 @@ BOOL CDeleteClipData::PreTranslateMessage(MSG* pMsg)
 		}
 	}
 
-	return CDialog::PreTranslateMessage(pMsg);
+	return CThemedDialog::PreTranslateMessage(pMsg);
 }
 
 void CDeleteClipData::SelectRow(int selectedRow)

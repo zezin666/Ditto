@@ -555,6 +555,7 @@
     <ClCompile Include="src\Crc32Dynamic.cpp" />
     <ClCompile Include="src\CreateQRCodeImage.cpp" />
     <ClCompile Include="src\CustomFriendsHelper.cpp" />
+    <ClCompile Include="src\DarkMode.cpp" />
     <ClCompile Include="src\DatabaseUtilities.cpp" />
     <ClCompile Include="src\DeleteClipData.cpp" />
     <ClCompile Include="src\DialogResizer.cpp" />
@@ -778,6 +779,11 @@
     <ClCompile Include="src\TrayWnd.cpp" />
     <ClCompile Include="src\UAC_Helper.cpp" />
     <ClCompile Include="src\UAC_Thread.cpp" />
+    <ClCompile Include="src\Ui\ThemedControls.cpp" />
+    <ClCompile Include="src\Ui\ThemedDialog.cpp" />
+    <ClCompile Include="src\UiDraw.cpp" />
+    <ClCompile Include="src\UiTheme.cpp" />
+    <ClCompile Include="src\UiWindow.cpp" />
     <ClCompile Include="src\WildCardMatch.cpp" />
     <ClCompile Include="src\WndEx.cpp" />
   </ItemGroup>
@@ -824,6 +830,7 @@
     <ClInclude Include="src\Crc32Dynamic.h" />
     <ClInclude Include="src\CreateQRCodeImage.h" />
     <ClInclude Include="src\CustomFriendsHelper.h" />
+    <ClInclude Include="src\DarkMode.h" />
     <ClInclude Include="src\DatabaseUtilities.h" />
     <ClInclude Include="src\DeleteClipData.h" />
     <ClInclude Include="src\DialogResizer.h" />
@@ -962,6 +969,12 @@
     <ClInclude Include="src\TrayWnd.h" />
     <ClInclude Include="src\UAC_Helper.h" />
     <ClInclude Include="src\UAC_Thread.h" />
+    <ClInclude Include="src\Ui\ThemedControls.h" />
+    <ClInclude Include="src\Ui\ThemedDialog.h" />
+    <ClInclude Include="src\Ui\UiIds.h" />
+    <ClInclude Include="src\UiDraw.h" />
+    <ClInclude Include="src\UiTheme.h" />
+    <ClInclude Include="src\UiWindow.h" />
     <ClInclude Include="src\UnicodeMacros.h" />
     <ClInclude Include="src\WildCardMatch.h" />
     <ClInclude Include="src\WndEx.h" />

@@ -78,6 +78,7 @@ public:
 	void SetDpiInfo(CDPI *dpi);
 
 	void OnDpiChanged();
+	void RefreshTheme();
 
 	//void SetWindowTextEx(LPCSTR)
 
@@ -99,6 +100,7 @@ protected:
 	CStringArray m_searches;
 
 	void RecalcLayout();
+	void UpdateWindowRegion();
 	virtual void PreSubclassWindow();
 
 	CDPI *m_windowDpi;

@@ -6,6 +6,9 @@
 #include "cp_main.h"
 #include "QListCtrl.h"
 #include "..\Shared\TextConvert.h"
+#include "DarkMode.h"
+#include "UiDraw.h"
+#include "UiTheme.h"
 
 // CSymbolEdit
 
@@ -19,11 +22,13 @@ IMPLEMENT_DYNAMIC(CSymbolEdit, CEdit)
 CSymbolEdit::CSymbolEdit() :
 	m_hSymbolIcon(NULL),
 	m_bInternalIcon(false),
-	m_colorPromptText(RGB(127, 127, 127)),
+	m_colorPromptText(UiTheme().TextSecondary()),
+	m_lastBrushColor(CLR_INVALID),
 	m_centerTextDiff(0)
 {
+	const CUiTheme& theme = UiTheme();
 	m_fontPrompt.CreateFont(
-		16,                        // nHeight
+		-theme.FontSizeBody(),     // nHeight
 		0,                         // nWidth
 		0,                         // nEscapement
 		0,                         // nOrientation
@@ -36,7 +41,7 @@ CSymbolEdit::CSymbolEdit() :
 		CLIP_DEFAULT_PRECIS,       // nClipPrecision
 		DEFAULT_QUALITY,           // nQuality
 		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
-		_T("Calibri"));
+		theme.FontFamilyUi());
 
 	m_mouseDownOnSearches = false;
 	m_mouseHoveringOverSearches = false;
@@ -336,6 +341,7 @@ bool CSymbolEdit::ShowSearchHistoryMenu()
 	ClientToScreen(&x);
 	x.y += windowRect.Height();
 
+	CDarkMode::ApplyToMenus(m_hWnd);
 	cmPopUp.TrackPopupMenu(TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RIGHTBUTTON, x.x, x.y, this, NULL);
 	
 	Invalidate();
@@ -374,12 +380,14 @@ void CSymbolEdit::SetSymbolIcon(UINT id, BOOL redraw)
 {
 	DestroyIcon();
 
+	CDPI dpi(m_hWnd);
+	int iconSize = dpi.Scale(UiTheme().IconSizeSmall());
 	m_hSymbolIcon = (HICON)::LoadImage(
 		AfxGetResourceHandle(),
 		MAKEINTRESOURCE(id),
 		IMAGE_ICON,
-		16,
-		16,
+		iconSize,
+		iconSize,
 		LR_DEFAULTCOLOR | LR_LOADTRANSPARENT);
 
 	ASSERT(m_hSymbolIcon != NULL);
@@ -440,151 +448,124 @@ void CSymbolEdit::SetPromptFont(const LOGFONT* lpLogFont, BOOL redraw)
 
 void CSymbolEdit::RecalcLayout()
 {
-	int width = GetSystemMetrics(SM_CXSMICON);
+	if (m_windowDpi == NULL)
+		return;
 
-	if (m_hSymbolIcon)
-	{
-		DWORD dwMargins = GetMargins();
-		SetMargins(LOWORD(dwMargins), width + 6);
-	}
-	else
-	{
-		if (m_windowDpi != NULL)
-		{
-			SetMargins(m_windowDpi->Scale(4), m_windowDpi->Scale(34));
-		}
-	}
+	const CUiTheme& theme = UiTheme();
+	const int iconSize = m_windowDpi->Scale(theme.IconSizeSmall());
+	const int buttonSize = m_windowDpi->Scale(theme.CaptionButtonSize());
+	const int left = m_windowDpi->Scale(theme.InputPaddingX()) + iconSize +
+		m_windowDpi->Scale(theme.FieldGap() / 2);
+	const int right = buttonSize * 2 + m_windowDpi->Scale(theme.InputPaddingX());
+	SetMargins(left, right);
+}
+
+void CSymbolEdit::UpdateWindowRegion()
+{
+	if (!IsWindow(m_hWnd))
+		return;
+
+	CRect rect;
+	GetClientRect(&rect);
+	if (rect.Width() <= 0 || rect.Height() <= 0)
+		return;
+
+	int radius = m_windowDpi->Scale(UiTheme().RadiusControl());
+	CRgn region;
+	region.CreateRoundRectRgn(0, 0, rect.Width() + 1, rect.Height() + 1,
+		radius * 2, radius * 2);
+	SetWindowRgn(region, TRUE);
+	region.Detach();
 }
 
 void CSymbolEdit::OnPaint()
 {
-	CPaintDC dc(this);
+	Default();
 
+	CClientDC dc(this);
 	CRect rect;
-	GetClientRect(&rect);
+	GetClientRect(rect);
+	if (rect.Width() <= 0 || rect.Height() <= 0 || m_windowDpi == NULL)
+		return;
 
-	DWORD margins = GetMargins();
-	
-	CRect textRect(rect);
-	textRect.left += LOWORD(margins);
-	textRect.right -= HIWORD(margins);
+	const CUiTheme& theme = UiTheme();
+	const int currentDpi = m_windowDpi->GetDPI();
+	const int buttonSize = m_windowDpi->Scale(theme.CaptionButtonSize());
+	const int iconSize = m_windowDpi->Scale(theme.IconSizeSmall());
+	const int glyphSize = m_windowDpi->Scale(theme.IconSizeMedium());
+	const int inset = m_windowDpi->Scale(theme.InputPaddingX());
 
-	// Clearing the background
-	dc.FillSolidRect(rect, GetSysColor(COLOR_WINDOW));	
+	CRect searchIconRect(inset, rect.CenterPoint().y - iconSize / 2,
+		inset + iconSize, rect.CenterPoint().y + (iconSize + 1) / 2);
+	UiDraw::DrawGlyph(&dc, searchIconRect, UiDraw::Glyph::Search,
+		this == GetFocus() ? theme.Accent() : theme.TextSecondary(),
+		currentDpi, theme.IconStrokeTenths());
 
-	if (m_hSymbolIcon)
-	{
-		// Drawing the icon
-		int width = GetSystemMetrics(SM_CXSMICON);
-		int height = GetSystemMetrics(SM_CYSMICON);
-
-		::DrawIconEx(
-			dc.m_hDC,
-			rect.right - width - 1,
-			1,
-			m_hSymbolIcon,
-			width,
-			height,
-			0,
-			NULL,
-			DI_NORMAL);
-
-		rect.left += LOWORD(margins) + 1;
-		rect.right -= (width + 7);
-	}
-	else
-	{
-		//rect.left += (LOWORD(dwMargins) + 1);
-		//rect.right -= (HIWORD(dwMargins) + 1);
-	}
+	CRect clearButton(rect.right - inset - buttonSize, 0,
+		rect.right - inset, rect.bottom);
+	CRect historyButton(clearButton.left - buttonSize, 0,
+		clearButton.left, rect.bottom);
 
 	CString text;
 	GetWindowText(text);
-	CFont* oldFont = NULL;
+	bool showHistory = text.GetLength() > 0 || this == GetFocus();
+	bool showClear = text.GetLength() > 0;
 
-	//rect.top += 1;
+	m_searchesButtonRect = showHistory ? historyButton : CRect(0, 0, 0, 0);
+	m_closeButtonRect = showClear ? clearButton : CRect(0, 0, 0, 0);
 
-
-	if(this == GetFocus() || text.GetLength() > 0)
+	if (showHistory || showClear)
 	{
-		dc.FillSolidRect(rect, CGetSetOptions::m_Theme.SearchTextBoxFocusBG());
-
-		//CBrush borderBrush(CGetSetOptions::m_Theme.SearchTextBoxFocusBorder());
-		//dc.FrameRect(rect, &borderBrush);
-
-		//rect.DeflateRect(1, 1, 1, 1);
-		//textRect.DeflateRect(0, 1, 1, 1);
-
-		oldFont = dc.SelectObject(GetFont());		
-
-		COLORREF oldColor = dc.GetTextColor();
-		dc.SetTextColor(CGetSetOptions::m_Theme.SearchTextBoxFocusText());
-			
-		dc.DrawText(text, textRect, DT_SINGLELINE | DT_INTERNAL | DT_EDITCONTROL | DT_NOPREFIX);
-
-		dc.SelectObject(oldFont);
-		dc.SetTextColor(oldColor);
-	}
-	else
-	{
-		dc.FillSolidRect(rect, CGetSetOptions::m_Theme.MainWindowBG());
+		CRect actionArea(historyButton.left, rect.top, rect.right, rect.bottom);
+		dc.FillSolidRect(actionArea, theme.SearchTextBoxBg());
 	}
 
-
-	if (text.GetLength() == 0 && m_strPromptText.GetLength() > 0)
+	if (showHistory)
 	{
-		//if we aren't showing the close icon, then use the full space
-		textRect.right += m_windowDpi->Scale(16);
-		//textRect.right -= LOWORD(margins);
-
-		oldFont = dc.SelectObject(&m_fontPrompt);
-		COLORREF color = dc.GetTextColor();
-		dc.SetTextColor(m_colorPromptText);
-
-		dc.DrawText(m_strPromptText, textRect, DT_LEFT | DT_SINGLELINE | DT_EDITCONTROL | DT_VCENTER | DT_NOPREFIX);
-		dc.SetTextColor(color);
-		dc.SelectObject(oldFont);
+		if (m_mouseHoveringOverSearches || m_mouseDownOnSearches)
+		{
+			CRect hover(historyButton);
+			hover.DeflateRect((buttonSize - glyphSize) / 4, (buttonSize - glyphSize) / 4);
+			UiDraw::RoundedRect(&dc, hover, m_windowDpi->Scale(theme.RadiusControl()),
+				theme.Hover(), CLR_INVALID, 0);
+		}
+		CRect glyph(historyButton.CenterPoint().x - glyphSize / 2,
+			historyButton.CenterPoint().y - glyphSize / 2,
+			historyButton.CenterPoint().x + (glyphSize + 1) / 2,
+			historyButton.CenterPoint().y + (glyphSize + 1) / 2);
+		UiDraw::DrawGlyph(&dc, glyph, UiDraw::Glyph::ChevronDown,
+			theme.TextSecondary(), currentDpi, theme.IconStrokeTenths());
 	}
 
-	int right = rect.right;
-	if ((text.GetLength() > 0 || this == GetFocus()))
+	if (showClear)
 	{
-		m_searchesButtonRect.SetRect(rect.right - m_windowDpi->Scale(18), 0, rect.right, rect.bottom);
-		right = rect.right - m_windowDpi->Scale(18);
-		m_searchesButton.Draw(&dc, *m_windowDpi, this, m_searchesButtonRect.left, 4, m_mouseHoveringOverSearches, m_mouseDownOnSearches);
-	}
-	else
-	{
-		m_searchesButtonRect.SetRect(0, 0, 0, 0);
-		//m_searchButton.Draw(&dc, this, rect.right - 22, 4, false, false);
-	}
-
-	if (text.GetLength() > 0)
-	{
-		//OutputDebugString(_T("showing close button\n"));
-
-		m_closeButtonRect.SetRect(right - m_windowDpi->Scale(16), 0, right, rect.bottom);
-		m_closeButton.Draw(&dc, *m_windowDpi, this, m_closeButtonRect.left, 4, m_mouseHoveringOverClose, m_mouseDownOnClose);
-	}
-	else
-	{
-		//OutputDebugString(_T("not showing close button\n"));
-		m_closeButtonRect.SetRect(0, 0, 0, 0);
-		//m_searchButton.Draw(&dc, this, rect.right - 22, 4, false, false);
+		if (m_mouseHoveringOverClose || m_mouseDownOnClose)
+		{
+			CRect hover(clearButton);
+			hover.DeflateRect((buttonSize - glyphSize) / 4, (buttonSize - glyphSize) / 4);
+			UiDraw::RoundedRect(&dc, hover, m_windowDpi->Scale(theme.RadiusControl()),
+				theme.Hover(), CLR_INVALID, 0);
+		}
+		CRect glyph(clearButton.CenterPoint().x - glyphSize / 2,
+			clearButton.CenterPoint().y - glyphSize / 2,
+			clearButton.CenterPoint().x + (glyphSize + 1) / 2,
+			clearButton.CenterPoint().y + (glyphSize + 1) / 2);
+		UiDraw::DrawGlyph(&dc, glyph, UiDraw::Glyph::Close,
+			theme.TextSecondary(), currentDpi, theme.IconStrokeTenths());
 	}
 
-	//OutputDebugString(_T("OnPaint"));
-
-	if (text != m_lastTextOnPaint &&
-		text == _T(""))
+	if (text.IsEmpty() && m_strPromptText.GetLength() > 0 && this != GetFocus())
 	{
-		::SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+		DWORD margins = GetMargins();
+		CRect promptRect(rect);
+		promptRect.left += LOWORD(margins);
+		promptRect.right = historyButton.left - m_windowDpi->Scale(theme.FieldGap() / 2);
+		UiDraw::DrawTextEllipsis(&dc, m_strPromptText, promptRect, theme.FontFamilyUi(),
+			theme.FontSizeBody(), FW_NORMAL, m_colorPromptText, currentDpi,
+			DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 	}
 
 	m_lastTextOnPaint = text;
-
-	//OutputDebugString(_T("OnPaint \r\n"));
-
 }
 
 void CSymbolEdit::OnSize(UINT nType, int cx, int cy)
@@ -592,6 +573,7 @@ void CSymbolEdit::OnSize(UINT nType, int cx, int cy)
 	CEdit::OnSize(nType, cx, cy);
 
 	RecalcLayout();
+	UpdateWindowRegion();
 }
 
 LRESULT CSymbolEdit::OnSetFont(WPARAM wParam, LPARAM lParam)
@@ -605,28 +587,11 @@ LRESULT CSymbolEdit::OnSetFont(WPARAM wParam, LPARAM lParam)
 
 HBRUSH CSymbolEdit::CtlColor(CDC* pDC, UINT n)
 {
-	COLORREF color = -1;	
-
-	if (::GetFocus() == m_hWnd)
-	{
-		pDC->SetTextColor(CGetSetOptions::m_Theme.SearchTextBoxFocusText());
-		pDC->SetBkColor(CGetSetOptions::m_Theme.SearchTextBoxFocusBG());
-		color = CGetSetOptions::m_Theme.SearchTextBoxFocusBG();
-	}
-	else
-	{
-		pDC->SetBkColor(CGetSetOptions::m_Theme.MainWindowBG());
-		color = CGetSetOptions::m_Theme.MainWindowBG();
-	}
-
-	if (color != m_lastBrushColor)
-	{
-		DeleteObject(m_brush);
-		m_brush.CreateSolidBrush(color);
-		m_lastBrushColor = color;
-	}
-
-	return m_brush;
+	const CUiTheme& theme = UiTheme();
+	pDC->SetTextColor(theme.SearchTextBoxText());
+	pDC->SetBkColor(theme.SearchTextBoxBg());
+	m_lastBrushColor = theme.SearchTextBoxBg();
+	return UiDraw::Brush(theme.SearchTextBoxBg());
 }
 
 void CSymbolEdit::OnSetFocus(CWnd* pOldWnd)
@@ -646,6 +611,9 @@ void CSymbolEdit::OnSetFocus(CWnd* pOldWnd)
 	}
 
 	CEdit::OnSetFocus(pOldWnd);
+	Invalidate();
+	SetWindowPos(NULL, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOSIZE | SWP_NOMOVE |
+		SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
 void CSymbolEdit::OnKillFocus(CWnd* pNewWnd)
@@ -657,6 +625,9 @@ void CSymbolEdit::OnKillFocus(CWnd* pNewWnd)
 	SetTimer(1, 500, NULL);
 	
 	CEdit::OnKillFocus(pNewWnd);
+	Invalidate();
+	SetWindowPos(NULL, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOSIZE | SWP_NOMOVE |
+		SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
 BOOL CSymbolEdit::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
@@ -684,6 +655,8 @@ BOOL CSymbolEdit::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 
 void CSymbolEdit::OnLButtonUp(UINT nFlags, CPoint point)
 {
+	bool handled = m_mouseDownOnClose || m_mouseDownOnSearches;
+
 	if (m_mouseDownOnClose)
 	{
 		ReleaseCapture();
@@ -696,9 +669,6 @@ void CSymbolEdit::OnLButtonUp(UINT nFlags, CPoint point)
 		InvalidateRect(m_searchesButtonRect);
 	}
 
-	m_mouseDownOnClose = false;
-	m_mouseDownOnSearches = false;
-
 	if (m_closeButtonRect.PtInRect(point))
 	{
 		if ((GetWindowTextLength() > 0))
@@ -709,14 +679,19 @@ void CSymbolEdit::OnLButtonUp(UINT nFlags, CPoint point)
 				pOwner->SendMessage(NM_CANCEL_SEARCH, 0, 0);
 			}
 		}		
-	}	
-
-	if (m_searchesButtonRect.PtInRect(point))
+	}
+	else if (m_searchesButtonRect.PtInRect(point))
 	{
 		this->ShowSearchHistoryMenu();
 	}
 
-	CEdit::OnLButtonUp(nFlags, point);
+	m_mouseDownOnClose = false;
+	m_mouseDownOnSearches = false;
+
+	if (handled)
+		Invalidate();
+	else
+		CEdit::OnLButtonUp(nFlags, point);
 }
 
 void CSymbolEdit::OnLButtonDown(UINT nFlags, CPoint point)
@@ -726,6 +701,7 @@ void CSymbolEdit::OnLButtonDown(UINT nFlags, CPoint point)
 		m_mouseDownOnClose = true;
 		SetCapture();
 		InvalidateRect(m_closeButtonRect);
+		return;
 	}
 	else
 	{
@@ -737,6 +713,7 @@ void CSymbolEdit::OnLButtonDown(UINT nFlags, CPoint point)
 		m_mouseDownOnSearches = true;
 		SetCapture();
 		InvalidateRect(m_searchesButtonRect);
+		return;
 	}
 	else
 	{
@@ -829,19 +806,26 @@ void CSymbolEdit::OnDpiChanged()
 	SetDpiInfo(m_windowDpi);
 }
 
+void CSymbolEdit::RefreshTheme()
+{
+	m_colorPromptText = UiTheme().TextSecondary();
+	RecalcLayout();
+	UpdateWindowRegion();
+	Invalidate(TRUE);
+	SetWindowPos(NULL, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOSIZE | SWP_NOMOVE |
+		SWP_NOZORDER | SWP_NOACTIVATE);
+}
+
 void CSymbolEdit::SetDpiInfo(CDPI *dpi)
 { 
 	m_windowDpi = dpi; 
 
-	m_closeButton.Reset();
-	m_closeButton.LoadStdImageDPI(m_windowDpi->GetDPI(), search_close_16, search_close_20, search_close_24, search_close_28, search_close_32, _T("PNG"));
-
-	m_searchesButton.Reset();
-	m_searchesButton.LoadStdImageDPI(m_windowDpi->GetDPI(), down_16, down_20, down_24, down_28, down_32, _T("PNG"));
-
 	RecalcLayout();
+	UpdateWindowRegion();
 
-	Invalidate();
+	Invalidate(TRUE);
+	SetWindowPos(NULL, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOSIZE | SWP_NOMOVE |
+		SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
 BOOL CSymbolEdit::OnEraseBkgnd(CDC* pDC)
@@ -855,131 +839,41 @@ BOOL CSymbolEdit::OnEraseBkgnd(CDC* pDC)
 
 void CSymbolEdit::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
 {
-	CString text;
-	GetWindowText(text);
-
-	//if (text.GetLength() > 0 || this == GetFocus())
 	if (m_windowDpi != NULL)
 	{
-		lpncsp->rgrc[0].left += m_windowDpi->Scale(1);
-		lpncsp->rgrc[0].top += m_windowDpi->Scale(1);
-		lpncsp->rgrc[0].right -= m_windowDpi->Scale(1);
-		lpncsp->rgrc[0].bottom -= m_windowDpi->Scale(1);
-
-
-		CRect rectWnd, rectClient;
-
-		////calculate client area height needed for a font
-		CFont *pFont = GetFont();
-		CRect rectText;
-
-
-		CDC *pDC = GetDC();
-
-		CFont *pOld = pDC->SelectObject(pFont);
-		pDC->DrawText("Ky", rectText, DT_CALCRECT | DT_LEFT);
-		UINT uiVClientHeight = rectText.Height();
-
-		pDC->SelectObject(pOld);
-		ReleaseDC(pDC);
-
-
-
-		////calculate NC area to center text.
-
-		//GetClientRect(rectClient);
-		GetWindowRect(rectWnd);
-
-		rectWnd.DeflateRect(m_windowDpi->Scale(1), m_windowDpi->Scale(1));
-
-		m_centerTextDiff = (rectWnd.Height() - uiVClientHeight) / 2;
-
-		if (m_centerTextDiff < 0 || m_centerTextDiff > uiVClientHeight)
-		{
-			m_centerTextDiff = 0;
-		}
-
-		lpncsp->rgrc[0].top += m_centerTextDiff;
-		lpncsp->rgrc[0].bottom -= m_centerTextDiff;
+		int border = m_windowDpi->Scale(UiTheme().BorderWidth());
+		lpncsp->rgrc[0].left += border;
+		lpncsp->rgrc[0].top += border;
+		lpncsp->rgrc[0].right -= border;
+		lpncsp->rgrc[0].bottom -= border;
 	}
-
-	//ClientToScreen(rectClient);
-
-	//UINT uiCenterOffset = (rectWnd.Height() - uiVClientHeight) / 2;
-	//UINT uiCY = (rectWnd.Heig%ht() - rectClient.Height()) / 2;
-	//UINT uiCX = (rectWnd.Width() - rectClient.Width()) / 2;
-
-	//rectWnd.OffsetRect(-rectWnd.left, -rectWnd.top);
-	//m_rectNCTop = rectWnd;
-		
-	//m_rectNCTop.DeflateRect(uiCX, uiCY, uiCX, uiCenterOffset + uiVClientHeight + uiCY);
-
-	//m_rectNCBottom = rectWnd;
-
-	//m_rectNCBottom.DeflateRect(uiCX, uiCenterOffset + uiVClientHeight + uiCY, uiCX, uiCY);
-
-	//lpncsp->rgrc[0].top += uiCenterOffset;
-	//lpncsp->rgrc[0].bottom -= uiCenterOffset;
-
-	//lpncsp->rgrc[0].left += uiCX;
-	//lpncsp->rgrc[0].right -= uiCY;
-
-	//CEdit::OnNcCalcSize(bCalcValidRects, lpncsp);
 }
 
 
 void CSymbolEdit::OnNcPaint()
 {
-
-	CString text;
-	GetWindowText(text);
-
 	CWindowDC dc(this);
-	
-	CRect r;
-	this->GetWindowRect(r);
-	this->ScreenToClient(r);
+	if (m_windowDpi == NULL)
+		return;
 
-	CRect t(0, 0, r.Width(), m_centerTextDiff+ m_windowDpi->Scale(1));
+	const CUiTheme& theme = UiTheme();
+	CRect rect;
+	GetWindowRect(rect);
+	rect.OffsetRect(-rect.left, -rect.top);
 
-	CRect b(0, r.Height() - m_centerTextDiff- m_windowDpi->Scale(1), r.Width(), r.Height());
+	const int radius = m_windowDpi->Scale(theme.RadiusControl());
+	const int border = m_windowDpi->Scale(theme.BorderWidth());
+	const bool focused = this == GetFocus();
+	UiDraw::RoundedRect(&dc, rect, radius, CLR_INVALID,
+		focused ? theme.FocusRing() : theme.Border(), border);
 
-	COLORREF c = CGetSetOptions::m_Theme.MainWindowBG();
-
-	if (this == GetFocus() || text.GetLength() > 0)
-	{		
-		dc.FillSolidRect(t, CGetSetOptions::m_Theme.SearchTextBoxFocusBG());
-		dc.FillSolidRect(b, CGetSetOptions::m_Theme.SearchTextBoxFocusBG());
-
-		c = CGetSetOptions::m_Theme.SearchTextBoxFocusBorder();
-	}
-	else
+	if (focused)
 	{
-		dc.FillSolidRect(t, CGetSetOptions::m_Theme.MainWindowBG());
-		dc.FillSolidRect(b, CGetSetOptions::m_Theme.MainWindowBG());
-	}	
-
-	//if ((text.GetLength() > 0 || this == GetFocus()) && m_windowDpi)
-	{
-		CWindowDC dc(this);
-
-		CRect rcFrame;
-		this->GetWindowRect(rcFrame);
-		this->ScreenToClient(rcFrame);
-
-		CRect rcBorder(0, 0, rcFrame.Width(), rcFrame.Height());
-
-		int border = m_windowDpi->Scale(1);
-		CBrush borderBrush(c);
-
-		for (int x = 0; x < border; x++)
-		{
-			dc.FrameRect(rcBorder, &borderBrush);
-			rcBorder.DeflateRect(1, 1, 1, 1);
-		}
+		CRect focusRect(rect);
+		focusRect.DeflateRect(border, border);
+		UiDraw::FocusRing(&dc, focusRect, max(0, radius - border),
+			theme.FocusRing(), m_windowDpi->Scale(theme.FocusRingWidth()));
 	}
-
-	//OutputDebugString(_T("OnNCPaint \r\n"));
 }
 
 void CSymbolEdit::OnTimer(UINT_PTR nIDEvent)
@@ -988,8 +882,9 @@ void CSymbolEdit::OnTimer(UINT_PTR nIDEvent)
 	{
 	case 1:
 			KillTimer(1);
-			//Invalidate();
-			::SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+			Invalidate(TRUE);
+			SetWindowPos(NULL, 0, 0, 0, 0, SWP_DRAWFRAME | SWP_NOSIZE | SWP_NOMOVE |
+				SWP_NOZORDER | SWP_NOACTIVATE);
 			break;
 	}
 

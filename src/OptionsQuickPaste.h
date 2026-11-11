@@ -8,12 +8,13 @@
 #include "NumberEdit.h"
 #include "OptionsSheet.h"
 #include "afxwin.h"
+#include "Ui/ThemedDialog.h"
 //
 
 /////////////////////////////////////////////////////////////////////////////
 // COptionsQuickPaste dialog
 
-class COptionsQuickPaste : public CPropertyPage
+class COptionsQuickPaste : public CThemedPropertyPage
 {
 	DECLARE_DYNCREATE(COptionsQuickPaste)
 

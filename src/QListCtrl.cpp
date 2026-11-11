@@ -10,12 +10,15 @@
 #include "DittoCopyBuffer.h"
 #include <atlbase.h>
 #include "DrawHTML.h"
+#include "UiTheme.h"
+#include "UiDraw.h"
 #include "..\Shared\TextConvert.h"
 #include <cmath>
 #include <vector>
 #include <string>
 #include <cwchar>   // For swscanf
 #include <algorithm> // For std::round
+#include <memory>
 #include <gdiplus.h>
 
 #ifdef _DEBUG
@@ -24,9 +27,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-#define ROW_BOTTOM_BORDER		4
-#define ROW_LEFT_BORDER			3
-#define COLOR_SHADOW			RGB(245, 245, 245)
 #define DUMMY_COL_WIDTH			2
 
 #define TIMER_SHOW_PROPERTIES	1
@@ -210,6 +210,12 @@ CQListCtrl::CQListCtrl()
 	m_allSelected = false;
 	m_rowHeight = 50;
 	m_mouseOverScrollAreaStart = 0;
+	m_timerToHideScrollAreaSet = false;
+	m_hoverRow = -1;
+	m_trackingHover = false;
+	m_checkerboardDpi = 0;
+	m_checkerboardColor1 = CLR_INVALID;
+	m_checkerboardColor2 = CLR_INVALID;
 	m_showIfClipWasPasted = TRUE;
 	m_bShowTextForFirstTenHotKeys = true;
 	m_pToolTipActions = NULL;
@@ -217,6 +223,8 @@ CQListCtrl::CQListCtrl()
 
 CQListCtrl::~CQListCtrl()
 {
+	m_paintGraphics.reset();
+
 	if (m_pchTip != NULL)
 		delete m_pchTip;
 
@@ -259,6 +267,8 @@ BEGIN_MESSAGE_MAP(CQListCtrl, CListCtrl)
 	ON_NOTIFY_REFLECT(LVN_KEYDOWN, OnKeydown)
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnCustomdrawList)
 	ON_WM_MOUSEMOVE()
+	ON_WM_MOUSELEAVE()
+	ON_WM_SETFOCUS()
 	ON_WM_SYSKEYDOWN()
 	ON_WM_ERASEBKGND()
 	ON_WM_CREATE()
@@ -414,17 +424,26 @@ void CQListCtrl::SetNumberOfLinesPerRow(int nLines, bool force)
 void CQListCtrl::MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct)
 {
 	TEXTMETRIC tm;
-	HDC hDC = ::GetDC(NULL);
+	HDC hDC = ::GetDC(m_hWnd);
 	CFont* pFont = GetFont();
+	if (pFont == NULL || pFont->GetSafeHandle() == NULL)
+	{
+		::ReleaseDC(m_hWnd, hDC);
+		return;
+	}
 	HFONT hFontOld = (HFONT)SelectObject(hDC, pFont->GetSafeHandle());
 	GetTextMetrics(hDC, &tm);
 	if (m_windowDpi != NULL)
 	{
-		lpMeasureItemStruct->itemHeight = ((tm.tmHeight + tm.tmExternalLeading) * m_linesPerRow) + m_windowDpi->Scale(ROW_BOTTOM_BORDER);
+		int textHeight = (tm.tmHeight + tm.tmExternalLeading) * m_linesPerRow;
+		int padding = UiDraw::Scale(8, m_windowDpi->GetDPI());
+		lpMeasureItemStruct->itemHeight = max(
+			UiDraw::Scale(UiTheme().ListRowHeight(), m_windowDpi->GetDPI()),
+			textHeight + padding);
 		m_rowHeight = lpMeasureItemStruct->itemHeight;
 	}
 	SelectObject(hDC, hFontOld);
-	::ReleaseDC(NULL, hDC);
+	::ReleaseDC(m_hWnd, hDC);
 }
 
 void CQListCtrl::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
@@ -437,39 +456,56 @@ void CQListCtrl::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
 	// beginning of the paint cycle.
 	if (CDDS_PREPAINT == pLVCD->nmcd.dwDrawStage)
 	{
-		*pResult = CDRF_NOTIFYITEMDRAW;
+		// A nested/reentrant paint can replace the previous wrapper safely; the
+		// normal path still has exactly one Graphics object per paint pass.
+		m_paintGraphics.reset();
+		m_paintGraphics = std::make_unique<Gdiplus::Graphics>(pLVCD->nmcd.hdc);
+		*pResult = CDRF_NOTIFYITEMDRAW | CDRF_NOTIFYPOSTPAINT;
+	}
+	else if (CDDS_POSTPAINT == pLVCD->nmcd.dwDrawStage)
+	{
+#ifdef _DEBUG
+		static bool s_loggedSharedPaintGraphics = false;
+		if (m_paintGraphics != NULL && !s_loggedSharedPaintGraphics)
+		{
+			Log(_T("T3 list paint pass reused one Gdiplus::Graphics object"));
+			s_loggedSharedPaintGraphics = true;
+		}
+#endif
+		m_paintGraphics.reset();
+		*pResult = CDRF_DODEFAULT;
 	}
 	else if (CDDS_ITEMPREPAINT == pLVCD->nmcd.dwDrawStage)
 	{
 		LVITEM   rItem;
 		int      nItem = static_cast<int>(pLVCD->nmcd.dwItemSpec);
 		CDC* pDC = CDC::FromHandle(pLVCD->nmcd.hdc);
-		COLORREF crBkgnd;
-		BOOL     bListHasFocus;
-		CRect    rcItem;
+		std::unique_ptr<Gdiplus::Graphics> fallbackGraphics;
+		Gdiplus::Graphics* graphics = m_paintGraphics.get();
+		if (graphics == NULL)
+		{
+			fallbackGraphics =
+				std::make_unique<Gdiplus::Graphics>(pLVCD->nmcd.hdc);
+			graphics = fallbackGraphics.get();
+		}
+		BOOL bListHasFocus;
+		CRect rcItem;
 
 		bListHasFocus = (GetSafeHwnd() == ::GetFocus());
 
-		// Get the image index and selected/focused state of the
-		// item being drawn.
 		ZeroMemory(&rItem, sizeof(LVITEM));
 		rItem.mask = LVIF_STATE;
 		rItem.iItem = nItem;
 		rItem.stateMask = LVIS_SELECTED | LVIS_FOCUSED;
 		GetItem(&rItem);
 
-		// Get the rect that bounds the text label.
 		GetItemRect(nItem, rcItem, LVIR_SELECTBOUNDS);
 
-		COLORREF OldColor = -1;
-		int nOldBKMode = -1;
-
 		CString csText;
-		LPTSTR lpszText = csText.GetBufferSetLength(CGetSetOptions::m_bDescTextSize);
+		LPTSTR lpszText = csText.GetBufferSetLength(CGetSetOptions::m_bDescTextSize + 1);
 		GetItemText(nItem, 0, lpszText, CGetSetOptions::m_bDescTextSize);
 		csText.ReleaseBuffer();
 
-		// extract symbols
 		CString strSymbols;
 		int nSymEnd = csText.Find('|');
 		if (nSymEnd >= 0)
@@ -478,71 +514,122 @@ void CQListCtrl::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
 			csText = csText.Mid(nSymEnd + 1);
 		}
 
-		// Draw the background of the list item.  Colors are selected
-		// according to the item's state.
-		if (rItem.state & LVIS_SELECTED)
+		const CUiTheme& theme = UiTheme();
+		int dpi = m_windowDpi != NULL ? m_windowDpi->GetDPI() : 96;
+		COLORREF rowBackground = theme.ListRowBackground(nItem);
+		COLORREF rowTextColor = theme.TextPrimary();
+		bool isSelected = (rItem.state & LVIS_SELECTED) != 0;
+		bool isFocused = (rItem.state & LVIS_FOCUSED) != 0;
+		bool isHovered = (m_hoverRow == nItem);
+
+		if (theme.UsesLegacyZebra() && !isSelected)
 		{
-			if (bListHasFocus)
-			{
-				crBkgnd = CGetSetOptions::m_Theme.ListBoxSelectedBG();
-				OldColor = pDC->SetTextColor(CGetSetOptions::m_Theme.ListBoxSelectedText());
-			}
-			else
-			{
-				crBkgnd = CGetSetOptions::m_Theme.ListBoxSelectedNoFocusBG();
-				OldColor = pDC->SetTextColor(CGetSetOptions::m_Theme.ListBoxSelectedNoFocusText());
-			}
-		}
-		else
-		{
-			//Shade alternating Rows
-			if ((nItem % 2) == 0)
-			{
-				crBkgnd = CGetSetOptions::m_Theme.ListBoxOddRowsBG();
-				OldColor = pDC->SetTextColor(CGetSetOptions::m_Theme.ListBoxOddRowsText());
-			}
-			else
-			{
-				crBkgnd = CGetSetOptions::m_Theme.ListBoxEvenRowsBG();
-				OldColor = pDC->SetTextColor(CGetSetOptions::m_Theme.ListBoxEvenRowsText());
-			}
+			rowTextColor = (nItem % 2 == 0) ?
+				CGetSetOptions::m_Theme.ListBoxOddRowsText() :
+				CGetSetOptions::m_Theme.ListBoxEvenRowsText();
 		}
 
-		pDC->FillSolidRect(rcItem, crBkgnd);
-		nOldBKMode = pDC->SetBkMode(TRANSPARENT);
+		pDC->FillSolidRect(rcItem, rowBackground);
 
-		CRect rcText = rcItem;
-		rcText.left += m_windowDpi->Scale(ROW_LEFT_BORDER);
-		rcText.top += m_windowDpi->Scale(1);
-		rcText.bottom -= m_windowDpi->Scale(1);
+		CRect rowRect(rcItem);
+		rowRect.DeflateRect(
+			UiDraw::Scale(theme.ListRowInsetX(), dpi),
+			UiDraw::Scale(theme.ListRowInsetY(), dpi));
 
-		if (m_showIfClipWasPasted &&
+		COLORREF rowFill = rowBackground;
+		if (isSelected)
+		{
+			rowFill = theme.Selection();
+			rowTextColor = theme.SelectionText();
+		}
+		else if (isHovered)
+		{
+			rowFill = theme.Hover();
+		}
+
+		int rowRadius = UiDraw::Scale(theme.RadiusListItem(), dpi);
+		if (isSelected || isHovered)
+		{
+			UiDraw::RoundedRect(*graphics, rowRect, rowRadius,
+				rowFill, CLR_INVALID, 0);
+		}
+
+		CRect rcText(rowRect);
+		rcText.left += UiDraw::Scale(12, dpi);
+
+		if (isSelected)
+		{
+			int accentWidth = UiDraw::Scale(3, dpi);
+			int accentHeight = UiDraw::Scale(14, dpi);
+			CRect accentRect(
+				rowRect.left + UiDraw::Scale(4, dpi),
+				rowRect.CenterPoint().y - accentHeight / 2,
+				rowRect.left + UiDraw::Scale(4, dpi) + max(1, accentWidth),
+				rowRect.CenterPoint().y - accentHeight / 2 + accentHeight);
+			UiDraw::RoundedRect(*graphics, accentRect, max(1, accentWidth / 2),
+				theme.Accent(), CLR_INVALID, 0);
+		}
+
+		bool wasPasted = m_showIfClipWasPasted &&
 			strSymbols.GetLength() > 0 &&
-			strSymbols.Find(_T("<pasted>")) >= 0) //clip was pasted from ditto
+			strSymbols.Find(_T("<pasted>")) >= 0;
+		if (wasPasted)
 		{
-			CRect pastedRect(rcItem);
-			pastedRect.left++;
-			pastedRect.right = pastedRect.left + m_windowDpi->Scale(2);
+			int checkSize = UiDraw::Scale(12, dpi);
+			int statusRight = rowRect.right - UiDraw::Scale(6, dpi);
+			CRect checkRect(
+				statusRight - checkSize,
+				rowRect.CenterPoint().y - checkSize / 2,
+				statusRight,
+				rowRect.CenterPoint().y - checkSize / 2 + checkSize);
+			UiDraw::DrawGlyph(*graphics, checkRect, UiDraw::Glyph::Check,
+				theme.Pasted(), dpi, theme.IconStrokeTenths());
 
-			pDC->FillSolidRect(pastedRect, CGetSetOptions::m_Theme.ClipPastedColor());
+			int barWidth = UiDraw::Scale(3, dpi);
+			int barHeight = UiDraw::Scale(14, dpi);
+			int barRight = checkRect.left - UiDraw::Scale(4, dpi);
+			CRect barRect(
+				barRight - barWidth,
+				rowRect.CenterPoint().y - barHeight / 2,
+				barRight,
+				rowRect.CenterPoint().y - barHeight / 2 + barHeight);
+			UiDraw::RoundedRect(*graphics, barRect, max(1, barWidth / 2),
+				theme.Pasted(), CLR_INVALID, 0);
+
+			rcText.right = barRect.left - UiDraw::Scale(8, dpi);
 		}
 
-		// set firstTenNum to the first ten number (1-10) corresponding to
-		//  the current nItem.
-		// -1 means that nItem is not in the FirstTen block.
 		int firstTenNum = GetFirstTenNum(nItem);
-
 		if (m_bShowTextForFirstTenHotKeys && firstTenNum >= 0)
 		{
-			rcText.left += m_windowDpi->Scale(12);
-		}
-		else
-		{
-			rcText.left += m_windowDpi->Scale(3);
+			int indexWidth = UiDraw::Scale(theme.ListIndexColumnWidth(), dpi);
+			CRect indexRect(rcText.left, rowRect.top, rcText.left + indexWidth, rowRect.bottom);
+
+			HFONT hOldFont = (HFONT)pDC->SelectObject(m_SmallFont);
+			COLORREF oldTextColor = pDC->SetTextColor(
+				isSelected ? theme.SelectionText() : theme.TextSecondary());
+			int oldBkMode = pDC->SetBkMode(TRANSPARENT);
+
+			CString csIndex;
+			csIndex.Format(_T("%d"), firstTenNum);
+			pDC->DrawText(csIndex, indexRect,
+				DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
+
+			int dividerX = indexRect.right - max(1, UiDraw::Scale(1, dpi));
+			HPEN hPen = UiDraw::Pen(theme.Border(), 1);
+			HPEN hOldPen = (HPEN)pDC->SelectObject(hPen);
+			pDC->MoveTo(dividerX, rowRect.top + UiDraw::Scale(7, dpi));
+			pDC->LineTo(dividerX, rowRect.bottom - UiDraw::Scale(7, dpi));
+			pDC->SelectObject(hOldPen);
+
+			pDC->SetBkMode(oldBkMode);
+			pDC->SetTextColor(oldTextColor);
+			pDC->SelectObject(hOldFont);
+
+			rcText.left = indexRect.right + UiDraw::Scale(8, dpi);
 		}
 
 		bool drawInGroupIcon = true;
-		// if we are inside a group, don't display the "in group" flag
 		if (theApp.m_GroupID > 0)
 		{
 			int nFlag = strSymbols.Find(_T("<ingroup>"));
@@ -550,110 +637,83 @@ void CQListCtrl::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
 				drawInGroupIcon = false;
 		}
 
-		DrawCopiedColorCode(csText, rcText, pDC);
-
-		DrawBitMap(nItem, rcText, pDC, csText);
-
-		// draw the symbol box
+		int iconSize = UiDraw::Scale(theme.ListIconSize(), dpi);
+		int iconTop = rowRect.CenterPoint().y - iconSize / 2;
 		if (strSymbols.GetLength() > 0)
 		{
-			if (strSymbols.Find(_T("<group>")) >= 0) //group
+			if (strSymbols.Find(_T("<group>")) >= 0)
 			{
-				m_groupFolder.Draw(pDC, *m_windowDpi, this, rcText.left, rcText.top, false, false);
-				rcText.left += m_groupFolder.ImageWidth() + m_windowDpi->Scale(2);
+				CRect iconRect(rcText.left, iconTop, rcText.left + iconSize, iconTop + iconSize);
+				UiDraw::DrawGlyph(*graphics, iconRect, UiDraw::Glyph::Folder,
+					theme.TextSecondary(), dpi, theme.IconStrokeTenths());
+				rcText.left += iconSize + UiDraw::Scale(2, dpi);
 			}
-			if (strSymbols.Find(_T("<noautodelete>")) >= 0) //don't auto delete
+			if (strSymbols.Find(_T("<noautodelete>")) >= 0)
 			{
-				m_dontDeleteImage.Draw(pDC, *m_windowDpi, this, rcText.left, rcText.top, false, false);
-				rcText.left += m_dontDeleteImage.ImageWidth() + m_windowDpi->Scale(2);
+				CRect iconRect(rcText.left, iconTop, rcText.left + iconSize, iconTop + iconSize);
+				m_dontDeleteImage.Draw(*graphics, *m_windowDpi, iconRect, false, false);
+				rcText.left += iconSize + UiDraw::Scale(2, dpi);
 			}
-			if (strSymbols.Find(_T("<shortcut>")) >= 0) // has shortcut
+			if (strSymbols.Find(_T("<shortcut>")) >= 0)
 			{
-				m_shortCutImage.Draw(pDC, *m_windowDpi, this, rcText.left, rcText.top, false, false);
-				rcText.left += m_shortCutImage.ImageWidth() + m_windowDpi->Scale(2);
+				CRect iconRect(rcText.left, iconTop, rcText.left + iconSize, iconTop + iconSize);
+				m_shortCutImage.Draw(*graphics, *m_windowDpi, iconRect, false, false);
+				rcText.left += iconSize + UiDraw::Scale(2, dpi);
 			}
 			if (drawInGroupIcon &&
-				strSymbols.Find(_T("<ingroup>")) >= 0) // in group
+				strSymbols.Find(_T("<ingroup>")) >= 0)
 			{
-				m_inFolderImage.Draw(pDC, *m_windowDpi, this, rcText.left, rcText.top, false, false);
-				rcText.left += m_inFolderImage.ImageWidth() + m_windowDpi->Scale(2);
+				CRect iconRect(rcText.left, iconTop, rcText.left + iconSize, iconTop + iconSize);
+				m_inFolderImage.Draw(*graphics, *m_windowDpi, iconRect, false, false);
+				rcText.left += iconSize + UiDraw::Scale(2, dpi);
 			}
-			if (strSymbols.Find(_T("<qpastetext>")) >= 0) // has quick paste text
+			if (strSymbols.Find(_T("<sticky>")) >= 0)
 			{
-			}
-			if (strSymbols.Find(_T("<sticky>")) >= 0) //sticky clip
-			{
-				m_stickyImage.Draw(pDC, *m_windowDpi, this, rcText.left, rcText.top, false, false);
-				rcText.left += m_stickyImage.ImageWidth() + m_windowDpi->Scale(2);
+				CRect iconRect(rcText.left, iconTop, rcText.left + iconSize, iconTop + iconSize);
+				UiDraw::DrawGlyph(*graphics, iconRect, UiDraw::Glyph::Pin,
+					theme.Pinned(), dpi, theme.IconStrokeTenths());
+				rcText.left += iconSize + UiDraw::Scale(2, dpi);
 			}
 		}
+
+		DrawCopiedColorCode(csText, rcText, pDC, *graphics);
+		DrawBitMap(nItem, rcText, pDC, *graphics, csText);
+
+		int oldBkMode = pDC->SetBkMode(TRANSPARENT);
+		COLORREF oldTextColor = pDC->SetTextColor(rowTextColor);
 
 		if (DrawRtfText(nItem, rcText, pDC) == FALSE)
 		{
-			auto highlightColor = CGetSetOptions::m_Theme.SearchTextHighlight();
-			//use unprintable characters so it doesn't find copied html to convert
+			DrawSearchHighlight(pDC, csText, rcText);
+
+			COLORREF highlightColor = theme.HighlightText();
 			if (m_searchText.GetLength() > 0 &&
 				FindNoCaseAndInsert(csText, m_searchText, StrF(_T("\x01\x04 color='#%02x%02x%02x'\x02"), GetRValue(highlightColor), GetGValue(highlightColor), GetBValue(highlightColor)), _T("\x01\x03\x04\x02"), m_linesPerRow) > 0)
 			{
-				DrawHTML(pDC->m_hDC, csText, csText.GetLength(), rcText, DT_VCENTER | DT_EXPANDTABS | DT_NOPREFIX);
+				DrawHTML(pDC->m_hDC, csText, csText.GetLength(), rcText,
+					DT_VCENTER | DT_EXPANDTABS | DT_NOPREFIX | DT_END_ELLIPSIS);
 			}
 			else
 			{
-				pDC->DrawText(csText, rcText, DT_VCENTER | DT_EXPANDTABS | DT_NOPREFIX);
+				pDC->DrawText(csText, rcText,
+					DT_VCENTER | DT_EXPANDTABS | DT_NOPREFIX | DT_END_ELLIPSIS);
 			}
 		}
 
-		// Draw a focus rect around the item if necessary.
-		//if(bListHasFocus && (rItem.state & LVIS_FOCUSED))
-		//	pDC->DrawFocusRect(rcItem);
-
-		if (m_bShowTextForFirstTenHotKeys && firstTenNum >= 0)
+		if (bListHasFocus && isFocused)
 		{
-			CString cs;
-			if (firstTenNum == 10)
-				cs = "0";
-			else
-				cs.Format(_T("%d"), firstTenNum);
-
-			CRect crClient;
-
-			GetWindowRect(crClient);
-			ScreenToClient(crClient);
-
-			CRect crHotKey = rcItem;
-
-			int extraFromClipWasPaste = 0;
-			if (m_showIfClipWasPasted)
-				extraFromClipWasPaste = 3;
-
-			crHotKey.right = crHotKey.left + m_windowDpi->Scale(11);
-			crHotKey.left += m_windowDpi->Scale(1 + extraFromClipWasPaste);
-			crHotKey.top += m_windowDpi->Scale(1 + extraFromClipWasPaste);
-
-			HFONT hOldFont = (HFONT)pDC->SelectObject(m_SmallFont);
-			COLORREF localOldTextColor = pDC->SetTextColor(CGetSetOptions::m_Theme.ListSmallQuickPasteIndexColor());
-
-			CPen pen(PS_SOLID, 0, CGetSetOptions::m_Theme.ListSmallQuickPasteIndexColor());
-			CPen* pOldPen = pDC->SelectObject(&pen);
-
-			pDC->DrawText(cs, crHotKey, DT_BOTTOM);
-
-			pDC->MoveTo(CPoint(rcItem.left + m_windowDpi->Scale(8 + extraFromClipWasPaste), rcItem.top));
-			pDC->LineTo(CPoint(rcItem.left + m_windowDpi->Scale(8 + extraFromClipWasPaste), rcItem.bottom));
-
-			pDC->SelectObject(hOldFont);
-			pDC->SetTextColor(localOldTextColor);
-			pDC->SelectObject(pOldPen);
+			CRect focusRect(rowRect);
+			focusRect.DeflateRect(
+				max(1, UiDraw::Scale(1, dpi)),
+				max(1, UiDraw::Scale(1, dpi)));
+			UiDraw::FocusRing(*graphics, focusRect, rowRadius,
+				theme.FocusRing(), max(1, UiDraw::Scale(theme.FocusRingWidth(), dpi)));
 		}
 
-		// restore the previous values
-		if (OldColor > -1)
-			pDC->SetTextColor(OldColor);
+		pDC->SetTextColor(oldTextColor);
+		pDC->SetBkMode(oldBkMode);
 
-		if (nOldBKMode > -1)
-			pDC->SetBkMode(nOldBKMode);
-
-		*pResult = CDRF_SKIPDEFAULT;    // We've painted everything.
+		*pResult = CDRF_SKIPDEFAULT;
 	}
 }
 
@@ -798,27 +858,116 @@ static COLORREF OklchToRgb(double l, double c, double h)
 
 void CQListCtrl::DrawCheckerboard(CDC* pDC, CRect rect)
 {
-	COLORREF color1 = RGB(255, 255, 255); // White
-	COLORREF color2 = RGB(204, 204, 204); // Light grey
-	int squareSize = m_windowDpi->Scale(4);
-	if (squareSize <= 0)
+	if (pDC == NULL || rect.IsRectEmpty())
 	{
-		squareSize = 4;
+		return;
 	}
 
-	for (int y = rect.top; y < rect.bottom; y += squareSize)
+	CreateCheckerboardBrush();
+	if (m_checkerboardBrush.GetSafeHandle() != NULL)
 	{
-		for (int x = rect.left; x < rect.right; x += squareSize)
-		{
-			COLORREF color = ((( (x - rect.left) / squareSize) + ((y - rect.top) / squareSize)) % 2 == 0) ? color1 : color2;
-			CRect square(x, y, min(x + squareSize, rect.right), min(y + squareSize, rect.bottom));
-			pDC->FillSolidRect(square, color);
-		}
+		pDC->FillRect(rect, &m_checkerboardBrush);
 	}
 }
 
+void CQListCtrl::CreateCheckerboardBrush()
+{
+	if (m_windowDpi == NULL)
+	{
+		return;
+	}
 
-void CQListCtrl::DrawCopiedColorCode(CString& csText, CRect& rcText, CDC* pDC)
+	int dpi = m_windowDpi->GetDPI();
+	const CUiTheme& theme = UiTheme();
+	COLORREF color1 = theme.Surface();
+	COLORREF color2 = theme.SurfaceSunken();
+	if (m_checkerboardDpi == dpi &&
+		m_checkerboardColor1 == color1 &&
+		m_checkerboardColor2 == color2 &&
+		m_checkerboardBrush.GetSafeHandle() != NULL)
+	{
+		return;
+	}
+
+	m_checkerboardBrush.DeleteObject();
+
+	int squareSize = UiDraw::Scale(4, dpi);
+	if (squareSize <= 0)
+	{
+		squareSize = 1;
+	}
+
+	CClientDC dc(this);
+	CDC patternDC;
+	patternDC.CreateCompatibleDC(&dc);
+
+	CBitmap patternBitmap;
+	patternBitmap.CreateCompatibleBitmap(&dc, squareSize * 2, squareSize * 2);
+	CBitmap* pOldBitmap = patternDC.SelectObject(&patternBitmap);
+
+	patternDC.FillSolidRect(0, 0, squareSize, squareSize, color1);
+	patternDC.FillSolidRect(squareSize, 0, squareSize, squareSize, color2);
+	patternDC.FillSolidRect(0, squareSize, squareSize, squareSize, color2);
+	patternDC.FillSolidRect(squareSize, squareSize, squareSize, squareSize, color1);
+
+	m_checkerboardBrush.CreatePatternBrush(&patternBitmap);
+	m_checkerboardDpi = dpi;
+	m_checkerboardColor1 = color1;
+	m_checkerboardColor2 = color2;
+
+	patternDC.SelectObject(pOldBitmap);
+}
+
+void CQListCtrl::DrawSearchHighlight(CDC* pDC, const CString& text, const CRect& rect)
+{
+	if (pDC == NULL ||
+		text.IsEmpty() ||
+		m_searchText.IsEmpty() ||
+		rect.IsRectEmpty())
+	{
+		return;
+	}
+
+	CString searchable = text;
+	CString needle = m_searchText;
+	searchable.MakeLower();
+	needle.MakeLower();
+
+	int dpi = m_windowDpi != NULL ? m_windowDpi->GetDPI() : 96;
+	CSize textSize = pDC->GetTextExtent(_T("Ag"));
+	int highlightHeight = min(
+		rect.Height(),
+		max(textSize.cy, UiDraw::Scale(UiTheme().FontSizeBody(), dpi)));
+	int top = rect.top + UiDraw::Scale(4, dpi);
+
+	int savedDc = pDC->SaveDC();
+	pDC->IntersectClipRect(rect);
+
+	int position = searchable.Find(needle);
+	while (position >= 0)
+	{
+		CSize prefixSize = pDC->GetTextExtent(searchable.Left(position));
+		CSize matchSize = pDC->GetTextExtent(searchable.Mid(position, needle.GetLength()));
+
+		CRect highlightRect(
+			rect.left + prefixSize.cx,
+			top,
+			min(rect.right, rect.left + prefixSize.cx + matchSize.cx),
+			top + highlightHeight);
+		if (highlightRect.Width() > 0)
+		{
+			pDC->FillSolidRect(highlightRect, UiTheme().HighlightBg());
+		}
+
+		position = searchable.Find(needle, position + max(1, needle.GetLength()));
+	}
+
+	pDC->RestoreDC(savedDc);
+}
+
+
+void CQListCtrl::DrawCopiedColorCode(CString& csText, CRect& rcText, CDC* pDC,
+	Gdiplus::Graphics& graphics)
 {
 	if (CGetSetOptions::m_bDrawCopiedColorCode == FALSE || csText.IsEmpty())
 		return;
@@ -840,28 +989,43 @@ void CQListCtrl::DrawCopiedColorCode(CString& csText, CRect& rcText, CDC* pDC)
 	// 2. Helper lambda to draw the color box
 	auto DrawColorBox = [&](COLORREF color, int alpha = 255)
 	{
-		CRect pastedRect(rcText);
-		int boxSize = rcText.Height();
-		pastedRect.right = pastedRect.left + boxSize;
-		pastedRect.bottom = pastedRect.top + boxSize;
+		const CUiTheme& theme = UiTheme();
+		int dpi = m_windowDpi != NULL ? m_windowDpi->GetDPI() : 96;
+		int boxSize = min(
+			UiDraw::Scale(theme.IconSizeSmall(), dpi),
+			max(1, rcText.Height() - UiDraw::Scale(2, dpi)));
+		if (boxSize <= 0)
+		{
+			return;
+		}
+
+		CRect swatchRect(
+			rcText.left,
+			rcText.CenterPoint().y - boxSize / 2,
+			rcText.left + boxSize,
+			rcText.CenterPoint().y - boxSize / 2 + boxSize);
+		int radius = UiDraw::Scale(3, dpi);
 
 		if (alpha < 255)
 		{
-			DrawCheckerboard(pDC, pastedRect);
+			DrawCheckerboard(pDC, swatchRect);
 
-			// Use GDI+ for alpha blending
-			Gdiplus::Graphics graphics(pDC->GetSafeHdc());
-			Gdiplus::Color gdiplusColor(alpha, GetRValue(color), GetGValue(color), GetBValue(color));
-			Gdiplus::SolidBrush brush(gdiplusColor);
-			graphics.FillRectangle(&brush, Gdiplus::Rect(pastedRect.left, pastedRect.top, pastedRect.Width(), pastedRect.Height()));
+			graphics.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+			graphics.FillRectangle(
+				UiDraw::AlphaBrush(color, alpha),
+				Gdiplus::Rect(swatchRect.left, swatchRect.top,
+					swatchRect.Width(), swatchRect.Height()));
 		}
 		else
 		{
-			// Opaque color is faster with FillSolidRect and doesn't need a checkerboard.
-			pDC->FillSolidRect(pastedRect, color);
+			UiDraw::RoundedRect(graphics, swatchRect, radius,
+				color, CLR_INVALID, 0);
 		}
 
-		rcText.left += boxSize + m_windowDpi->Scale(ROW_LEFT_BORDER);
+		UiDraw::RoundedRect(graphics, swatchRect, radius,
+			CLR_INVALID, theme.Border(), 1);
+
+		rcText.left += boxSize + UiDraw::Scale(theme.FieldGap(), dpi);
 		csText = originalCleanedText;
 	};
 
@@ -1166,23 +1330,55 @@ BOOL CQListCtrl::DrawRtfText(int nItem, CRect& crRect, CDC* pDC)
 // DrawBitMap loads a DIB from the DB, draws a crRect thumbnail of the image
 //  to pDC and caches that thumbnail as a DIB in m_ThumbNails[ ItemID ].
 // ALL items are cached in m_ThumbNails (those without images are cached with NULL m_hgData)
-BOOL CQListCtrl::DrawBitMap(int nItem, CRect& crRect, CDC* pDC, const CString& csDescription)
+BOOL CQListCtrl::DrawBitMap(int nItem, CRect& crRect, CDC* pDC,
+	Gdiplus::Graphics& graphics, const CString& csDescription)
 {
 	if (CGetSetOptions::m_bDrawThumbnail == FALSE)
 		return FALSE;
 
+	int dpi = m_windowDpi != NULL ? m_windowDpi->GetDPI() : 96;
+	const CUiTheme& theme = UiTheme();
 	CClipFormatQListCtrl* format = GetItem_CF_DIB_ClipFormat(nItem);
 	if (format != NULL)
 	{
-		HGLOBAL smallImage = format->GetDibFittingToHeight(pDC, crRect.Height());
+		int thumbHeight = min(crRect.Height(), UiDraw::Scale(28, dpi));
+		HGLOBAL smallImage = format->GetDibFittingToHeight(pDC, thumbHeight);
 		if (smallImage != NULL)
 		{
-			//Will return the width of the bitmap in nWidth
-			int nWidth = 0;
-			if (CBitmapHelper::DrawDIB(pDC, smallImage, crRect.left, crRect.top, nWidth))
+			int sourceWidth = thumbHeight;
+			int sourceHeight = thumbHeight;
+			LPBITMAPINFO pBitmapInfo = (LPBITMAPINFO)GlobalLock(smallImage);
+			if (pBitmapInfo != NULL)
 			{
-				// adjust the rect so other information can be drawn next to the thumbnail
-				crRect.left += nWidth + 3;
+				sourceWidth = abs(pBitmapInfo->bmiHeader.biWidth);
+				sourceHeight = abs(pBitmapInfo->bmiHeader.biHeight);
+				GlobalUnlock(smallImage);
+			}
+
+			int maxWidth = UiDraw::Scale(40, dpi);
+			int drawWidth = min(sourceWidth, maxWidth);
+			int drawHeight = min(sourceHeight, thumbHeight);
+			CRect thumbRect(
+				crRect.left,
+				crRect.CenterPoint().y - drawHeight / 2,
+				crRect.left + drawWidth,
+				crRect.CenterPoint().y - drawHeight / 2 + drawHeight);
+
+			DrawCheckerboard(pDC, thumbRect);
+
+			int savedDc = pDC->SaveDC();
+			pDC->IntersectClipRect(thumbRect);
+			int nWidth = 0;
+			if (CBitmapHelper::DrawDIB(pDC, smallImage, thumbRect.left, thumbRect.top, nWidth))
+			{
+				pDC->RestoreDC(savedDc);
+				UiDraw::RoundedRect(graphics, thumbRect,
+					UiDraw::Scale(4, dpi), CLR_INVALID, theme.Border(), 1);
+				crRect.left += min(nWidth, maxWidth) + UiDraw::Scale(theme.FieldGap(), dpi);
+			}
+			else
+			{
+				pDC->RestoreDC(savedDc);
 			}
 		}
 	}
@@ -1213,29 +1409,10 @@ void CQListCtrl::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 BOOL CQListCtrl::OnEraseBkgnd(CDC* pDC)
 {
-
 	CRect rect;
 	GetClientRect(&rect);
-	CBrush myBrush(CGetSetOptions::m_Theme.MainWindowBG());    // dialog background color
-	CBrush* pOld = pDC->SelectObject(&myBrush);
-	BOOL bRes = pDC->PatBlt(0, 0, rect.Width(), rect.Height(), PATCOPY);
-	pDC->SelectObject(pOld);    // restore old brush
-	return bRes;                       // CDialog::OnEraseBkgnd(pDC);
-
-	// Simply returning TRUE seems OK since we do custom item
-	//	painting.  However, there is a pixel buffer around the
-	//	border of this control (not within the item rects)
-	//	which becomes visually corrupt if it is not erased.
-
-	// In most cases, I do not notice the erasure, so I have kept
-	//	the call to CListCtrl::OnEraseBkgnd(pDC);
-
-	// However, for some reason, bulk erasure is very noticeable when
-	//	shift-scrolling the page to select a block of items, so
-	//	I made a special case for that:
-	//if(GetSelectedCount() >= 2)
-	//	return TRUE;
-	//return CListCtrl::OnEraseBkgnd(pDC);
+	pDC->FillSolidRect(&rect, UiTheme().Surface());
+	return TRUE;
 }
 
 BOOL CQListCtrl::OnToolTipText(UINT id, NMHDR* pNMHDR, LRESULT* pResult)
@@ -1422,7 +1599,6 @@ BOOL CQListCtrl::PreTranslateMessage(MSG* pMsg)
 		}
 
 	case WM_VSCROLL:
-		ASSERT(FALSE);
 		break;
 	} // end switch(pMsg->message)
 
@@ -1910,8 +2086,13 @@ void CQListCtrl::OnKillFocus(CWnd* pNewWnd)
 {
 	CListCtrl::OnKillFocus(pNewWnd);
 
-	//if(FocusOnToolTip() == FALSE)
-		//m_pToolTip->Hide();
+	RefreshVisibleRows();
+}
+
+void CQListCtrl::OnSetFocus(CWnd* pOldWnd)
+{
+	CListCtrl::OnSetFocus(pOldWnd);
+	RefreshVisibleRows();
 }
 
 HWND CQListCtrl::GetToolTipHWnd()
@@ -2100,6 +2281,44 @@ BOOL CQListCtrl::OnItemDeleted(long lID)
 
 void CQListCtrl::OnMouseMove(UINT nFlags, CPoint point)
 {
+	if (!m_trackingHover)
+	{
+		TRACKMOUSEEVENT tme = { sizeof(TRACKMOUSEEVENT) };
+		tme.dwFlags = TME_LEAVE;
+		tme.hwndTrack = m_hWnd;
+		TrackMouseEvent(&tme);
+		m_trackingHover = true;
+	}
+
+	int hoverRow = -1;
+	int topIndex = GetTopIndex();
+	int bottomIndex = min(
+		GetItemCount(),
+		topIndex + GetCountPerPage() + 1);
+	for (int row = topIndex; row < bottomIndex; row++)
+	{
+		CRect itemRect;
+		if (GetItemRect(row, itemRect, LVIR_BOUNDS) && itemRect.PtInRect(point))
+		{
+			hoverRow = row;
+			break;
+		}
+	}
+
+	if (m_hoverRow != hoverRow)
+	{
+		int oldHoverRow = m_hoverRow;
+		m_hoverRow = hoverRow;
+		if (oldHoverRow >= 0 && oldHoverRow < GetItemCount())
+		{
+			RedrawItems(oldHoverRow, oldHoverRow);
+		}
+		if (m_hoverRow >= 0 && m_hoverRow < GetItemCount())
+		{
+			RedrawItems(m_hoverRow, m_hoverRow);
+		}
+	}
+
 	if (CGetSetOptions::m_showScrollBar == FALSE)
 	{
 		CRect crWindow;
@@ -2142,6 +2361,22 @@ void CQListCtrl::OnMouseMove(UINT nFlags, CPoint point)
 	}
 
 	CListCtrl::OnMouseMove(nFlags, point);
+}
+
+void CQListCtrl::OnMouseLeave()
+{
+	m_trackingHover = false;
+	if (m_hoverRow >= 0)
+	{
+		int oldHoverRow = m_hoverRow;
+		m_hoverRow = -1;
+		if (oldHoverRow < GetItemCount())
+		{
+			RedrawItems(oldHoverRow, oldHoverRow);
+		}
+	}
+
+	CListCtrl::OnMouseLeave();
 }
 
 bool CQListCtrl::MouseInScrollBarArea(CRect crWindow, CPoint point)
@@ -2271,7 +2506,6 @@ void CQListCtrl::SetDpiInfo(CDPI* dpi)
 	m_windowDpi = dpi;
 
 	m_groupFolder.Reset();
-	m_groupFolder.LoadStdImageDPI(m_windowDpi->GetDPI(), IDB_OPEN_FOLDER_16_16, IDB_OPEN_FOLDER_20_20, IDB_OPEN_FOLDER_24_24, IDB_OPEN_FOLDER_24_24, IDB_OPEN_FOLDER_32_32, _T("PNG"));
 
 	m_dontDeleteImage.Reset();
 	m_dontDeleteImage.LoadStdImageDPI(m_windowDpi->GetDPI(), IDB_YELLOW_STAR_16_16, IDB_YELLOW_STAR_20_20, IDB_YELLOW_STAR_24_24, IDB_YELLOW_STAR_24_24, IDB_YELLOW_STAR_32_32, _T("PNG"));
@@ -2283,31 +2517,44 @@ void CQListCtrl::SetDpiInfo(CDPI* dpi)
 	m_shortCutImage.LoadStdImageDPI(m_windowDpi->GetDPI(), IDB_KEY_16_16, IDB_KEY_20_20, IDB_KEY_24_24, IDB_KEY_24_24, IDB_KEY_32_32, _T("PNG"));
 
 	m_stickyImage.Reset();
-	m_stickyImage.LoadStdImageDPI(m_windowDpi->GetDPI(), IDB_STICKY_16_16, IDB_STICKY_20_20, IDB_STICKY_24_24, IDB_STICKY_24_24, IDB_STICKY_32_32, _T("PNG"));
 
-	DeleteObject(m_SmallFont);
+	if (m_SmallFont != NULL)
+	{
+		DeleteObject(m_SmallFont);
+		m_SmallFont = NULL;
+	}
 
 	CreateSmallFont();
+
+	m_checkerboardBrush.DeleteObject();
+	m_checkerboardDpi = 0;
+	m_checkerboardColor1 = CLR_INVALID;
+	m_checkerboardColor2 = CLR_INVALID;
 }
 
 void CQListCtrl::CreateSmallFont()
 {
 	LOGFONT lf;
+	int dpi = m_windowDpi->GetDPI();
+	int fontLogicalPixels = MulDiv(
+		CGetSetOptions::GetFirstTenHotKeysFontSize(), 96, 72);
+	fontLogicalPixels = max(UiTheme().FontSizeCaption(), fontLogicalPixels);
 
-	lf.lfHeight = -MulDiv(CGetSetOptions::GetFirstTenHotKeysFontSize(), m_windowDpi->GetDPI(), 72);
+	lf.lfHeight = -UiDraw::Scale(fontLogicalPixels, dpi);
 	lf.lfWidth = 0;
 	lf.lfEscapement = 0;
 	lf.lfOrientation = 0;
-	lf.lfWeight = FW_LIGHT;
+	lf.lfWeight = FW_SEMIBOLD;
 	lf.lfItalic = FALSE;
 	lf.lfUnderline = FALSE;
 	lf.lfStrikeOut = FALSE;
-	lf.lfCharSet = ANSI_CHARSET;
-	lf.lfOutPrecision = OUT_STRING_PRECIS;
-	lf.lfClipPrecision = CLIP_STROKE_PRECIS;
-	lf.lfQuality = DEFAULT_QUALITY;
+	lf.lfCharSet = DEFAULT_CHARSET;
+	lf.lfOutPrecision = OUT_DEFAULT_PRECIS;
+	lf.lfClipPrecision = CLIP_DEFAULT_PRECIS;
+	lf.lfQuality = CLEARTYPE_QUALITY;
 	lf.lfPitchAndFamily = VARIABLE_PITCH | FF_DONTCARE;
-	lstrcpy(lf.lfFaceName, _T("Small Font"));
+	_tcsncpy_s(lf.lfFaceName, LF_FACESIZE,
+		UiTheme().FontFamilyUi(), _TRUNCATE);
 
 	m_SmallFont = ::CreateFontIndirect(&lf);
 }

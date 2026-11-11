@@ -5,6 +5,8 @@
 #include "CP_Main.h"
 #include "WndEx.h"
 #include ".\wndex.h"
+#include "UiTheme.h"
+#include "UiWindow.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -80,7 +82,7 @@ BOOL CWndEx::Create(const CRect& crStart, CWnd* pParentWnd)
 	wc.hInstance = AfxGetInstanceHandle();
 	wc.hIcon = NULL;
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH) GetStockObject(WHITE_BRUSH);
+	wc.hbrBackground = (HBRUSH) GetStockObject(NULL_BRUSH);
 	wc.lpszMenuName =  NULL;
 	wc.lpszClassName = _T("QPasteClass");
 	
@@ -109,7 +111,9 @@ int CWndEx::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		SWP_NOZORDER | SWP_NOACTIVATE);
 
 	SetCaptionColorActive(false, TRUE);
-	m_DittoWindow.SetCaptionOn(this, CGetSetOptions::GetCaptionPos(), true, CGetSetOptions::m_Theme.GetCaptionSize(), CGetSetOptions::m_Theme.GetCaptionFontSize());
+	m_DittoWindow.SetCaptionOn(this, CGetSetOptions::GetCaptionPos(), true,
+		UiTheme().CaptionHeight(), UiTheme().FontSizeWindowTitle());
+	UiWindow::ApplyWindowEffects(m_hWnd);
 	SetAutoMaxDelay(CGetSetOptions::GetAutoMaxDelay());
 
 	m_toolTip.Create(this);
@@ -125,24 +129,29 @@ int CWndEx::OnCreate(LPCREATESTRUCT lpCreateStruct)
 bool CWndEx::SetCaptionColorActive(BOOL bPersistant, BOOL ConnectedToClipboard)
 {
 	bool bResult;
+	const CUiTheme& theme = UiTheme();
 
 	if(ConnectedToClipboard == false)
 	{
-		bResult = m_DittoWindow.SetCaptionColors(CGetSetOptions::m_Theme.CaptionLeftNotConnected(), CGetSetOptions::m_Theme.CaptionRightNotConnected(), CGetSetOptions::m_Theme.BorderNotConnected());
+		bResult = m_DittoWindow.SetCaptionColors(theme.CaptionLeftNotConnected(),
+			theme.CaptionRightNotConnected(), theme.Border());
 	}
 	else
 	{
 		if(bPersistant)
 		{
-			bResult = m_DittoWindow.SetCaptionColors(CGetSetOptions::m_Theme.CaptionLeftTopMost(), CGetSetOptions::m_Theme.CaptionRightTopMost(), CGetSetOptions::m_Theme.BorderTopMost());
+			bResult = m_DittoWindow.SetCaptionColors(theme.CaptionLeftTopMost(),
+				theme.CaptionRightTopMost(), theme.Border());
 		}
 		else
 		{
-			bResult = m_DittoWindow.SetCaptionColors(CGetSetOptions::m_Theme.CaptionLeft(), CGetSetOptions::m_Theme.CaptionRight(), CGetSetOptions::m_Theme.Border());
+			bResult = m_DittoWindow.SetCaptionColors(theme.CaptionLeft(),
+				theme.CaptionRight(), theme.Border());
 		}
 	}
 
-	m_DittoWindow.SetCaptionTextColor(CGetSetOptions::m_Theme.CaptionTextColor());
+	m_DittoWindow.SetCaptionTextColor(theme.CaptionText());
+	UiWindow::ApplyWindowEffects(m_hWnd);
 
 	return bResult;
 }
@@ -232,7 +241,10 @@ BOOL CWndEx::PreTranslateMessage(MSG* pMsg)
 
 BOOL CWndEx::OnEraseBkgnd(CDC* pDC) 
 {
-	return CWnd::OnEraseBkgnd(pDC);
+	CRect rect;
+	GetClientRect(rect);
+	pDC->FillSolidRect(rect, UiTheme().Canvas());
+	return TRUE;
 }
 
 void CWndEx::OnTimer(UINT_PTR nIDEvent)

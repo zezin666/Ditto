@@ -1,0 +1,24 @@
+2026-11-11T04:52:31.621 [release-dark] BEGIN Theme=Modern Dark Build=Release64 Rows=120 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t7-release-dark-5e9bed6a4dc24dde97ca95e7c57eba4d
+2026-11-11T04:52:40.091 [release-dark] nogroup-english=[-No Group-]
+2026-11-11T04:52:53.217 [release-dark] nogroup-deutsch-custom=[Keine Gruppe (QA)]
+2026-11-11T04:52:57.276 [release-dark] nogroup-deutsch-fallback=[-No Group-]
+2026-11-11T04:52:59.030 [release-dark] list-load-wait items=120
+2026-11-11T04:52:59.740 [release-dark] popup-found dpi=144 listItems=120
+2026-11-11T04:52:59.742 [release-dark] nogroup-runtime=[]
+2026-11-11T04:53:00.663 [release-dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-release-dark-indicators-top.png size=450x450
+2026-11-11T04:53:03.021 [release-dark] scroll480 ms=1833 gdiBefore=78 gdiAfter=76 deltaGdi=-2 userBefore=70 userAfter=71 deltaUser=1 items=120
+2026-11-11T04:53:03.394 [release-dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-release-dark-indicators-scrolled.png size=450x450
+2026-11-11T04:53:04.306 [release-dark] nogroup-runtime-after-show=[-No Group-] treeVisible=True
+2026-11-11T04:53:04.320 [release-dark] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-release-dark-group-tree.png size=450x315
+2026-11-11T04:53:06.587 [release-dark] screenshot-region=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t7-release-dark-contextmenu.png size=419x621
+2026-11-11T04:53:06.589 [release-dark] context menu captured
+2026-11-11T04:53:09.472 [release-dark] exit clean
+2026-11-11T04:53:09.481 [release-dark] log-marker [T3 list paint pass reused one Gdiplus::Graphics object] count=0
+2026-11-11T04:53:09.486 [release-dark] log-marker [T3 GdiImageDrawer shared Graphics draws: 1] count=0
+2026-11-11T04:53:09.490 [release-dark] log-marker [T3 GdiImageDrawer shared Graphics draws: 100] count=0
+2026-11-11T04:53:09.494 [release-dark] log-marker [T3 UiDraw created translucent brush cache] count=0
+2026-11-11T04:53:09.499 [release-dark] log-marker [T3 UiDraw alpha brush cache cap reached; clearing] count=0
+2026-11-11T04:53:09.504 [release-dark] log-marker [T3 UiDraw purged translucent brush cache] count=4
+2026-11-11T04:53:09.508 [release-dark] log-marker [ExitInstance] count=10
+2026-11-11T04:53:09.519 [release-dark] log-scan clean (expected noise filtered)
+2026-11-11T04:53:09.531 [release-dark] DONE

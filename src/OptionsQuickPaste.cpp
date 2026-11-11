@@ -17,9 +17,9 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // COptionsQuickPaste property page
 
-IMPLEMENT_DYNCREATE(COptionsQuickPaste, CPropertyPage)
+IMPLEMENT_DYNCREATE(COptionsQuickPaste, CThemedPropertyPage)
 
-COptionsQuickPaste::COptionsQuickPaste() : CPropertyPage(COptionsQuickPaste::IDD)
+COptionsQuickPaste::COptionsQuickPaste() : CThemedPropertyPage(COptionsQuickPaste::IDD)
 {
 	m_csTitle = theApp.m_Language.GetString("QuickPasteTitle", "Quick Paste");
 	m_psp.pszTitle = m_csTitle;
@@ -63,7 +63,7 @@ void COptionsQuickPaste::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(COptionsQuickPaste, CPropertyPage)
+BEGIN_MESSAGE_MAP(COptionsQuickPaste, CThemedPropertyPage)
 	//{{AFX_MSG_MAP(COptionsQuickPaste)
 	ON_BN_CLICKED(IDC_BUTTON_FONT, OnButtonFont)
 	ON_BN_CLICKED(IDC_BUTTON_DEFAULT_FAULT, OnButtonDefaultFault)
@@ -77,7 +77,7 @@ END_MESSAGE_MAP()
 
 BOOL COptionsQuickPaste::OnInitDialog() 
 {
-	CPropertyPage::OnInitDialog();
+	CThemedPropertyPage::OnInitDialog();
 
 	m_pParent = (COptionsSheet *)GetParent();
 	
@@ -129,6 +129,7 @@ BOOL COptionsQuickPaste::OnInitDialog()
 	FillThemes();
 
 	theApp.m_Language.UpdateOptionQuickPaste(this);
+	CThemedControls::FinishLayout(this);
 		
 	return FALSE;
 }
@@ -202,7 +203,7 @@ BOOL COptionsQuickPaste::OnApply()
 	else
 		CGetSetOptions::SetShowIfClipWasPasted(FALSE);
 	
-	return CPropertyPage::OnApply();
+	return CThemedPropertyPage::OnApply();
 }
 
 void COptionsQuickPaste::OnButtonFont() 

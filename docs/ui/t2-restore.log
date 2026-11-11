@@ -1,0 +1,26 @@
+MSBuild 自动检测: 使用来自 "C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\MSBuild\Current\bin" 的 msbuild 版本 "18.11.1.51303"。
+Restoring NuGet package libpng-msvc-x86.1.6.33.8807.
+Restoring NuGet package zlib-msvc-x64.1.2.11.8900.
+Restoring NuGet package zlib-msvc-x86.1.2.11.8900.
+Restoring NuGet package libpng-msvc-x64.1.6.33.8807.
+Adding package 'libpng-msvc-x86.1.6.33.8807' to folder 'D:\orca\workspaces\Ditto\ui-shell\packages'
+Adding package 'zlib-msvc-x64.1.2.11.8900' to folder 'D:\orca\workspaces\Ditto\ui-shell\packages'
+Adding package 'libpng-msvc-x64.1.6.33.8807' to folder 'D:\orca\workspaces\Ditto\ui-shell\packages'
+Adding package 'zlib-msvc-x86.1.2.11.8900' to folder 'D:\orca\workspaces\Ditto\ui-shell\packages'
+Added package 'zlib-msvc-x64.1.2.11.8900' to folder 'D:\orca\workspaces\Ditto\ui-shell\packages'
+Added package 'zlib-msvc-x86.1.2.11.8900' to folder 'D:\orca\workspaces\Ditto\ui-shell\packages'
+Added package 'libpng-msvc-x86.1.6.33.8807' to folder 'D:\orca\workspaces\Ditto\ui-shell\packages'
+Added package 'libpng-msvc-x64.1.6.33.8807' to folder 'D:\orca\workspaces\Ditto\ui-shell\packages'
+  CACHE https://api.nuget.org/v3/vulnerabilities/index.json
+  CACHE https://api.nuget.org/v3/vulnerabilities/vulnerability.base.json
+  CACHE https://api.nuget.org/v3/vulnerabilities/vulnerability.update.json
+
+使用的 NuGet 配置文件:
+    C:\Users\zezin\AppData\Roaming\NuGet\NuGet.Config
+
+使用的源:
+    C:\Users\zezin\.nuget\packages\
+    https://api.nuget.org/v3/index.json
+
+已安装:
+    packages.config projects 的 4 包

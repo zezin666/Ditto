@@ -1,0 +1,12 @@
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+适用于 .NET Framework MSBuild 版本 18.11.1-1.26513.3+940033be3
+
+  focus.vcxproj -> D:\orca\workspaces\Ditto\ui-shell\Debug64\focus.dll
+  DittoUtil.vcxproj -> D:\orca\workspaces\Ditto\ui-shell\Debug64\Addins\DittoUtil.dll
+  ICU_Loader.vcxproj -> D:\orca\workspaces\Ditto\ui-shell\Debug64\ICU_Loader.dll
+  EncryptDecrypt.vcxproj -> D:\orca\workspaces\Ditto\ui-shell\Debug64\EncryptDecrypt.lib
+  QPasteWnd.cpp
+  SymbolEdit.cpp
+  正在生成代码...
+  CP_Main.vcxproj -> D:\orca\workspaces\Ditto\ui-shell\Debug64\Ditto.exe

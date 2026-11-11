@@ -12,11 +12,12 @@
 #include "afxwin.h"
 #include "HyperLink.h"
 #include "afxcmn.h"
+#include "Ui/ThemedDialog.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // COptionsKeyBoard dialog
 
-class COptionsKeyBoard : public CPropertyPage
+class COptionsKeyBoard : public CThemedPropertyPage
 {
 	DECLARE_DYNCREATE(COptionsKeyBoard)
 

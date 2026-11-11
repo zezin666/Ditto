@@ -11,11 +11,12 @@
 #include "GroupCombo.h"
 #include "RichEditCtrlEx.h"
 #include "DialogResizer.h"
+#include "Ui/ThemedDialog.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CCopyProperties dialog
 
-class CCopyProperties : public CDialog
+class CCopyProperties : public CThemedDialog
 {
 // Construction
 public:

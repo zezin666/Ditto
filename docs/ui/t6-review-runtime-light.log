@@ -1,0 +1,26 @@
+2026-11-11T03:46:40.239 [light] BEGIN Theme=Modern Light Build=Debug64 Rows=5000 Run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t6-light-d409514055e049388cc571c07844e2cb
+2026-11-11T03:46:45.557 [light] main=593514
+2026-11-11T03:46:48.832 [light] popup-found dpi=144 listItems=5001
+2026-11-11T03:46:48.837 [light] tabStops groups=True back=True system=True options=True empty=True list=True
+2026-11-11T03:46:48.845 [light] tabChain=513,514,528,32805,517,513,514,528,32805,517,513,514
+2026-11-11T03:46:48.859 [light] list-visible=1268,867,1665,1253 edit=1331,1257,1548,1308
+2026-11-11T03:46:48.875 [light] LAYOUT PASS
+2026-11-11T03:46:49.271 [light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t6-light-popup.png size=450x450
+2026-11-11T03:46:49.984 [light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t6-light-footer-focus.png size=450x450
+2026-11-11T03:46:52.010 [light] empty visible=True tabStop=True
+2026-11-11T03:46:52.236 [light] empty-focus ok=True focus=4197800
+2026-11-11T03:46:52.933 [light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t6-light-empty-focus.png size=450x450
+2026-11-11T03:46:54.950 [light] space-clear textLength=0 items=5001
+2026-11-11T03:46:57.183 [light] empty-focus-enter ok=True focus=4197800
+2026-11-11T03:46:59.188 [light] enter-clear textLength=0 items=5001
+2026-11-11T03:47:02.176 [light] UNVERIFIED search-history menu not found
+2026-11-11T03:47:04.919 [light] scroll400 ms=799 gdiBefore=83 gdiAfter=81 deltaGdi=-2 userBefore=71 userAfter=72 deltaUser=1 items=5001
+2026-11-11T03:47:06.010 [light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t6-light-5k-list.png size=450x450
+2026-11-11T03:47:08.400 [light] screenshot=D:\orca\workspaces\Ditto\ui-integration\artifacts\ui\after\t6-light-color-swatch.png size=450x450
+2026-11-11T03:47:20.162 [light] exit clean=True
+2026-11-11T03:47:20.173 [light] log-marker [T3 list paint pass reused one Gdiplus::Graphics object] count=1
+2026-11-11T03:47:20.191 [light] log-marker [T3 UiDraw created translucent brush cache] count=1
+2026-11-11T03:47:20.198 [light] log-marker [T3 UiDraw purged translucent brush cache] count=1
+2026-11-11T03:47:20.203 [light] log-marker [ExitInstance] count=3
+2026-11-11T03:47:20.215 [light] log-scan clean (expected noise filtered)
+2026-11-11T03:47:20.225 [light] DONE

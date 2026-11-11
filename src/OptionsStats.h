@@ -10,7 +10,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // COptionsStats dialog
 
-class COptionsStats : public CPropertyPage
+#include "Ui/ThemedDialog.h"
+
+class COptionsStats : public CThemedPropertyPage
 {
 	DECLARE_DYNCREATE(COptionsStats)
 

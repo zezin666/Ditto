@@ -7,12 +7,13 @@
 // OptionsSheet.h : header file
 //
 //#include "ShowTaskBarIcon.h"
+#include "Ui/ThemedDialog.h"
 
 
 /////////////////////////////////////////////////////////////////////////////
 // COptionsSheet
 
-class COptionsSheet : public CPropertySheet
+class COptionsSheet : public CThemedPropertySheet
 {
 	DECLARE_DYNAMIC(COptionsSheet)
 

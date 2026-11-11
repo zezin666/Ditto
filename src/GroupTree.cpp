@@ -5,6 +5,9 @@
 #include "cp_main.h"
 #include "GroupTree.h"
 #include "ActionEnums.h"
+#include "DarkMode.h"
+#include "DPI.h"
+#include "UiTheme.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,6 +41,9 @@ BEGIN_MESSAGE_MAP(CGroupTree, CTreeCtrl)
 	ON_NOTIFY_REFLECT(NM_DBLCLK, OnDblclk)
 	ON_NOTIFY_REFLECT(TVN_KEYDOWN, OnKeydown)
 	ON_WM_RBUTTONDOWN()
+	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnCustomDraw)
+	ON_WM_ERASEBKGND()
+	ON_NOTIFY_REFLECT(TVN_GETINFOTIP, OnGetInfoTip)
 	//}}AFX_MSG_MAP
 	ON_COMMAND(ID_MENU_NEWGROUP32896, &CGroupTree::OnMenuNewgroup32896)
 	ON_COMMAND(ID_MENU_DELETEGROUP, &CGroupTree::OnMenuDeletegroup)
@@ -77,11 +83,13 @@ int CGroupTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	SetImageList(&iml, TVSIL_NORMAL);
 	iml.Detach();
 
+	SetExtendedStyle(TVS_EX_DOUBLEBUFFER, TVS_EX_DOUBLEBUFFER);
+
 	m_actions.AddAccel(ActionEnums::NEWGROUP, ACCEL_MAKEKEY(VK_F7, HOTKEYF_CONTROL));
 	m_actions.AddAccel(ActionEnums::CLIP_PROPERTIES, ACCEL_MAKEKEY(VK_RETURN, HOTKEYF_ALT));
 	m_actions.AddAccel(ActionEnums::DELETE_SELECTED, VK_DELETE);
 
-	
+	RefreshTheme();
 
 	return 0;
 }
@@ -175,13 +183,13 @@ bool CGroupTree::DoActionClipProperties()
 
 void CGroupTree::FillTree()
 {	
-	this->SetBkColor(CGetSetOptions::m_Theme.GroupTreeBG());
-	this->SetTextColor(CGetSetOptions::m_Theme.GroupTreeText());
+	RefreshTheme();
 
 	DeleteAllItems();
 	m_bSendAllready = false;
 
-	HTREEITEM hItem = InsertItem(_T("-No Group-"), TVI_ROOT);
+	HTREEITEM hItem = InsertItem(theApp.m_Language.GetString(
+		_T("NoGroup"), _T("-No Group-")), TVI_ROOT);
 	SetItemData(hItem, -1);
 
 	SetItemState(hItem, TVIS_EXPANDED, TVIS_EXPANDED);
@@ -190,6 +198,19 @@ void CGroupTree::FillTree()
 		SelectItem(hItem);
 	
 	FillTree(-1, hItem);
+}
+
+void CGroupTree::RefreshTheme()
+{
+	const CUiTheme& theme = UiTheme();
+	SetBkColor(theme.GroupTreeBg());
+	SetTextColor(theme.TextPrimary());
+
+	CDPI dpi(m_hWnd);
+	TreeView_SetItemHeight(m_hWnd, dpi.Scale(theme.ListRowHeight()));
+
+	CDarkMode::ApplyToControl(m_hWnd);
+	Invalidate();
 }
 
 
@@ -370,7 +391,57 @@ void CGroupTree::OnRclickQuickPaste(NMHDR *pNMHDR, LRESULT *pResult)
 
 		theApp.m_Language.UpdateGroupsRightClickMenu(cmSubMenu);
 		
+		CDarkMode::ApplyToMenus(m_hWnd);
 		cmSubMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RIGHTBUTTON, pp.x, pp.y, this, NULL);
+	}
+
+	*pResult = 0;
+}
+
+void CGroupTree::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMTVCUSTOMDRAW pCustomDraw = reinterpret_cast<LPNMTVCUSTOMDRAW>(pNMHDR);
+	const CUiTheme& theme = UiTheme();
+
+	switch (pCustomDraw->nmcd.dwDrawStage)
+	{
+	case CDDS_PREPAINT:
+		*pResult = CDRF_NOTIFYITEMDRAW;
+		return;
+	case CDDS_ITEMPREPAINT:
+		if ((pCustomDraw->nmcd.uItemState & CDIS_SELECTED) != 0)
+		{
+			pCustomDraw->clrTextBk = theme.Selection();
+			pCustomDraw->clrText = theme.SelectionText();
+		}
+		else
+		{
+			pCustomDraw->clrTextBk = theme.GroupTreeBg();
+			pCustomDraw->clrText = theme.TextPrimary();
+		}
+		*pResult = CDRF_NEWFONT;
+		return;
+	default:
+		*pResult = CDRF_DODEFAULT;
+		return;
+	}
+}
+
+BOOL CGroupTree::OnEraseBkgnd(CDC* pDC)
+{
+	CRect rect;
+	GetClientRect(rect);
+	pDC->FillSolidRect(rect, UiTheme().GroupTreeBg());
+	return TRUE;
+}
+
+void CGroupTree::OnGetInfoTip(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NMTVGETINFOTIP* pInfoTip = reinterpret_cast<NMTVGETINFOTIP*>(pNMHDR);
+	if (pInfoTip->pszText != NULL && pInfoTip->cchTextMax > 0)
+	{
+		CString text = GetItemText(pInfoTip->hItem);
+		_tcsncpy_s(pInfoTip->pszText, pInfoTip->cchTextMax, text, _TRUNCATE);
 	}
 
 	*pResult = 0;

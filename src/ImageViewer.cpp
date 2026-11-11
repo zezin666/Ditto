@@ -6,6 +6,7 @@
 #include "ImageViewer.h"
 #include "BitmapHelper.h"
 #include "memdc.h"
+#include "UiTheme.h"
 
 
 // CImageViewer
@@ -124,12 +125,7 @@ void CImageViewer::OnPaint()
 	CRect rect;
 	GetClientRect(rect);	
 
-	CBrush  Brush, *pOldBrush;
-	Brush.CreateSolidBrush(CGetSetOptions::m_Theme.DescriptionWindowBG());
-
-	pOldBrush = memDC.SelectObject(&Brush);
-
-	memDC.FillRect(&rect, &Brush);
+	memDC.FillSolidRect(&rect, UiTheme().Surface());
 
 	if (m_pGdiplusBitmap)
 	{
@@ -153,7 +149,6 @@ void CImageViewer::OnPaint()
 		//OutputDebugString(StrF(_T("OnPaint, Width: %d, New Width: %d\r\n"), rect.Width(), (int)nW));
 	}
 	
-	memDC.SelectObject(pOldBrush);
 }
 
 

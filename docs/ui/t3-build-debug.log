@@ -1,0 +1,276 @@
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+适用于 .NET Framework MSBuild 版本 18.11.1-1.26513.3+940033be3
+生成启动时间为 2026/11/10 23:41:19。
+
+节点 1 上的项目“D:\orca\workspaces\Ditto\ui-list\CP_Main_10.sln”(默认目标)。
+ValidateSolutionConfiguration:
+  正在生成解决方案配置“Debug|x64”。
+ValidateProjects:
+  在解决方案配置“Debug|x64”中未选定生成项目“FocusHighlight”。
+项目“D:\orca\workspaces\Ditto\ui-list\CP_Main_10.sln”(1)正在节点 1 上生成“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj.metaproj”(2) (默认目标)。
+项目“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj.metaproj”(2)正在节点 1 上生成“D:\orca\workspaces\Ditto\ui-list\EncryptDecrypt\EncryptDecrypt.vcxproj”(3) (默认目标)。
+PrepareForBuild:
+  已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+InitializeBuildStatus:
+  正在创建“x64\Debug\EncryptDecrypt.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+  正在对“x64\Debug\EncryptDecrypt.tlog\unsuccessfulbuild”执行 Touch 任务。
+ClCompile:
+  所有输出均为最新。
+  所有输出均为最新。
+Lib:
+  所有输出均为最新。
+  EncryptDecrypt.vcxproj -> D:\orca\workspaces\Ditto\ui-list\Debug64\EncryptDecrypt.lib
+FinalizeBuildStatus:
+  正在删除文件“x64\Debug\EncryptDecrypt.tlog\unsuccessfulbuild”。
+  正在对“x64\Debug\EncryptDecrypt.tlog\EncryptDecrypt.lastbuildstate”执行 Touch 任务。
+已完成生成项目“D:\orca\workspaces\Ditto\ui-list\EncryptDecrypt\EncryptDecrypt.vcxproj”(默认目标)的操作。
+项目“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj.metaproj”(2)正在节点 1 上生成“D:\orca\workspaces\Ditto\ui-list\ICU_Loader\ICU_Loader.vcxproj”(4) (默认目标)。
+PrepareForBuild:
+  已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+InitializeBuildStatus:
+  正在创建“x64\Debug\ICU_Loader.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+  正在对“x64\Debug\ICU_Loader.tlog\unsuccessfulbuild”执行 Touch 任务。
+ClCompile:
+  所有输出均为最新。
+  所有输出均为最新。
+Link:
+  所有输出均为最新。
+  ICU_Loader.vcxproj -> D:\orca\workspaces\Ditto\ui-list\Debug64\ICU_Loader.dll
+FinalizeBuildStatus:
+  正在删除文件“x64\Debug\ICU_Loader.tlog\unsuccessfulbuild”。
+  正在对“x64\Debug\ICU_Loader.tlog\ICU_Loader.lastbuildstate”执行 Touch 任务。
+已完成生成项目“D:\orca\workspaces\Ditto\ui-list\ICU_Loader\ICU_Loader.vcxproj”(默认目标)的操作。
+项目“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj.metaproj”(2)正在节点 1 上生成“D:\orca\workspaces\Ditto\ui-list\Addins\DittoUtil\DittoUtil.vcxproj”(5) (默认目标)。
+PrepareForBuild:
+  已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+InitializeBuildStatus:
+  正在创建“x64\Debug\DittoUtil.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+  正在对“x64\Debug\DittoUtil.tlog\unsuccessfulbuild”执行 Touch 任务。
+ClCompile:
+  所有输出均为最新。
+  所有输出均为最新。
+ResourceCompile:
+  所有输出均为最新。
+Link:
+  所有输出均为最新。
+  DittoUtil.vcxproj -> D:\orca\workspaces\Ditto\ui-list\Debug64\Addins\DittoUtil.dll
+FinalizeBuildStatus:
+  正在删除文件“x64\Debug\DittoUtil.tlog\unsuccessfulbuild”。
+  正在对“x64\Debug\DittoUtil.tlog\DittoUtil.lastbuildstate”执行 Touch 任务。
+已完成生成项目“D:\orca\workspaces\Ditto\ui-list\Addins\DittoUtil\DittoUtil.vcxproj”(默认目标)的操作。
+项目“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj.metaproj”(2)正在节点 1 上生成“D:\orca\workspaces\Ditto\ui-list\focusdll\focus.vcxproj”(6) (默认目标)。
+PrepareForBuild:
+  已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+InitializeBuildStatus:
+  正在创建“x64\Debug\focus.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+  正在对“x64\Debug\focus.tlog\unsuccessfulbuild”执行 Touch 任务。
+ClCompile:
+  所有输出均为最新。
+Link:
+  所有输出均为最新。
+  focus.vcxproj -> D:\orca\workspaces\Ditto\ui-list\Debug64\focus.dll
+FinalizeBuildStatus:
+  正在删除文件“x64\Debug\focus.tlog\unsuccessfulbuild”。
+  正在对“x64\Debug\focus.tlog\focus.lastbuildstate”执行 Touch 任务。
+已完成生成项目“D:\orca\workspaces\Ditto\ui-list\focusdll\focus.vcxproj”(默认目标)的操作。
+项目“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj.metaproj”(2)正在节点 1 上生成“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj”(7) (默认目标)。
+PrepareForBuild:
+  已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
+InitializeBuildStatus:
+  正在对“x64\Debug\CP_Main.tlog\unsuccessfulbuild”执行 Touch 任务。
+Midl:
+  所有输出均为最新。
+ClCompile:
+  所有输出均为最新。
+  C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\bin\HostX64\x64\CL.exe /c /I"D:\orca\workspaces\Ditto\ui-list\packages\libpng-msvc-x64.1.6.33.8807\build\native\../..//build/native/include" /I"D:\orca\workspaces\Ditto\ui-list\packages\zlib-msvc-x64.1.2.11.8900\build\native\../..//build/native/include" /ZI /nologo /W3 /WX- /diagnostics:column /Od /D HAS_libpng /D HAS_zlib /D _DEBUG /D _WINDOWS /D _MBCS /D UNICODE /D HAVE_CONFIG_H /D _UNICODE /D UNICODE /D _AFXDLL /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Yu"stdafx.h" /Fp".\Debug64/CP_Main.pch" /Fo".\Debug64/" /Fd".\Debug64/vc145.pdb" /external:W3 /Gd /TP /FC /errorReport:queue /bigobj src\QListCtrl.cpp
+  QListCtrl.cpp
+  所有输出均为最新。
+  所有输出均为最新。
+ResourceCompile:
+  所有输出均为最新。
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\bin\HostX64\x64\link.exe /ERRORREPORT:QUEUE /OUT:"debug64\Ditto.exe" /INCREMENTAL /ILK:"x64\Debug\Ditto.ilk" /NOLOGO "D:\orca\workspaces\Ditto\ui-list\packages\libpng-msvc-x64.1.6.33.8807\build\native\../..//build/native/lib_debug/libpng16_staticd.lib" "D:\orca\workspaces\Ditto\ui-list\packages\zlib-msvc-x64.1.2.11.8900\build\native\../..//build/native/lib_debug/zlibstaticd.lib" ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib Winmm.lib Pdh.lib Version.lib Debug64\\EncryptDecrypt.lib Shlwapi.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:DeclareDPIAware.manifest /manifestinput:"C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Tools\MSVC\14.51.36231\Include\Manifest\PerMonitorHighDPIAware.manifest" /DEBUG /PDB:".\Debug64/Ditto.pdb" /MAP:".\Debug64/Ditto.map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS /TLBID:1 /ENTRY:"wWinMainCRTStartup" /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\orca\workspaces\Ditto\ui-list\Debug64\Ditto.lib" /MACHINE:X64 x64\Debug\CP_Main.res
+  .\Debug64/About.obj
+  .\Debug64/Accels.obj
+  .\Debug64/ActionEnums.obj
+  .\Debug64/AddType.obj
+  .\Debug64/AdvGeneral.obj
+  .\Debug64/AlphaBlend.obj
+  .\Debug64/AutoSendToClientThread.obj
+  .\Debug64/BitmapHelper.obj
+  .\Debug64/CF_HDropAggregator.obj
+  .\Debug64/CF_TextAggregator.obj
+  .\Debug64/CF_UnicodeTextAggregator.obj
+  .\Debug64/ChaiScriptOnCopy.obj
+  .\Debug64/ChaiScriptXml.obj
+  .\Debug64/Client.obj
+  .\Debug64/Clip.obj
+  .\Debug64/ClipboardSaveRestore.obj
+  .\Debug64/ClipboardViewer.obj
+  .\Debug64/ClipCompare.obj
+  .\Debug64/ClipEditThread.obj
+  .\Debug64/ClipFormatQListCtrl.obj
+  .\Debug64/ClipIds.obj
+  .\Debug64/Clip_ImportExport.obj
+  .\Debug64/ConvertRTFToText.obj
+  .\Debug64/CopyProperties.obj
+  .\Debug64/CopyThread.obj
+  .\Debug64/CP_Main.obj
+  .\Debug64/Crc32Dynamic.obj
+  .\Debug64/CreateQRCodeImage.obj
+  .\Debug64/CustomFriendsHelper.obj
+  .\Debug64/DarkMode.obj
+  .\Debug64/DatabaseUtilities.obj
+  .\Debug64/DeleteClipData.obj
+  .\Debug64/DialogResizer.obj
+  .\Debug64/DimWnd.obj
+  .\Debug64/DittoAddin.obj
+  .\Debug64/DittoAddins.obj
+  .\Debug64/DittoChaiScript.obj
+  .\Debug64/DittoCopyBuffer.obj
+  .\Debug64/DittoDropTarget.obj
+  .\Debug64/DittoPopupWindow.obj
+  .\Debug64/DittoRulerRichEditCtrl.obj
+  .\Debug64/DittoWindow.obj
+  .\Debug64/DPI.obj
+  .\Debug64/DrawHTML.obj
+  .\Debug64/EditFrameWnd.obj
+  .\Debug64/EditWithButton.obj
+  .\Debug64/EditWnd.obj
+  .\Debug64/EventThread.obj
+  .\Debug64/ExternalWindowTracker.obj
+  .\Debug64/FileRecieve.obj
+  .\Debug64/FileSend.obj
+  .\Debug64/FileTransferProgressDlg.obj
+  .\Debug64/FormatSQL.obj
+  .\Debug64/FormattedTextDraw.obj
+  .\Debug64/FriendDetails.obj
+  .\Debug64/FriendPromptDlg.obj
+  .\Debug64/GdiImageDrawer.obj
+  .\Debug64/GdipButton.obj
+  .\Debug64/GlobalClips.obj
+  .\Debug64/GroupCombo.obj
+  .\Debug64/GroupName.obj
+  .\Debug64/GroupStatic.obj
+  .\Debug64/GroupTree.obj
+  .\Debug64/HListBox.obj
+  .\Debug64/HotKeys.obj
+  .\Debug64/HTMLFormatAggregator.obj
+  .\Debug64/HyperLink.obj
+  .\Debug64/ICU_String.obj
+  .\Debug64/ImageFormatAggregator.obj
+  .\Debug64/ImageHelper.obj
+  .\Debug64/ImageViewer.obj
+  .\Debug64/MagneticWnd.obj
+  .\Debug64/MainFrm.obj
+  .\Debug64/MainFrmThread.obj
+  .\Debug64/MainTableFunctions.obj
+  .\Debug64/Md5.obj
+  .\Debug64/MessagePumpThread.obj
+  .\Debug64/Misc.obj
+  .\Debug64/ModernScrollBar.obj
+  .\Debug64/MoveToGroupDlg.obj
+  .\Debug64/MultiLanguage.obj
+  .\Debug64/MyDropTarget.obj
+  .\Debug64/NoDbFrameWnd.obj
+  .\Debug64/NTray.obj
+  .\Debug64/NumberEdit.obj
+  .\Debug64/OleClipSource.obj
+  .\Debug64/OptionFriends.obj
+  .\Debug64/Options.obj
+  .\Debug64/OptionsCopyBuffers.obj
+  .\Debug64/OptionsGeneral.obj
+  .\Debug64/OptionsKeyBoard.obj
+  .\Debug64/OptionsQuickPaste.obj
+  .\Debug64/OptionsSheet.obj
+  .\Debug64/OptionsStats.obj
+  .\Debug64/OptionsTypes.obj
+  .\Debug64/OptionsUtilities.obj
+  .\Debug64/Path.obj
+  .\Debug64/PerfTimer.obj
+  .\Debug64/Popup.obj
+  .\Debug64/PowerManager.obj
+  .\Debug64/ProcessPaste.obj
+  .\Debug64/ProgressWnd.obj
+  .\Debug64/QListCtrl.obj
+  .\Debug64/QPasteWnd.obj
+  .\Debug64/QPasteWndThread.obj
+  .\Debug64/QRCodeViewer.obj
+  .\Debug64/bitstream.obj
+  .\Debug64/mask.obj
+  .\Debug64/mmask.obj
+  .\Debug64/mqrspec.obj
+  .\Debug64/qrenc.obj
+  .\Debug64/qrencode.obj
+  .\Debug64/QRGenerator.obj
+  .\Debug64/qrinput.obj
+  .\Debug64/qrspec.obj
+  .\Debug64/rscode.obj
+  .\Debug64/rsecc.obj
+  .\Debug64/split.obj
+  .\Debug64/QuickPaste.obj
+  .\Debug64/QuickPasteKeyboard.obj
+  .\Debug64/RecieveFile.obj
+  .\Debug64/RecieveSocket.obj
+  .\Debug64/RegExFilterHelper.obj
+  .\Debug64/RichEditCtrlEx.obj
+  .\Debug64/RichTextAggregator.obj
+  .\Debug64/ColourPicker.obj
+  .\Debug64/ColourPopup.obj
+  .\Debug64/StdioFileEx.obj
+  .\Debug64/FontComboBox.obj
+  .\Debug64/RRECToolbar.obj
+  .\Debug64/RulerRichEdit.obj
+  .\Debug64/RulerRichEditCtrl.obj
+  .\Debug64/SizeComboBox.obj
+  .\Debug64/StdGrfx.obj
+  .\Debug64/TextFile.obj
+  .\Debug64/SaveAnimation.obj
+  .\Debug64/ScriptEditor.obj
+  .\Debug64/ScrollHelper.obj
+  .\Debug64/SearchEditBox.obj
+  .\Debug64/SelectDB.obj
+  .\Debug64/SendKeys.obj
+  .\Debug64/SendMail.obj
+  .\Debug64/SendSocket.obj
+  .\Debug64/Server.obj
+  .\Debug64/ShowTaskBarIcon.obj
+  .\Debug64/SimpleBrowser.obj
+  .\Debug64/SnapWindow.obj
+  .\Debug64/SpecialPasteOptions.obj
+  .\Debug64/CppSQLite3.obj
+  .\Debug64/sqlite3mc_amalgamation.obj
+  .\Debug64/StdAfx.obj
+  .\Debug64/SymbolEdit.obj
+  .\Debug64/SystemTray.obj
+  .\Debug64/TabCtrl.obj
+  .\Debug64/Theme.obj
+  .\Debug64/tinystr.obj
+  .\Debug64/tinyxml.obj
+  .\Debug64/tinyxmlerror.obj
+  .\Debug64/tinyxmlparser.obj
+  .\Debug64/ToolTipEx.obj
+  .\Debug64/TrayWnd.obj
+  .\Debug64/UAC_Helper.obj
+  .\Debug64/UAC_Thread.obj
+  .\Debug64/UiDraw.obj
+  .\Debug64/UiTheme.obj
+  .\Debug64/UiWindow.obj
+  .\Debug64/WildCardMatch.obj
+  .\Debug64/WndEx.obj
+  CP_Main.vcxproj -> D:\orca\workspaces\Ditto\ui-list\Debug64\Ditto.exe
+libpng-msvc_AfterBuild_redist_Debug_x64:
+  正在将文件从“D:\orca\workspaces\Ditto\ui-list\packages\libpng-msvc-x64.1.6.33.8807\build\native\bin_debug\libpng16d.dll”复制到“D:\orca\workspaces\Ditto\ui-list\Debug64\libpng16d.dll”。
+FinalizeBuildStatus:
+  正在删除文件“x64\Debug\CP_Main.tlog\unsuccessfulbuild”。
+  正在对“x64\Debug\CP_Main.tlog\CP_Main.lastbuildstate”执行 Touch 任务。
+已完成生成项目“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj”(默认目标)的操作。
+已完成生成项目“D:\orca\workspaces\Ditto\ui-list\CP_Main.vcxproj.metaproj”(默认目标)的操作。
+已完成生成项目“D:\orca\workspaces\Ditto\ui-list\CP_Main_10.sln”(默认目标)的操作。
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:02.97

@@ -12,8 +12,9 @@
 
 #include "hyperlink.h"
 #include "HListBox.h"
+#include "Ui/ThemedDialog.h"
 
-class CAbout : public CPropertyPage
+class CAbout : public CThemedPropertyPage
 {
 	DECLARE_DYNCREATE(CAbout)
 

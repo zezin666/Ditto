@@ -6,6 +6,7 @@
 #include "OptionFriends.h"
 #include "FriendDetails.h"
 #include "DimWnd.h"
+#include "DPI.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -15,12 +16,27 @@ static char THIS_FILE[] = __FILE__;
 
 #define EMPTRY_STRING "----"
 
+namespace
+{
+	void MoveGroupBoxBehindControls(CWnd* pDialog, UINT controlId)
+	{
+		HWND hWnd = ::GetDlgItem(pDialog->GetSafeHwnd(), controlId);
+		if (hWnd != NULL)
+		{
+			::SetWindowLongPtr(hWnd, GWL_STYLE,
+				::GetWindowLongPtr(hWnd, GWL_STYLE) | WS_CLIPSIBLINGS);
+			::SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, 0, 0,
+				SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+		}
+	}
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // COptionFriends property page
 
-IMPLEMENT_DYNCREATE(COptionFriends, CPropertyPage)
+IMPLEMENT_DYNCREATE(COptionFriends, CThemedPropertyPage)
 
-COptionFriends::COptionFriends() : CPropertyPage(COptionFriends::IDD)
+COptionFriends::COptionFriends() : CThemedPropertyPage(COptionFriends::IDD)
 {
 	m_csTitle = theApp.m_Language.GetString("FriendsTitle", "Friends");
 	m_psp.pszTitle = m_csTitle;
@@ -39,7 +55,7 @@ COptionFriends::~COptionFriends()
 
 void COptionFriends::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
+	CThemedPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(COptionFriends)
 	DDX_Control(pDX, IDC_CHECK_DISABLE_FRIENDS, m_bDisableRecieve);
 	DDX_Control(pDX, IDC_CHECK_LOG_SEND_RECIEVE, m_SendRecieve);
@@ -51,7 +67,7 @@ void COptionFriends::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(COptionFriends, CPropertyPage)
+BEGIN_MESSAGE_MAP(COptionFriends, CThemedPropertyPage)
 	//{{AFX_MSG_MAP(COptionFriends)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST, OnDblclkList)
 	ON_NOTIFY(LVN_KEYDOWN, IDC_LIST, OnKeydownList)
@@ -65,7 +81,7 @@ END_MESSAGE_MAP()
 
 BOOL COptionFriends::OnInitDialog() 
 {
-	CPropertyPage::OnInitDialog();
+	CThemedPropertyPage::OnInitDialog();
 
 	m_pParent = (COptionsSheet *)GetParent();
 	
@@ -93,6 +109,8 @@ BOOL COptionFriends::OnInitDialog()
 	UpdateData(FALSE);
 
 	theApp.m_Language.UpdateOptionFriends(this);
+	CThemedControls::FinishLayout(this);
+	MoveGroupBoxBehindControls(this, IDC_STATIC_REMOTE_FILES);
 		
 	return FALSE;
 }
@@ -143,18 +161,26 @@ BOOL COptionFriends::OnApply()
 		CGetSetOptions::SetRequestFilesUsingIP(FALSE);
 	}
 	
-	return CPropertyPage::OnApply();
+	return CThemedPropertyPage::OnApply();
 }
 
 
 void COptionFriends::InitListCtrlCols()
 {
-	// Insert some columns
-	m_List.InsertColumn(0, _T(""), LVCFMT_LEFT, 25);
+	CDPI dpi(m_List.GetSafeHwnd());
+	CRect client;
+	m_List.GetClientRect(client);
+	const int total = client.Width() - dpi.Scale(20);
+	const int firstWidth = dpi.Scale(28);
+	const int remaining = total > firstWidth ? total - firstWidth : dpi.Scale(300);
+	const int sendWidth = remaining * 30 / 100;
+	const int ipWidth = remaining * 30 / 100;
+	const int descriptionWidth = remaining - sendWidth - ipWidth;
 
-	m_List.InsertColumn(1, theApp.m_Language.GetString("Send_All_Copies", "Send All Copies"), LVCFMT_LEFT, 90);
-	m_List.InsertColumn(2, theApp.m_Language.GetString("IP_Name", "IP/Name"), LVCFMT_LEFT, 135);
-	m_List.InsertColumn(3, theApp.m_Language.GetString("Descriptions", "Descriptions"), LVCFMT_LEFT, 157);
+	m_List.InsertColumn(0, _T(""), LVCFMT_LEFT, firstWidth);
+	m_List.InsertColumn(1, theApp.m_Language.GetString("Send_All_Copies", "Send All Copies"), LVCFMT_LEFT, sendWidth);
+	m_List.InsertColumn(2, theApp.m_Language.GetString("IP_Name", "IP/Name"), LVCFMT_LEFT, ipWidth);
+	m_List.InsertColumn(3, theApp.m_Language.GetString("Descriptions", "Descriptions"), LVCFMT_LEFT, descriptionWidth);
 }
 
 void COptionFriends::InsertItems()

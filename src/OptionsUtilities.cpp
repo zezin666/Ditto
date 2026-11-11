@@ -14,9 +14,9 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // COptionsUtilities property page
 
-IMPLEMENT_DYNCREATE(COptionsUtilities, CPropertyPage)
+IMPLEMENT_DYNCREATE(COptionsUtilities, CThemedPropertyPage)
 
-COptionsUtilities::COptionsUtilities() : CPropertyPage(COptionsUtilities::IDD)
+COptionsUtilities::COptionsUtilities() : CThemedPropertyPage(COptionsUtilities::IDD)
 {
 	//{{AFX_DATA_INIT(COptionsUtilities)
 		// NOTE: the ClassWizard will add member initialization here
@@ -29,14 +29,14 @@ COptionsUtilities::~COptionsUtilities()
 
 void COptionsUtilities::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
+	CThemedPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(COptionsUtilities)
 	DDX_Control(pDX, IDC_PATH, m_ePath);
 	//}}AFX_DATA_MAP
 }
 
 
-BEGIN_MESSAGE_MAP(COptionsUtilities, CPropertyPage)
+BEGIN_MESSAGE_MAP(COptionsUtilities, CThemedPropertyPage)
 	//{{AFX_MSG_MAP(COptionsUtilities)
 	ON_BN_CLICKED(IDC_COMPACT_DB, OnCompactDB)
 	ON_BN_CLICKED(IDC_REPAIR, OnRepair)
@@ -64,14 +64,15 @@ BOOL COptionsUtilities::OnApply()
 		CGetSetOptions::SetDBPath(csPath);
 	}
 		
-	return CPropertyPage::OnApply();
+	return CThemedPropertyPage::OnApply();
 }
 
 BOOL COptionsUtilities::OnInitDialog() 
 {
-	CPropertyPage::OnInitDialog();
+	CThemedPropertyPage::OnInitDialog();
 	
 	m_ePath.SetWindowText(CGetSetOptions::GetDBPath(FALSE));
+	CThemedControls::FinishLayout(this);
 		
 	return TRUE;
 }

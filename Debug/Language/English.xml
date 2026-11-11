@@ -445,7 +445,18 @@
 		<Item English_Text = "At Caret" ID = "AtCaret"></Item>
 		<Item English_Text = "At Cursor" ID = "AtCursor"></Item>
 		<Item English_Text = "At Previous Position" ID = "AtPreviousPosition"></Item>
-		
+
+		//Modern UI strings added by T2/T5 (English defaults; other languages fall back)
+		<Item English_Text = "Back" ID = "BackTooltip"></Item>
+		<Item English_Text = "Menu" ID = "SystemMenuTooltip"></Item>
+		<Item English_Text = "Options" ID = "OptionsTooltip"></Item>
+		<Item English_Text = "No matching clips" ID = "NoResultsTitle"></Item>
+		<Item English_Text = "Try a different search or clear it to see all clips." ID = "NoResultsHint"></Item>
+		<Item English_Text = "Clear search" ID = "ClearSearchAction"></Item>
+		<Item English_Text = "Star clips to keep them handy here." ID = "NoStarredClipsHint"></Item>
+		<Item English_Text = "Clear filter" ID = "ClearFilterAction"></Item>
+		<Item English_Text = "-No Group-" ID = "NoGroup"></Item>
+
 	</Ditto_String_Table>
 	<Ditto_Options_Sheet>
 		<Item English_Text = "OK" ID = "1"></Item>

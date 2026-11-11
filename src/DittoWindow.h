@@ -34,7 +34,6 @@ public:
 	void SetCaptionTextColor(COLORREF color);
 	void MinMaxWindow(CWnd *pWnd, long lOption);
 	void SetTitleTextHeight(CWnd *pWnd);
-	int IndexToPos(int index, bool horizontal);
 	void OnDpiChanged(CWnd *pWnd, int dpi);
 	
 	bool m_bDrawClose;
@@ -80,6 +79,7 @@ public:
 
 	int m_captionBorderWidth;
 	int m_captionFontSize;
+	int m_captionHeightLogical;
 
 	int m_captionPosition;
 	int m_borderSize;

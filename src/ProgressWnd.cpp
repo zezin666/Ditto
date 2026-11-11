@@ -1,5 +1,10 @@
 #include "stdafx.h"
 #include "ProgressWnd.h"
+#include "DPI.h"
+#include "Ui/ThemedDialog.h"
+#include "UiTheme.h"
+#include "UiDraw.h"
+#include <algorithm>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -16,6 +21,79 @@ LPCTSTR szEntryX  = _T("X");
 LPCTSTR szEntryY  = _T("Y");
 
 #define _CRT_NON_CONFORMING_SWPRINTFS 1
+
+namespace
+{
+	void DrawThemedProgress(HDC hDC, HWND hWnd)
+	{
+		if (hDC == NULL || hWnd == NULL)
+			return;
+
+		CDC dc;
+		dc.Attach(hDC);
+		CRect client;
+		GetClientRect(hWnd, &client);
+		dc.FillSolidRect(client, UiTheme().SurfaceAlt());
+
+		PBRANGE range = { 0, 0 };
+		SendMessage(hWnd, PBM_GETRANGE, 0,
+			reinterpret_cast<LPARAM>(&range));
+		const int position = static_cast<int>(
+			SendMessage(hWnd, PBM_GETPOS, 0, 0));
+		if (range.iHigh > range.iLow && position > range.iLow)
+		{
+			const int span = range.iHigh - range.iLow;
+			const int value = std::min<int>(position, range.iHigh) - range.iLow;
+			CRect fill(client);
+			fill.right = fill.left + MulDiv(client.Width(), value, span);
+			if (!fill.IsRectEmpty())
+				dc.FillSolidRect(fill, UiTheme().AccentFill());
+		}
+
+		CRect border(client);
+		if (!border.IsRectEmpty())
+		{
+			border.right -= 1;
+			border.bottom -= 1;
+			dc.Draw3dRect(border, UiTheme().Border(), UiTheme().Border());
+		}
+		dc.Detach();
+	}
+
+	LRESULT CALLBACK ProgressSubclassProc(HWND hWnd, UINT message, WPARAM wParam,
+		LPARAM lParam, UINT_PTR subclassId, DWORD_PTR refData)
+	{
+		switch (message)
+		{
+		case WM_ERASEBKGND:
+			return 1;
+		case WM_PAINT:
+		{
+			PAINTSTRUCT paint = { 0 };
+			HDC hDC = BeginPaint(hWnd, &paint);
+			DrawThemedProgress(hDC, hWnd);
+			EndPaint(hWnd, &paint);
+			return 0;
+		}
+		case WM_PRINTCLIENT:
+			DrawThemedProgress(reinterpret_cast<HDC>(wParam), hWnd);
+			return 0;
+		case WM_NCDESTROY:
+			RemoveWindowSubclass(hWnd, ProgressSubclassProc, subclassId);
+			break;
+		default:
+			break;
+		}
+
+		return DefSubclassProc(hWnd, message, wParam, lParam);
+	}
+}
+
+void UiProgress::Prepare(HWND hWnd)
+{
+	if (hWnd != NULL)
+		SetWindowSubclass(hWnd, ProgressSubclassProc, 1, 0);
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // CProgressWnd
@@ -63,13 +141,7 @@ BOOL CProgressWnd::Create(CWnd* pParent, LPCTSTR pszTitle, BOOL bSmooth /* = FAL
     // Register window class
     CString csClassName = AfxRegisterWndClass(CS_OWNDC|CS_HREDRAW|CS_VREDRAW,
                                               ::LoadCursor(NULL, IDC_APPSTARTING),
-                                              CBrush(::GetSysColor(COLOR_BTNFACE)));
-
-    // Get the system window message font for use in the cancel button and text area
-    NONCLIENTMETRICS ncm;
-    ncm.cbSize = sizeof(NONCLIENTMETRICS);
-    VERIFY(SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0));
-    m_font.CreateFontIndirect(&(ncm.lfMessageFont)); 
+                                              CBrush(UiTheme().Canvas()));
 
     // If no parent supplied then try and get a pointer to it anyway
     if (!pParent)
@@ -88,6 +160,15 @@ BOOL CProgressWnd::Create(CWnd* pParent, LPCTSTR pszTitle, BOOL bSmooth /* = FAL
                         NULL);    
     if (!bSuccess) return FALSE;
 
+	CDPI dpi(m_hWnd);
+	LOGFONT lf = { 0 };
+	lf.lfHeight = -UiDraw::Scale(UiTheme().FontSizeDialogBody(), dpi.GetDPI());
+	lf.lfWeight = FW_NORMAL;
+	lf.lfCharSet = DEFAULT_CHARSET;
+	lf.lfQuality = CLEARTYPE_QUALITY;
+	_tcsncpy_s(lf.lfFaceName, UiTheme().FontFamilyUi(), _TRUNCATE);
+	m_font.CreateFontIndirect(&lf);
+
     // Now create the controls
     CRect TempRect(0,0,10,10);
 
@@ -102,18 +183,24 @@ BOOL CProgressWnd::Create(CWnd* pParent, LPCTSTR pszTitle, BOOL bSmooth /* = FAL
 #endif
     bSuccess = m_wndProgress.Create(dwProgressStyle,TempRect, this, IDC_PROGRESS);
     if (!bSuccess) return FALSE;
+	::SetWindowTheme(m_wndProgress.GetSafeHwnd(), L"", L"");
+	UiProgress::Prepare(m_wndProgress.GetSafeHwnd());
+	m_wndProgress.SendMessage(PBM_SETBARCOLOR, 0,
+		static_cast<LPARAM>(UiTheme().AccentFill()));
+	m_wndProgress.SendMessage(PBM_SETBKCOLOR, 0,
+		static_cast<LPARAM>(UiTheme().SurfaceAlt()));
 
     bSuccess = m_CancelButton.Create(m_strCancelLabel, 
                                    WS_CHILD|WS_VISIBLE|WS_TABSTOP| BS_PUSHBUTTON, 
                                      TempRect, this, IDC_CANCEL);
     if (!bSuccess) return FALSE;
 
-    m_CancelButton.SetFont(&m_font, TRUE);
-    m_Text.SetFont(&m_font, TRUE);
+	CThemedControls::PrepareDialog(this);
 
     // Resize the whole thing according to the number of text lines, desired window
     // width and current font.
     SetWindowSize(m_nNumTextLines, 390);
+	CThemedControls::FinishLayout(this);
 
     // Center and show window
     if (m_bPersistantPosition)
@@ -147,14 +234,16 @@ BOOL CProgressWnd::GoModal(LPCTSTR pszTitle /*=_T("Progress")"*/, BOOL bSmooth /
     
 void CProgressWnd::SetWindowSize(int nNumTextLines, int nWindowWidth /*=390*/)
 {
-    int nMargin = 10;
-    CSize EdgeSize(::GetSystemMetrics(SM_CXEDGE), ::GetSystemMetrics(SM_CYEDGE));
+	CDPI dpi(m_hWnd);
+	const int logicalWindowWidth = dpi.Scale(nWindowWidth);
+    int nMargin = dpi.Scale(10);
+    CSize EdgeSize(dpi.Scale(2), dpi.Scale(2));
 
     CRect TextRect, CancelRect, ProgressRect;
     CSize CancelSize;
 
     // Set up a default size for the text area in case things go wrong
-    TextRect.SetRect(nMargin,nMargin, nWindowWidth-2*nMargin, 100+2*nMargin);
+    TextRect.SetRect(nMargin,nMargin, logicalWindowWidth-nMargin, dpi.Scale(100)+2*nMargin);
 
     // Get DrawText to tell us how tall the text area will be (while we're at
     // it, we'll see how big the word "Cancel" is)
@@ -164,7 +253,7 @@ void CProgressWnd::SetWindowSize(int nNumTextLines, int nWindowWidth /*=390*/)
         CString str = _T("M");
         for (int i = 0; i < nNumTextLines-1; i++) str += _T("\nM");
         pDC->DrawText(str, TextRect, DT_CALCRECT|DT_NOCLIP|DT_NOPREFIX);
-        TextRect.right = TextRect.left + nWindowWidth;
+        TextRect.right = TextRect.left + logicalWindowWidth - 2 * nMargin;
         CancelSize = pDC->GetTextExtent(m_strCancelLabel + _T("  ")) +
                                              CSize(EdgeSize.cx*4, EdgeSize.cy*3);
         pDC->SelectObject(pOldFont);
@@ -346,13 +435,9 @@ END_MESSAGE_MAP()
 
 BOOL CProgressWnd::OnEraseBkgnd(CDC* pDC) 
 {
-    // Fill background with Catchment background colour
-    CBrush backBrush(GetSysColor(COLOR_BTNFACE));
-    CBrush* pOldBrush = pDC->SelectObject(&backBrush);
     CRect rect;
-    pDC->GetClipBox(&rect);     // Erase the area needed
-    pDC->PatBlt(rect.left, rect.top, rect.Width(), rect.Height(), PATCOPY);
-    pDC->SelectObject(pOldBrush);
+    pDC->GetClipBox(&rect);
+	pDC->FillSolidRect(rect, UiTheme().Canvas());
 
     return TRUE;
 }

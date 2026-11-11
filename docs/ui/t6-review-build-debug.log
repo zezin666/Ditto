@@ -1,0 +1,9 @@
+适用于 .NET Framework MSBuild 版本 18.11.1-1.26513.3+940033be3
+
+  focus.vcxproj -> D:\orca\workspaces\Ditto\ui-integration\Debug64\focus.dll
+  EncryptDecrypt.vcxproj -> D:\orca\workspaces\Ditto\ui-integration\Debug64\EncryptDecrypt.lib
+  ICU_Loader.vcxproj -> D:\orca\workspaces\Ditto\ui-integration\Debug64\ICU_Loader.dll
+  DittoUtil.vcxproj -> D:\orca\workspaces\Ditto\ui-integration\Debug64\Addins\DittoUtil.dll
+  QPasteWnd.cpp
+  CP_Main.vcxproj -> D:\orca\workspaces\Ditto\ui-integration\Debug64\Ditto.exe
+RELEASE_EXIT=0 DEBUG_EXIT=0

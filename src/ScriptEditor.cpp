@@ -12,10 +12,10 @@
 
 // CScriptEditor dialog
 
-IMPLEMENT_DYNAMIC(CScriptEditor, CDialogEx)
+IMPLEMENT_DYNAMIC(CScriptEditor, CThemedDialog)
 
 CScriptEditor::CScriptEditor(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_SCRIPT_EDITOR, pParent)
+	: CThemedDialog(IDD_SCRIPT_EDITOR, pParent)
 {
 
 }
@@ -32,7 +32,7 @@ void CScriptEditor::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CScriptEditor, CDialogEx)
+BEGIN_MESSAGE_MAP(CScriptEditor, CThemedDialog)
 	ON_LBN_SELCHANGE(IDC_LIST_SCRIPTS, &CScriptEditor::OnLbnSelchangeListScripts)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_SCRIPT, &CScriptEditor::OnBnClickedButtonAddScript)
 	ON_EN_KILLFOCUS(IDC_EDIT_NAME, &CScriptEditor::OnEnKillfocusEditName)
@@ -49,7 +49,7 @@ END_MESSAGE_MAP()
 
 BOOL CScriptEditor::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	CThemedDialog::OnInitDialog();
 
 	SetWindowText(m_title);
 
@@ -103,6 +103,7 @@ BOOL CScriptEditor::OnInitDialog()
 
 	SetDlgItemText(IDC_EDIT_ACTIVE_APP, _T("App name"));
 	SetDlgItemText(IDC_EDIT_ACTIVE_APP_TITLE, _T("App Title"));	
+	CThemedControls::FinishLayout(this);
 
 	return FALSE;
 }

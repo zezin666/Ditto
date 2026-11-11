@@ -14,6 +14,7 @@
 #include "Accels.h"
 #include "GdiImageDrawer.h"
 #include "DPI.h"
+#include <memory>
 
 #define NM_SEARCH_ENTER_PRESSED		WM_USER+0x100
 #define NM_RIGHT					WM_USER+0x101
@@ -166,7 +167,8 @@ public:
 
 protected:
 	BOOL GetClipData(int nItem, CClipFormat &Clip);
-	BOOL DrawBitMap(int nItem, CRect &crRect, CDC *pDC, const CString &csDescription);
+	BOOL DrawBitMap(int nItem, CRect &crRect, CDC *pDC,
+		Gdiplus::Graphics& graphics, const CString &csDescription);
 	void LoadDittoCopyBufferHotkeys();
 	bool MouseInScrollBarArea(CRect crWindow, CPoint point);
 	BOOL DrawRtfText(int nItem, CRect &crRect, CDC *pDC);
@@ -207,7 +209,8 @@ protected:
 	//{{AFX_MSG(CQListCtrl)
 	afx_msg void OnKeydown(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult);
-	void DrawCopiedColorCode(CString& csText, CRect& rcText, CDC* pDC);
+	void DrawCopiedColorCode(CString& csText, CRect& rcText, CDC* pDC,
+		Gdiplus::Graphics& graphics);
 	afx_msg void OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -219,10 +222,22 @@ protected:
 	afx_msg BOOL OnToolTipText(UINT id, NMHDR * pNMHDR, LRESULT * pResult);
 	afx_msg void MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnMouseLeave();
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt);
+protected:
+	void DrawSearchHighlight(CDC* pDC, const CString& text, const CRect& rect);
+	void CreateCheckerboardBrush();
+	int m_hoverRow;
+	bool m_trackingHover;
+	CBrush m_checkerboardBrush;
+	int m_checkerboardDpi;
+	COLORREF m_checkerboardColor1;
+	COLORREF m_checkerboardColor2;
+	std::unique_ptr<Gdiplus::Graphics> m_paintGraphics;
 };
 
 /////////////////////////////////////////////////////////////////////////////

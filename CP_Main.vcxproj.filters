@@ -85,6 +85,9 @@
     <ClCompile Include="src\CustomFriendsHelper.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\DarkMode.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\DatabaseUtilities.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -385,6 +388,21 @@
     <ClCompile Include="src\UAC_Thread.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ui\ThemedControls.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ui\ThemedDialog.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UiDraw.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UiTheme.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UiWindow.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\WildCardMatch.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -581,6 +599,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\CustomFriendsHelper.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DarkMode.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\DatabaseUtilities.h">
@@ -905,6 +926,24 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\UAC_Thread.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ui\ThemedControls.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ui\ThemedDialog.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ui\UiIds.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UiDraw.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UiTheme.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UiWindow.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\UnicodeMacros.h">

@@ -1,10 +1,11 @@
 #pragma once
 #include "afxcmn.h"
+#include "Ui/ThemedDialog.h"
 
 
 // COptionsCopyBuffers dialog
 
-class COptionsCopyBuffers : public CPropertyPage
+class COptionsCopyBuffers : public CThemedPropertyPage
 {
 	DECLARE_DYNCREATE(COptionsCopyBuffers)
 

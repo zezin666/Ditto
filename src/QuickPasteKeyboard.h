@@ -1,11 +1,12 @@
 #pragma once
 #include "afxcmn.h"
 #include "afxwin.h"
+#include "Ui/ThemedDialog.h"
 
 
 // CQuickPasteKeyboard dialog
 
-class CQuickPasteKeyboard : public CPropertyPage
+class CQuickPasteKeyboard : public CThemedPropertyPage
 {
 	DECLARE_DYNAMIC(CQuickPasteKeyboard)
 

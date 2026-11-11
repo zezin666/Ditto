@@ -1,0 +1,40 @@
+T3 runtime evidence 2026-11-10
+
+Final Release binary:
+  Release64\Ditto.exe
+
+Portable test data:
+  %TEMP%\ditto-ui-t3-648300a5553b4324be8f2ec99d94f4b3
+  DBPath3=<temp>\Ditto.db
+  LanguageFile=English
+  Theme2=Modern Light / Modern Dark
+  Scratch Main rows: 5013
+
+Build:
+  Release|x64: docs\ui\t3-build-release.log, 0 errors
+  Debug|x64:   docs\ui\t3-build-debug.log, 0 errors
+
+Performance:
+  GDI objects: 87 before -> 87 after
+  User objects: 63 before -> 62 after
+  1,000 synchronous line-scroll messages: 2,761 ms
+  Working set: 31.9 MB
+
+Light captures:
+  artifacts\ui\t3\t3-light-selected-image-color.png
+  artifacts\ui\t3\t3-light-hover.png
+  artifacts\ui\t3\t3-light-search-highlight.png
+  artifacts\ui\t3\t3-light-scrollbar-hover.png
+  artifacts\ui\t3\t3-light-description.png
+
+Dark captures:
+  artifacts\ui\t3\t3-dark-selected-image-color.png
+  artifacts\ui\t3\t3-dark-hover.png
+  artifacts\ui\t3\t3-dark-search-highlight.png
+  artifacts\ui\t3\t3-dark-scrollbar-hover.png
+  artifacts\ui\t3\t3-dark-description.png
+
+Runtime check:
+  Dark plain description text color was instrumented as 0x00F5F3F2.
+  Headless PrintWindow did not reliably capture the RichEdit text layer, so
+  description PNGs show the card chrome/metadata instead of body text.

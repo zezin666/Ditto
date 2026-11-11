@@ -6,6 +6,7 @@
 #include "ATLComTime.h"
 #include <vector>
 #include "afxcmn.h"
+#include "Ui/ThemedDialog.h"
 
 // CDeleteClipData dialog
 
@@ -30,7 +31,7 @@ public:
 	
 	
 	
-class CDeleteClipData : public CDialog
+class CDeleteClipData : public CThemedDialog
 {
 	DECLARE_DYNAMIC(CDeleteClipData)
 

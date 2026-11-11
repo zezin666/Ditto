@@ -17,6 +17,8 @@
 #include "OptionsSheet.h"
 #include "DeleteClipData.h"
 #include "DatabaseUtilities.h"
+#include "DarkMode.h"
+#include "UiTheme.h"
 
 #ifdef _DEBUG
     #define new DEBUG_NEW
@@ -853,6 +855,7 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 			if (theme == _T(""))
 			{
 				CGetSetOptions::m_Theme.Load(theme);
+				CUiTheme::Instance().OnSystemThemeChanged();
 
 				auto visible = m_quickPaste.IsWindowVisibleEx();
 				m_quickPaste.CloseQPasteWnd();
@@ -1306,6 +1309,8 @@ LRESULT CMainFrame::OnOptionsClosed(WPARAM wParam, LPARAM lParam)
 	if (themeChanged)
 	{
 		CGetSetOptions::m_Theme.Load(CGetSetOptions::GetTheme());
+		CUiTheme::Instance().Refresh(CGetSetOptions::m_Theme);
+		CDarkMode::RefreshSystemTheme();
 
 		m_quickPaste.CloseQPasteWnd();
 	}
@@ -1507,6 +1512,7 @@ void CMainFrame::OnWinIniChange(LPCTSTR lpszSection)
 		wcscmp(lpszSection, L"ImmersiveColorSet") == 0)
 	{
 		Log(StrF(_T("OnWinIniChange %s, setting timer to 1000ms to change theme"), lpszSection));
+		CUiTheme::Instance().OnSystemThemeChanged();
 		KillTimer(SET_WINDOWS_THEME_TIMER);
 		SetTimer(SET_WINDOWS_THEME_TIMER, 1000, NULL);
 	}

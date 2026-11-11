@@ -6,7 +6,11 @@
 #include "CopyProperties.h"
 #include ".\copyproperties.h"
 #include "Md5.h"
+#include "DPI.h"
+#include "UiDraw.h"
+#include "UiTheme.h"
 #include "..\Shared\TextConvert.h"
+#include <algorithm>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -17,9 +21,126 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CCopyProperties dialog
 
+namespace
+{
+	void FitCheckBoxToText(CWnd* pDialog, UINT controlId)
+	{
+		CWnd* pControl = pDialog->GetDlgItem(controlId);
+		if (pControl == NULL || pControl->GetSafeHwnd() == NULL)
+			return;
+
+		CString text;
+		pControl->GetWindowText(text);
+		if (text.IsEmpty())
+			return;
+
+		CRect controlRect;
+		pControl->GetWindowRect(controlRect);
+		pDialog->ScreenToClient(controlRect);
+
+		CDPI dpi(pDialog->GetSafeHwnd());
+		CClientDC dc(pControl);
+		const CSize textSize = UiDraw::MeasureText(&dc, text,
+			UiTheme().FontFamilyUi(), UiTheme().FontSizeBody(), FW_NORMAL,
+			dpi.GetDPI());
+		const int desiredWidth = std::max<int>(controlRect.Width(),
+			dpi.Scale(16 + 8 + 12) + textSize.cx);
+
+		CRect clientRect;
+		pDialog->GetClientRect(clientRect);
+		const int padding = dpi.Scale(7);
+		const int extraWidth = std::max<int>(0,
+			controlRect.left + desiredWidth - (clientRect.right - padding));
+		if (extraWidth > 0)
+		{
+			CRect windowRect;
+			pDialog->GetWindowRect(windowRect);
+			pDialog->SetWindowPos(NULL, 0, 0, windowRect.Width() + extraWidth,
+				windowRect.Height(), SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+			for (UINT buttonId : { static_cast<UINT>(IDOK), static_cast<UINT>(IDCANCEL) })
+			{
+				CWnd* pButton = pDialog->GetDlgItem(buttonId);
+				if (pButton != NULL && pButton->GetSafeHwnd() != NULL)
+				{
+					CRect buttonRect;
+					pButton->GetWindowRect(buttonRect);
+					pDialog->ScreenToClient(buttonRect);
+					pButton->SetWindowPos(NULL, buttonRect.left + extraWidth,
+						buttonRect.top, 0, 0,
+						SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+				}
+			}
+		}
+		const int desiredRight = controlRect.left + desiredWidth;
+		if (desiredRight > controlRect.right)
+		{
+			const int delta = desiredRight - controlRect.right;
+			HWND child = ::GetWindow(pDialog->GetSafeHwnd(), GW_CHILD);
+			while (child != NULL)
+			{
+				if (child != pControl->GetSafeHwnd())
+				{
+					CRect siblingRect;
+					::GetWindowRect(child, &siblingRect);
+					pDialog->ScreenToClient(siblingRect);
+					if (siblingRect.top < controlRect.bottom &&
+						siblingRect.bottom > controlRect.top &&
+						siblingRect.left >= controlRect.right)
+					{
+						::SetWindowPos(child, NULL, siblingRect.left + delta,
+							siblingRect.top, 0, 0,
+							SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+					}
+				}
+				child = ::GetWindow(child, GW_HWNDNEXT);
+			}
+			pControl->SetWindowPos(NULL, 0, 0, desiredRight - controlRect.left,
+				controlRect.Height(), SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+		}
+	}
+
+	void FitLabelAndMoveControl(CWnd* pDialog, UINT labelId, UINT controlId)
+	{
+		CWnd* pLabel = pDialog->GetDlgItem(labelId);
+		CWnd* pControl = pDialog->GetDlgItem(controlId);
+		if (pLabel == NULL || pControl == NULL)
+			return;
+
+		CString text;
+		pLabel->GetWindowText(text);
+		CClientDC dc(pLabel);
+		CFont* pFont = pLabel->GetFont();
+		CFont* pOldFont = pFont != NULL ? dc.SelectObject(pFont) : NULL;
+		const CSize textSize = dc.GetTextExtent(text);
+		if (pOldFont != NULL)
+			dc.SelectObject(pOldFont);
+
+		CRect labelRect;
+		pLabel->GetWindowRect(labelRect);
+		pDialog->ScreenToClient(labelRect);
+		CDPI dpi(pDialog->GetSafeHwnd());
+		const int desiredWidth = std::max<int>(labelRect.Width(),
+			textSize.cx + dpi.Scale(3));
+		if (desiredWidth <= labelRect.Width())
+			return;
+
+		CRect controlRect;
+		pControl->GetWindowRect(controlRect);
+		pDialog->ScreenToClient(controlRect);
+		const int desiredLeft = labelRect.left + desiredWidth + dpi.Scale(5);
+		const int delta = std::max<int>(0, desiredLeft - controlRect.left);
+		pLabel->SetWindowPos(NULL, 0, 0, desiredWidth, labelRect.Height(),
+			SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+		if (delta > 0)
+		{
+			pControl->SetWindowPos(NULL, controlRect.left + delta, controlRect.top,
+				0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+		}
+	}
+}
 
 CCopyProperties::CCopyProperties(long lCopyID, CWnd* pParent, CClip *pMemoryClip)
-	: CDialog(CCopyProperties::IDD, pParent)
+	: CThemedDialog(CCopyProperties::IDD, pParent)
 {
 	m_lCopyID = lCopyID;
 	m_bDeletedData = false;
@@ -40,7 +161,7 @@ CCopyProperties::CCopyProperties(long lCopyID, CWnd* pParent, CClip *pMemoryClip
 
 void CCopyProperties::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CThemedDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CCopyProperties)
 	DDX_Control(pDX, IDC_EDIT_QUICK_PASTE, m_QuickPasteText);
 	DDX_Control(pDX, IDC_EDIT_PROPERTIES, m_description);
@@ -57,7 +178,7 @@ void CCopyProperties::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CCopyProperties, CDialog)
+BEGIN_MESSAGE_MAP(CCopyProperties, CThemedDialog)
 	//{{AFX_MSG_MAP(CCopyProperties)
 	ON_BN_CLICKED(IDC_DELETE_COPY_DATA, OnDeleteCopyData)
 	ON_WM_ACTIVATE()
@@ -73,7 +194,7 @@ END_MESSAGE_MAP()
 
 BOOL CCopyProperties::OnInitDialog() 
 {
-	CDialog::OnInitDialog();
+	CThemedDialog::OnInitDialog();
 
 	//remove the default icon in top left of window
 	int extendedStyle = GetWindowLong(m_hWnd, GWL_EXSTYLE);
@@ -126,6 +247,12 @@ BOOL CCopyProperties::OnInitDialog()
 	m_Resize.AddControl(IDC_EDIT_MD5, DR_MoveTop | DR_MoveLeft);
 	
 	theApp.m_Language.UpdateClipProperties(this);
+	CThemedControls::FinishLayout(this);
+	FitCheckBoxToText(this, IDC_CHECK_WIN);
+	FitCheckBoxToText(this, IDC_CHECK_WIN_MOVE_TO_GROUP);
+	FitCheckBoxToText(this, IDC_HOT_KEY_GLOBAL);
+	FitCheckBoxToText(this, IDC_HOT_KEY_GLOBAL_MOVE_TO_GROUP);
+	FitLabelAndMoveControl(this, IDC_STATIC_MD5, IDC_EDIT_MD5);
 
 	if (m_clip.ID() > 0)
 	{
@@ -259,8 +386,10 @@ void CCopyProperties::LoadDataFromCClip(CClip &Clip)
 
 			if(rect.top > anchorRect.bottom)
 			{
+				CDPI dpi(m_hWnd);
+				const int gap = dpi.Scale(4);
 				::MoveWindow(hwnd, rect.left, 
-					rect.top - (anchorRect.Height()+4), rect.Width(), 
+					rect.top - (anchorRect.Height()+gap), rect.Width(), 
 					rect.Height(), TRUE);
 			}
 
@@ -274,13 +403,13 @@ void CCopyProperties::LoadDataFromCClip(CClip &Clip)
 
 		::MoveWindow(m_hWnd, rect2.left, 
 				rect2.top, rect2.Width(), 
-				rect2.Height() - (anchorRect.Height()+4), TRUE);
+				rect2.Height() - (anchorRect.Height()+CDPI(m_hWnd).Scale(4)), TRUE);
 	}
 }
 
 void CCopyProperties::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized) 
 {
-	CDialog::OnActivate(nState, pWndOther, bMinimized);
+	CThemedDialog::OnActivate(nState, pWndOther, bMinimized);
 
 	if (nState == WA_INACTIVE)
 	{
@@ -354,7 +483,7 @@ void CCopyProperties::OnOK()
 	}
 	CATCH_SQLITE_EXCEPTION
 
-	CDialog::OnOK();
+	CThemedDialog::OnOK();
 }
 
 BOOL CCopyProperties::CheckGlobalHotKey(CClip &clip)
@@ -492,12 +621,12 @@ void CCopyProperties::OnCancel()
 {
 	m_bHandleKillFocus = true;
 		
-	CDialog::OnCancel();
+	CThemedDialog::OnCancel();
 }
 
 void CCopyProperties::OnSize(UINT nType, int cx, int cy) 
 {
-	CDialog::OnSize(nType, cx, cy);
+	CThemedDialog::OnSize(nType, cx, cy);
 	
 	if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) &&
 		m_mouseDownOnCaption == false)
@@ -512,12 +641,7 @@ void CCopyProperties::OnSize(UINT nType, int cx, int cy)
 
 HBRUSH CCopyProperties::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
-	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
-
-	// TODO:  Change any attributes of the DC here
-
-	// TODO:  Return a different brush if the default is not desired
-	return hbr;
+	return CThemedControls::OnCtlColor(this, pDC, pWnd, nCtlColor);
 }
 
 
@@ -596,5 +720,5 @@ void CCopyProperties::OnNcLButtonDown(UINT nHitTest, CPoint point)
 		m_mouseDownOnCaption = true;
 	}
 
-	CDialog::OnNcLButtonDown(nHitTest, point);
+	CThemedDialog::OnNcLButtonDown(nHitTest, point);
 }

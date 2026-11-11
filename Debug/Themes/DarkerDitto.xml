@@ -1,44 +1,122 @@
-<Ditto_Theme_File Version="2.5" Author="Zigboom" Notes="DarkTheme">
+<Ditto_Theme_File Version="3" Author="Ditto" Notes="Modern Dark">
+	<CaptionLeft>#2C2F34</CaptionLeft>
+	<CaptionRight>#2C2F34</CaptionRight>
+	<CaptionLeftTopMost>#2C2F34</CaptionLeftTopMost>
+	<CaptionRightTopMost>#2C2F34</CaptionRightTopMost>
+	<CaptionLeftNotConnected>#2C2F34</CaptionLeftNotConnected>
+	<CaptionRightNotConnected>#2C2F34</CaptionRightNotConnected>
+	<CaptionTextColor>#F2F3F5</CaptionTextColor>
 
-	<CaptionLeft>RGB(0,0,0)</CaptionLeft>
-	<CaptionRight>RGB(51,51,51)</CaptionRight>
+	<ListBoxOddRowsBG>#24262A</ListBoxOddRowsBG>
+	<ListBoxEvenRowsBG>#24262A</ListBoxEvenRowsBG>
+	<ListBoxOddRowsText>#F2F3F5</ListBoxOddRowsText>
+	<ListBoxEvenRowsText>#F2F3F5</ListBoxEvenRowsText>
+	<ListBoxSelectedBG>#2E3A52</ListBoxSelectedBG>
+	<ListBoxSelectedNoFocusBG>#2E3A52</ListBoxSelectedNoFocusBG>
+	<ListBoxSelectedText>#F2F3F5</ListBoxSelectedText>
+	<ListBoxSelectedNoFocusText>#F2F3F5</ListBoxSelectedNoFocusText>
+	<ClipPastedColor>#4CC38A</ClipPastedColor>
+	<ListSmallQuickPasteIndexColor>#A7ADB7</ListSmallQuickPasteIndexColor>
 
-	<CaptionLeftTopMost>RGB(0,0,0)</CaptionLeftTopMost>
-	<CaptionRightTopMost>RGB(51,51,51)</CaptionRightTopMost>
+	<MainWindowBG>#1B1C1F</MainWindowBG>
+	<Border>#383B41</Border>
+	<BorderTopMost>#383B41</BorderTopMost>
+	<BorderNotConnected>#FF6B6B</BorderNotConnected>
+	<GroupTreeBG>#1B1C1F</GroupTreeBG>
+	<GroupTreeText>#A7ADB7</GroupTreeText>
+	<CaptionSize>34</CaptionSize>
+	<CaptionFontSize>14</CaptionFontSize>
+	<DescriptionWindowBG>#1B1C1F</DescriptionWindowBG>
+	<DescriptionWindowText>#F2F3F5</DescriptionWindowText>
+	<SearchTextBoxFocusBG>#24262A</SearchTextBoxFocusBG>
+	<SearchTextBoxFocusText>#F2F3F5</SearchTextBoxFocusText>
+	<SearchTextBoxFocusBorder>#6C9BFF</SearchTextBoxFocusBorder>
+	<SearchTextHighlight>#F2F3F5</SearchTextHighlight>
+	<ScrollBarThumb>#4E535C</ScrollBarThumb>
+	<ScrollBarThumbHover>#6C727C</ScrollBarThumbHover>
+	<ScrollBarTrack>#1B1C1F</ScrollBarTrack>
 
-	<CaptionLeftNotConnected>RGB(0,0,0)</CaptionLeftNotConnected>
-	<CaptionRightNotConnected>RGB(51,51,51)</CaptionRightNotConnected>
+	<Canvas>#1B1C1F</Canvas>
+	<Surface>#24262A</Surface>
+	<SurfaceAlt>#2C2F34</SurfaceAlt>
+	<SurfaceSunken>#202226</SurfaceSunken>
+	<BorderStrong>#4A4E56</BorderStrong>
+	<TextPrimary>#F2F3F5</TextPrimary>
+	<TextSecondary>#A7ADB7</TextSecondary>
+	<TextDisabled>#6C727C</TextDisabled>
+	<Accent>#6C9BFF</Accent>
+	<AccentHover>#82AAFF</AccentHover>
+	<AccentPressed>#5A87E6</AccentPressed>
+	<AccentFill>#4C8DFF</AccentFill>
+	<AccentFillHover>#6BA0FF</AccentFillHover>
+	<AccentFillPressed>#3C7AEA</AccentFillPressed>
+	<AccentOn>#0B1220</AccentOn>
+	<Selection>#2E3A52</Selection>
+	<SelectionText>#F2F3F5</SelectionText>
+	<Hover>#2F3238</Hover>
+	<FocusRing>#6C9BFF</FocusRing>
+	<Danger>#FF6B6B</Danger>
+	<DangerFill>#FF6B6B</DangerFill>
+	<DangerOn>#1B1C1F</DangerOn>
+	<Pinned>#E0A94A</Pinned>
+	<Pasted>#4CC38A</Pasted>
+	<HighlightBg>#2E3A52</HighlightBg>
+	<HighlightText>#F2F3F5</HighlightText>
+	<CloseHoverBg>#C42B1C</CloseHoverBg>
+	<CloseHoverOn>#FFFFFF</CloseHoverOn>
 
-	<CaptionTextColor>RGB(127,127,127)</CaptionTextColor>
-
-	<ListBoxOddRowsBG>RGB(24,24,24)</ListBoxOddRowsBG>
-	<ListBoxEvenRowsBG>RGB(0,0,0)</ListBoxEvenRowsBG>
-
-	<ListBoxOddRowsText>RGB(153,153,153)</ListBoxOddRowsText>
-	<ListBoxEvenRowsText>RGB(153,153,153)</ListBoxEvenRowsText>
-
-	<ListBoxSelectedBG>RGB(64,64,64)</ListBoxSelectedBG>
-	<ListBoxSelectedNoFocusBG>RGB(64,64,64)</ListBoxSelectedNoFocusBG>
-
-	<ListBoxSelectedText>RGB(238,238,238)</ListBoxSelectedText>
-	<ListBoxSelectedNoFocusText>RGB(220,220,220)</ListBoxSelectedNoFocusText>
-
-	<Border>RGB(0,0,0)</Border>
-	<BorderTopMost>RGB(0,0,0)</BorderTopMost>
-	<BorderNotConnected>RGB(255,0,0)</BorderNotConnected>
-
-	<GroupTreeBG>RGB(0,0,0)</GroupTreeBG>
-	<GroupTreeText>RGB(153,153,153)</GroupTreeText>
-
-	<CaptionSize></CaptionSize>
-	<CaptionFontSize></CaptionFontSize>
-
-	<DescriptionWindowBG>RGB(100,100,100)</DescriptionWindowBG>
-	<DescriptionWindowText>RGB(200,200,200)</DescriptionWindowText>
-
-	<MainWindowBG>RGB(0,0,0)</MainWindowBG>
-
-	<SearchTextBoxFocusBG>RGB(24,24,24)</SearchTextBoxFocusBG>
-	<SearchTextBoxFocusText>RGB(127,127,127)</SearchTextBoxFocusText>
-
+	<RadiusWindow>12</RadiusWindow>
+	<RadiusPanel>10</RadiusPanel>
+	<RadiusControl>8</RadiusControl>
+	<RadiusListItem>6</RadiusListItem>
+	<BorderWidth>1</BorderWidth>
+	<FocusRingWidth>2</FocusRingWidth>
+	<CaptionHeight>34</CaptionHeight>
+	<CaptionButtonSize>28</CaptionButtonSize>
+	<CaptionIconSize>16</CaptionIconSize>
+	<SearchHeight>34</SearchHeight>
+	<BottomBarHeight>40</BottomBarHeight>
+	<BottomBarPadding>6</BottomBarPadding>
+	<ListRowHeight>30</ListRowHeight>
+	<ListRowInsetX>8</ListRowInsetX>
+	<ListRowInsetY>1</ListRowInsetY>
+	<ListIndexColumnWidth>18</ListIndexColumnWidth>
+	<ListIconSize>16</ListIconSize>
+	<IconSizeSmall>16</IconSizeSmall>
+	<IconSizeMedium>20</IconSizeMedium>
+	<IconSizeLarge>24</IconSizeLarge>
+	<ScrollBarThumbWidth>6</ScrollBarThumbWidth>
+	<ScrollBarThumbHoverWidth>10</ScrollBarThumbHoverWidth>
+	<ScrollBarInset>2</ScrollBarInset>
+	<ScrollBarRadius>3</ScrollBarRadius>
+	<ScrollBarMinThumb>24</ScrollBarMinThumb>
+	<TooltipRadius>10</TooltipRadius>
+	<TooltipPadding>12</TooltipPadding>
+	<DialogPadding>16</DialogPadding>
+	<FieldGap>8</FieldGap>
+	<SectionGap>16</SectionGap>
+	<ButtonHeight>30</ButtonHeight>
+	<ButtonMinWidth>76</ButtonMinWidth>
+	<ButtonPaddingX>14</ButtonPaddingX>
+	<ButtonRadius>6</ButtonRadius>
+	<InputHeight>30</InputHeight>
+	<InputRadius>6</InputRadius>
+	<InputPaddingX>8</InputPaddingX>
+	<TabHeight>36</TabHeight>
+	<TabPaddingX>12</TabPaddingX>
+	<TabUnderlineHeight>2</TabUnderlineHeight>
+	<MenuItemHeight>28</MenuItemHeight>
+	<MenuPaddingX>12</MenuPaddingX>
+	<MenuGutterWidth>28</MenuGutterWidth>
+	<EmptyStateMaxWidth>240</EmptyStateMaxWidth>
+	<FontSizeBody>13</FontSizeBody>
+	<FontSizeSecondary>12</FontSizeSecondary>
+	<FontSizeCaption>11</FontSizeCaption>
+	<FontSizeTitle>14</FontSizeTitle>
+	<FontSizeWindowTitle>14</FontSizeWindowTitle>
+	<FontSizeDialogBody>12</FontSizeDialogBody>
+	<IconStrokeTenths>15</IconStrokeTenths>
+	<MotionFastMs>120</MotionFastMs>
+	<MotionStdMs>160</MotionStdMs>
+	<ScrollBarAutoHideMs>800</ScrollBarAutoHideMs>
 </Ditto_Theme_File>

@@ -1,0 +1,662 @@
+T4a visual/runtime verification 2026-11-10T23:06:33.8979895+08:00
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-33bdecad066f492fa5ceccbd488b9fa5
+MainhWnd setting=3346700
+options opened title=[Options]
+options rect=489,175,1841,845
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-light.png 1352x670
+keyboard page hwnd=7405606
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-light.png 1352x670
+keyboard SendPaste hwnd=1511464 check=1
+quick paste keyboard page hwnd=22351968
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-light.png 1352x670
+advanced hwnd=792188 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-light.png 730x665
+copy scripts hwnd=2430482 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light.png 667x551
+PASS Theme=Modern Light Language=English
+BEGIN Theme=Modern Dark Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-dark-40ed549abbd34b72a09a484eb1e47f37
+MainhWnd setting=14357010
+options opened title=[Options]
+options rect=489,175,1841,845
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-dark.png 1352x670
+keyboard page hwnd=1577000
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-dark.png 1352x670
+keyboard SendPaste hwnd=2036276 check=1
+quick paste keyboard page hwnd=6885682
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-dark.png 1352x670
+advanced hwnd=15338410 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-dark.png 730x665
+copy scripts hwnd=857720 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark.png 667x551
+PASS Theme=Modern Dark Language=English
+BEGIN Theme=Modern Light Language=Deutsch run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-de-36e7283b097a461196603745fe5cbae3
+MainhWnd setting=5377250
+options opened title=[Options]
+options rect=489,165,1966,854
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-de.png 1477x689
+keyboard page hwnd=18288198
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-de.png 1477x689
+keyboard SendPaste hwnd=7672432 check=1
+quick paste keyboard page hwnd=18026232
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-de.png 1477x689
+advanced hwnd=67899608 text=[Erweitert]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-de.png 730x665
+copy scripts hwnd=10950286 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-de.png 667x551
+PASS Theme=Modern Light Language=Deutsch
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-018bf44a68874b8898b3ebd806f385ef
+MainhWnd setting=7934722
+options opened title=[Options]
+options rect=347,175,1699,845
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-light.png 1352x670
+keyboard page hwnd=1577590
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-light.png 1352x670
+keyboard SendPaste hwnd=3150418 check=1
+quick paste keyboard page hwnd=18484806
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-light.png 1352x670
+advanced hwnd=1447546 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-light.png 730x665
+copy scripts hwnd=4526180 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light.png 667x551
+PASS Theme=Modern Light Language=English
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-6d145745b5284533b4e7f7ff389037e0
+MainhWnd setting=2560198
+options opened title=[Options]
+options rect=489,175,1294,845
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-light.png 805x670
+keyboard page hwnd=3871552
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-light.png 805x670
+keyboard SendPaste hwnd=10425700 check=1
+quick paste keyboard page hwnd=4330426
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-light.png 805x670
+advanced hwnd=7278898 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-light.png 730x665
+copy scripts hwnd=3346470 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light.png 667x551
+PASS Theme=Modern Light Language=English
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-e4d4fe34ebac46869051770d7d0668f9
+MainhWnd setting=5772174
+options opened title=[Options]
+options rect=489,175,1294,845
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-light.png 805x670
+keyboard page hwnd=2625734
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-light.png 805x670
+keyboard SendPaste hwnd=11473600 check=1
+quick paste keyboard page hwnd=2364744
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-light.png 805x670
+advanced hwnd=4851664 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-light.png 730x665
+copy scripts hwnd=2299690 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light.png 667x551
+PASS Theme=Modern Light Language=English
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-eb1c05db15aa41af83cc73fedc0b8f69
+MainhWnd setting=
+FAIL Theme=Modern Light Language=English error=MainhWnd was not written
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-f6452c22f9654151bf9ef36488253c8b
+MainhWnd setting=11276900
+options opened title=[Options]
+options rect=733,262,1941,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-light.png 1208x1005
+keyboard page hwnd=4789356
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-light.png 1208x1005
+keyboard SendPaste hwnd=7935716 check=1
+quick paste keyboard page hwnd=6035180
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-light.png 1208x1005
+advanced hwnd=6165884 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-light.png 1095x998
+copy scripts hwnd=9572836 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light.png 1001x826
+PASS Theme=Modern Light Language=English
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-319bddeea6ec446b97ed17814d7ef9cf
+MainhWnd setting=10293580
+options opened title=[Options]
+options rect=733,262,1941,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-light.png 1208x1005
+keyboard page hwnd=11209086
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-light.png 1208x1005
+keyboard SendPaste hwnd=8197318 check=1
+quick paste keyboard page hwnd=5640540
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-light.png 1208x1005
+advanced hwnd=5771776 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-light.png 1095x998
+copy scripts hwnd=5248808 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light.png 1001x826
+PASS Theme=Modern Light Language=English
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-3e026ba1895b4b1e8b72b3ab0c231f8d
+MainhWnd setting=3477552
+options opened title=[Options]
+options rect=733,262,1941,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-light.png 1208x1005
+keyboard page hwnd=6818802
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-light.png 1208x1005
+keyboard SendPaste hwnd=15142832 check=1
+quick paste keyboard page hwnd=13177404
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-light.png 1208x1005
+advanced hwnd=10424652 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-light.png 1095x998
+copy scripts hwnd=1840414 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light.png 1001x826
+PASS Theme=Modern Light Language=English
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-3028ac87979a4b0b8c6cdffdc7b2b8fc
+MainhWnd setting=6622182
+options opened title=[Options]
+options rect=733,262,1884,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-light.png 1151x1005
+keyboard page hwnd=14355656
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-light.png 1151x1005
+keyboard SendPaste hwnd=10490188 check=1
+quick paste keyboard page hwnd=6231628
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-light.png 1151x1005
+advanced hwnd=6098146 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-light.png 1095x998
+copy scripts hwnd=4003164 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light.png 1001x826
+PASS Theme=Modern Light Language=English
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-7bc494c5df3a49f1b3d42764a30be5df
+MainhWnd setting=9965834
+options opened title=[Options]
+options rect=733,262,1917,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-light.png 1184x1005
+keyboard page hwnd=4724518
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-light.png 1184x1005
+keyboard SendPaste hwnd=3544896 check=1
+quick paste keyboard page hwnd=1906418
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-light.png 1184x1005
+advanced hwnd=9246074 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-light.png 1095x998
+copy scripts hwnd=8983166 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light.png 1001x826
+PASS Theme=Modern Light Language=English
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-beba12d8ea8646acbda7a0716bb3e0d4
+MainhWnd setting=11145284
+options opened title=[Options]
+options rect=733,262,1917,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-light.png 1166x996
+keyboard page hwnd=11472838
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-light.png 1166x996
+keyboard SendPaste hwnd=7472682 check=1
+quick paste keyboard page hwnd=8065028
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-light.png 1166x996
+advanced hwnd=11867196 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-light.png 1077x989
+copy scripts hwnd=2692614 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light.png 983x817
+PASS Theme=Modern Light Language=English
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-8a8e58d1f1bc41a0bbd4a824c4bbb37f
+MainhWnd setting=7017018
+options opened title=[Options]
+options rect=733,262,1992,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-light.png 1241x996
+keyboard page hwnd=14815226
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-light.png 1241x996
+keyboard SendPaste hwnd=32247844 check=1
+quick paste keyboard page hwnd=3871576
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-light.png 1241x996
+advanced hwnd=4263982 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-light.png 1077x989
+copy scripts hwnd=4396782 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light.png 983x817
+PASS Theme=Modern Light Language=English
+BEGIN Theme=Modern Dark Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-dark-424285fff4914cc6a00f545a41b4e47d
+MainhWnd setting=7737336
+options opened title=[Options]
+options rect=733,262,1992,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-dark.png 1241x996
+keyboard page hwnd=9310278
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-dark.png 1241x996
+keyboard SendPaste hwnd=6361600 check=1
+quick paste keyboard page hwnd=4723728
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-dark.png 1241x996
+advanced hwnd=15471122 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-dark.png 1077x989
+copy scripts hwnd=12129934 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark.png 983x817
+PASS Theme=Modern Dark Language=English
+BEGIN Theme=Modern Dark Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-dark-99ddcc47db1c48f9b1827163b1ae4dc5
+MainhWnd setting=10555658
+options opened title=[Options]
+options rect=733,262,1992,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-dark.png 1241x996
+keyboard page hwnd=2823556
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-dark.png 1241x996
+keyboard SendPaste hwnd=8787716 check=1
+quick paste keyboard page hwnd=16386986
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-dark.png 1241x996
+advanced hwnd=12129340 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-dark.png 1077x989
+copy scripts hwnd=8326122 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark.png 983x817
+PASS Theme=Modern Dark Language=English
+BEGIN Theme=Modern Dark Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-dark-d1ab978debac448a9a20078f32c1aa7e
+MainhWnd setting=18416478
+options opened title=[Options]
+options rect=733,262,1992,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-dark.png 1241x996
+keyboard page hwnd=595556
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-dark.png 1241x996
+keyboard SendPaste hwnd=15077456 check=1
+quick paste keyboard page hwnd=3085080
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-dark.png 1241x996
+advanced hwnd=9770362 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-dark.png 1077x989
+copy scripts hwnd=12587712 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark.png 983x817
+PASS Theme=Modern Dark Language=English
+BEGIN Theme=Modern Dark Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-dark-d925d9c9ca5f489f9760127c853b003a
+MainhWnd setting=9634044
+options opened title=[Options]
+options rect=733,262,1992,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-dark.png 1241x996
+keyboard page hwnd=33296420
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-dark.png 1241x996
+keyboard SendPaste hwnd=726628 check=1
+quick paste keyboard page hwnd=5640238
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-dark.png 1241x996
+advanced hwnd=3085834 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-dark.png 1077x989
+copy scripts hwnd=5444376 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark.png 983x817
+PASS Theme=Modern Dark Language=English
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-d9b23e8c27e84f5aa5d423965112d6ca
+MainhWnd setting=10557094
+options opened title=[Options]
+options rect=733,262,1992,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-light.png 1241x996
+keyboard page hwnd=19861338
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-light.png 1241x996
+keyboard SendPaste hwnd=19599236 check=1
+quick paste keyboard page hwnd=8589514
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-light.png 1241x996
+advanced hwnd=7935794 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-light.png 1077x989
+copy scripts hwnd=5051408 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light.png 983x817
+PASS Theme=Modern Light Language=English
+BEGIN Theme=Modern Dark Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-dark-7eb05f936f0547e88c4305f02857b7ec
+MainhWnd setting=11665446
+options opened title=[Options]
+options rect=733,262,1992,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-dark.png 1241x996
+keyboard page hwnd=14551878
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-dark.png 1241x996
+keyboard SendPaste hwnd=7476604 check=1
+quick paste keyboard page hwnd=4986606
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-dark.png 1241x996
+advanced hwnd=6624198 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-dark.png 1077x989
+copy scripts hwnd=25825376 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark.png 983x817
+PASS Theme=Modern Dark Language=English
+BEGIN Theme=Modern Light Language=Deutsch run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-de-dcadb1f07013492f99cc2420afb71559
+MainhWnd setting=5836958
+options opened title=[Options]
+options rect=733,247,2195,1281
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-de.png 1444x1025
+keyboard page hwnd=10883008
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-de.png 1444x1025
+keyboard SendPaste hwnd=7475282 check=1
+quick paste keyboard page hwnd=16059494
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-de.png 1444x1025
+advanced hwnd=16780488 text=[Erweitert]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-de.png 1077x989
+copy scripts hwnd=4854382 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-de.png 983x817
+PASS Theme=Modern Light Language=Deutsch
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-efbc0381009d44908fcade40b582314f
+MainhWnd setting=7539890
+options opened title=[Options]
+options rect=733,262,1992,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-light.png 1241x996
+keyboard page hwnd=11210960
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-light.png 1241x996
+keyboard SendPaste hwnd=5313142 check=1
+quick paste keyboard page hwnd=18615210
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-light.png 1241x996
+advanced hwnd=3084366 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-light.png 1077x989
+copy scripts hwnd=5903192 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light.png 983x817
+PASS Theme=Modern Light Language=English
+BEGIN Theme=Modern Dark Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-dark-5f14c5010e524f6c99b31aa3082d0862
+MainhWnd setting=3347976
+options opened title=[Options]
+options rect=733,262,1992,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-dark.png 1241x996
+keyboard page hwnd=11341878
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-dark.png 1241x996
+keyboard SendPaste hwnd=3609682 check=1
+quick paste keyboard page hwnd=9573752
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-dark.png 1241x996
+advanced hwnd=12718674 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-dark.png 1077x989
+copy scripts hwnd=5707146 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark.png 983x817
+PASS Theme=Modern Dark Language=English
+BEGIN Theme=Modern Light Language=Deutsch run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-de-548bc3804f1247a1a3039e8553e6a6b6
+MainhWnd setting=15863888
+options opened title=[Options]
+options rect=733,247,2195,1281
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-de.png 1444x1025
+keyboard page hwnd=13636288
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-de.png 1444x1025
+keyboard SendPaste hwnd=3675218 check=1
+quick paste keyboard page hwnd=4723304
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-de.png 1444x1025
+advanced hwnd=6491054 text=[Erweitert]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-de.png 1077x989
+copy scripts hwnd=28250184 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-de.png 983x817
+PASS Theme=Modern Light Language=Deutsch
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-a60e9bb9a0214f7e85763beec60c7ad9
+MainhWnd setting=4592172
+options opened title=[Options]
+options rect=733,262,1992,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-light.png 1241x996 print=True
+keyboard page hwnd=13963332
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-light.png 1241x996 print=True
+keyboard SendPaste hwnd=12326706 check=1
+quick paste keyboard page hwnd=7279240
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-light.png 1241x996 print=True
+advanced hwnd=34869284 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-light.png 1077x989 print=True
+copy scripts hwnd=9507704 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light.png 983x817 print=True
+PASS Theme=Modern Light Language=English
+BEGIN Theme=Modern Dark Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-dark-a34dc5464f01472ea120315cdf5bf5be
+MainhWnd setting=5510160
+options opened title=[Options]
+options rect=733,262,1992,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-dark.png 1241x996 print=True
+keyboard page hwnd=12454600
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-dark.png 1241x996 print=True
+keyboard SendPaste hwnd=10162482 check=1
+quick paste keyboard page hwnd=6361190
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-dark.png 1241x996 print=True
+advanced hwnd=11278082 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-dark.png 1077x989 print=True
+copy scripts hwnd=6296506 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark.png 983x817 print=True
+PASS Theme=Modern Dark Language=English
+BEGIN Theme=Modern Light Language=Deutsch run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-de-b9ec4508d192425b939a52a2064006c7
+MainhWnd setting=9114726
+options opened title=[Options]
+options rect=733,247,2195,1281
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-de.png 1444x1025 print=True
+keyboard page hwnd=13044260
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-de.png 1444x1025 print=True
+keyboard SendPaste hwnd=12582950 check=1
+quick paste keyboard page hwnd=4326268
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-de.png 1444x1025 print=True
+advanced hwnd=10424390 text=[Erweitert]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-de.png 1077x989 print=True
+copy scripts hwnd=7411410 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-de.png 983x817 print=True
+PASS Theme=Modern Light Language=Deutsch
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-653c301768854bc09e993511099164e2
+MainhWnd setting=9309162
+options opened title=[Options]
+options rect=733,262,1992,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-light.png 1241x996 print=True
+keyboard page hwnd=20713498
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-light.png 1241x996 print=True
+keyboard SendPaste hwnd=5706350 check=1
+quick paste keyboard page hwnd=16976878
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-light.png 1241x996 print=True
+advanced hwnd=7736546 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-light.png 1077x989 print=True
+copy scripts hwnd=6231570 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light.png 983x817 print=True
+PASS Theme=Modern Light Language=English
+BEGIN Theme=Modern Dark Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-dark-ac2ccef4638d43eb8143fc4171c5e702
+MainhWnd setting=13897456
+options opened title=[Options]
+options rect=733,262,1992,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-dark.png 1241x996 print=True
+keyboard page hwnd=6034024
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-dark.png 1241x996 print=True
+keyboard SendPaste hwnd=11012636 check=1
+quick paste keyboard page hwnd=3348284
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-dark.png 1241x996 print=True
+advanced hwnd=4001848 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-dark.png 1077x989 print=True
+copy scripts hwnd=3806728 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark.png 983x817 print=True
+PASS Theme=Modern Dark Language=English
+BEGIN Theme=Modern Light Language=Deutsch run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-de-2dbaa84a3c254fabbb6eb5ac6134e0f0
+MainhWnd setting=11341726
+options opened title=[Options]
+options rect=733,247,2195,1281
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-de.png 1444x1025 print=True
+keyboard page hwnd=14291012
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-de.png 1444x1025 print=True
+keyboard SendPaste hwnd=3019410 check=1
+quick paste keyboard page hwnd=1709208
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-de.png 1444x1025 print=True
+advanced hwnd=28774472 text=[Erweitert]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-de.png 1077x989 print=True
+copy scripts hwnd=46534444 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-de.png 983x817 print=True
+PASS Theme=Modern Light Language=Deutsch
+BEGIN Theme=Modern Dark Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-dark-ecda4682b46742bcbfbc2180fb2a99f3
+MainhWnd setting=10685092
+options opened title=[Options]
+options rect=733,262,2040,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-dark.png 1289x996 print=True
+keyboard page hwnd=14618686
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-dark.png 1289x996 print=True
+keyboard SendPaste hwnd=4985314 check=1
+quick paste keyboard page hwnd=6689620
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-dark.png 1289x996 print=True
+advanced hwnd=18747386 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-dark.png 1077x989 print=True
+copy scripts hwnd=6428178 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark.png 983x817 print=True
+screen screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark-screen.png 983x817
+PASS Theme=Modern Dark Language=English
+BEGIN Theme=Modern Dark Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-dark-edfbc59c680949e4aebde45c113b5daa
+MainhWnd setting=6623270
+options opened title=[Options]
+options rect=733,262,2040,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-dark.png 1289x996 print=True
+keyboard page hwnd=10752070
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-dark.png 1289x996 print=True
+keyboard SendPaste hwnd=5050924 check=1
+quick paste keyboard page hwnd=15732678
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-dark.png 1289x996 print=True
+advanced hwnd=15929352 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-dark.png 1077x989 print=True
+copy scripts hwnd=9246284 text=[On Copy Scripts]
+script child id=2153 class=[Edit] text=[]
+script child id=1018 class=[Edit] text=[]
+script child id=1042 class=[Button] text=[]
+script child id=2157 class=[Edit] text=[]
+script child id=2158 class=[Edit] text=[]
+script child id=1040 class=[Button] text=[Run]
+script child id=1 class=[Button] text=[OK]
+script child id=2 class=[Button] text=[Cancel]
+script child id=2161 class=[ListBox] text=[]
+script child id=2124 class=[Button] text=[Add]
+script child id=2125 class=[Button] text=[Delete]
+script child id=2156 class=[Static] text=[Name]
+script child id=2126 class=[Static] text=[Desciption]
+script child id=2159 class=[Static] text=[Sample Input]
+script child id=2160 class=[Static] text=[Sample Output]
+script child id=2162 class=[Static] text=[All function must return true/false.  Return true to cancel saving the copy or cancel the paste.]
+script child id=2163 class=[Static] text=[Script]
+script child id=2164 class=[Static] text=[Active]
+script child id=2165 class=[MFCLink] text=[ChaiScript (http://chaiscript.com/)]
+script child id=2166 class=[MFCLink] text=[Examples]
+script child id=2172 class=[RichEdit20W] text=[]
+script child id=2173 class=[Edit] text=[]
+script child id=1019 class=[Edit] text=[]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark.png 983x817 print=True
+screen screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark-screen.png 983x817
+PASS Theme=Modern Dark Language=English
+BEGIN Theme=Modern Dark Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-dark-757a9a5cc0dd480a97d09406b3e01087
+MainhWnd setting=19009456
+options opened title=[Options]
+options rect=733,262,2040,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-dark.png 1289x996 print=True
+keyboard page hwnd=21106714
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-dark.png 1289x996 print=True
+keyboard SendPaste hwnd=10621234 check=1
+quick paste keyboard page hwnd=10818316
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-dark.png 1289x996 print=True
+advanced hwnd=10293240 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-dark.png 1077x989 print=True
+copy scripts hwnd=3806844 text=[On Copy Scripts]
+script child id=2153 class=[Edit] text=[]
+script child id=1018 class=[Edit] text=[]
+script child id=1042 class=[Button] text=[]
+script child id=2157 class=[Edit] text=[]
+script child id=2158 class=[Edit] text=[]
+script child id=1040 class=[Button] text=[Run]
+script child id=1 class=[Button] text=[OK]
+script child id=2 class=[Button] text=[Cancel]
+script child id=2161 class=[ListBox] text=[]
+script child id=2124 class=[Button] text=[Add]
+script child id=2125 class=[Button] text=[Delete]
+script child id=2156 class=[Static] text=[Name]
+script child id=2126 class=[Static] text=[Desciption]
+script child id=2159 class=[Static] text=[Sample Input]
+script child id=2160 class=[Static] text=[Sample Output]
+script child id=2162 class=[Static] text=[All function must return true/false.  Return true to cancel saving the copy or cancel the paste.]
+script child id=2163 class=[Static] text=[Script]
+script child id=2164 class=[Static] text=[Active]
+script child id=2165 class=[MFCLink] text=[ChaiScript (http://chaiscript.com/)]
+script child id=2166 class=[MFCLink] text=[Examples]
+script child id=2172 class=[RichEdit20W] text=[]
+script child id=2173 class=[Edit] text=[]
+script child id=1019 class=[Edit] text=[]
+external rich bg result=2499104
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark.png 983x817 print=True
+screen screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark-screen.png 983x817
+PASS Theme=Modern Dark Language=English
+BEGIN Theme=Modern Dark Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-dark-ac86c1d8f9134ec2aea0312fc27f4d6a
+MainhWnd setting=13242386
+options opened title=[Options]
+options rect=733,262,2040,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-dark.png 1289x996 print=True
+keyboard page hwnd=8196278
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-dark.png 1289x996 print=True
+keyboard SendPaste hwnd=3477970 check=1
+quick paste keyboard page hwnd=12849994
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-dark.png 1289x996 print=True
+advanced hwnd=15929286 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-dark.png 1077x989 print=True
+copy scripts hwnd=4003448 text=[On Copy Scripts]
+script child id=2153 class=[Edit] text=[]
+script child id=1018 class=[Edit] text=[]
+script child id=1042 class=[Button] text=[]
+script child id=2157 class=[Edit] text=[]
+script child id=2158 class=[Edit] text=[]
+script child id=1040 class=[Button] text=[Run]
+script child id=1 class=[Button] text=[OK]
+script child id=2 class=[Button] text=[Cancel]
+script child id=2161 class=[ListBox] text=[]
+script child id=2124 class=[Button] text=[Add]
+script child id=2125 class=[Button] text=[Delete]
+script child id=2156 class=[Static] text=[Name]
+script child id=2126 class=[Static] text=[Desciption]
+script child id=2159 class=[Static] text=[Sample Input]
+script child id=2160 class=[Static] text=[Sample Output]
+script child id=2162 class=[Static] text=[All function must return true/false.  Return true to cancel saving the copy or cancel the paste.]
+script child id=2163 class=[Static] text=[Script]
+script child id=2164 class=[Static] text=[Active]
+script child id=2165 class=[MFCLink] text=[ChaiScript (http://chaiscript.com/)]
+script child id=2166 class=[MFCLink] text=[Examples]
+script child id=2172 class=[RichEdit20W] text=[]
+script child id=2173 class=[Edit] text=[]
+script child id=1019 class=[Edit] text=[]
+external rich bg result=2499104
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark.png 983x817 print=True
+screen screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark-screen.png 983x817
+PASS Theme=Modern Dark Language=English
+BEGIN Theme=Modern Dark Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-dark-6965e4471618429c8f5af771d38f3f80
+MainhWnd setting=14946372
+options opened title=[Options]
+options rect=733,262,2040,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-dark.png 1289x996 print=True
+keyboard page hwnd=6033456
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-dark.png 1289x996 print=True
+keyboard SendPaste hwnd=6689036 check=1
+quick paste keyboard page hwnd=8262372
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-dark.png 1289x996 print=True
+advanced hwnd=46993196 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-dark.png 1077x989 print=True
+copy scripts hwnd=2954852 text=[On Copy Scripts]
+script child id=2153 class=[Edit] text=[]
+script child id=1018 class=[Edit] text=[]
+script child id=1042 class=[Button] text=[]
+script child id=2157 class=[Edit] text=[]
+script child id=2158 class=[Edit] text=[]
+script child id=1040 class=[Button] text=[Run]
+script child id=1 class=[Button] text=[OK]
+script child id=2 class=[Button] text=[Cancel]
+script child id=2161 class=[ListBox] text=[]
+script child id=2124 class=[Button] text=[Add]
+script child id=2125 class=[Button] text=[Delete]
+script child id=2156 class=[Static] text=[Name]
+script child id=2126 class=[Static] text=[Desciption]
+script child id=2159 class=[Static] text=[Sample Input]
+script child id=2160 class=[Static] text=[Sample Output]
+script child id=2162 class=[Static] text=[All function must return true/false.  Return true to cancel saving the copy or cancel the paste.]
+script child id=2163 class=[Static] text=[Script]
+script child id=2164 class=[Static] text=[Active]
+script child id=2165 class=[MFCLink] text=[ChaiScript (http://chaiscript.com/)]
+script child id=2166 class=[MFCLink] text=[Examples]
+script child id=2172 class=[RichEdit20W] text=[]
+script child id=2173 class=[Edit] text=[]
+script child id=1019 class=[Edit] text=[]
+external rich bg result=2499104
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark.png 983x817 print=True
+screen screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark-screen.png 983x817
+PASS Theme=Modern Dark Language=English
+BEGIN Theme=Modern Dark Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-dark-932f2225616a4dde9d334e7ba91c8d16
+MainhWnd setting=72028376
+options opened title=[Options]
+options rect=733,262,2040,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-dark.png 1289x996 print=True
+keyboard page hwnd=15536190
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-dark.png 1289x996 print=True
+keyboard SendPaste hwnd=3609042 check=1
+quick paste keyboard page hwnd=12981066
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-dark.png 1289x996 print=True
+advanced hwnd=15404974 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-dark.png 1077x989 print=True
+copy scripts hwnd=15472268 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark.png 983x817 print=True
+screen screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-dark-screen.png 983x817
+PASS Theme=Modern Dark Language=English
+BEGIN Theme=Modern Light Language=English run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-light-d524e868f45741a1b6e86907d7325c8d
+MainhWnd setting=12126748
+options opened title=[Options]
+options rect=733,262,2040,1267
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-light.png 1289x996 print=True
+keyboard page hwnd=12586910
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-light.png 1289x996 print=True
+keyboard SendPaste hwnd=12259762 check=1
+quick paste keyboard page hwnd=13046602
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-light.png 1289x996 print=True
+advanced hwnd=26546080 text=[Advanced]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-light.png 1077x989 print=True
+copy scripts hwnd=4200056 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light.png 983x817 print=True
+screen screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-light-screen.png 983x817
+PASS Theme=Modern Light Language=English
+BEGIN Theme=Modern Light Language=Deutsch run=C:\Users\zezin\AppData\Local\Temp\ditto-ui-t4a-de-2a4dd9de7fa24214aae75163543ba78b
+MainhWnd setting=6357566
+options opened title=[Options]
+options rect=733,247,2243,1281
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-general-de.png 1492x1025 print=True
+keyboard page hwnd=22155290
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-keyboard-de.png 1492x1025 print=True
+keyboard SendPaste hwnd=10948914 check=1
+quick paste keyboard page hwnd=11211532
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-options-quickpastekeyboard-de.png 1492x1025 print=True
+advanced hwnd=15667114 text=[Erweitert]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-adv-general-de.png 1077x989 print=True
+copy scripts hwnd=15603340 text=[On Copy Scripts]
+screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-de.png 983x817 print=True
+screen screenshot D:\orca\workspaces\Ditto\ui-options-core\artifacts\ui\t4a\t4a-script-editor-de-screen.png 983x817
+PASS Theme=Modern Light Language=Deutsch

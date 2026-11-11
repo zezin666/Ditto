@@ -1,0 +1,14 @@
+# T6 QA: LVM_SCROLL crash reproduction (T3-only branch 1a60e6f, Debug64)
+# RunDir: /c/Users/zezin/AppData/Local/Temp/ditto-t3-iso-1794339538/
+# Command: probe-5k-scroll.ps1 -Messages 400 -Method LVM
+items=5000 gdi=86
+EXITED during scroll at iteration 1
+scrollDone ms=20418 alive=False gdi=0
+finalExited=True
+
+# Additional control: T1 foundation build f6e5118 (pre-T3 list)
+# RunDir: /c/Users/zezin/AppData/Local/Temp/ditto-base-iso-1794340445/
+items=5000 gdi=85
+EXITED during scroll at iteration 1
+scrollDone ms=19914 alive=False gdi=0
+finalExited=True
