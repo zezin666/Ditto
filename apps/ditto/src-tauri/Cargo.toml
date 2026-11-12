@@ -20,6 +20,7 @@ tauri-build.workspace = true
 ditto-clipboard = { path = "../../../crates/ditto-clipboard" }
 ditto-ipc = { path = "../../../crates/ditto-ipc" }
 ditto-model = { path = "../../../crates/ditto-model" }
+ditto-paste = { path = "../../../crates/ditto-paste" }
 ditto-storage = { path = "../../../crates/ditto-storage" }
 ditto-ui-tokens = { path = "../../../crates/ditto-ui-tokens" }
 ditto-win = { path = "../../../crates/ditto-win" }

@@ -1,12 +1,23 @@
-//! Paste target tracking and SendInput boundary. Implementation belongs to T4.
+//! Paste target tracking, clipboard materialization, SendInput, and OLE drag-out.
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PasteMode {
-    Normal,
-    PlainText,
-    Multi,
-}
+mod clipboard;
+mod drag;
+mod elevation;
+mod engine;
+mod error;
+mod input;
+mod model;
+mod payload;
+mod target;
 
-pub trait PasteTarget {
-    fn is_target_available(&self) -> bool;
-}
+pub use clipboard::WindowsClipboardBackend;
+pub use drag::{drag_out, parse_file_drop};
+pub use engine::{
+    ClipboardBackend, ElevationBackend, InputBackend, PasteEngine, PasteFailure, PasteReport,
+    TargetBackend, WindowsPasteEngine,
+};
+pub use error::{PasteError, PasteErrorCode, PasteResult};
+pub use input::SendInputBackend;
+pub use model::{BatchMode, IntegrityLevel, PasteFormat, PasteOptions, TargetWindow};
+pub use payload::{build_file_drop, build_payload, validate_file_paths};
+pub use target::WindowsTargetBackend;
