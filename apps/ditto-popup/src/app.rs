@@ -6,7 +6,7 @@ use std::{
     path::{Path, PathBuf},
     sync::{
         Arc,
-        atomic::AtomicIsize,
+        atomic::{AtomicBool, AtomicIsize, Ordering},
         mpsc::{self, Receiver, Sender},
     },
     thread,
@@ -48,7 +48,17 @@ enum PopupSignal {
     Show { received_at: Instant },
     Hide,
     Connection(bool),
+    HideLocal,
+    SettingsChanged,
+    ClipsChanged,
     Shutdown,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum PopupPreviewMode {
+    Off,
+    Auto,
+    F3,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -58,6 +68,13 @@ struct RuntimeSettings {
     hide_on_focus_loss: bool,
     position: PositionMode,
     confirm_delete: bool,
+    compact: bool,
+    lines_per_clip: u8,
+    font_scale: u16,
+    preview: PopupPreviewMode,
+    animations: bool,
+    always_on_top: bool,
+    show_grouped_in_main: bool,
 }
 
 impl RuntimeSettings {
@@ -68,6 +85,13 @@ impl RuntimeSettings {
             hide_on_focus_loss: options.hide_on_focus_loss,
             position: options.default_position(),
             confirm_delete: true,
+            compact: false,
+            lines_per_clip: 1,
+            font_scale: 100,
+            preview: PopupPreviewMode::Auto,
+            animations: true,
+            always_on_top: true,
+            show_grouped_in_main: true,
         }
     }
 }
@@ -208,11 +232,13 @@ pub struct PopupApp {
     theme: Theme,
     palette: Palette,
     visible: bool,
+    visible_flag: Arc<AtomicBool>,
     always_on_top: bool,
     user_activated: bool,
     previous_foreground: HWND,
     last_popup_position: Option<POINT>,
     window_handle: Option<HWND>,
+    window_handle_slot: Arc<AtomicIsize>,
     window_styled: bool,
     shown_at: Option<Instant>,
     show_received_at: Option<Instant>,
@@ -221,6 +247,10 @@ pub struct PopupApp {
     settings: RuntimeSettings,
     items: Vec<ClipSummary>,
     total: u64,
+    total_is_estimate: bool,
+    next_cursor: Option<String>,
+    append_request: Option<u64>,
+    load_more_due: bool,
     groups: Vec<GroupNode>,
     copy_buffers: Vec<CopyBufferSlot>,
     query: String,
@@ -253,7 +283,11 @@ enum FocusTarget {
 }
 
 impl PopupApp {
-    pub fn new(creation: &eframe::CreationContext<'_>, options: PopupOptions) -> Self {
+    pub fn new(
+        creation: &eframe::CreationContext<'_>,
+        options: PopupOptions,
+        preconnected: Option<PipeClient>,
+    ) -> Self {
         let theme = options.theme_override.unwrap_or_else(|| {
             Theme::from(if crate::theme::high_contrast_enabled() {
                 ThemeMode::HighContrast
@@ -268,6 +302,7 @@ impl PopupApp {
         apply_visuals(&creation.egui_ctx, theme, palette);
 
         let (sender, receiver) = mpsc::channel();
+        let visible_flag = Arc::new(AtomicBool::new(false));
         let (window_handle, window_styled) = native_window(creation)
             .and_then(|hwnd| make_popup_window(hwnd).ok().map(|()| (Some(hwnd), true)))
             .unwrap_or((None, false));
@@ -275,12 +310,23 @@ impl PopupApp {
             platform::configure_window(hwnd, theme, palette);
             resize_for_options(&creation.egui_ctx, hwnd, &options, theme);
         }
+        let handle = Arc::new(AtomicIsize::new(
+            window_handle.map_or(0, |hwnd| hwnd.0 as isize),
+        ));
         if !options.mock {
-            let handle = Arc::new(AtomicIsize::new(
-                window_handle.map_or(0, |hwnd| hwnd.0 as isize),
-            ));
-            spawn_ipc_client(creation.egui_ctx.clone(), sender, handle);
+            spawn_ipc_client(
+                creation.egui_ctx.clone(),
+                sender.clone(),
+                Arc::clone(&handle),
+                preconnected,
+            );
         }
+        spawn_outside_click_watcher(
+            creation.egui_ctx.clone(),
+            sender,
+            Arc::clone(&visible_flag),
+            Arc::clone(&handle),
+        );
 
         let provider: Box<dyn ClipProvider> = if options.mock {
             Box::new(MockProvider::default())
@@ -317,11 +363,13 @@ impl PopupApp {
             theme,
             palette,
             visible: false,
+            visible_flag,
             always_on_top: true,
             user_activated: false,
             previous_foreground: HWND::default(),
             last_popup_position: None,
             window_handle,
+            window_handle_slot: Arc::clone(&handle),
             window_styled,
             shown_at: None,
             show_received_at: None,
@@ -329,6 +377,10 @@ impl PopupApp {
             perf_log: PathBuf::new(),
             items: Vec::new(),
             total: 0,
+            total_is_estimate: false,
+            next_cursor: None,
+            append_request: None,
+            load_more_due: false,
             groups: Vec::new(),
             copy_buffers: Vec::new(),
             query: String::new(),
@@ -371,6 +423,14 @@ impl PopupApp {
         self.theme.mode()
     }
 
+    fn row_height(&self) -> f32 {
+        let base = dimension::row_height(self.mode());
+        let density = if self.settings.compact { 1.25 } else { 1.5 };
+        let lines = 1.0 + f32::from(self.settings.lines_per_clip.saturating_sub(1)) * 0.35;
+        let scale = f32::from(self.settings.font_scale) / 100.0;
+        base * density * lines * scale
+    }
+
     fn search_id() -> Id {
         Id::new(SEARCH_ID)
     }
@@ -384,7 +444,19 @@ impl PopupApp {
                 }
                 PopupSignal::Hide => {
                     qa_trace("signal-hide");
+                    self.hide_popup_from_core();
+                }
+                PopupSignal::HideLocal => {
+                    qa_trace("signal-hide-local");
                     self.hide_popup();
+                }
+                PopupSignal::SettingsChanged => {
+                    self.provider.send(ProviderCommand::RefreshMetadata);
+                }
+                PopupSignal::ClipsChanged => {
+                    if self.visible {
+                        self.request_load();
+                    }
                 }
                 PopupSignal::Connection(connected) => {
                     if connected {
@@ -443,13 +515,15 @@ impl PopupApp {
             ditto_win::set_popup_visible(hwnd, true);
         }
         self.ctx.send_viewport_cmd(ViewportCommand::Visible(true));
-        self.ctx
-            .send_viewport_cmd(ViewportCommand::WindowLevel(if self.always_on_top {
+        self.ctx.send_viewport_cmd(ViewportCommand::WindowLevel(
+            if self.settings.always_on_top {
                 WindowLevel::AlwaysOnTop
             } else {
                 WindowLevel::Normal
-            }));
+            },
+        ));
         self.visible = true;
+        self.visible_flag.store(true, Ordering::SeqCst);
         self.user_activated = false;
         self.shown_at = Some(Instant::now());
         self.show_received_at = Some(received_at);
@@ -472,7 +546,26 @@ impl PopupApp {
     }
 
     fn hide_popup(&mut self) {
+        let was_visible = self.visible;
+        self.hide_popup_internal();
+        if was_visible {
+            // Local hides (Esc, focus loss, outside click, errors) must update
+            // the core's visibility flag or the next hotkey would toggle to
+            // "hide" a popup the core still thinks is visible.
+            notify_hide_sync();
+        }
+    }
+
+    /// Hides without echoing a Hide request back to the core. Used when the
+    /// core itself broadcast a Hide event, avoiding a feedback loop.
+    fn hide_popup_from_core(&mut self) {
+        self.hide_popup_internal();
+    }
+
+    fn hide_popup_internal(&mut self) {
+        qa_trace("hide-popup");
         self.visible = false;
+        self.visible_flag.store(false, Ordering::SeqCst);
         self.group_menu.open = false;
         if let Some(hwnd) = self.window_handle {
             ditto_win::set_popup_visible(hwnd, false);
@@ -515,6 +608,8 @@ impl PopupApp {
                         continue;
                     }
                     self.loading = false;
+                    let append = self.append_request == Some(request_id);
+                    self.append_request = None;
                     match result {
                         Ok(page) => {
                             self.service_error = None;
@@ -525,8 +620,14 @@ impl PopupApp {
                             {
                                 self.ensure_cjk_fonts();
                             }
-                            self.items = page.items;
                             self.total = page.total;
+                            self.total_is_estimate = page.total_is_estimate;
+                            self.next_cursor = page.next_cursor.clone();
+                            if append {
+                                self.items.extend(page.items);
+                            } else {
+                                self.items = page.items;
+                            }
                             self.loaded_query = self.query.clone();
                             self.clamp_selection();
                             if self.selection.primary.is_none() && !self.items.is_empty() {
@@ -629,6 +730,52 @@ impl PopupApp {
         if let Some(value) = popup_value("confirm_delete").and_then(serde_json::Value::as_bool) {
             self.settings.confirm_delete = value;
         }
+        if let Some(value) = appearance_value("density").and_then(serde_json::Value::as_str) {
+            self.settings.compact = value.eq_ignore_ascii_case("compact");
+        }
+        if let Some(value) = appearance_value("lines_per_clip").and_then(serde_json::Value::as_u64)
+        {
+            self.settings.lines_per_clip = u8::try_from(value).unwrap_or(1).clamp(1, 5);
+        }
+        if let Some(value) = appearance_value("font_scale").and_then(serde_json::Value::as_u64) {
+            self.settings.font_scale = u16::try_from(value).unwrap_or(100).clamp(80, 200);
+        }
+        if let Some(value) = appearance_value("preview").and_then(serde_json::Value::as_str) {
+            self.settings.preview = match value {
+                "off" => PopupPreviewMode::Off,
+                "f3" => PopupPreviewMode::F3,
+                _ => PopupPreviewMode::Auto,
+            };
+            if self.settings.preview == PopupPreviewMode::Off {
+                self.preview_open = false;
+            }
+        }
+        if let Some(value) = appearance_value("animations").and_then(serde_json::Value::as_bool) {
+            self.settings.animations = value;
+        }
+        if let Some(value) = appearance_value("always_on_top").and_then(serde_json::Value::as_bool)
+        {
+            self.settings.always_on_top = value;
+            self.always_on_top = value;
+            if self.visible {
+                self.ctx
+                    .send_viewport_cmd(ViewportCommand::WindowLevel(if value {
+                        WindowLevel::AlwaysOnTop
+                    } else {
+                        WindowLevel::Normal
+                    }));
+            }
+        }
+        if let Some(value) = appearance_value("show_grouped_in_main")
+            .or_else(|| snapshot.values.pointer("/groups/show_grouped_in_main"))
+            .and_then(serde_json::Value::as_bool)
+        {
+            self.settings.show_grouped_in_main = value;
+            if !value {
+                self.current_group = GroupFilter::All;
+                self.group_menu.open = false;
+            }
+        }
         if self.options.theme_override.is_none()
             && let Some(value) = popup_value("theme")
                 .or_else(|| appearance_value("theme"))
@@ -698,13 +845,37 @@ impl PopupApp {
     fn request_load(&mut self) {
         self.request_id = self.request_id.saturating_add(1);
         self.loading = true;
+        self.append_request = None;
         self.search_due = None;
-        let limit = if self.options.mock { 10_000 } else { 1_000 };
+        let limit = if self.options.mock { 10_000 } else { 500 };
         self.provider.send(ProviderCommand::Load {
             request_id: self.request_id,
             query: self.query.clone(),
             group: self.current_group,
             limit,
+            cursor: None,
+        });
+        self.request_repaint_soon();
+    }
+
+    /// Fetches the next cursor page and appends it. The popup used to request
+    /// a fixed 1000 rows, so real histories beyond 1000 were unreachable.
+    fn request_load_more(&mut self) {
+        if self.loading {
+            return;
+        }
+        let Some(cursor) = self.next_cursor.clone() else {
+            return;
+        };
+        self.request_id = self.request_id.saturating_add(1);
+        self.loading = true;
+        self.append_request = Some(self.request_id);
+        self.provider.send(ProviderCommand::Load {
+            request_id: self.request_id,
+            query: self.query.clone(),
+            group: self.current_group,
+            limit: 500,
+            cursor: Some(cursor),
         });
         self.request_repaint_soon();
     }
@@ -820,10 +991,11 @@ impl PopupApp {
             .shown_at
             .is_none_or(|shown| shown.elapsed() > Duration::from_millis(100));
         if enough_time
-            && self
-                .window_handle
-                .is_some_and(platform::primary_click_outside)
+            && self.window_handle.is_some_and(|hwnd| {
+                platform::outside_click_or_foreground_change(hwnd, self.previous_foreground)
+            })
         {
+            qa_trace("outside-click-hide");
             self.hide_popup();
         }
     }
@@ -862,7 +1034,9 @@ impl PopupApp {
             return;
         }
         if ctx.input_mut(|input| input.consume_key(Modifiers::NONE, egui::Key::F3)) {
-            self.preview_open = !self.preview_open;
+            if self.settings.preview != PopupPreviewMode::Off {
+                self.preview_open = !self.preview_open;
+            }
             return;
         }
 
@@ -1043,13 +1217,16 @@ impl PopupApp {
 
     fn paste_selected(&mut self, mode: PasteMode) {
         let ids = self.selected_ids();
-        for clip_id in ids {
-            self.provider
-                .send(ProviderCommand::Action(ProviderAction::Paste {
-                    clip_id,
-                    mode,
-                }));
+        if ids.is_empty() {
+            return;
         }
+        // One batch request: the core's PasteEngine::paste_many owns ordering,
+        // stop-on-failure, the multi-paste interval, and write suppression.
+        self.provider
+            .send(ProviderCommand::Action(ProviderAction::Paste {
+                clip_ids: ids,
+                mode,
+            }));
     }
 
     fn paste_first_ten(&mut self, number: u8) {
@@ -1058,7 +1235,7 @@ impl PopupApp {
             let clip_id = clip.id;
             self.provider
                 .send(ProviderCommand::Action(ProviderAction::Paste {
-                    clip_id,
+                    clip_ids: vec![clip_id],
                     mode: PasteMode::Original,
                 }));
         }
@@ -1119,7 +1296,7 @@ impl PopupApp {
                 if let Some(clip) = self.items.get(index) {
                     self.provider
                         .send(ProviderCommand::Action(ProviderAction::Paste {
-                            clip_id: clip.id,
+                            clip_ids: vec![clip.id],
                             mode,
                         }));
                 }
@@ -1174,9 +1351,11 @@ impl PopupApp {
                 self.paste_buffer(slot, plain_text);
             }
             MenuCommand::Preview { index } => {
-                self.selection.primary = Some(index);
-                self.selection.anchor = Some(index);
-                self.preview_open = true;
+                if self.settings.preview != PopupPreviewMode::Off {
+                    self.selection.primary = Some(index);
+                    self.selection.anchor = Some(index);
+                    self.preview_open = true;
+                }
             }
         }
     }
@@ -1200,20 +1379,22 @@ impl PopupApp {
                             .strong()
                             .color(self.palette.text_primary),
                     );
-                    let group_response = icon_button(
-                        ui,
-                        dimension::control_height(mode) - dimension::space_xs(mode),
-                        Icon::Folder,
-                        self.palette,
-                        self.group_menu.open,
-                        self.locale.text(key::GROUP_CHOOSE),
-                        radius::control(mode),
-                    );
-                    if group_response.clicked() {
-                        self.group_menu.open = !self.group_menu.open;
-                        self.group_menu.position = group_response.rect.left_bottom()
-                            + vec2(0.0, dimension::space_xs(mode));
-                        group_button_pos = Some(self.group_menu.position);
+                    if self.settings.show_grouped_in_main {
+                        let group_response = icon_button(
+                            ui,
+                            dimension::control_height(mode) - dimension::space_xs(mode),
+                            Icon::Folder,
+                            self.palette,
+                            self.group_menu.open,
+                            self.locale.text(key::GROUP_CHOOSE),
+                            radius::control(mode),
+                        );
+                        if group_response.clicked() {
+                            self.group_menu.open = !self.group_menu.open;
+                            self.group_menu.position = group_response.rect.left_bottom()
+                                + vec2(0.0, dimension::space_xs(mode));
+                            group_button_pos = Some(self.group_menu.position);
+                        }
                     }
                     let path = self.group_path();
                     if !path.is_empty() {
@@ -1476,7 +1657,7 @@ impl PopupApp {
     }
 
     fn draw_preview(&mut self, ctx: &egui::Context) {
-        if !self.preview_open {
+        if !self.preview_open || self.settings.preview == PopupPreviewMode::Off {
             return;
         }
         let mode = self.mode();
@@ -1643,7 +1824,8 @@ impl PopupApp {
                     }
                     return;
                 }
-                let row_height = clip_row_height(mode);
+                let row_height = self.row_height();
+                let item_count = self.items.len();
                 let viewport_height = ui.available_height();
                 let mut interaction = None;
                 let mut menu_command = None;
@@ -1697,6 +1879,14 @@ impl PopupApp {
                     }
                 });
                 self.rendered_rows = rendered_rows;
+                if self.next_cursor.is_some()
+                    && self
+                        .selection
+                        .primary
+                        .is_some_and(|index| index.saturating_add(20) >= item_count)
+                {
+                    self.load_more_due = true;
+                }
                 if let Some(interaction) = interaction {
                     match interaction {
                         ListInteraction::Select { index, modifiers } => {
@@ -1719,6 +1909,10 @@ impl PopupApp {
     }
 
     fn draw_group_menu(&mut self, ctx: &egui::Context) {
+        if !self.settings.show_grouped_in_main {
+            self.group_menu.open = false;
+            return;
+        }
         if !self.group_menu.open {
             return;
         }
@@ -1898,7 +2092,7 @@ impl PopupApp {
                 )));
             self.ctx.request_repaint();
         } else if matches!(capture.stage, CaptureStage::Requested(_)) {
-            self.ctx.request_repaint_after(Duration::from_millis(50));
+            self.ctx.request_repaint();
         }
     }
 
@@ -1946,7 +2140,7 @@ impl PopupApp {
     }
 
     fn tick_bench_scroll(&mut self, update_started: Instant) {
-        let row_height = clip_row_height(self.mode());
+        let row_height = self.row_height();
         let item_count = self.items.len();
         let Some(bench) = self.bench_scroll.as_mut() else {
             return;
@@ -2062,8 +2256,12 @@ impl eframe::App for PopupApp {
         let now = Instant::now();
         let external_dt = now.saturating_duration_since(self.last_frame_at);
         self.last_frame_at = now;
-        if self.window_handle.is_none() {
-            self.window_handle = native_window(frame);
+        if self.window_handle.is_none()
+            && let Some(hwnd) = native_window(frame)
+        {
+            self.window_handle = Some(hwnd);
+            self.window_handle_slot
+                .store(hwnd.0 as isize, Ordering::SeqCst);
         }
         self.style_window_once();
         if let Some(scale) = self.options.dpi_scale_override {
@@ -2083,11 +2281,25 @@ impl eframe::App for PopupApp {
         self.enforce_hidden_unless_requested();
 
         apply_visuals(ctx, self.theme, self.palette);
+        let font_scale = f32::from(self.settings.font_scale) / 100.0;
+        let animations = self.settings.animations;
+        ctx.style_mut(|style| {
+            for font in style.text_styles.values_mut() {
+                font.size *= font_scale;
+            }
+            if !animations {
+                style.animation_time = 0.0;
+            }
+        });
         self.draw_title(ctx);
         self.draw_search(ctx);
         self.draw_status(ctx);
         self.draw_preview(ctx);
         self.draw_list(ctx);
+        if self.load_more_due {
+            self.load_more_due = false;
+            self.request_load_more();
+        }
         self.draw_group_menu(ctx);
         self.draw_delete_modal(ctx);
         self.record_first_frame();
@@ -2101,8 +2313,18 @@ impl eframe::App for PopupApp {
                 last.1 = external_dt.as_secs_f32() * 1000.0;
             }
         }
-        if !self.visible {
-            ctx.request_repaint_after(Duration::from_millis(250));
+        if self.visible {
+            // Outside-click and focus-loss hiding are polled Win32 state, so
+            // the visible-but-inactive popup needs frames even when egui has
+            // no input to process. Without this the first outside click could
+            // never be observed.
+            if self.settings.hide_on_focus_loss && !self.user_activated {
+                ctx.request_repaint_after(Duration::from_millis(100));
+            }
+        } else {
+            // IPC events call `request_repaint`; this is only a safety net for
+            // a lost wake, so keep the idle cadence low (was 250 ms).
+            ctx.request_repaint_after(Duration::from_secs(1));
         }
     }
 }
@@ -2700,10 +2922,6 @@ fn panel_frame(fill: Color32) -> egui::Frame {
     egui::Frame::new().fill(fill)
 }
 
-fn clip_row_height(mode: Mode) -> f32 {
-    dimension::row_height(mode) * 1.5
-}
-
 fn install_fonts(ctx: &egui::Context) -> bool {
     let mut fonts = FontDefinitions::default();
     let candidates = [
@@ -2803,17 +3021,94 @@ fn resize_for_options(ctx: &egui::Context, hwnd: HWND, options: &PopupOptions, t
     }
 }
 
+/// Connects to the core and completes the protocol handshake before the
+/// renderer/window is created. On a cold start this moves IPC readiness ahead
+/// of GPU/font initialization, which is what the hotkey path waits for.
+pub fn prewarm_ipc() -> Option<PipeClient> {
+    let started = Instant::now();
+    let name = pipe_name().ok()?;
+    let client = PipeClient::connect(&name).ok()?;
+    client.send(1, &hello_request(ClientKind::Popup)).ok()?;
+    match client.read_response().ok()? {
+        Response::HelloAck { .. } => {
+            qa_trace(&format!(
+                "hello-ack-prewarm-{}us",
+                started.elapsed().as_micros()
+            ));
+            Some(client)
+        }
+        _ => None,
+    }
+}
+
+/// Polls Win32 input state on a background thread. egui may stop painting a
+/// visible-but-inactive layered window (occlusion, no input), so outside-click
+/// and foreground-change hiding cannot rely on an update frame.
+fn spawn_outside_click_watcher(
+    ctx: egui::Context,
+    sender: Sender<PopupSignal>,
+    visible: Arc<AtomicBool>,
+    handle: Arc<AtomicIsize>,
+) {
+    let _ = thread::Builder::new()
+        .name("ditto-popup-outside-watch".to_string())
+        .spawn(move || {
+            loop {
+                thread::sleep(Duration::from_millis(30));
+                if !visible.load(Ordering::SeqCst) {
+                    continue;
+                }
+                let raw = handle.load(Ordering::SeqCst);
+                if raw == 0 {
+                    continue;
+                }
+                let hwnd = HWND(raw as *mut c_void);
+                if platform::primary_click_outside(hwnd) {
+                    qa_trace("watcher-outside-click");
+                    let _ = sender.send(PopupSignal::HideLocal);
+                    ctx.request_repaint();
+                    thread::sleep(Duration::from_millis(400));
+                }
+            }
+        });
+}
+
+/// Sends a request-id-tagged HidePopup on a short-lived control connection.
+/// This keeps the core's `popup_visible` state exact after a local hide.
+fn notify_hide_sync() {
+    let _ = thread::Builder::new()
+        .name("ditto-popup-hide-sync".to_string())
+        .spawn(|| {
+            let Ok(name) = pipe_name() else {
+                return;
+            };
+            let Ok(client) = PipeClient::connect(&name) else {
+                return;
+            };
+            if client.send(9, &Request::HidePopup).is_ok() {
+                let _ = client.read_response();
+            }
+        });
+}
+
 fn spawn_ipc_client(
     ctx: egui::Context,
     sender: Sender<PopupSignal>,
     native_handle: Arc<AtomicIsize>,
+    preconnected: Option<PipeClient>,
 ) {
     thread::Builder::new()
         .name("ditto-popup-ipc".to_string())
         .spawn(move || {
             let mut backoff = Duration::from_millis(250);
+            let mut pending = preconnected;
             loop {
-                match connect_and_read(ctx.clone(), sender.clone(), Arc::clone(&native_handle)) {
+                match connect_and_read(
+                    ctx.clone(),
+                    sender.clone(),
+                    Arc::clone(&native_handle),
+                    pending.take(),
+                ) {
                     Ok(()) => backoff = Duration::from_millis(250),
                     Err(_) => {
                         let _ = sender.send(PopupSignal::Connection(false));
@@ -2844,34 +3139,43 @@ fn connect_and_read(
     ctx: egui::Context,
     sender: Sender<PopupSignal>,
     _native_handle: Arc<AtomicIsize>,
+    preconnected: Option<PipeClient>,
 ) -> ditto_model::Result<()> {
-    let name = pipe_name()?;
-    let client = PipeClient::connect(&name)?;
-    qa_trace("connected");
-    client.send(1, &hello_request(ClientKind::Popup))?;
-    match client.read_response()? {
-        Response::HelloAck { .. } => {
-            qa_trace("hello-ack");
-            let _ = sender.send(PopupSignal::Connection(true));
-            ctx.request_repaint();
-            // A hotkey press may arrive before this client connects. The core
-            // remembers visibility so the first press is not lost.
-            client.send(2, &Request::GetPopupVisibility)?;
-            if let Response::PopupVisibility { visible: true } = client.read_response()? {
-                let _ = sender.send(PopupSignal::Show {
-                    received_at: Instant::now(),
-                });
+    let client = if let Some(client) = preconnected {
+        qa_trace("using-prewarmed-ipc");
+        let _ = sender.send(PopupSignal::Connection(true));
+        ctx.request_repaint();
+        client
+    } else {
+        let name = pipe_name()?;
+        let client = PipeClient::connect(&name)?;
+        qa_trace("connected");
+        client.send(1, &hello_request(ClientKind::Popup))?;
+        match client.read_response()? {
+            Response::HelloAck { .. } => {
+                qa_trace("hello-ack");
+                let _ = sender.send(PopupSignal::Connection(true));
                 ctx.request_repaint();
+                client
+            }
+            Response::Error { message, .. } => {
+                return Err(ditto_model::DittoError::Ipc(message));
+            }
+            _ => {
+                return Err(ditto_model::DittoError::Ipc(
+                    "unexpected response to Hello".to_string(),
+                ));
             }
         }
-        Response::Error { message, .. } => {
-            return Err(ditto_model::DittoError::Ipc(message));
-        }
-        _ => {
-            return Err(ditto_model::DittoError::Ipc(
-                "unexpected response to Hello".to_string(),
-            ));
-        }
+    };
+    // A hotkey press may arrive before this client connects. The core
+    // remembers visibility so the first press is not lost.
+    client.send(2, &Request::GetPopupVisibility)?;
+    if let Response::PopupVisibility { visible: true } = client.read_response()? {
+        let _ = sender.send(PopupSignal::Show {
+            received_at: Instant::now(),
+        });
+        ctx.request_repaint();
     }
     loop {
         match client.read_event()? {
@@ -2885,6 +3189,14 @@ fn connect_and_read(
             Event::HidePopup => {
                 qa_trace("event-hide");
                 let _ = sender.send(PopupSignal::Hide);
+                ctx.request_repaint();
+            }
+            Event::SettingsChanged { .. } => {
+                let _ = sender.send(PopupSignal::SettingsChanged);
+                ctx.request_repaint();
+            }
+            Event::ClipAdded { .. } | Event::ClipUpdated { .. } | Event::ClipDeleted { .. } => {
+                let _ = sender.send(PopupSignal::ClipsChanged);
                 ctx.request_repaint();
             }
             Event::Shutdown { .. } => {

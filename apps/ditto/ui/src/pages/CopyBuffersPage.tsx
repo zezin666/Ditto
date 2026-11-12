@@ -115,9 +115,10 @@ export function CopyBuffersPage({
   return (
     <div className="page-stack">
       <SettingsCard title={t("copyBuffers.hotkeys")}>
-        <SettingRow label={t("copyBuffers.playSound")}>
+        <SettingRow label={t("copyBuffers.playSound")} help={t("common.comingLater")}>
           <Switch
             checked={settings.copyBuffers.playSound}
+            disabled
             onChange={(_, data) =>
               onChange({
                 ...settings,

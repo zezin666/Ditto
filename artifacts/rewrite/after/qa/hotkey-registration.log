@@ -1,0 +1,13 @@
+T9 B-3 real UI verification (release, temp data root)
+1) Record Ctrl+Alt+K in Settings > Hotkeys, Apply.
+   log: global hotkey changed to Ctrl+Alt+K
+   RegisterHotKey probe: CTRL_BACKQUOTE_AVAILABLE=True CTRL_ALT_K_AVAILABLE=False
+   => old chord released, new chord owned by Ditto.
+
+2) Record Ctrl+Alt+J while another process owns Ctrl+Alt+J, Apply.
+   UI toast: "Settings could not be applied."
+   Persisted hotkeys.open_chord (read-only SQLite): "Ctrl+Alt+K"
+   RegisterHotKey probe: J_AVAILABLE=False (external owner) K_AVAILABLE=False (Ditto kept old)
+   => conflict returns an error and rolls back registration + persisted setting.
+
+Evidence screenshot: artifacts/rewrite/after/screenshots/T9-hotkey-conflict-rollback.png

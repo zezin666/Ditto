@@ -76,19 +76,37 @@ T5 `SettingsState` 与 T2 JSON 不完全同构：
 `ClipQuery` 新增 `kind`、`pinned_only`；`ClipSummary` 新增 `size_bytes`；新增 `count_clips`、`update_clip_text`。
 审查点：`summary_columns` 末尾新增列后，所有行解析索引是否一致（已有测试覆盖搜索/详情/pin/copy buffer）；`update_clip_text` 不更新 content_hash，去重语义是否可接受。
 
+## 3.6 T9 修复入口
+
+- `docs/rewrite/T9-FIX-REPORT.md`：CODE-REVIEW B-1…Nit 的逐条状态与证据索引。
+- `apps/ditto/src-tauri/src/hotkeys.rs`：chord 解析、冲突探测、原子 swap/回滚。
+- `apps/ditto-popup/src/app.rs`：Show 前目标快照、本地 Hide 同步、后台外部点击 watcher、cursor 分页。
+- `apps/ditto/src-tauri/src/core_service.rs`：显式目标粘贴、retention timer、暂停/捕获重配置。
+- `crates/ditto-win/src/lib.rs`：overlapped IPC 写超时、慢客户端断开、popup 崩溃可见性清理、ACL。
+- `tools/qa/popup-hide-sync.ps1`、`tools/qa/paging-check.ps1`：T9 新增的可重复 QA。
+
 ## 4. 复现步骤
 
 ### 4.1 构建与质量门
 ```powershell
+# Fresh worktree: build sidecars before any clippy/test that compiles the Tauri app.
+cargo build -p ditto-popup-app -p ditto-uac-helper-app
+pwsh scripts/prepare-sidecars.ps1 -Profile debug
+npm ci --prefix apps/ditto/ui
+npm run build --prefix apps/ditto/ui
 cargo fmt --all --check
 cargo clippy --workspace --all-targets --locked -- -D warnings
 cargo test --workspace --locked
-npm run build --prefix apps/ditto/ui
 cargo build --release -p ditto-popup-app -p ditto-uac-helper-app --locked
 pwsh scripts/prepare-sidecars.ps1 -Profile release
 cd apps/ditto; npx --no-install tauri build
 pwsh scripts/package-portable.ps1 -Profile release
 ```
+
+`apps/ditto/src-tauri/tauri.conf.json` lists `externalBin` as a required input;
+`cargo clippy`/`cargo build` on a fresh worktree fail with
+`resource path binaries\DittoPopup-x86_64-pc-windows-msvc.exe doesn't exist`
+until the sidecar staging step above runs. CI uses the same order.
 
 ### 4.2 合成 IPC/性能冒烟
 ```powershell

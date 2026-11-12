@@ -75,14 +75,18 @@ impl ClipboardSource for WindowsClipboardSource {
         let mut formats = Vec::new();
         let mut warnings = Vec::new();
         let mut count = 0_u32;
+        let mut total_bytes = 0_usize;
         loop {
             format = unsafe { EnumClipboardFormats(format) };
             if format == 0 {
                 break;
             }
             count += 1;
-            if count > 1_024 {
-                warnings.push("clipboard contains more than 1024 formats".to_string());
+            if count > self.config.max_formats as u32 {
+                warnings.push(format!(
+                    "clipboard contains more than {} formats",
+                    self.config.max_formats
+                ));
                 break;
             }
             let name = clipboard_format_name(format);
@@ -97,23 +101,39 @@ impl ClipboardSource for WindowsClipboardSource {
             if is_non_global_format(format) {
                 continue;
             }
-            let limit = if is_image_format(&name) {
+            if name == "CF_HDROP" && !self.config.capture_files {
+                continue;
+            }
+            let image = is_image_format(&name);
+            if image && !self.config.capture_images {
+                continue;
+            }
+            let limit = if image {
                 self.config.max_image_bytes
             } else {
                 self.config.max_clip_bytes
             };
-            match read_global_format(format) {
+            let remaining = self.config.max_total_bytes.saturating_sub(total_bytes);
+            if remaining == 0 {
+                warnings.push(format!(
+                    "clipboard exceeded the {} byte total capture budget",
+                    self.config.max_total_bytes
+                ));
+                break;
+            }
+            let budget = limit.min(remaining);
+            match read_global_format(format, budget) {
                 Ok(bytes) if bytes.is_empty() => {
                     warnings.push(format!("{name} was empty"));
                 }
-                Ok(bytes) if bytes.len() > limit => {
-                    warnings.push(format!("{name} exceeded the {} byte limit", limit));
+                Ok(bytes) => {
+                    total_bytes += bytes.len();
+                    formats.push(RawClipboardFormat {
+                        name,
+                        data: bytes,
+                        is_primary: false,
+                    });
                 }
-                Ok(bytes) => formats.push(RawClipboardFormat {
-                    name,
-                    data: bytes,
-                    is_primary: false,
-                }),
                 Err(error) => {
                     warnings.push(format!("{name}: {error}"));
                 }
@@ -124,8 +144,16 @@ impl ClipboardSource for WindowsClipboardSource {
         }
         Ok(Some(RawClipboardSnapshot {
             formats,
-            source_app: foreground.app,
-            source_window_title: foreground.title,
+            source_app: self
+                .config
+                .record_source_app
+                .then_some(foreground.app)
+                .flatten(),
+            source_window_title: self
+                .config
+                .record_source_app
+                .then_some(foreground.title)
+                .flatten(),
             warnings,
         }))
     }
@@ -146,8 +174,19 @@ impl ClipboardMonitor {
         config: CaptureConfig,
         callback: impl Fn(CapturedClip) + Send + Sync + 'static,
     ) -> ClipboardResult<Self> {
+        Self::start_with_suppression_config(config, Arc::new(WriteSuppression::default()), callback)
+    }
+
+    /// Starts the monitor with an existing suppression slot. Reconfiguring
+    /// capture (settings Apply, pause/resume) reuses the same slot so paste
+    /// suppression keeps working across monitor restarts.
+    pub fn start_with_suppression_config(
+        config: CaptureConfig,
+        suppression: Arc<WriteSuppression>,
+        callback: impl Fn(CapturedClip) + Send + Sync + 'static,
+    ) -> ClipboardResult<Self> {
         let source = WindowsClipboardSource::new(config.clone());
-        Self::start_with_source(source, config, callback)
+        Self::start_with_source_and_suppression(source, config, suppression, callback)
     }
 
     pub fn start_with_source<S>(
@@ -158,7 +197,23 @@ impl ClipboardMonitor {
     where
         S: ClipboardSource + 'static,
     {
-        let suppression = Arc::new(WriteSuppression::default());
+        Self::start_with_source_and_suppression(
+            source,
+            config,
+            Arc::new(WriteSuppression::default()),
+            callback,
+        )
+    }
+
+    pub fn start_with_source_and_suppression<S>(
+        source: S,
+        config: CaptureConfig,
+        suppression: Arc<WriteSuppression>,
+        callback: impl Fn(CapturedClip) + Send + Sync + 'static,
+    ) -> ClipboardResult<Self>
+    where
+        S: ClipboardSource + 'static,
+    {
         let source: Box<dyn ClipboardSource> = Box::new(source);
         let engine = CaptureEngine::new(source, config.clone(), Arc::clone(&suppression));
         let callback = Arc::new(callback);
@@ -422,7 +477,7 @@ fn open_clipboard_with_retry() -> ClipboardResult<()> {
     Err(ClipboardError::Occupied)
 }
 
-fn read_global_format(format: u32) -> ClipboardResult<Vec<u8>> {
+fn read_global_format(format: u32, max_bytes: usize) -> ClipboardResult<Vec<u8>> {
     let handle = unsafe { GetClipboardData(format) }
         .map_err(|error| ClipboardError::ReadFailed(error.to_string()))?;
     if handle == HANDLE::default() {
@@ -434,6 +489,15 @@ fn read_global_format(format: u32) -> ClipboardResult<Vec<u8>> {
     let size = unsafe { GlobalSize(memory) };
     if size == 0 {
         return Ok(Vec::new());
+    }
+    if size > max_bytes {
+        // Reject before GlobalLock/copy so an oversized clipboard object does
+        // not allocate a second large buffer.
+        return Err(ClipboardError::TooLarge {
+            format: format!("CF_{format}"),
+            size,
+            limit: max_bytes,
+        });
     }
     let pointer = unsafe { GlobalLock(memory) };
     if pointer.is_null() {
@@ -454,7 +518,7 @@ fn is_excluded_format_set() -> ClipboardResult<bool> {
 }
 
 fn global_dword(format: u32) -> Option<u32> {
-    let bytes = read_global_format(format).ok()?;
+    let bytes = read_global_format(format, 4 * 1024).ok()?;
     Some(u32::from_le_bytes(bytes.get(0..4)?.try_into().ok()?))
 }
 

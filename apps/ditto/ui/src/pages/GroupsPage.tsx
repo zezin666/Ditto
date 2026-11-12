@@ -241,9 +241,10 @@ export function GroupsPage({
             ariaLabel={t("groups.defaultGroup")}
           />
         </SettingRow>
-        <SettingRow label={t("groups.promptForName")}>
+        <SettingRow label={t("groups.promptForName")} help={t("common.comingLater")}>
           <Switch
             checked={settings.groups.promptForName}
+            disabled
             onChange={(_, data) => patchGroups({ promptForName: data.checked })}
             aria-label={t("groups.promptForName")}
           />

@@ -71,10 +71,13 @@ Ditto $version portable (x86_64)
 
 1. Extract this folder to a writable location.
 2. Run Ditto.exe. The portable marker file keeps data in <exe_dir>\Data.
-3. Press Ctrl+Alt+D for the popup, or use the tray icon.
-   Ctrl+Alt+Shift+D is the fallback when the default hotkey is taken.
+3. Press Ctrl+` for the popup, or use the tray icon. The chord is configurable
+   in Settings; Ctrl+Alt+D / Ctrl+Alt+Shift+D are development fallbacks.
 4. DittoPopup.exe and DittoUacHelper.exe must stay beside Ditto.exe.
-5. Settings open from the tray menu. The settings window is created on demand.
+5. Settings open from the tray menu. The settings window is created on demand
+   and requires the Microsoft Edge WebView2 Evergreen Runtime:
+   https://go.microsoft.com/fwlink/p/?LinkId=2124703
+   If it is missing, Ditto shows a native message and keeps running headless.
 6. Binaries are unsigned, so Windows SmartScreen or Defender may warn.
 
 Privacy: this archive contains no clipboard history, no settings,

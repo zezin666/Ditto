@@ -188,18 +188,20 @@ export function HotkeyRecorder({
   actionLabel,
   onChange,
   compact = false,
+  disabled = false,
 }: {
   value: string;
   actionLabel: string;
   onChange: (value: string) => void;
   compact?: boolean;
+  disabled?: boolean;
 }) {
   const { t } = useI18n();
   const [recording, setRecording] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (!recording) {
+    if (!recording || disabled) {
       return;
     }
     const handleKeyDown = (event: globalThis.KeyboardEvent) => {
@@ -236,6 +238,7 @@ export function HotkeyRecorder({
         aria-label={t("hotkeys.record")}
         title={recording ? t("hotkeys.recording") : t("hotkeys.recordHint", { action: actionLabel })}
         className={recording ? "recording-button" : ""}
+        disabled={disabled}
         onClick={() => setRecording((current) => !current)}
       >
         {recording ? t("hotkeys.recording") : compact ? "" : t("hotkeys.record")}
@@ -246,6 +249,7 @@ export function HotkeyRecorder({
           icon={<DismissRegular />}
           aria-label={t("hotkeys.clearBinding")}
           title={t("hotkeys.clearBinding")}
+          disabled={disabled}
           onClick={() => onChange("")}
         />
       ) : null}

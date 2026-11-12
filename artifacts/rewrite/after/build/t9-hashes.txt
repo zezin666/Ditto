@@ -1,0 +1,6 @@
+T9 release artifacts (signtool verify /pa: No signature found)
+Ditto.exe | 11382272 | 3bf1e6e629ac5027b5b529dd48a93dd399b5552d13e6f35ef2fa8b0372ba66dc | NotSigned
+DittoPopup.exe | 5007872 | 4466e5d903eaae62b6d7219f10d635eedd6642cd98e6180cf6b801384b018323 | NotSigned
+DittoUacHelper.exe | 272896 | ec5b7eaf2dd18d6626d939d0d545fcad6475c0963674b85857a53ddf86b52705 | NotSigned
+Ditto_0.1.0_x64-setup.exe | 4870054 | 35ee43d7e8b7dfa20204b3b5272b9ed5035d0338bc7c6fb000932f5535c984d5 | NotSigned
+Ditto-0.1.0-x64-portable.zip | 6855700 | c6523ae1f14ff373227ae5d41dca2e0e732c82093bca5d36f9cf4a7cdc0b9304 | n/a

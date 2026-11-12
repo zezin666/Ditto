@@ -1,4 +1,5 @@
 use std::{
+    collections::BTreeSet,
     fs::{self, File, OpenOptions},
     io::Read,
     path::{Path, PathBuf},
@@ -269,7 +270,9 @@ fn create_package(
             fs::remove_file(&destination)?;
         }
         fs::rename(temp_zip, &destination)?;
-        verify_package(&destination)
+        let report = verify_package(&destination);
+        remove_sqlite_sidecars(&destination);
+        report
     } else {
         if destination.exists() {
             if !options.replace_existing {
@@ -283,7 +286,9 @@ fn create_package(
         } else {
             fs::rename(&staging, &destination)?;
         }
-        verify_package(&destination)
+        let report = verify_package(&destination);
+        remove_sqlite_sidecars(&destination);
+        report
     }
 }
 
@@ -309,6 +314,7 @@ fn build_package(source_data_root: &Path, staging: &Path, kind: &str) -> Migrati
     let schema_version: u32 =
         connection.pragma_query_value(None, "user_version", |row| row.get(0))?;
     drop(connection);
+    remove_sqlite_sidecars(staging);
     let manifest = Manifest {
         kind: kind.to_string(),
         format_version: PACKAGE_FORMAT_VERSION,
@@ -383,6 +389,7 @@ fn verify_package_dir(root: &Path, display_path: &Path) -> MigrationResult<Packa
             "manifest counts differ from package database".into(),
         ));
     }
+    verify_no_extra_files(root, &manifest)?;
     Ok(PackageReport {
         status: "verified".into(),
         package_path: display_path.display().to_string(),
@@ -393,6 +400,44 @@ fn verify_package_dir(root: &Path, display_path: &Path) -> MigrationResult<Packa
         files_verified,
         warnings: Vec::new(),
     })
+}
+
+fn remove_sqlite_sidecars(root: &Path) {
+    for name in ["ditto.db-shm", "ditto.db-wal", "ditto.db-journal"] {
+        let _ = fs::remove_file(root.join(name));
+    }
+}
+
+/// A package may contain only `manifest.json`, `ditto.db`, and the files
+/// declared under `blobs/` and `thumbs/`. Anything else could smuggle
+/// unverified content into the data root during import.
+fn verify_no_extra_files(root: &Path, manifest: &Manifest) -> MigrationResult<()> {
+    let mut allowed = BTreeSet::new();
+    allowed.insert("manifest.json".to_string());
+    allowed.insert(manifest.database.path.clone());
+    // SQLite may create these transient files while the package database is
+    // opened read-only; they are not package content.
+    for sidecar in ["ditto.db-shm", "ditto.db-wal", "ditto.db-journal"] {
+        allowed.insert(sidecar.to_string());
+    }
+    for digest in manifest.blobs.iter().chain(&manifest.thumbs) {
+        allowed.insert(digest.path.replace('\\', "/"));
+    }
+    let mut files = Vec::new();
+    collect_files(root, &mut files)?;
+    for file in files {
+        let relative = file
+            .strip_prefix(root)
+            .map_err(|_| MigrationError::Invalid("package path escaped root".into()))?
+            .to_string_lossy()
+            .replace('\\', "/");
+        if !allowed.contains(&relative) {
+            return Err(MigrationError::Invalid(format!(
+                "package contains an undeclared file: {relative}"
+            )));
+        }
+    }
+    Ok(())
 }
 
 fn open_package_database(root: &Path) -> MigrationResult<Connection> {
@@ -810,5 +855,21 @@ mod tests {
         .expect("write manifest");
         let error = verify_package(&package).expect_err("hash mismatch");
         assert!(error.to_string().contains("hash mismatch"));
+    }
+
+    #[test]
+    fn undeclared_package_files_are_rejected() {
+        let temp = TempDir::new().expect("temp");
+        let data = temp.path().join("data");
+        let storage = Storage::open_data_root(&data).expect("storage");
+        storage
+            .insert_clip(&synthetic_clip("extra file guard"), false)
+            .expect("insert");
+        drop(storage);
+        let package = temp.path().join("export");
+        create_export(&data, &package, &ExportOptions::default()).expect("export");
+        fs::write(package.join("evil.exe"), b"not part of the manifest").expect("extra file");
+        let error = verify_package(&package).expect_err("extra file must be rejected");
+        assert!(error.to_string().contains("undeclared file"));
     }
 }

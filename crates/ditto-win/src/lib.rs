@@ -23,8 +23,8 @@ use windows::{
     Win32::{
         Foundation::{
             CloseHandle, DUPLICATE_SAME_ACCESS, DuplicateHandle, ERROR_ALREADY_EXISTS,
-            ERROR_BROKEN_PIPE, ERROR_PIPE_CONNECTED, GENERIC_READ, GENERIC_WRITE, GetLastError,
-            HANDLE, LocalFree, WAIT_OBJECT_0,
+            ERROR_BROKEN_PIPE, ERROR_IO_PENDING, ERROR_PIPE_CONNECTED, GENERIC_READ, GENERIC_WRITE,
+            GetLastError, HANDLE, LocalFree, WAIT_OBJECT_0, WAIT_TIMEOUT,
         },
         Graphics::Gdi::InvalidateRect,
         Security::{
@@ -36,33 +36,50 @@ use windows::{
         },
         Storage::FileSystem::{
             CreateFileW, FILE_ATTRIBUTE_NORMAL, FILE_FLAG_FIRST_PIPE_INSTANCE,
-            FILE_FLAGS_AND_ATTRIBUTES, FILE_SHARE_MODE, OPEN_EXISTING, PIPE_ACCESS_DUPLEX,
-            ReadFile, WriteFile,
+            FILE_FLAG_OVERLAPPED, FILE_FLAGS_AND_ATTRIBUTES, FILE_SHARE_MODE, OPEN_EXISTING,
+            PIPE_ACCESS_DUPLEX, ReadFile, WriteFile,
         },
-        System::Pipes::{
-            ConnectNamedPipe, CreateNamedPipeW, PIPE_READMODE_BYTE, PIPE_REJECT_REMOTE_CLIENTS,
-            PIPE_TYPE_BYTE, PIPE_WAIT, PeekNamedPipe, WaitNamedPipeW,
+        System::{
+            Diagnostics::ToolHelp::{
+                CreateToolhelp32Snapshot, PROCESSENTRY32W, Process32FirstW, Process32NextW,
+                TH32CS_SNAPPROCESS,
+            },
+            IO::{CancelIoEx, GetOverlappedResult, OVERLAPPED},
+            Pipes::{
+                ConnectNamedPipe, CreateNamedPipeW, PIPE_READMODE_BYTE, PIPE_REJECT_REMOTE_CLIENTS,
+                PIPE_TYPE_BYTE, PIPE_WAIT, PeekNamedPipe, WaitNamedPipeW,
+            },
+            Registry::{
+                HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE, RRF_RT_REG_DWORD, RRF_RT_REG_SZ,
+                RegGetValueW,
+            },
+            Threading::{
+                CreateEventW, GetCurrentProcess, INFINITE, OpenProcessToken, SetEvent,
+                WaitForSingleObject,
+            },
         },
-        System::Registry::{HKEY_CURRENT_USER, RRF_RT_REG_DWORD, RegGetValueW},
-        System::Threading::{
-            CreateEventW, GetCurrentProcess, INFINITE, OpenProcessToken, SetEvent,
-            WaitForSingleObject,
-        },
-        UI::Input::KeyboardAndMouse::{
-            HOT_KEY_MODIFIERS, MOD_NOREPEAT, RegisterHotKey, UnregisterHotKey,
-        },
-        UI::WindowsAndMessaging::{
-            GWL_EXSTYLE, GetWindowLongPtrW, HWND_TOPMOST, LWA_ALPHA, SW_SHOWNOACTIVATE,
-            SWP_NOACTIVATE, SWP_NOMOVE, SWP_NOSIZE, SWP_NOZORDER, SWP_SHOWWINDOW,
-            SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, ShowWindow, WS_EX_LAYERED,
-            WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW, WS_EX_TRANSPARENT,
+        UI::{
+            Input::KeyboardAndMouse::{
+                HOT_KEY_MODIFIERS, MOD_NOREPEAT, RegisterHotKey, UnregisterHotKey,
+            },
+            WindowsAndMessaging::{
+                GWL_EXSTYLE, GetWindowLongPtrW, HWND_TOPMOST, LWA_ALPHA, MB_ICONWARNING, MB_OK,
+                MessageBoxW, SW_SHOWNOACTIVATE, SWP_NOACTIVATE, SWP_NOMOVE, SWP_NOSIZE,
+                SWP_NOZORDER, SWP_SHOWWINDOW, SetLayeredWindowAttributes, SetWindowLongPtrW,
+                SetWindowPos, ShowWindow, WS_EX_LAYERED, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW,
+                WS_EX_TRANSPARENT,
+            },
         },
     },
-    core::{PWSTR, w},
+    core::{PCWSTR, PWSTR, w},
 };
 
 const MAX_INSTANCES: u32 = 32;
 const PIPE_BUFFER_SIZE: u32 = 64 * 1024;
+/// A slow or hostile pipe client must never block the core's capture callback.
+/// Overlapped writes are cancelled after this budget and the client is dropped.
+const WRITE_TIMEOUT_MS: u32 = 250;
+const WEBVIEW2_CLIENT_KEY: &str = "{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}";
 
 /// Returns the canonical SID string for the current process token.
 pub fn current_user_sid_string() -> ditto_model::Result<String> {
@@ -209,6 +226,142 @@ pub fn hotkey_available(modifiers: u32, virtual_key: u32) -> bool {
     }
 }
 
+/// Returns the installed WebView2 Runtime version, if any.
+///
+/// The Evergreen bootstrapper writes the client version under `pv` for both
+/// machine-wide and per-user installs; the machine-wide key is redirected for
+/// 32-bit processes, so both registry views are checked.
+pub fn webview2_version() -> Option<String> {
+    let machine_views = [
+        format!(r"SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{WEBVIEW2_CLIENT_KEY}"),
+        format!(r"SOFTWARE\Microsoft\EdgeUpdate\Clients\{WEBVIEW2_CLIENT_KEY}"),
+    ];
+    let user_view = format!(r"Software\Microsoft\EdgeUpdate\Clients\{WEBVIEW2_CLIENT_KEY}");
+    for key in &machine_views {
+        if let Some(version) = registry_string(HKEY_LOCAL_MACHINE, key, "pv") {
+            return Some(version);
+        }
+    }
+    registry_string(HKEY_CURRENT_USER, &user_view, "pv")
+}
+
+/// True when either the Evergreen Runtime is registered or an installed
+/// `msedgewebview2.exe` exists. Registry data can be absent on stripped images,
+/// so the install directory is also checked.
+pub fn webview2_available() -> bool {
+    if webview2_version().is_some() {
+        return true;
+    }
+    for root in ["ProgramFiles(x86)", "ProgramFiles", "LOCALAPPDATA"] {
+        let Some(base) = std::env::var_os(root) else {
+            continue;
+        };
+        let candidate = std::path::PathBuf::from(base)
+            .join("Microsoft")
+            .join("EdgeWebView")
+            .join("Application");
+        if candidate
+            .read_dir()
+            .ok()
+            .into_iter()
+            .flatten()
+            .filter_map(Result::ok)
+            .any(|entry| entry.path().join("msedgewebview2.exe").is_file())
+        {
+            return true;
+        }
+    }
+    false
+}
+
+fn registry_string(
+    root: windows::Win32::System::Registry::HKEY,
+    key: &str,
+    value: &str,
+) -> Option<String> {
+    let key_wide = wide(key);
+    let value_wide = wide(value);
+    let mut buffer = [0_u16; 128];
+    let mut size = std::mem::size_of_val(&buffer) as u32;
+    let status = unsafe {
+        RegGetValueW(
+            root,
+            PCWSTR(key_wide.as_ptr()),
+            PCWSTR(value_wide.as_ptr()),
+            RRF_RT_REG_SZ,
+            None,
+            Some(buffer.as_mut_ptr().cast()),
+            Some(&mut size),
+        )
+    };
+    if status.is_err() || size == 0 {
+        return None;
+    }
+    let units = size as usize / 2;
+    let end = buffer[..units.min(buffer.len())]
+        .iter()
+        .position(|unit| *unit == 0)
+        .unwrap_or(units.min(buffer.len()));
+    Some(String::from_utf16_lossy(&buffer[..end]))
+}
+
+/// Shows a native blocking message box. Used when WebView2 is unavailable and
+/// the Settings window cannot be created.
+pub fn show_message_box(title: &str, text: &str, warning: bool) {
+    let title_wide = wide(title);
+    let text_wide = wide(text);
+    let flags = if warning {
+        MB_OK | MB_ICONWARNING
+    } else {
+        MB_OK
+    };
+    unsafe {
+        let _ = MessageBoxW(
+            None,
+            PCWSTR(text_wide.as_ptr()),
+            PCWSTR(title_wide.as_ptr()),
+            flags,
+        );
+    }
+}
+
+/// Counts direct `msedgewebview2.exe` child processes for diagnostics.
+pub fn webview_process_count() -> usize {
+    let snapshot = unsafe { CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0) };
+    let Ok(snapshot) = snapshot else {
+        return 0;
+    };
+    let _snapshot = OwnedHandle(snapshot);
+    let mut entry = PROCESSENTRY32W {
+        dwSize: std::mem::size_of::<PROCESSENTRY32W>() as u32,
+        ..Default::default()
+    };
+    let mut count = 0_usize;
+    let current = std::process::id();
+    if unsafe { Process32FirstW(snapshot, &mut entry) }.is_err() {
+        return 0;
+    }
+    loop {
+        if entry.th32ParentProcessID == current {
+            let name = String::from_utf16_lossy(
+                &entry.szExeFile[..entry
+                    .szExeFile
+                    .iter()
+                    .position(|unit| *unit == 0)
+                    .unwrap_or(entry.szExeFile.len())],
+            );
+            if name.eq_ignore_ascii_case("msedgewebview2.exe") {
+                count += 1;
+            }
+        }
+        entry.dwSize = std::mem::size_of::<PROCESSENTRY32W>() as u32;
+        if unsafe { Process32NextW(snapshot, &mut entry) }.is_err() {
+            break;
+        }
+    }
+    count
+}
+
 /// Hide a pre-warmed top-level window from the taskbar without activation.
 pub fn make_popup_window(hwnd: windows::Win32::Foundation::HWND) -> ditto_model::Result<()> {
     if hwnd.0.is_null() {
@@ -303,6 +456,7 @@ pub struct PipeServer {
     clients: Arc<Mutex<HashMap<u64, Arc<Connection>>>>,
     next_event: Arc<AtomicU64>,
     popup_visible: Arc<AtomicBool>,
+    popup_clients: Arc<AtomicU64>,
 }
 
 pub type RequestHandler = Arc<dyn Fn(&Request) -> Response + Send + Sync>;
@@ -323,10 +477,12 @@ impl PipeServer {
         let name = name.to_string();
         let clients = Arc::new(Mutex::new(HashMap::<u64, Arc<Connection>>::new()));
         let popup_visible = Arc::new(AtomicBool::new(false));
+        let popup_clients = Arc::new(AtomicU64::new(0));
         let first = Connection::create_server_instance(&name, true)?;
         let clients_for_thread = Arc::clone(&clients);
         let handler_for_thread = handler.clone();
         let visible_for_thread = Arc::clone(&popup_visible);
+        let popup_clients_for_thread = Arc::clone(&popup_clients);
 
         thread::Builder::new()
             .name("ditto-ipc-server".to_string())
@@ -337,6 +493,7 @@ impl PipeServer {
                     clients_for_thread,
                     handler_for_thread,
                     visible_for_thread,
+                    popup_clients_for_thread,
                 )
             })
             .map_err(|error| ditto_model::DittoError::Ipc(error.to_string()))?;
@@ -345,6 +502,7 @@ impl PipeServer {
             clients,
             next_event: Arc::new(AtomicU64::new(1)),
             popup_visible,
+            popup_clients,
         })
     }
 
@@ -352,10 +510,19 @@ impl PipeServer {
         let sequence = self.next_event.fetch_add(1, Ordering::Relaxed);
         let frame = Frame::json(FrameType::Event, sequence, event)
             .map_err(|error| ditto_model::DittoError::Ipc(error.to_string()))?;
-        let clients: Vec<_> = self.clients.lock().values().cloned().collect();
-        for client in clients {
+        let clients: Vec<(u64, Arc<Connection>)> = self
+            .clients
+            .lock()
+            .iter()
+            .map(|(id, connection)| (*id, Arc::clone(connection)))
+            .collect();
+        for (id, client) in clients {
             if let Err(error) = client.write_frame(&frame) {
-                tracing::debug!(%error, "IPC event delivery failed");
+                // A client that stopped reading must be disconnected; otherwise
+                // its stuck writer would keep the queue full forever.
+                tracing::debug!(%error, client_id = id, "IPC event delivery failed; dropping client");
+                self.clients.lock().remove(&id);
+                client.mark_closed();
             }
         }
         Ok(())
@@ -363,6 +530,10 @@ impl PipeServer {
 
     pub fn popup_visible(&self) -> bool {
         self.popup_visible.load(Ordering::SeqCst)
+    }
+
+    pub fn popup_client_count(&self) -> u64 {
+        self.popup_clients.load(Ordering::SeqCst)
     }
 
     /// Updates the shared popup state and broadcasts the matching control
@@ -391,15 +562,25 @@ struct Connection {
     write_handle: SharedHandle,
     write_lock: Mutex<()>,
     id: u64,
+    client_kind: Mutex<Option<ClientKind>>,
+    closed: AtomicBool,
 }
 
 impl Connection {
     fn create_server_instance(name: &str, first_instance: bool) -> ditto_model::Result<Self> {
-        static NEXT_ID: AtomicU64 = AtomicU64::new(1);
         let sid = current_user_sid_string()?;
-        let sddl = format!("D:P(A;;GA;;;SY)(A;;GA;;;{sid})(A;;GR;;;BA)");
+        let sddl = pipe_security_descriptor(&sid);
+        Self::create_server_instance_with_sddl(name, first_instance, &sddl)
+    }
+
+    fn create_server_instance_with_sddl(
+        name: &str,
+        first_instance: bool,
+        sddl: &str,
+    ) -> ditto_model::Result<Self> {
+        static NEXT_ID: AtomicU64 = AtomicU64::new(1);
         let mut descriptor = PSECURITY_DESCRIPTOR::default();
-        let sddl_wide = wide(&sddl);
+        let sddl_wide = wide(sddl);
         unsafe {
             ConvertStringSecurityDescriptorToSecurityDescriptorW(
                 windows::core::PCWSTR(sddl_wide.as_ptr()),
@@ -420,7 +601,7 @@ impl Connection {
             lpSecurityDescriptor: descriptor.0,
             bInheritHandle: false.into(),
         };
-        let mut access = PIPE_ACCESS_DUPLEX;
+        let mut access = PIPE_ACCESS_DUPLEX | FILE_FLAG_OVERLAPPED;
         if first_instance {
             access |= FILE_FLAG_FIRST_PIPE_INSTANCE;
         }
@@ -452,21 +633,56 @@ impl Connection {
             write_handle: SharedHandle(write_handle),
             write_lock: Mutex::new(()),
             id: NEXT_ID.fetch_add(1, Ordering::Relaxed),
+            client_kind: Mutex::new(None),
+            closed: AtomicBool::new(false),
         })
     }
 
+    fn mark_closed(&self) {
+        self.closed.store(true, Ordering::SeqCst);
+    }
+
     fn connect(&self) -> ditto_model::Result<()> {
-        unsafe {
-            if ConnectNamedPipe(self.read_handle.0, None).is_err() {
-                let code = GetLastError();
-                if code != ERROR_PIPE_CONNECTED {
-                    return Err(ditto_model::DittoError::Windows(format!(
-                        "ConnectNamedPipe failed: {code:?}"
-                    )));
-                }
-            }
+        // The instance was created with FILE_FLAG_OVERLAPPED, so
+        // ConnectNamedPipe must receive an OVERLAPPED structure.
+        let event = unsafe { CreateEventW(None, true, false, None) }
+            .map_err(|error| ditto_model::DittoError::Windows(error.to_string()))?;
+        let _event = OwnedHandle(event);
+        let mut overlapped = OVERLAPPED {
+            hEvent: event,
+            ..Default::default()
+        };
+        let result = unsafe { ConnectNamedPipe(self.read_handle.0, Some(&mut overlapped)) };
+        if result.is_ok() {
+            return Ok(());
         }
-        Ok(())
+        let code = unsafe { GetLastError() };
+        if code == ERROR_PIPE_CONNECTED {
+            // A client connected between CreateNamedPipeW and ConnectNamedPipe.
+            return Ok(());
+        }
+        if code == ERROR_IO_PENDING {
+            let wait = unsafe { WaitForSingleObject(event, INFINITE) };
+            if wait != WAIT_OBJECT_0 {
+                unsafe {
+                    let _ = CancelIoEx(self.read_handle.0, Some(&overlapped));
+                }
+                return Err(ditto_model::DittoError::Windows(
+                    "ConnectNamedPipe wait failed".to_string(),
+                ));
+            }
+            let mut transferred = 0_u32;
+            unsafe {
+                GetOverlappedResult(self.read_handle.0, &overlapped, &mut transferred, false)
+            }
+            .map_err(|error| {
+                ditto_model::DittoError::Windows(format!("ConnectNamedPipe: {error}"))
+            })?;
+            return Ok(());
+        }
+        Err(ditto_model::DittoError::Windows(format!(
+            "ConnectNamedPipe failed: {code:?}"
+        )))
     }
 
     fn read_frame(&self) -> Result<Frame, IpcError> {
@@ -475,8 +691,21 @@ impl Connection {
 
     fn write_frame(&self, frame: &Frame) -> Result<(), IpcError> {
         let _guard = self.write_lock.lock();
+        if self.closed.load(Ordering::SeqCst) {
+            return Err(IpcError::Io(io::Error::new(
+                io::ErrorKind::BrokenPipe,
+                "IPC connection is closed",
+            )));
+        }
         write_frame(&mut PipeWriter(self.write_handle.0), frame)
     }
+}
+
+/// The main IPC pipe is readable only by SYSTEM and the current user.
+/// Administrators are deliberately not granted access: the pipe carries clip
+/// summaries and events for this user's session only.
+fn pipe_security_descriptor(current_user_sid: &str) -> String {
+    format!("D:P(A;;GA;;;SY)(A;;GA;;;{current_user_sid})")
 }
 
 fn accept_loop(
@@ -485,6 +714,7 @@ fn accept_loop(
     clients: Arc<Mutex<HashMap<u64, Arc<Connection>>>>,
     handler: Option<RequestHandler>,
     popup_visible: Arc<AtomicBool>,
+    popup_clients: Arc<AtomicU64>,
 ) {
     loop {
         if let Err(error) = current.connect() {
@@ -507,12 +737,14 @@ fn accept_loop(
         let clients_for_handler = Arc::clone(&clients);
         let handler_for_connection = handler.clone();
         let visible_for_connection = Arc::clone(&popup_visible);
+        let popup_clients_for_connection = Arc::clone(&popup_clients);
         thread::spawn(move || {
             handle_connection(
                 connection,
                 clients_for_handler,
                 handler_for_connection,
                 visible_for_connection,
+                popup_clients_for_connection,
             )
         });
 
@@ -531,8 +763,12 @@ fn handle_connection(
     clients: Arc<Mutex<HashMap<u64, Arc<Connection>>>>,
     handler: Option<RequestHandler>,
     popup_visible: Arc<AtomicBool>,
+    popup_clients: Arc<AtomicU64>,
 ) {
     loop {
+        if connection.closed.load(Ordering::SeqCst) {
+            break;
+        }
         match pipe_available(connection.read_handle.0) {
             Ok(0) => {
                 thread::sleep(Duration::from_millis(10));
@@ -571,6 +807,12 @@ fn handle_connection(
         };
 
         let response = dispatch_request(&request, &clients, handler.as_deref(), &popup_visible);
+        if let Request::Hello { client, .. } = &request {
+            if *client == ClientKind::Popup {
+                popup_clients.fetch_add(1, Ordering::SeqCst);
+            }
+            *connection.client_kind.lock() = Some(*client);
+        }
         if send_response(&connection, frame.request_id, &response).is_err() {
             break;
         }
@@ -579,6 +821,15 @@ fn handle_connection(
         }
     }
     clients.lock().remove(&connection.id);
+    connection.mark_closed();
+    if connection.client_kind.lock().take() == Some(ClientKind::Popup)
+        && popup_clients.fetch_sub(1, Ordering::SeqCst) == 1
+    {
+        // The resident popup process is gone (crash or exit). Do not leave the
+        // core believing it is still visible, or the next hotkey would toggle
+        // it hidden instead of showing it.
+        popup_visible.store(false, Ordering::SeqCst);
+    }
 }
 
 fn dispatch_request(
@@ -699,7 +950,7 @@ impl PipeClient {
                     FILE_SHARE_MODE(0),
                     None,
                     OPEN_EXISTING,
-                    FILE_FLAGS_AND_ATTRIBUTES(FILE_ATTRIBUTE_NORMAL.0),
+                    FILE_FLAGS_AND_ATTRIBUTES(FILE_ATTRIBUTE_NORMAL.0 | FILE_FLAG_OVERLAPPED.0),
                     None,
                 )
             };
@@ -713,6 +964,8 @@ impl PipeClient {
                             write_handle: SharedHandle(write_handle),
                             write_lock: Mutex::new(()),
                             id: 0,
+                            client_kind: Mutex::new(None),
+                            closed: AtomicBool::new(false),
                         },
                     });
                 }
@@ -786,12 +1039,7 @@ struct PipeReader(HANDLE);
 
 impl Read for PipeReader {
     fn read(&mut self, buffer: &mut [u8]) -> io::Result<usize> {
-        let mut read = 0_u32;
-        unsafe {
-            ReadFile(self.0, Some(buffer), Some(&mut read), None)
-                .map_err(|error| io::Error::other(error.to_string()))?;
-        }
-        Ok(read as usize)
+        overlapped_read(self.0, buffer)
     }
 }
 
@@ -799,16 +1047,98 @@ struct PipeWriter(HANDLE);
 
 impl Write for PipeWriter {
     fn write(&mut self, buffer: &[u8]) -> io::Result<usize> {
-        let mut written = 0_u32;
-        unsafe {
-            WriteFile(self.0, Some(buffer), Some(&mut written), None)
-                .map_err(|error| io::Error::other(error.to_string()))?;
-        }
-        Ok(written as usize)
+        overlapped_write(self.0, buffer)
     }
 
     fn flush(&mut self) -> io::Result<()> {
         Ok(())
+    }
+}
+
+fn overlapped_read(handle: HANDLE, buffer: &mut [u8]) -> io::Result<usize> {
+    let event = unsafe { CreateEventW(None, true, false, None) }
+        .map_err(|error| io::Error::other(error.to_string()))?;
+    let _event = OwnedHandle(event);
+    let mut overlapped = OVERLAPPED {
+        hEvent: event,
+        ..Default::default()
+    };
+    let mut direct_read = 0_u32;
+    let result = unsafe {
+        ReadFile(
+            handle,
+            Some(buffer),
+            Some(&mut direct_read),
+            Some(&mut overlapped),
+        )
+    };
+    match result {
+        Ok(()) => Ok(direct_read as usize),
+        Err(error) if error.code() == ERROR_IO_PENDING.into() => {
+            let wait = unsafe { WaitForSingleObject(event, INFINITE) };
+            if wait != WAIT_OBJECT_0 {
+                unsafe {
+                    let _ = CancelIoEx(handle, Some(&overlapped));
+                }
+                return Err(io::Error::new(
+                    io::ErrorKind::TimedOut,
+                    "IPC read did not complete",
+                ));
+            }
+            let mut transferred = 0_u32;
+            unsafe { GetOverlappedResult(handle, &overlapped, &mut transferred, false) }
+                .map_err(|error| io::Error::other(error.to_string()))?;
+            Ok(transferred as usize)
+        }
+        Err(error) => Err(io::Error::other(error.to_string())),
+    }
+}
+
+fn overlapped_write(handle: HANDLE, buffer: &[u8]) -> io::Result<usize> {
+    let event = unsafe { CreateEventW(None, true, false, None) }
+        .map_err(|error| io::Error::other(error.to_string()))?;
+    let _event = OwnedHandle(event);
+    let mut overlapped = OVERLAPPED {
+        hEvent: event,
+        ..Default::default()
+    };
+    let mut direct_written = 0_u32;
+    let result = unsafe {
+        WriteFile(
+            handle,
+            Some(buffer),
+            Some(&mut direct_written),
+            Some(&mut overlapped),
+        )
+    };
+    match result {
+        Ok(()) => Ok(direct_written as usize),
+        Err(error) if error.code() == ERROR_IO_PENDING.into() => {
+            let wait = unsafe { WaitForSingleObject(event, WRITE_TIMEOUT_MS) };
+            if wait == WAIT_TIMEOUT {
+                // Cancel the pending write and let the caller drop this
+                // connection. A client that stops reading must not block the
+                // core's capture callback indefinitely.
+                unsafe {
+                    let _ = CancelIoEx(handle, Some(&overlapped));
+                }
+                return Err(io::Error::new(
+                    io::ErrorKind::TimedOut,
+                    "IPC write timed out; slow client disconnected",
+                ));
+            }
+            if wait != WAIT_OBJECT_0 {
+                unsafe {
+                    let _ = CancelIoEx(handle, Some(&overlapped));
+                }
+                return Err(io::Error::other("IPC write wait failed"));
+            }
+            let mut transferred = 0_u32;
+            unsafe { GetOverlappedResult(handle, &overlapped, &mut transferred, false) }
+                .map_err(|error| io::Error::other(error.to_string()))?;
+            Ok(transferred as usize)
+        }
+        Err(error) => Err(io::Error::other(error.to_string())),
     }
 }
 
@@ -953,5 +1283,95 @@ mod tests {
             Response::Groups { groups } if groups.is_empty()
         ));
         drop(server);
+    }
+
+    #[test]
+    fn pipe_acl_contains_only_system_and_current_user() {
+        let sddl = pipe_security_descriptor("S-1-5-21-1-2-3-1001");
+        assert_eq!(sddl, "D:P(A;;GA;;;SY)(A;;GA;;;S-1-5-21-1-2-3-1001)");
+        assert!(
+            !sddl.contains(";;;BA"),
+            "administrators must not get an ACE"
+        );
+    }
+
+    #[test]
+    fn opening_a_pipe_owned_by_another_sid_is_denied() {
+        let name = format!(
+            r"\\.\pipe\ditto-test-acl-{}-{}",
+            std::process::id(),
+            unix_millis()
+        );
+        let foreign = "S-1-5-21-1111111111-2222222222-3333333333-1001";
+        let server = Connection::create_server_instance_with_sddl(
+            &name,
+            true,
+            &pipe_security_descriptor(foreign),
+        )
+        .expect("create foreign-SID pipe");
+        let name_wide = wide(&name);
+        let opened = unsafe {
+            CreateFileW(
+                windows::core::PCWSTR(name_wide.as_ptr()),
+                (GENERIC_READ | GENERIC_WRITE).0,
+                FILE_SHARE_MODE(0),
+                None,
+                OPEN_EXISTING,
+                FILE_FLAGS_AND_ATTRIBUTES(FILE_ATTRIBUTE_NORMAL.0 | FILE_FLAG_OVERLAPPED.0),
+                None,
+            )
+        };
+        assert!(
+            opened.is_err(),
+            "current user must not open a foreign SID pipe"
+        );
+        drop(server);
+    }
+
+    #[test]
+    fn broadcast_disconnects_a_client_that_stops_reading() {
+        let name = format!(
+            r"\\.\pipe\ditto-test-slow-{}-{}",
+            std::process::id(),
+            unix_millis()
+        );
+        let server = PipeServer::start_with_handler(&name, |_| Response::Ok).expect("server");
+        let _client = PipeClient::connect(&name).expect("connect");
+        for _ in 0..200 {
+            if server.client_count() > 0 {
+                break;
+            }
+            thread::sleep(Duration::from_millis(5));
+        }
+        assert_eq!(server.client_count(), 1);
+        let clip = ditto_model::ClipSummary {
+            id: 1,
+            kind: ditto_model::ClipKind::Text,
+            preview_text: "x".repeat(60 * 1024),
+            source_app: None,
+            created_at_ms: 0,
+            last_pasted_at_ms: None,
+            pinned: false,
+            pin_order: None,
+            group_id: None,
+            copy_buffer: None,
+            formats: vec!["CF_UNICODETEXT".to_string()],
+            size_bytes: 1,
+            has_image: false,
+            image_thumb_ref: None,
+            pasted_count: 0,
+            state_rev: 1,
+        };
+        let event = Event::ClipAdded { clip };
+        let started = std::time::Instant::now();
+        for _ in 0..4 {
+            server.broadcast(&event).expect("broadcast");
+        }
+        assert!(
+            started.elapsed() < Duration::from_secs(3),
+            "broadcast blocked for {:?}",
+            started.elapsed()
+        );
+        assert_eq!(server.client_count(), 0, "slow client is dropped");
     }
 }

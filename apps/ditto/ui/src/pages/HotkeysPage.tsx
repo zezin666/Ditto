@@ -107,33 +107,36 @@ export function HotkeysPage({
       ) : null}
 
       <SettingsCard title={t("hotkeys.open")}>
-        <SettingRow label={t("hotkeys.open")}>
+        <SettingRow label={t("hotkeys.open")} help={t("hotkeys.globalOpen")}>
           <HotkeyRecorder
             value={hotkeys.open}
             actionLabel={t("hotkeys.open")}
             onChange={(value) => updateBinding("open", value)}
           />
         </SettingRow>
-        <SettingRow label={t("hotkeys.openAlt")}>
+        <SettingRow label={t("hotkeys.openAlt")} help={t("hotkeys.notImplemented")}>
           <HotkeyRecorder
             value={hotkeys.openAlt}
             actionLabel={t("hotkeys.openAlt")}
+            disabled
             onChange={(value) => updateBinding("openAlt", value)}
           />
         </SettingRow>
-        <SettingRow label={t("hotkeys.plainTextPaste")}>
+        <SettingRow label={t("hotkeys.plainTextPaste")} help={t("hotkeys.notImplemented")}>
           <HotkeyRecorder
             value={hotkeys.plainTextPaste}
             actionLabel={t("hotkeys.plainTextPaste")}
+            disabled
             onChange={(value) => updateBinding("plainTextPaste", value)}
           />
         </SettingRow>
       </SettingsCard>
 
       <SettingsCard title={t("hotkeys.firstTenGrid")}>
-        <SettingRow label={t("hotkeys.firstTen")}>
+        <SettingRow label={t("hotkeys.firstTen")} help={t("hotkeys.worksWhenOpen")}>
           <Switch
             checked={hotkeys.firstTenEnabled}
+            disabled
             onChange={(_, data) => patch({ firstTenEnabled: data.checked })}
             aria-label={t("hotkeys.firstTen")}
           />
@@ -144,6 +147,7 @@ export function HotkeysPage({
               <span className="hotkey-grid-label">{t("hotkeys.slot", { slot: index + 1 })}</span>
               <HotkeyRecorder
                 compact
+                disabled
                 value={chord}
                 actionLabel={t("hotkeys.slot", { slot: index + 1 })}
                 onChange={(value) => updateBinding(`firstTen.${index}`, value)}
@@ -162,6 +166,7 @@ export function HotkeysPage({
                 <span>{t("hotkeys.copy")}</span>
                 <HotkeyRecorder
                   compact
+                  disabled
                   value={buffer.copy}
                   actionLabel={`${t("hotkeys.slot", { slot: buffer.slot })} ${t("hotkeys.copy")}`}
                   onChange={(value) => updateBinding(`copy.${buffer.slot}`, value)}
@@ -171,6 +176,7 @@ export function HotkeysPage({
                 <span>{t("hotkeys.paste")}</span>
                 <HotkeyRecorder
                   compact
+                  disabled
                   value={buffer.paste}
                   actionLabel={`${t("hotkeys.slot", { slot: buffer.slot })} ${t("hotkeys.paste")}`}
                   onChange={(value) => updateBinding(`paste.${buffer.slot}`, value)}
@@ -180,6 +186,7 @@ export function HotkeysPage({
                 <span>{t("hotkeys.cut")}</span>
                 <HotkeyRecorder
                   compact
+                  disabled
                   value={buffer.cut}
                   actionLabel={`${t("hotkeys.slot", { slot: buffer.slot })} ${t("hotkeys.cut")}`}
                   onChange={(value) => updateBinding(`cut.${buffer.slot}`, value)}

@@ -12,6 +12,12 @@ pub enum ClipboardError {
     UnsupportedFormat(String),
     #[error("invalid clipboard data: {0}")]
     InvalidData(String),
+    #[error("{format} is {size} bytes, exceeding the {limit} byte capture budget")]
+    TooLarge {
+        format: String,
+        size: usize,
+        limit: usize,
+    },
     #[error("image conversion failed: {0}")]
     Image(String),
     #[error("Windows API error: {0}")]

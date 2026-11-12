@@ -779,6 +779,17 @@ fn broadcast_clip_updated(state: &AppState, clip_id: i64, field: &str) {
     });
 }
 
+/// Resolves the system Explorer with an absolute path. Never lets Windows'
+/// executable search order (which includes the current directory) pick a
+/// `explorer.exe` planted next to the app.
+pub(crate) fn explorer_executable() -> PathBuf {
+    std::env::var_os("WINDIR")
+        .map(PathBuf::from)
+        .filter(|path| path.is_dir())
+        .unwrap_or_else(|| PathBuf::from(r"C:\Windows"))
+        .join("explorer.exe")
+}
+
 fn open_folder(path: &Path) -> Result<OperationResult, CommandError> {
     if !path.is_dir() {
         return Err(CommandError::not_found(format!(
@@ -786,7 +797,7 @@ fn open_folder(path: &Path) -> Result<OperationResult, CommandError> {
             path.display()
         )));
     }
-    Command::new("explorer.exe")
+    Command::new(explorer_executable())
         .arg(path)
         .spawn()
         .map_err(|error| CommandError::internal(format!("failed to open folder: {error}")))?;
@@ -829,10 +840,26 @@ pub fn set_settings(
     }
     let previous = settings_state(&state)?;
     let restart_required = previous.general.language != settings.general.language
-        || previous.general.run_at_startup != settings.general.run_at_startup;
+        || previous.general.run_at_startup != settings.general.run_at_startup
+        || previous.general.single_instance != settings.general.single_instance;
+    let previous_value = settings_value(&previous);
     let value = settings_value(&settings);
+    // Validate the chord before touching storage so an invalid value does not
+    // require a rollback.
+    if previous.hotkeys.open != settings.hotkeys.open {
+        crate::hotkeys::parse_chord(&settings.hotkeys.open).map_err(CommandError::invalid)?;
+    }
     let keys = flatten_keys("", &value);
     let snapshot = state.storage().set_settings(&value)?;
+    if let Err(error) = crate::apply_host_settings(&app, &previous_value, &value) {
+        // Registration or monitor reconfiguration failed: restore the old
+        // settings atomically and report the conflict to the UI.
+        if let Err(restore_error) = state.storage().set_settings(&previous_value) {
+            log::error!("failed to roll back settings after error: {restore_error}");
+        }
+        let _ = crate::apply_host_settings(&app, &value, &previous_value);
+        return Err(CommandError::conflict(error));
+    }
     state.broadcast(&Event::SettingsChanged {
         keys,
         revision: snapshot.revision,
@@ -944,10 +971,18 @@ pub fn delete_clips(
 #[tauri::command]
 pub fn clear_history(state: State<'_, AppState>) -> Result<MutationResult, CommandError> {
     let affected = state.storage().clear_history()?;
+    // Soft delete first, then hard-delete the just-cleared rows and GC the
+    // blobs they referenced. Otherwise "clear history" would leave the
+    // database and data root growing forever.
+    let removed = state.storage().purge_deleted_before(now_ms())?;
+    state.broadcast(&Event::ClipDeleted {
+        ids: Vec::new(),
+        state_rev: state.storage().state_rev().unwrap_or_default(),
+    });
     Ok(MutationResult {
         ok: true,
         affected: usize::try_from(affected).unwrap_or(usize::MAX),
-        message: "cleared".to_string(),
+        message: format!("cleared {removed} clips and purged deleted blobs"),
     })
 }
 
@@ -993,7 +1028,9 @@ pub fn edit_clip(
     id: i64,
     text: String,
 ) -> Result<MutationResult, CommandError> {
-    state.storage().update_clip_text(id, &text)?;
+    // A full payload rewrite: text formats, hashes, preview, size, and FTS are
+    // updated together so Original paste and dedupe match the visible text.
+    state.storage().rewrite_clip_text(id, &text)?;
     broadcast_clip_updated(&state, id, "text_content");
     Ok(MutationResult {
         ok: true,
@@ -1361,9 +1398,9 @@ fn stage_package(
         package: staged.display().to_string(),
         requested_at_ms: now_ms(),
     };
-    std::fs::write(
-        pending::import_marker(data_root),
-        serde_json::to_vec_pretty(&pending)?,
+    pending::write_marker(
+        &pending::import_marker(data_root),
+        &serde_json::to_vec_pretty(&pending)?,
     )?;
     Ok(OperationResult {
         ok: true,
@@ -1418,17 +1455,47 @@ pub fn optimize_storage(state: State<'_, AppState>) -> Result<OperationResult, C
 #[tauri::command]
 pub fn get_migration_status(state: State<'_, AppState>) -> Result<MigrationStatus, CommandError> {
     let data_root = &state.data_root().path;
-    if pending::migration_marker(data_root).is_file() {
+    if let Some(failed) = pending::failed_marker_description(data_root) {
         return Ok(MigrationStatus {
             completed: false,
-            in_progress: true,
-            phase: "pending-restart".to_string(),
+            in_progress: false,
+            phase: "failed".to_string(),
             processed: 0,
             total: 0,
             source_path: None,
             started_at: None,
             completed_at: None,
-            warnings: vec!["legacy migration is staged and will run on the next start".to_string()],
+            warnings: vec![format!(
+                "a staged import or migration failed; details: {failed}"
+            )],
+        });
+    }
+    if pending::migration_marker(data_root).is_file() {
+        let (total, warnings) = std::fs::read_to_string(pending::migration_marker(data_root))
+            .ok()
+            .and_then(|text| serde_json::from_str::<pending::PendingMigration>(&text).ok())
+            .map(|pending| {
+                (
+                    pending.clips,
+                    vec![
+                        "legacy migration is staged and will run on the next start"
+                            .to_string(),
+                        "v1 migration is one-shot: progress is shown after restart and cannot be cancelled"
+                            .to_string(),
+                    ],
+                )
+            })
+            .unwrap_or_else(|| (0, vec!["legacy migration is staged".to_string()]));
+        return Ok(MigrationStatus {
+            completed: false,
+            in_progress: true,
+            phase: "pending-restart".to_string(),
+            processed: 0,
+            total,
+            source_path: None,
+            started_at: None,
+            completed_at: None,
+            warnings,
         });
     }
     let report_path = data_root.join("migration-report.json");
@@ -1465,6 +1532,20 @@ pub fn get_migration_status(state: State<'_, AppState>) -> Result<MigrationStatu
 }
 
 #[tauri::command]
+pub fn clear_staged_failure(state: State<'_, AppState>) -> Result<OperationResult, CommandError> {
+    let cleared = pending::clear_failed(&state.data_root().path);
+    Ok(OperationResult {
+        ok: true,
+        message: if cleared.is_empty() {
+            "no failed staged operation to clear".to_string()
+        } else {
+            format!("cleared {} failed staging marker(s)", cleared.len())
+        },
+        path: cleared.first().cloned(),
+    })
+}
+
+#[tauri::command]
 pub fn migration_dry_run(
     _state: State<'_, AppState>,
     source: String,
@@ -1491,10 +1572,13 @@ pub fn migration_apply(
         source: datatabase,
         settings,
         requested_at_ms: now_ms(),
+        clips: report.source_counts.clips,
+        groups: report.source_counts.groups,
+        formats: report.source_counts.formats,
     };
-    std::fs::write(
-        pending::migration_marker(&state.data_root().path),
-        serde_json::to_vec_pretty(&pending)?,
+    pending::write_marker(
+        &pending::migration_marker(&state.data_root().path),
+        &serde_json::to_vec_pretty(&pending)?,
     )?;
     Ok(migration_run(report, false, true))
 }
@@ -1561,7 +1645,7 @@ pub fn get_diagnostics(state: State<'_, AppState>) -> Result<DiagnosticsInfo, Co
         os: format!("Windows {}", std::env::consts::OS),
         architecture: std::env::consts::ARCH.to_string(),
         core_pid: std::process::id(),
-        webview_pid_count: 0,
+        webview_pid_count: ditto_win::webview_process_count(),
         database_bytes: state.storage().database_size_bytes().unwrap_or_default(),
         log_path: state.data_root().logs_dir().display().to_string(),
         settings_revision: snapshot.revision,
@@ -1603,6 +1687,16 @@ mod tests {
         let hotkeys = hotkeys_from(&Value::Null);
         assert_eq!(hotkeys.copy_buffers.len(), 5);
         assert_eq!(hotkeys.first_ten_chords.len(), 10);
+    }
+
+    #[test]
+    fn explorer_executable_is_absolute_and_never_uses_path_search() {
+        let explorer = explorer_executable();
+        assert!(explorer.is_absolute(), "explorer path must be absolute");
+        assert_eq!(
+            explorer.file_name().and_then(|name| name.to_str()),
+            Some("explorer.exe")
+        );
     }
 
     #[test]

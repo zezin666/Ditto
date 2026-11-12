@@ -91,6 +91,23 @@ type Page =
   | "languages"
   | "about";
 
+const pageValues: Page[] = [
+  "general",
+  "appearance",
+  "hotkeys",
+  "clipboard",
+  "groups",
+  "copyBuffers",
+  "data",
+  "languages",
+  "about",
+];
+
+function pageFromHash(): Page | null {
+  const value = window.location.hash.replace(/^#/, "");
+  return pageValues.includes(value as Page) ? (value as Page) : null;
+}
+
 const pageKeys: Record<Page, { title: string; description: string }> = {
   general: { title: "page.general.title", description: "page.general.description" },
   appearance: { title: "page.appearance.title", description: "page.appearance.description" },
@@ -269,7 +286,18 @@ function SettingsShell({
   setRestartRequired: (required: boolean) => void;
 }) {
   const { t, missingKeys, fallbackKeys } = useI18n();
-  const [page, setPage] = useState<Page>("general");
+  const [page, setPage] = useState<Page>(pageFromHash() ?? "general");
+  useEffect(() => {
+    const onHashChange = () => {
+      const next = pageFromHash();
+      if (next) {
+        setPage(next);
+      }
+    };
+    window.addEventListener("hashchange", onHashChange);
+    onHashChange();
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
   const [groups, setGroups] = useState<GroupNode[]>([]);
   const [buffers, setBuffers] = useState<CopyBuffer[]>([]);
   const [selectedClipId, setSelectedClipId] = useState<number | null>(null);

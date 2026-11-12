@@ -8,7 +8,7 @@ use std::{
 
 use ditto_model::{
     ClipDetail, ClipFormatInfo, ClipKind, ClipPage, ClipQuery, ClipSort, ClipSummary,
-    CopyBufferSlot, GroupNode, NewClip, SearchMode,
+    CopyBufferSlot, GroupNode, NewClip, NewClipFormat, SearchMode,
 };
 use parking_lot::{Condvar, Mutex};
 use rusqlite::{Connection, OpenFlags, OptionalExtension, Row, types::Value as SqlValue};
@@ -17,7 +17,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     StorageError, StorageResult,
     blob::{self, collect_files_recursive},
-    schema::{configure_connection, migrate, now_ms},
+    schema::{configure_connection, migrate, now_ms, validate_regex},
 };
 
 const FORMAT_SEPARATOR: char = '\u{1f}';
@@ -390,11 +390,6 @@ impl Storage {
 
     pub fn search_clips(&self, query: &ClipQuery) -> StorageResult<ClipPage> {
         let started = Instant::now();
-        if query.mode == SearchMode::Regex {
-            return Err(StorageError::InvalidData(
-                "regex search is deferred beyond T2".to_string(),
-            ));
-        }
         validate_search_mode(query.mode)?;
         let state_rev = self.state_rev()?;
         let connection = self.reader()?;
@@ -654,6 +649,126 @@ impl Storage {
                  description = ?2, size_bytes = ?3, updated_at_ms = ?4
              WHERE id = ?5 AND is_deleted = 0",
             rusqlite::params![text, preview, text.len() as i64, now_ms(), clip_id],
+        )?;
+        if changed == 0 {
+            return Err(StorageError::NotFound(format!("clip {clip_id}")));
+        }
+        bump_state(&transaction)?;
+        transaction.commit()?;
+        Ok(())
+    }
+
+    /// Rewrites a plain-text clip as a complete payload edit: the stored text
+    /// formats, content/formats hashes, preview, and FTS row all change
+    /// together. Rich-text and binary clips are rejected rather than showing an
+    /// edit that would paste stale bytes.
+    pub fn rewrite_clip_text(&self, clip_id: i64, text: &str) -> StorageResult<()> {
+        let text = truncate_utf8(text, 1024 * 1024);
+        let preview = truncate_utf8(&text, 8 * 1024);
+        let mut connection = self.writer.lock();
+        let transaction = connection.transaction()?;
+        let kind: String = transaction
+            .query_row(
+                "SELECT kind FROM clips WHERE id = ?1 AND is_deleted = 0",
+                [clip_id],
+                |row| row.get(0),
+            )
+            .optional()?
+            .ok_or_else(|| StorageError::NotFound(format!("clip {clip_id}")))?;
+        if matches!(kind.as_str(), "image" | "files" | "html" | "rtf") {
+            return Err(StorageError::Conflict(format!(
+                "{kind} clips cannot be edited as plain text in v1"
+            )));
+        }
+        let mut has_unicode = false;
+        let mut has_ansi = false;
+        let mut has_oem = false;
+        {
+            let mut statement =
+                transaction.prepare("SELECT format_name FROM clip_formats WHERE clip_id = ?1")?;
+            let mut rows = statement.query([clip_id])?;
+            while let Some(row) = rows.next()? {
+                match row.get::<_, String>(0)?.as_str() {
+                    "CF_UNICODETEXT" => has_unicode = true,
+                    "CF_TEXT" => has_ansi = true,
+                    "CF_OEMTEXT" => has_oem = true,
+                    _ => {}
+                }
+            }
+        }
+        if !(has_unicode || has_ansi || has_oem) {
+            return Err(StorageError::Conflict(
+                "clip has no editable text format".to_string(),
+            ));
+        }
+
+        let mut formats = Vec::with_capacity(3);
+        if has_unicode {
+            let mut data = text
+                .encode_utf16()
+                .flat_map(u16::to_le_bytes)
+                .collect::<Vec<_>>();
+            data.extend_from_slice(&0_u16.to_le_bytes());
+            formats.push(("CF_UNICODETEXT", data));
+        }
+        if has_ansi {
+            formats.push(("CF_TEXT", ditto_clipboard::encode_ansi_text(&text)));
+        }
+        if has_oem {
+            formats.push(("CF_OEMTEXT", ditto_clipboard::encode_oem_text(&text)));
+        }
+        let primary_index = formats
+            .iter()
+            .position(|(name, _)| *name == "CF_UNICODETEXT")
+            .unwrap_or(0);
+        let primary_name = formats[primary_index].0;
+        let content_hash =
+            ditto_clipboard::content_hash_for_format(primary_name, &formats[primary_index].1);
+        let formats_hash = ditto_clipboard::formats_hash_for(
+            &formats
+                .iter()
+                .map(|(name, data)| ((*name).to_string(), data.clone()))
+                .collect::<Vec<_>>(),
+        );
+        let size_bytes = formats
+            .iter()
+            .map(|(_, data)| data.len() as u64)
+            .sum::<u64>();
+
+        transaction.execute("DELETE FROM clip_formats WHERE clip_id = ?1", [clip_id])?;
+        for (seq, (name, data)) in formats.into_iter().enumerate() {
+            store_format(
+                &transaction,
+                &self.data_root,
+                clip_id,
+                &NewClipFormat {
+                    format_name: name.to_string(),
+                    seq: u32::try_from(seq).unwrap_or(u32::MAX),
+                    data,
+                    mime: Some("text/plain".to_string()),
+                    is_primary: seq == primary_index,
+                },
+                Some(primary_name),
+            )?;
+        }
+        let changed = transaction.execute(
+            "UPDATE clips
+             SET kind = 'text', primary_format = ?1, text_content = ?2,
+                 text_truncated = 0, preview_text = ?3, quick_paste_text = ?3,
+                 description = ?3, content_hash = ?4, formats_hash = ?5,
+                 size_bytes = ?6, has_image = 0, thumb_path = NULL,
+                 updated_at_ms = ?7
+             WHERE id = ?8 AND is_deleted = 0",
+            rusqlite::params![
+                primary_name,
+                text,
+                preview,
+                content_hash.to_vec(),
+                formats_hash.to_vec(),
+                size_bytes as i64,
+                now_ms(),
+                clip_id,
+            ],
         )?;
         if changed == 0 {
             return Err(StorageError::NotFound(format!("clip {clip_id}")));
@@ -1055,10 +1170,8 @@ fn validate_search_mode(mode: SearchMode) -> StorageResult<()> {
         SearchMode::Contains
         | SearchMode::Fulltext
         | SearchMode::QuickPaste
-        | SearchMode::Wildcard => Ok(()),
-        SearchMode::Regex => Err(StorageError::InvalidData(
-            "regex search is not supported".to_string(),
-        )),
+        | SearchMode::Wildcard
+        | SearchMode::Regex => Ok(()),
     }
 }
 
@@ -1238,6 +1351,27 @@ fn append_text_filter(
 ) -> StorageResult<bool> {
     let text = query.query.trim();
     if text.is_empty() {
+        return Ok(false);
+    }
+
+    if query.mode == SearchMode::Regex {
+        validate_regex(text)?;
+        let pattern = SqlValue::Text(format!("(?i:{text})"));
+        clauses.push(
+            "(c.preview_text REGEXP ?
+              OR c.quick_paste_text REGEXP ?
+              OR substr(coalesce(c.text_content, ''), 1, 65536) REGEXP ?
+              OR c.description REGEXP ?
+              OR substr(coalesce(c.source_app, ''), 1, 1024) REGEXP ?)"
+                .to_string(),
+        );
+        params.extend([
+            pattern.clone(),
+            pattern.clone(),
+            pattern.clone(),
+            pattern.clone(),
+            pattern,
+        ]);
         return Ok(false);
     }
 
@@ -1435,7 +1569,7 @@ pub(crate) fn truncate_utf8(value: &str, max_bytes: usize) -> String {
 
 #[cfg(test)]
 mod tests {
-    use ditto_model::{NewClip, NewClipFormat};
+    use ditto_model::{ClipQuery, NewClip, NewClipFormat, SearchMode};
 
     use super::Storage;
     use crate::test_support::{temp_storage, test_clip};
@@ -1552,6 +1686,82 @@ mod tests {
         assert_eq!(first.values["clipboard"]["max_entries"], 42);
         assert_eq!(first.revision, second.revision);
         assert!(third.revision > second.revision);
+    }
+
+    #[test]
+    fn rewrite_clip_text_updates_formats_hashes_and_fts() {
+        let (_temp, storage) = temp_storage();
+        let clip = storage
+            .insert_clip(&test_clip("old editable text", "hash-edit"), false)
+            .expect("insert")
+            .clip;
+        storage
+            .rewrite_clip_text(clip.id, "new editable text")
+            .expect("rewrite");
+        let detail = storage.get_clip(clip.id).expect("detail");
+        assert_eq!(detail.text_content.as_deref(), Some("new editable text"));
+        assert_eq!(detail.summary.preview_text, "new editable text");
+        assert_eq!(detail.formats.len(), 1);
+        assert_eq!(detail.formats[0].format_name, "CF_UNICODETEXT");
+        let expected = ditto_clipboard::content_hash_for_format(
+            "CF_UNICODETEXT",
+            &detail.formats[0].data.clone().expect("inline text"),
+        );
+        let stored_hash: Vec<u8> = storage
+            .reader()
+            .expect("reader")
+            .query_row(
+                "SELECT content_hash FROM clips WHERE id = ?1",
+                [clip.id],
+                |row| row.get(0),
+            )
+            .expect("hash");
+        assert_eq!(stored_hash, expected.to_vec());
+        let hits = storage
+            .search_clips(&ClipQuery {
+                query: "new editable".to_string(),
+                ..ClipQuery::default()
+            })
+            .expect("search new");
+        assert_eq!(hits.items.len(), 1);
+        let old = storage
+            .search_clips(&ClipQuery {
+                query: "old editable".to_string(),
+                ..ClipQuery::default()
+            })
+            .expect("search old");
+        assert!(old.items.is_empty(), "FTS must drop the old text");
+    }
+
+    #[test]
+    fn regex_search_is_linear_and_rejects_invalid_or_oversized_patterns() {
+        let (_temp, storage) = temp_storage();
+        storage
+            .insert_clip(&test_clip("alpha sample", "hash-regex-a"), false)
+            .expect("alpha");
+        storage
+            .insert_clip(&test_clip("beta sample", "hash-regex-b"), false)
+            .expect("beta");
+        let hits = storage
+            .search_clips(&ClipQuery {
+                query: r"alpha\s+sample".to_string(),
+                mode: SearchMode::Regex,
+                ..ClipQuery::default()
+            })
+            .expect("regex search");
+        assert_eq!(hits.items.len(), 1);
+        let invalid = storage.search_clips(&ClipQuery {
+            query: "(".to_string(),
+            mode: SearchMode::Regex,
+            ..ClipQuery::default()
+        });
+        assert!(invalid.is_err(), "invalid patterns must be rejected");
+        let oversized = storage.search_clips(&ClipQuery {
+            query: "a".repeat(2_000),
+            mode: SearchMode::Regex,
+            ..ClipQuery::default()
+        });
+        assert!(oversized.is_err(), "oversized patterns must be rejected");
     }
 
     #[test]

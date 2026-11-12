@@ -189,7 +189,10 @@ pub fn current_foreground() -> HWND {
 }
 
 pub fn primary_click_outside(hwnd: HWND) -> bool {
-    let pressed = unsafe { GetAsyncKeyState(VK_LBUTTON.0 as i32) } & 1 != 0;
+    let state = unsafe { GetAsyncKeyState(VK_LBUTTON.0 as i32) };
+    // Low bit = pressed since the last poll; high bit = currently down. Polling
+    // at 50 ms plus the down-state check catches ordinary and injected clicks.
+    let pressed = (state & 1) != 0 || (state as u16 & 0x8000) != 0;
     if !pressed {
         return false;
     }
@@ -204,6 +207,17 @@ pub fn primary_click_outside(hwnd: HWND) -> bool {
         && cursor.x < rect.right
         && cursor.y >= rect.top
         && cursor.y < rect.bottom)
+}
+
+/// Hides on an outside click or when the user switches to another
+/// application. The popup itself is shown without activation, so the
+/// foreground remains the original target until the user clicks elsewhere.
+pub fn outside_click_or_foreground_change(hwnd: HWND, previous_foreground: HWND) -> bool {
+    let foreground = current_foreground();
+    if !foreground.0.is_null() && foreground != hwnd && foreground != previous_foreground {
+        return true;
+    }
+    primary_click_outside(hwnd)
 }
 
 pub fn sample_process() -> Option<ResourceSample> {

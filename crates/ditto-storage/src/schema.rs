@@ -1,5 +1,10 @@
-use std::path::Path;
+use std::{
+    collections::HashMap,
+    path::Path,
+    sync::{Arc, Mutex, OnceLock},
+};
 
+use regex::{Regex, RegexBuilder};
 use rusqlite::{Connection, Transaction};
 
 use crate::{StorageError, StorageResult};
@@ -190,6 +195,7 @@ pub fn configure_connection(connection: &Connection, read_only: bool) -> Storage
     connection.pragma_update(None, "foreign_keys", "ON")?;
     connection.pragma_update(None, "temp_store", "MEMORY")?;
     connection.pragma_update(None, "wal_autocheckpoint", 1_000)?;
+    register_sql_functions(connection)?;
     if read_only {
         connection.pragma_update(None, "query_only", "ON")?;
     } else {
@@ -314,6 +320,75 @@ fn apply_v1(transaction: &Transaction<'_>) -> StorageResult<()> {
         )?;
     }
     Ok(())
+}
+
+const MAX_REGEX_PATTERN_BYTES: usize = 1_024;
+const REGEX_SIZE_LIMIT: usize = 1 << 20;
+const REGEX_CACHE_ENTRIES: usize = 32;
+
+static REGEX_CACHE: OnceLock<Mutex<HashMap<String, Arc<Regex>>>> = OnceLock::new();
+
+fn register_sql_functions(connection: &Connection) -> StorageResult<()> {
+    connection.create_scalar_function(
+        "regexp",
+        2,
+        rusqlite::functions::FunctionFlags::SQLITE_UTF8
+            | rusqlite::functions::FunctionFlags::SQLITE_DETERMINISTIC,
+        |context| {
+            let pattern: String = context.get(0)?;
+            let value: Option<String> = context.get(1)?;
+            let Some(value) = value else {
+                return Ok(false);
+            };
+            let regex = cached_regex(&pattern)?;
+            Ok(regex.is_match(&value))
+        },
+    )?;
+    Ok(())
+}
+
+fn cached_regex(pattern: &str) -> rusqlite::Result<Arc<Regex>> {
+    let cache = REGEX_CACHE.get_or_init(|| Mutex::new(HashMap::new()));
+    if let Some(regex) = cache
+        .lock()
+        .expect("regex cache poisoned")
+        .get(pattern)
+        .cloned()
+    {
+        return Ok(regex);
+    }
+    let regex = Arc::new(
+        build_regex(pattern)
+            .map_err(|error| rusqlite::Error::UserFunctionError(Box::new(error)))?,
+    );
+    let mut cache = cache.lock().expect("regex cache poisoned");
+    if cache.len() >= REGEX_CACHE_ENTRIES {
+        cache.clear();
+    }
+    cache.insert(pattern.to_string(), Arc::clone(&regex));
+    Ok(regex)
+}
+
+fn build_regex(pattern: &str) -> Result<Regex, std::io::Error> {
+    if pattern.len() > MAX_REGEX_PATTERN_BYTES {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidInput,
+            "regex pattern is longer than 1024 bytes",
+        ));
+    }
+    RegexBuilder::new(pattern)
+        .size_limit(REGEX_SIZE_LIMIT)
+        .dfa_size_limit(REGEX_SIZE_LIMIT)
+        .build()
+        .map_err(|error| std::io::Error::new(std::io::ErrorKind::InvalidInput, error.to_string()))
+}
+
+/// Validates a user regex before it reaches SQL. The regex engine is linear
+/// time; the size and pattern limits bound compile-time memory.
+pub(crate) fn validate_regex(pattern: &str) -> StorageResult<()> {
+    build_regex(pattern)
+        .map(|_| ())
+        .map_err(|error| StorageError::InvalidData(format!("invalid regex: {error}")))
 }
 
 pub fn now_ms() -> i64 {

@@ -28,9 +28,10 @@ export function GeneralPage({
             aria-label={t("general.runAtStartup")}
           />
         </SettingRow>
-        <SettingRow label={t("general.startMinimized")} help={t("general.startMinimizedHelp")}>
+        <SettingRow label={t("general.startMinimized")} help={t("common.comingLater")}>
           <Switch
             checked={general.startMinimized}
+            disabled
             onChange={(_, data) => patch({ startMinimized: data.checked })}
             aria-label={t("general.startMinimized")}
           />
@@ -45,9 +46,10 @@ export function GeneralPage({
             aria-label={t("general.showTrayIcon")}
           />
         </SettingRow>
-        <SettingRow label={t("general.singleInstance")} help={t("general.singleInstanceHelp")}>
+        <SettingRow label={t("general.singleInstance")} help={t("common.comingLater")}>
           <Switch
             checked={general.singleInstance}
+            disabled
             onChange={(_, data) => patch({ singleInstance: data.checked })}
             aria-label={t("general.singleInstance")}
           />
@@ -66,9 +68,10 @@ export function GeneralPage({
             ariaLabel={t("general.language")}
           />
         </SettingRow>
-        <SettingRow label={t("general.startupMessage")} help={t("general.startupMessageHelp")} align="start">
+        <SettingRow label={t("general.startupMessage")} help={t("common.comingLater")} align="start">
           <Input
             value={general.startupMessage}
+            disabled
             placeholder={t("general.startupMessagePlaceholder")}
             onChange={(_, data) => patch({ startupMessage: data.value })}
             aria-label={t("general.startupMessage")}

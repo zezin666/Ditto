@@ -58,7 +58,9 @@ pub fn map_clip(row: &LegacyClipRow, data_rows: &[LegacyDataRow]) -> MappedClip 
         debounce_ms: 0,
         max_clip_bytes: MAX_FORMAT_BYTES,
         max_image_bytes: MAX_FORMAT_BYTES,
+        max_total_bytes: MAX_FORMAT_BYTES.saturating_mul(4),
         ignored_formats: Vec::new(),
+        ..CaptureConfig::default()
     };
     let captured = build_captured_clip(snapshot, &config);
     let (captured, mut warnings) = match captured {

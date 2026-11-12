@@ -1,6 +1,9 @@
 use std::io::Cursor;
 
 use image::{DynamicImage, ImageFormat, RgbaImage};
+use windows::Win32::Globalization::{
+    CP_ACP, CP_OEMCP, MULTI_BYTE_TO_WIDE_CHAR_FLAGS, MultiByteToWideChar, WideCharToMultiByte,
+};
 
 use crate::{ClipboardError, ClipboardResult};
 
@@ -22,9 +25,92 @@ pub fn normalize_text_for_hash(text: &str) -> String {
     text.replace("\r\n", "\n").replace('\r', "\n")
 }
 
+/// Decodes legacy `CF_TEXT` data using the process ANSI code page.
 pub fn decode_ansi_text(bytes: &[u8]) -> String {
-    let trimmed = bytes.split(|byte| *byte == 0).next().unwrap_or_default();
-    String::from_utf8_lossy(trimmed).into_owned()
+    decode_code_page(bytes, CP_ACP, true)
+}
+
+/// Decodes legacy `CF_OEMTEXT` data using the OEM code page.
+pub fn decode_oem_text(bytes: &[u8]) -> String {
+    decode_code_page(bytes, CP_OEMCP, true)
+}
+
+/// Decodes bytes in a Windows code page (`CP_ACP`, `CP_OEMCP`, or an explicit
+/// numeric code page such as 936/1252/437). Returns empty on unsupported data.
+pub fn decode_code_page(bytes: &[u8], code_page: u32, stop_at_nul: bool) -> String {
+    let data = if stop_at_nul {
+        bytes.split(|byte| *byte == 0).next().unwrap_or_default()
+    } else {
+        bytes
+    };
+    if data.is_empty() {
+        return String::new();
+    }
+    let length =
+        unsafe { MultiByteToWideChar(code_page, MULTI_BYTE_TO_WIDE_CHAR_FLAGS(0), data, None) };
+    if length <= 0 {
+        return String::from_utf8_lossy(data).into_owned();
+    }
+    let mut wide = vec![0_u16; length as usize];
+    let written = unsafe {
+        MultiByteToWideChar(
+            code_page,
+            MULTI_BYTE_TO_WIDE_CHAR_FLAGS(0),
+            data,
+            Some(&mut wide),
+        )
+    };
+    if written <= 0 {
+        return String::from_utf8_lossy(data).into_owned();
+    }
+    String::from_utf16_lossy(&wide[..written as usize])
+}
+
+/// Encodes text for legacy `CF_TEXT` using the process ANSI code page.
+pub fn encode_ansi_text(text: &str) -> Vec<u8> {
+    encode_code_page(text, CP_ACP)
+}
+
+/// Encodes text for legacy `CF_OEMTEXT` using the OEM code page.
+pub fn encode_oem_text(text: &str) -> Vec<u8> {
+    encode_code_page(text, CP_OEMCP)
+}
+
+/// Encodes text into a Windows code page for legacy clipboard formats.
+pub fn encode_code_page(text: &str, code_page: u32) -> Vec<u8> {
+    let wide = text.encode_utf16().collect::<Vec<_>>();
+    if wide.is_empty() {
+        return Vec::new();
+    }
+    let length = unsafe {
+        WideCharToMultiByte(
+            code_page,
+            0,
+            &wide,
+            None,
+            windows::core::PCSTR::null(),
+            None,
+        )
+    };
+    if length <= 0 {
+        return text.as_bytes().to_vec();
+    }
+    let mut bytes = vec![0_u8; length as usize];
+    let written = unsafe {
+        WideCharToMultiByte(
+            code_page,
+            0,
+            &wide,
+            Some(&mut bytes),
+            windows::core::PCSTR::null(),
+            None,
+        )
+    };
+    if written <= 0 {
+        return text.as_bytes().to_vec();
+    }
+    bytes.truncate(written as usize);
+    bytes
 }
 
 pub fn html_fragment_bytes(bytes: &[u8]) -> Vec<u8> {
@@ -43,16 +129,59 @@ pub fn html_fragment_bytes(bytes: &[u8]) -> Vec<u8> {
 
 pub fn html_preview(bytes: &[u8]) -> String {
     let fragment = html_fragment_bytes(bytes);
-    let source = String::from_utf8_lossy(&fragment);
+    let source = decode_html(&fragment);
     strip_html(&source)
 }
 
+/// Decodes an HTML clipboard fragment. The Windows HTML clipboard format is
+/// normally UTF-8, but producers may declare a legacy charset; honor it when
+/// the bytes are not valid UTF-8.
+pub fn decode_html(bytes: &[u8]) -> String {
+    if let Ok(text) = std::str::from_utf8(bytes) {
+        return text.to_string();
+    }
+    let charset = html_charset(bytes);
+    let code_page = charset
+        .as_deref()
+        .and_then(code_page_for_charset)
+        .unwrap_or(CP_ACP);
+    decode_code_page(bytes, code_page, false)
+}
+
+fn html_charset(bytes: &[u8]) -> Option<String> {
+    let window = &bytes[..bytes.len().min(8 * 1024)];
+    let lowered = String::from_utf8_lossy(window).to_ascii_lowercase();
+    let index = lowered.find("charset=")? + "charset=".len();
+    let rest = &lowered[index..];
+    let rest = rest.trim_start_matches(['"', '\'']);
+    let end = rest
+        .find(|character: char| {
+            character.is_whitespace() || matches!(character, '"' | '\'' | ';' | '>' | '/')
+        })
+        .unwrap_or(rest.len());
+    let label = rest[..end].trim();
+    (!label.is_empty()).then(|| label.to_string())
+}
+
+fn code_page_for_charset(label: &str) -> Option<u32> {
+    match label {
+        "utf-8" | "utf8" | "unicode-1-1-utf-8" => None,
+        "windows-1252" | "cp1252" | "iso-8859-1" | "latin1" => Some(1252),
+        "gb2312" | "gbk" | "gb18030" | "cp936" => Some(936),
+        "big5" | "cp950" => Some(950),
+        "shift_jis" | "shift-jis" | "cp932" => Some(932),
+        "cp437" | "ibm437" | "oem" => Some(437),
+        _ => None,
+    }
+}
+
 pub fn rtf_preview(bytes: &[u8]) -> String {
-    let source = String::from_utf8_lossy(bytes);
+    let source = decode_code_page(bytes, 1252, false);
     let mut output = String::new();
     let chars = source.chars().collect::<Vec<_>>();
     let mut index = 0;
     let mut pending_unicode = false;
+    let mut code_page = 1252_u32;
     while index < chars.len() {
         match chars[index] {
             '\\' => {
@@ -66,15 +195,23 @@ pub fn rtf_preview(bytes: &[u8]) -> String {
                         index += 1;
                     }
                     '\'' => {
-                        if index + 2 < chars.len() {
+                        let mut escaped = Vec::new();
+                        while index + 2 < chars.len() && chars[index] == '\'' {
                             let hex = format!("{}{}", chars[index + 1], chars[index + 2]);
                             if let Ok(value) = u8::from_str_radix(&hex, 16) {
-                                output.push(value as char);
+                                escaped.push(value);
                             }
                             index += 3;
-                        } else {
-                            index += 1;
+                            // The next escape starts with its own backslash:
+                            // `\'d6\'d0` is one continuous byte run.
+                            if index + 3 < chars.len()
+                                && chars[index] == '\\'
+                                && chars[index + 1] == '\''
+                            {
+                                index += 1;
+                            }
                         }
+                        output.push_str(&decode_code_page(&escaped, code_page, false));
                     }
                     'u' => {
                         index += 1;
@@ -112,6 +249,7 @@ pub fn rtf_preview(bytes: &[u8]) -> String {
                             index += 1;
                         }
                         let word = chars[start..index].iter().collect::<String>();
+                        let number_start = index;
                         while chars.get(index).is_some_and(|character| {
                             character.is_ascii_digit() || *character == '-'
                         }) {
@@ -119,6 +257,15 @@ pub fn rtf_preview(bytes: &[u8]) -> String {
                         }
                         if chars.get(index) == Some(&' ') {
                             index += 1;
+                        }
+                        if word == "ansicpg" && number_start < index {
+                            let digits = chars[number_start..index]
+                                .iter()
+                                .filter(|character| character.is_ascii_digit())
+                                .collect::<String>();
+                            if let Ok(value) = digits.parse::<u32>() {
+                                code_page = value;
+                            }
                         }
                         if word == "par" || word == "line" {
                             output.push('\n');
@@ -450,6 +597,26 @@ mod tests {
             hdrop_paths(&drop).expect("paths"),
             vec!["C:\\QA\\one.txt", "C:\\QA\\two.txt"]
         );
+    }
+
+    #[test]
+    fn ansi_text_uses_windows_code_pages_instead_of_utf8_lossy() {
+        assert_eq!(
+            decode_code_page(&[0xD6, 0xD0, 0xCE, 0xC4], 936, true),
+            "中文"
+        );
+        assert_eq!(
+            decode_code_page(&[0x43, 0x61, 0x66, 0xE9], 1252, true),
+            "Café"
+        );
+        assert_eq!(decode_code_page(&[0x82], 437, true), "é");
+    }
+
+    #[test]
+    fn html_and_rtf_honor_declared_code_pages() {
+        let html = b"<meta charset=\"gbk\"><b>\xD6\xD0\xCE\xC4</b>";
+        assert_eq!(html_preview(html), "中文");
+        assert_eq!(rtf_preview(br"{\rtf1\ansicpg936 \'d6\'d0\'ce\'c4}"), "中文");
     }
 
     #[test]

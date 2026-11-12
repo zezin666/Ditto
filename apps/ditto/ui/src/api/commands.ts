@@ -106,6 +106,7 @@ export const commands = {
     call<OperationResult>("import_data", { source }),
   optimizeStorage: () => call<OperationResult>("optimize_storage"),
   getMigrationStatus: () => call<MigrationStatus>("get_migration_status"),
+  clearStagedFailure: () => call<OperationResult>("clear_staged_failure"),
   migrationDryRun: (source: string) =>
     call<MigrationRun>("migration_dry_run", { source }),
   migrationApply: (source: string) =>

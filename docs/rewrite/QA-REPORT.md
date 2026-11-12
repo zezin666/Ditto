@@ -225,3 +225,54 @@ Portable ZIP 内容：`Ditto.exe`、`DittoPopup.exe`、`DittoUacHelper.exe`、`D
 2. 在解锁、可交互桌面复跑 UNVERIFIED 项（真实热键、粘贴、UAC、拖出、IME/DPI、托盘）。
 3. 评估把设置热键真正注册到 `tauri-plugin-global-shortcut`。
 4. 评估 popup 冷启动优化（预热/持久化 GL 缓存/切换渲染后端）。
+
+---
+
+# T9 QA 追加（2026-11-13，release）
+
+本节取代上文 T7 中与新实现冲突的冷启动/热键/滚动结论；旧数据保留用于追溯。
+
+## 质量门
+
+- `cargo fmt --all --check` PASS
+- `cargo clippy --workspace --all-targets --locked -- -D warnings` PASS
+- `cargo test --workspace --locked` PASS（全部 suites；migration 10k benchmark 仍 ignored）
+- `npm run build --prefix apps/ditto/ui` PASS
+- `npx tauri build` PASS → NSIS 4,870,054 B
+- `scripts/package-portable.ps1 -Profile release` PASS → ZIP 6,855,700 B
+- `tools/qa/install-smoke.ps1` PASS（安装/卸载、Portable、`Data\ditto.db`）
+
+## 性能与交互
+
+| 指标 | T9 实测 | 证据 |
+|---|---|---|
+| Popup 冷启动（无重建，3 次） | 1736.1 / 1707.7 / 1714.5 ms；中位数 **1714.5 ms** | `after/qa/cold-start-t9.txt` |
+| Popup app 侧 process-start→Hello | 0.3–0.7 ms | `popup-trace` |
+| Popup 首帧（100 次 IPC Show） | P50 1.813 ms / P95 **3.526 ms** | `after/qa/ipc-smoke-t9.log` |
+| 空闲 3 次冷采样中位数（core+popup private） | **40,480,768 B** | 同上 |
+| Settings 打开（窗口标题） | 79.0 ms | 同上 |
+| 二次实例退出 wall-clock | 49.5 ms | 同上 |
+| 真实 SQLite 10k cursor 分页 | 20 页 / 10,000 行 / 483 ms | `after/qa/paging-10k-real-sqlite.log` |
+| 真实 SQLite 10k 滚动（300 帧） | frame p50 0.674 / p95 **1.205** / max 25.6 ms；>50 ms 帧 0；update p95 0.004 ms | `after/perf/scroll-10k-real-sqlite.csv` |
+| 本地隐藏同步 | outside click → visible=false；下一次 Show → true；popup 崩溃 → false | `after/qa/popup-hide-sync.log` |
+| 热键 Apply/冲突回滚 | 新键生效、旧键释放；冲突 toast 且持久化保持旧键 | `T9-hotkey-conflict-rollback.png`、`T9-tauri-hotkeys-real.png` |
+
+冷启动说明：首次运行“刚构建的未签名 popup”仍可能被 Defender 实时扫描，进程进入 `main()` 前耗时 6.4 s（本次一次 7961 ms）；同一二进制后续冷启动为 1.71 s。popup 在 core 启动早期即 spawn，并与 Tauri 初始化重叠；常驻后热键→首帧为毫秒级。
+
+## 截图
+
+- `after/screenshots/T9-tauri-settings-real.png`（真实 Tauri WebView2，General 页，无 MockBackend）
+- `after/screenshots/T9-tauri-hotkeys-real.png`（未实现 chord 的 disabled/说明）
+- `after/screenshots/T9-hotkey-conflict-rollback.png`（冲突 toast）
+
+## 产物哈希
+
+见 `after/build/t9-hashes.txt`；4 个 exe/installer 均 `NotSigned`。
+
+## T9 之后仍 UNVERIFIED
+
+1. 物理 hotkey→输入→Enter/Shift+Enter→真实应用粘贴。
+2. 真实 tray 点击（代码与 EN/ZH 文案已测）。
+3. 缺失 WebView2 的真实机器路径。
+4. 真实 UAC、IME、Narrator、高对比度、混合 DPI、多显示器。
+5. Defender/SmartScreen 实际拦截行为。

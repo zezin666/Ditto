@@ -8,5 +8,5 @@ pub mod theme;
 pub mod ui;
 pub mod worker;
 
-pub use app::PopupApp;
+pub use app::{PopupApp, prewarm_ipc};
 pub use options::{CaptureOptions, CaptureState, PopupOptions};

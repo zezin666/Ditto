@@ -1326,10 +1326,12 @@ dependencies = [
 name = "ditto-storage"
 version = "0.1.0"
 dependencies = [
+ "ditto-clipboard",
  "ditto-model",
  "hex",
  "image",
  "parking_lot",
+ "regex",
  "rusqlite",
  "serde",
  "serde_json",

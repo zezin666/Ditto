@@ -17,6 +17,12 @@ pub trait ClipboardBackend: Send + Sync {
 
 pub trait TargetBackend: Send + Sync {
     fn capture(&self) -> PasteResult<TargetWindow>;
+    /// Validates a target snapshot captured before the popup was activated.
+    /// The default accepts the snapshot; the Windows backend re-checks that the
+    /// window still belongs to the same process.
+    fn validate(&self, _target: &TargetWindow) -> PasteResult<()> {
+        Ok(())
+    }
     fn activate(&self, target: &TargetWindow) -> PasteResult<()>;
     fn is_current_process_elevated(&self) -> bool;
 }
@@ -128,6 +134,18 @@ where
         clips: &[ClipDetail],
         options: &PasteOptions,
     ) -> Result<PasteReport, PasteFailure> {
+        self.paste_many_with_target(clips, options, None)
+    }
+
+    /// Pastes to an explicit target snapshot. The popup captures the user's
+    /// foreground window before it activates itself, then passes that snapshot
+    /// here so the paste never targets `DittoPopup.exe`.
+    pub fn paste_many_with_target(
+        &self,
+        clips: &[ClipDetail],
+        options: &PasteOptions,
+        target_snapshot: Option<&TargetWindow>,
+    ) -> Result<PasteReport, PasteFailure> {
         let options = options.clone().normalized();
         let mode = if clips.len() > 1 {
             BatchMode::Multi
@@ -152,12 +170,21 @@ where
             });
         }
 
-        let target = match self.target.capture() {
-            Ok(target) => target,
-            Err(error) => {
-                report.failed_clip_id = Some(clips[0].summary.id);
-                return Err(PasteFailure { error, report });
-            }
+        let target = match target_snapshot {
+            Some(snapshot) => match self.target.validate(snapshot) {
+                Ok(()) => snapshot.clone(),
+                Err(error) => {
+                    report.failed_clip_id = Some(clips[0].summary.id);
+                    return Err(PasteFailure { error, report });
+                }
+            },
+            None => match self.target.capture() {
+                Ok(target) => target,
+                Err(error) => {
+                    report.failed_clip_id = Some(clips[0].summary.id);
+                    return Err(PasteFailure { error, report });
+                }
+            },
         };
         report.target_pid = Some(target.pid);
         report.elevated =
@@ -182,6 +209,12 @@ where
             if let Err(error) = result {
                 report.failed_clip_id = Some(clip.summary.id);
                 if let Some(snapshot) = snapshot.as_ref() {
+                    // Restoring the pre-paste clipboard must also suppress the
+                    // capture of that restore, otherwise the original clip is
+                    // re-inserted into history after a failed paste.
+                    if let Ok(hash) = suppression_hash(snapshot) {
+                        self.suppression.remember(hash);
+                    }
                     if self.clipboard.write(snapshot).is_ok() {
                         report.restored_clipboard = true;
                     }
@@ -442,6 +475,84 @@ mod tests {
             engine.clipboard.writes.lock().last(),
             Some(&vec!["CF_TEXT".to_string()])
         );
+    }
+
+    #[test]
+    fn explicit_target_snapshot_is_used_without_capturing_the_foreground() {
+        let engine = PasteEngine::with_backends(
+            PathBuf::from("."),
+            Arc::new(WriteSuppression::default()),
+            MockClipboard::default(),
+            NeverCaptureTarget::default(),
+            MockInput::default(),
+            MockElevation::default(),
+        );
+        let snapshot = TargetWindow {
+            hwnd: 7,
+            focus_hwnd: 7,
+            pid: 4242,
+            thread_id: 9,
+            class_name: "Notepad".to_string(),
+            integrity: IntegrityLevel::Medium,
+        };
+        let report = engine
+            .paste_many_with_target(&[detail(1)], &PasteOptions::default(), Some(&snapshot))
+            .expect("snapshot paste");
+        assert_eq!(report.target_pid, Some(4242));
+        assert_eq!(engine.target.activations.load(Ordering::SeqCst), 1);
+        assert_eq!(engine.input.sends.load(Ordering::SeqCst), 1);
+    }
+
+    #[test]
+    fn restoring_the_original_clipboard_suppresses_the_next_capture() {
+        let snapshot_formats = vec![PasteFormat {
+            name: "CF_TEXT".to_string(),
+            data: b"original".to_vec(),
+            seq: 0,
+            is_primary: true,
+        }];
+        let expected_hash =
+            crate::clipboard::suppression_hash(&snapshot_formats).expect("snapshot hash");
+        let suppression = Arc::new(WriteSuppression::default());
+        let engine = PasteEngine::with_backends(
+            PathBuf::from("."),
+            Arc::clone(&suppression),
+            MockClipboard {
+                snapshot: Mutex::new(snapshot_formats),
+                ..MockClipboard::default()
+            },
+            FailSecondTarget::default(),
+            MockInput::default(),
+            MockElevation::default(),
+        );
+        let failure = engine
+            .paste_many(&[detail(1), detail(2)], &PasteOptions::default())
+            .expect_err("second paste must fail");
+        assert!(failure.report.restored_clipboard);
+        assert!(
+            suppression.is_expected(expected_hash),
+            "the restored clipboard must be suppressed on the next capture"
+        );
+    }
+
+    #[derive(Default)]
+    struct NeverCaptureTarget {
+        activations: AtomicU32,
+    }
+
+    impl TargetBackend for NeverCaptureTarget {
+        fn capture(&self) -> PasteResult<TargetWindow> {
+            Err(PasteError::NoTarget)
+        }
+
+        fn activate(&self, _target: &TargetWindow) -> PasteResult<()> {
+            self.activations.fetch_add(1, Ordering::SeqCst);
+            Ok(())
+        }
+
+        fn is_current_process_elevated(&self) -> bool {
+            false
+        }
     }
 
     struct ElevatedTarget;

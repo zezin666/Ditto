@@ -175,6 +175,19 @@ export function DataPage({
     }
   };
 
+  const clearFailedStaging = async () => {
+    setBusy(true);
+    try {
+      await commands.clearStagedFailure();
+      notify("success", t("toast.actionComplete"));
+      await refreshMigration();
+    } catch {
+      notify("error", t("toast.actionFailed"));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const openFolder = async () => {
     try {
       await commands.openDataFolder();
@@ -185,11 +198,13 @@ export function DataPage({
   };
 
   const confirmation = operation ? confirmationKeys[operation] : null;
-  const migrationLabel = migration?.inProgress
-    ? t("data.migrationRunning")
-    : migration?.completed
-      ? t("data.migrationCompleted")
-      : t("data.migrationNotStarted");
+  const migrationLabel = migration?.phase === "failed"
+    ? t("data.migrationFailed")
+    : migration?.inProgress
+      ? t("data.migrationRunning")
+      : migration?.completed
+        ? t("data.migrationCompleted")
+        : t("data.migrationNotStarted");
 
   return (
     <div className="page-stack">
@@ -277,6 +292,21 @@ export function DataPage({
                 value={migration.total ? migration.processed / migration.total : 0}
                 aria-label={t("data.migrationRunning")}
               />
+            ) : null}
+            {migration?.phase === "failed" ? (
+              <div className="inline-message">
+                <p className="setting-help standalone-help">{t("data.failedStaging")}</p>
+                {migration.warnings.map((warning) => (
+                  <code className="path-value" key={warning}>
+                    {warning}
+                  </code>
+                ))}
+                <div className="card-actions">
+                  <Button disabled={busy} onClick={() => void clearFailedStaging()}>
+                    {t("data.clearFailed")}
+                  </Button>
+                </div>
+              </div>
             ) : null}
             <SettingRow label={t("data.migrationSource")} align="start">
               <Input

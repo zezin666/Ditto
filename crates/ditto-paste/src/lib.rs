@@ -20,4 +20,4 @@ pub use error::{PasteError, PasteErrorCode, PasteResult};
 pub use input::SendInputBackend;
 pub use model::{BatchMode, IntegrityLevel, PasteFormat, PasteOptions, TargetWindow};
 pub use payload::{build_file_drop, build_payload, validate_file_paths};
-pub use target::WindowsTargetBackend;
+pub use target::{WindowsTargetBackend, capture_foreground_window, validate_target_snapshot};

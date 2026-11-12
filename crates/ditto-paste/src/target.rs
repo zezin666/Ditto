@@ -38,6 +38,10 @@ impl TargetBackend for WindowsTargetBackend {
         capture_foreground_window()
     }
 
+    fn validate(&self, target: &TargetWindow) -> PasteResult<()> {
+        validate_target_snapshot(target)
+    }
+
     fn activate(&self, target: &TargetWindow) -> PasteResult<()> {
         activate_target(target)
     }
@@ -45,6 +49,26 @@ impl TargetBackend for WindowsTargetBackend {
     fn is_current_process_elevated(&self) -> bool {
         process_integrity(std::process::id()).is_elevated_target()
     }
+}
+
+/// Re-validates a target captured when the popup was shown. Ditto's own
+/// windows are never valid paste targets even if the popup has since become
+/// the foreground window.
+pub fn validate_target_snapshot(target: &TargetWindow) -> PasteResult<()> {
+    if target.hwnd == 0 || target.pid == std::process::id() {
+        return Err(PasteError::NoTarget);
+    }
+    let hwnd = HWND(target.hwnd as *mut _);
+    if unsafe { !IsWindow(Some(hwnd)).as_bool() } {
+        return Err(PasteError::TargetChanged);
+    }
+    if pid_for_window(hwnd) != target.pid {
+        return Err(PasteError::TargetChanged);
+    }
+    if is_ditto_process(target.pid) {
+        return Err(PasteError::NoTarget);
+    }
+    Ok(())
 }
 
 pub fn capture_foreground_window() -> PasteResult<TargetWindow> {

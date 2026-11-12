@@ -1,0 +1,46 @@
+seeded 3 clips and group 1 into C:\Users\zezin\AppData\Local\Temp\ditto-t9-final\data
+CORE_PID=19036
+PASS core created the per-user named pipe
+PASS core created ditto.db under the synthetic data root
+PASS core shows no user-facing window at startup
+CORE_MAIN_WINDOW_TITLE=com.ditto.clipboard-siw
+CORE_MAIN_WINDOW_VISIBLE=True
+POPUP_READY=True POPUP_READY_MS=7,961.0
+IDLE_PRE_SHOW_PRIVATE_BYTES=40415232
+IDLE_COLD_SAMPLES_BYTES=40415232,40480768,40480768
+IDLE_COLD_MEDIAN_PRIVATE_BYTES=40480768
+PASS Hello returns HelloAck (protocol 1)
+CAPABILITIES=clipboard,groups,copy_buffers,preview,uac_paste
+PASS GetSettings returns a real settings snapshot
+PASS settings include general.language
+PASS GetGroups returns a group list
+PASS CreateGroup succeeds
+PASS created group is listed
+PASS GetClips returns clips
+PASS seeded synthetic clips are visible (3 clip(s))
+PASS seeded clip is the known synthetic text
+PASS Search finds the synthetic clip
+PASS SetPinned succeeds
+PASS MoveToGroup succeeds
+PASS CopyBufferAssign succeeds
+PASS copy buffer 1 references the synthetic clip
+PASS RenameGroup succeeds
+PASS Delete removes the synthetic clip
+PASS deleted clip is gone
+PASS DeleteGroup succeeds
+SETTINGS_OPEN_MS=79.0
+SECOND_INSTANCE_EXIT_MS=49.5
+
+sample core_working_set popup_working_set core_private_ws popup_private_ws total_private_ws
+------ ---------------- ----------------- --------------- ---------------- ----------------
+     1         30822400         127188992         5124096         87986176         93110272
+     2         32567296         127188992         5238784         87986176         93224960
+     3         32559104         127188992         5238784         87986176         93224960
+
+
+IDLE_TOTAL_PRIVATE_BYTES=93224960
+POPUP_IPC_FRAMES=100
+POPUP_FIRST_FRAME_P50_US=1813
+POPUP_FIRST_FRAME_P95_US=3526
+QA_ROOT=C:\Users\zezin\AppData\Local\Temp\ditto-t9-final
+QA_RESULT=completed

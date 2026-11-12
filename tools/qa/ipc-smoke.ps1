@@ -1,7 +1,7 @@
 param(
     [Parameter(Mandatory = $true)][string]$DittoExe,
     [string]$Root = "",
-    [int]$ShowCycles = 12
+    [int]$ShowCycles = 100
 )
 
 $ErrorActionPreference = "Stop"
@@ -32,11 +32,9 @@ trap {
     if ($null -ne $core -and -not $core.HasExited) {
         Stop-Process -Id $core.Id -Force -ErrorAction SilentlyContinue
     }
-    if ($null -ne $startedAt) {
-        Get-Process -Name DittoPopup -ErrorAction SilentlyContinue |
-            Where-Object { $_.StartTime -ge $startedAt } |
-            Stop-Process -Force -ErrorAction SilentlyContinue
-    }
+    Get-Process -Name DittoPopup -ErrorAction SilentlyContinue |
+        Where-Object { $_.Path -like "$repoRoot	arget\*" } |
+        Stop-Process -Force -ErrorAction SilentlyContinue
     [Console]::Error.WriteLine("QA_TRAP: $_")
     exit 1
 }
@@ -152,6 +150,24 @@ $earlyPopupPerf = if ($earlyPopup) { $earlyPerf | Where-Object { $_.IDProcess -e
 $earlyTotal = [int64]$earlyCore.WorkingSetPrivate + [int64]$(if ($earlyPopupPerf) { $earlyPopupPerf.WorkingSetPrivate } else { 0 })
 Write-Output ("IDLE_PRE_SHOW_PRIVATE_BYTES={0}" -f $earlyTotal)
 
+# Three cold idle samples before any show/IPC work; report the median (Q6).
+$coldSamples = @()
+for ($i = 0; $i -lt 3; $i++) {
+    Start-Sleep -Milliseconds 500
+    $coldCore = Get-Process -Id $core.Id -ErrorAction Stop
+    $coldPopup = Get-Process -Name DittoPopup -ErrorAction SilentlyContinue |
+        Where-Object { $_.StartTime -ge $startedAt } | Select-Object -First 1
+    $coldPerf = Get-CimInstance Win32_PerfFormattedData_PerfProc_Process |
+        Where-Object { $_.IDProcess -eq $core.Id -or ($coldPopup -and $_.IDProcess -eq $coldPopup.Id) }
+    $coldCorePerf = $coldPerf | Where-Object { $_.IDProcess -eq $core.Id } | Select-Object -First 1
+    $coldPopupPerf = if ($coldPopup) { $coldPerf | Where-Object { $_.IDProcess -eq $coldPopup.Id } | Select-Object -First 1 } else { $null }
+    $coldSamples += [int64]$coldCorePerf.WorkingSetPrivate + [int64]$(if ($coldPopupPerf) { $coldPopupPerf.WorkingSetPrivate } else { 0 })
+}
+$coldSorted = $coldSamples | Sort-Object
+$coldMedian = $coldSorted[[int][Math]::Floor($coldSorted.Count / 2)]
+Write-Output ("IDLE_COLD_SAMPLES_BYTES=" + ($coldSamples -join ","))
+Write-Output ("IDLE_COLD_MEDIAN_PRIVATE_BYTES={0}" -f $coldMedian)
+
 # --- IPC session ----------------------------------------------------------
 $pipe = New-Object System.IO.Pipes.NamedPipeClientStream(".", "ditto-$sid", [System.IO.Pipes.PipeDirection]::InOut)
 $pipe.Connect(5000)
@@ -220,6 +236,11 @@ try {
     $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
     $second = Start-Process -FilePath $DittoExe -ArgumentList "--settings" -PassThru
     for ($i = 0; $i -lt 600; $i++) {
+        if ($null -eq $exitMs -and $second.HasExited) {
+            # Wall-clock from before Start-Process to the process actually
+            # exiting; this is not a residual WaitForExit measurement.
+            $exitMs = $stopwatch.Elapsed.TotalMilliseconds
+        }
         Start-Sleep -Milliseconds 10
         $current = Get-Process -Id $core.Id -ErrorAction Stop
         if ($current.MainWindowTitle -eq "Ditto Settings") {
@@ -228,9 +249,10 @@ try {
             break
         }
     }
-    $exitStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
-    $second.WaitForExit(5000) | Out-Null
-    $exitMs = $exitStopwatch.Elapsed.TotalMilliseconds
+    if ($null -eq $exitMs) {
+        $second.WaitForExit(5000) | Out-Null
+        $exitMs = $stopwatch.Elapsed.TotalMilliseconds
+    }
 } catch {
     Write-Output "SETTINGS_LATENCY_UNVERIFIED=$($_.Exception.Message)"
 }
@@ -302,7 +324,7 @@ if (Test-Path -LiteralPath $perfLog) {
 
 # --- teardown -------------------------------------------------------------
 Get-Process -Name DittoPopup -ErrorAction SilentlyContinue |
-    Where-Object { $_.StartTime -ge $startedAt } |
+    Where-Object { $_.Path -like "$repoRoot	arget\*" } |
     Stop-Process -Force -ErrorAction SilentlyContinue
 Stop-Process -Id $core.Id -Force -ErrorAction SilentlyContinue
 Write-Output "QA_ROOT=$Root"

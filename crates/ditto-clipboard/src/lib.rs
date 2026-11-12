@@ -14,8 +14,9 @@ use parking_lot::Mutex;
 use sha2::{Digest, Sha256};
 
 pub use decode::{
-    decode_ansi_text, decode_utf16le, dib_to_png, hdrop_paths, html_fragment_bytes, html_preview,
-    normalize_text_for_hash, rtf_preview, thumbnail_png,
+    decode_ansi_text, decode_code_page, decode_html, decode_oem_text, decode_utf16le, dib_to_png,
+    encode_ansi_text, encode_code_page, encode_oem_text, hdrop_paths, html_fragment_bytes,
+    html_preview, normalize_text_for_hash, rtf_preview, thumbnail_png,
 };
 pub use error::{ClipboardError, ClipboardResult};
 pub use windows::{ClipboardMonitor, WindowsClipboardSource};
@@ -25,6 +26,14 @@ pub struct CaptureConfig {
     pub debounce_ms: u64,
     pub max_clip_bytes: usize,
     pub max_image_bytes: usize,
+    /// Total bytes accepted for one clipboard event. Caps pathological sets of
+    /// many large formats before any buffer is allocated.
+    pub max_total_bytes: usize,
+    /// Maximum number of formats read from one clipboard event.
+    pub max_formats: usize,
+    pub capture_files: bool,
+    pub capture_images: bool,
+    pub record_source_app: bool,
     pub ignored_formats: Vec<String>,
 }
 
@@ -34,6 +43,11 @@ impl Default for CaptureConfig {
             debounce_ms: 150,
             max_clip_bytes: 64 * 1024 * 1024,
             max_image_bytes: 32 * 1024 * 1024,
+            max_total_bytes: 128 * 1024 * 1024,
+            max_formats: 256,
+            capture_files: true,
+            capture_images: true,
+            record_source_app: true,
             ignored_formats: Vec::new(),
         }
     }
@@ -145,17 +159,40 @@ pub enum CaptureDisposition {
 
 #[derive(Default)]
 pub struct WriteSuppression {
-    expected: Mutex<Option<[u8; 32]>>,
+    /// A multi-clip paste writes several payloads in quick succession; the
+    /// monitor can observe more than one before the debounce fires, so keep a
+    /// short ordered window of expected hashes instead of a single slot.
+    expected: Mutex<std::collections::VecDeque<[u8; 32]>>,
 }
+
+const SUPPRESSION_WINDOW: usize = 16;
 
 impl WriteSuppression {
     pub fn remember(&self, content_hash: [u8; 32]) {
-        *self.expected.lock() = Some(content_hash);
+        let mut expected = self.expected.lock();
+        expected.push_back(content_hash);
+        while expected.len() > SUPPRESSION_WINDOW {
+            expected.pop_front();
+        }
     }
 
     fn consume_if_matches(&self, content_hash: [u8; 32]) -> bool {
-        let expected = self.expected.lock().take();
-        expected == Some(content_hash)
+        let mut expected = self.expected.lock();
+        if let Some(index) = expected.iter().position(|hash| *hash == content_hash) {
+            expected.remove(index);
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Test/diagnostic hook: whether the next matching capture would be
+    /// suppressed without consuming the expectation.
+    pub fn is_expected(&self, content_hash: [u8; 32]) -> bool {
+        self.expected
+            .lock()
+            .iter()
+            .any(|hash| *hash == content_hash)
     }
 }
 
@@ -208,13 +245,27 @@ pub fn build_captured_clip(
     let mut seq = 0_u32;
     let mut image_png = None;
     let mut has_dib = false;
+    let mut total_bytes = 0_usize;
 
     for raw in snapshot.formats {
         if raw.data.is_empty() {
             warnings.push(format!("{} was empty", raw.name));
             continue;
         }
+        if formats.len() >= config.max_formats {
+            warnings.push(format!(
+                "clipboard had more than {} formats; remaining formats were skipped",
+                config.max_formats
+            ));
+            break;
+        }
+        if raw.name == "CF_HDROP" && !config.capture_files {
+            continue;
+        }
         let image = is_image_format(&raw.name);
+        if image && !config.capture_images {
+            continue;
+        }
         let limit = if image {
             config.max_image_bytes
         } else {
@@ -224,6 +275,14 @@ pub fn build_captured_clip(
             warnings.push(format!("{} exceeded the {} byte limit", raw.name, limit));
             continue;
         }
+        if total_bytes.saturating_add(raw.data.len()) > config.max_total_bytes {
+            warnings.push(format!(
+                "{} exceeded the {} byte total capture budget",
+                raw.name, config.max_total_bytes
+            ));
+            continue;
+        }
+        total_bytes += raw.data.len();
         if raw.name == "PNG" {
             image_png.get_or_insert_with(|| raw.data.clone());
         }
@@ -335,31 +394,62 @@ fn primary_format_index(formats: &[CapturedFormat]) -> usize {
 }
 
 fn content_hash(format: &CapturedFormat) -> [u8; 32] {
+    content_hash_for_format(&format.name, &format.data)
+}
+
+/// Computes the dedupe hash for one clipboard format. Shared with the storage
+/// edit path so a rewritten clip dedupes exactly like a captured one.
+pub fn content_hash_for_format(name: &str, data: &[u8]) -> [u8; 32] {
     let mut hasher = Sha256::new();
-    hasher.update(format.name.as_bytes());
+    hasher.update(name.as_bytes());
     hasher.update([0]);
-    match format.name.as_str() {
+    match name {
         "CF_UNICODETEXT" => {
-            let text = decode_utf16le(&format.data);
+            let text = decode_utf16le(data);
             let normalized = normalize_text_for_hash(&text)
                 .encode_utf16()
                 .flat_map(u16::to_le_bytes)
                 .collect::<Vec<_>>();
             hasher.update(normalized);
         }
-        "CF_TEXT" | "CF_OEMTEXT" | "HTML Format" | "Rich Text Format" | "CF_HDROP" => {
-            let text = decode_ansi_text(&format.data);
+        "CF_TEXT" => {
+            let text = decode_ansi_text(data);
             hasher.update(normalize_text_for_hash(&text).as_bytes());
         }
-        _ => hasher.update(&format.data),
+        "CF_OEMTEXT" => {
+            let text = decode_oem_text(data);
+            hasher.update(normalize_text_for_hash(&text).as_bytes());
+        }
+        "HTML Format" => {
+            let text = html_preview(data);
+            hasher.update(normalize_text_for_hash(&text).as_bytes());
+        }
+        "Rich Text Format" => {
+            let text = rtf_preview(data);
+            hasher.update(normalize_text_for_hash(&text).as_bytes());
+        }
+        "CF_HDROP" => {
+            let text = decode_ansi_text(data);
+            hasher.update(normalize_text_for_hash(&text).as_bytes());
+        }
+        _ => hasher.update(data),
     }
     hasher.finalize().into()
 }
 
 fn formats_hash(formats: &[CapturedFormat]) -> [u8; 32] {
+    let pairs = formats
+        .iter()
+        .map(|format| (format.name.clone(), format.data.clone()))
+        .collect::<Vec<_>>();
+    formats_hash_for(&pairs)
+}
+
+/// Hash of the format set, used for duplicate detection and edit rewrite.
+pub fn formats_hash_for(formats: &[(String, Vec<u8>)]) -> [u8; 32] {
     let mut pairs = formats
         .iter()
-        .map(|format| (format.name.clone(), sha256(&format.data)))
+        .map(|(name, data)| (name.clone(), sha256(data)))
         .collect::<Vec<_>>();
     pairs.sort();
     let mut hasher = Sha256::new();
@@ -386,7 +476,11 @@ fn derive_text_content(formats: &[CapturedFormat]) -> Option<String> {
         .iter()
         .find(|format| matches!(format.name.as_str(), "CF_TEXT" | "CF_OEMTEXT"))
     {
-        return Some(decode_ansi_text(&format.data));
+        return Some(if format.name == "CF_OEMTEXT" {
+            decode_oem_text(&format.data)
+        } else {
+            decode_ansi_text(&format.data)
+        });
     }
     if let Some(format) = formats.iter().find(|format| format.name == "HTML Format") {
         return Some(html_preview(&format.data));
@@ -560,5 +654,45 @@ mod tests {
         let second = build_captured_clip(snapshot("line one\nline two"), &CaptureConfig::default())
             .expect("second");
         assert_eq!(first.content_hash, second.content_hash);
+    }
+
+    #[test]
+    fn capture_flags_and_total_budget_filter_formats_before_storage() {
+        let mut sample = snapshot("kept");
+        sample.formats.push(RawClipboardFormat {
+            name: "CF_HDROP".to_string(),
+            data: vec![0; 8],
+            is_primary: false,
+        });
+        sample.formats.push(RawClipboardFormat {
+            name: "PNG".to_string(),
+            data: vec![0; 8],
+            is_primary: false,
+        });
+        let config = CaptureConfig {
+            capture_files: false,
+            capture_images: false,
+            max_total_bytes: 128,
+            ..CaptureConfig::default()
+        };
+        let clip = build_captured_clip(sample, &config).expect("capture");
+        assert!(
+            clip.formats
+                .iter()
+                .all(|format| format.name != "CF_HDROP" && format.name != "PNG")
+        );
+        let mut too_large = snapshot("kept");
+        too_large.formats.push(RawClipboardFormat {
+            name: "Custom".to_string(),
+            data: vec![7; 512],
+            is_primary: false,
+        });
+        let clip = build_captured_clip(too_large, &config).expect("capture");
+        assert!(clip.formats.iter().all(|format| format.name != "Custom"));
+        assert!(
+            clip.warnings
+                .iter()
+                .any(|warning| warning.contains("total capture budget"))
+        );
     }
 }

@@ -34,6 +34,7 @@ pub enum PasteMode {
 pub struct ClipPage {
     pub items: Vec<ClipSummary>,
     pub total: u64,
+    pub total_is_estimate: bool,
     pub took_ms: u64,
     pub next_cursor: Option<String>,
 }
@@ -74,7 +75,13 @@ pub type ProviderResult<T> = Result<T, ProviderError>;
 pub trait ClipProvider: Send {
     fn name(&self) -> &'static str;
 
-    fn load(&mut self, query: &str, group: GroupFilter, limit: usize) -> ProviderResult<ClipPage>;
+    fn load(
+        &mut self,
+        query: &str,
+        group: GroupFilter,
+        limit: usize,
+        cursor: Option<&str>,
+    ) -> ProviderResult<ClipPage>;
 
     fn groups(&mut self) -> ProviderResult<Vec<GroupNode>>;
 
@@ -83,6 +90,16 @@ pub trait ClipProvider: Send {
     fn copy_buffers(&mut self) -> ProviderResult<Vec<CopyBufferSlot>>;
 
     fn paste(&mut self, clip_id: i64, mode: PasteMode) -> ProviderResult<()>;
+
+    /// Pastes a selected batch through the core's single `clip_ids` request so
+    /// the engine's ordering, stop-on-failure, interval, and suppression rules
+    /// apply to the real popup path.
+    fn paste_many(&mut self, clip_ids: &[i64], mode: PasteMode) -> ProviderResult<()> {
+        for clip_id in clip_ids {
+            self.paste(*clip_id, mode)?;
+        }
+        Ok(())
+    }
 
     fn set_pinned(&mut self, clip_id: i64, pinned: bool) -> ProviderResult<()>;
 
@@ -193,6 +210,29 @@ impl IpcProvider {
         }))
     }
 
+    fn paste_ids(&mut self, clip_ids: &[i64], mode: PasteMode) -> ProviderResult<()> {
+        let (plain_text, formats) = match mode {
+            PasteMode::Original => (false, Vec::new()),
+            PasteMode::PlainText => (true, Vec::new()),
+            PasteMode::Html => (false, vec!["HTML Format".to_string()]),
+            PasteMode::Rtf => (false, vec!["Rich Text Format".to_string()]),
+            PasteMode::Files => (false, vec!["CF_HDROP".to_string()]),
+        };
+        let Some(first) = clip_ids.first().copied() else {
+            return Ok(());
+        };
+        match self.call(Request::Paste {
+            clip_id: first,
+            plain_text,
+            formats,
+            clip_ids: clip_ids.to_vec(),
+        })? {
+            Response::PasteResult { outcome } if outcome.ok => Ok(()),
+            Response::PasteResult { outcome } => Err(ProviderError::Core(outcome.message)),
+            other => Err(unexpected("paste", &other)),
+        }
+    }
+
     fn update_buffer_cache(&mut self, items: &[ClipSummary]) {
         self.buffer_clips = [None; 5];
         for item in items {
@@ -210,12 +250,19 @@ impl ClipProvider for IpcProvider {
         "ipc"
     }
 
-    fn load(&mut self, query: &str, group: GroupFilter, limit: usize) -> ProviderResult<ClipPage> {
-        let request = query_request_for_group(query, limit, group);
+    fn load(
+        &mut self,
+        query: &str,
+        group: GroupFilter,
+        limit: usize,
+        cursor: Option<&str>,
+    ) -> ProviderResult<ClipPage> {
+        let request = query_request_for_group(query, limit, group, cursor);
         match self.call(request)? {
             Response::Clips {
                 items,
                 total,
+                total_is_estimate,
                 took_ms,
                 next_cursor,
                 ..
@@ -224,6 +271,7 @@ impl ClipProvider for IpcProvider {
                 Ok(ClipPage {
                     items,
                     total,
+                    total_is_estimate,
                     took_ms,
                     next_cursor,
                 })
@@ -276,23 +324,11 @@ impl ClipProvider for IpcProvider {
     }
 
     fn paste(&mut self, clip_id: i64, mode: PasteMode) -> ProviderResult<()> {
-        let (plain_text, formats) = match mode {
-            PasteMode::Original => (false, Vec::new()),
-            PasteMode::PlainText => (true, Vec::new()),
-            PasteMode::Html => (false, vec!["HTML Format".to_string()]),
-            PasteMode::Rtf => (false, vec!["Rich Text Format".to_string()]),
-            PasteMode::Files => (false, vec!["CF_HDROP".to_string()]),
-        };
-        match self.call(Request::Paste {
-            clip_id,
-            plain_text,
-            formats,
-            clip_ids: Vec::new(),
-        })? {
-            Response::PasteResult { outcome } if outcome.ok => Ok(()),
-            Response::PasteResult { outcome } => Err(ProviderError::Core(outcome.message)),
-            other => Err(unexpected("paste", &other)),
-        }
+        self.paste_ids(&[clip_id], mode)
+    }
+
+    fn paste_many(&mut self, clip_ids: &[i64], mode: PasteMode) -> ProviderResult<()> {
+        self.paste_ids(clip_ids, mode)
     }
 
     fn set_pinned(&mut self, clip_id: i64, pinned: bool) -> ProviderResult<()> {
@@ -365,10 +401,15 @@ impl ClipProvider for IpcProvider {
 }
 
 pub fn query_request(query: &str, limit: usize) -> Request {
-    query_request_for_group(query, limit, GroupFilter::All)
+    query_request_for_group(query, limit, GroupFilter::All, None)
 }
 
-fn query_request_for_group(query: &str, limit: usize, group: GroupFilter) -> Request {
+fn query_request_for_group(
+    query: &str,
+    limit: usize,
+    group: GroupFilter,
+    cursor: Option<&str>,
+) -> Request {
     let limit = u32::try_from(limit).unwrap_or(u32::MAX);
     let group_id = match group {
         GroupFilter::All => None,
@@ -380,7 +421,7 @@ fn query_request_for_group(query: &str, limit: usize, group: GroupFilter) -> Req
             query: String::new(),
             group_id,
             limit,
-            cursor: None,
+            cursor: cursor.map(ToString::to_string),
             sort: ditto_model::ClipSort::Recent,
         }
     } else {
@@ -390,7 +431,7 @@ fn query_request_for_group(query: &str, limit: usize, group: GroupFilter) -> Req
             mode: ditto_model::SearchMode::Contains,
             sort: ditto_model::ClipSort::Recent,
             limit,
-            cursor: None,
+            cursor: cursor.map(ToString::to_string),
         }
     }
 }

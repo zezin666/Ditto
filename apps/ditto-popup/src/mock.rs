@@ -124,7 +124,7 @@ impl MockProvider {
             for iteration in 0..iterations {
                 let started = Instant::now();
                 let page = self
-                    .load(query, GroupFilter::All, self.records.len())
+                    .load(query, GroupFilter::All, self.records.len(), None)
                     .expect("mock load");
                 rows.push(BenchmarkRow {
                     query: (*query).to_string(),
@@ -166,20 +166,35 @@ impl ClipProvider for MockProvider {
         "mock"
     }
 
-    fn load(&mut self, query: &str, group: GroupFilter, limit: usize) -> ProviderResult<ClipPage> {
+    fn load(
+        &mut self,
+        query: &str,
+        group: GroupFilter,
+        limit: usize,
+        cursor: Option<&str>,
+    ) -> ProviderResult<ClipPage> {
         let started = Instant::now();
         let indices = self.filtered_indices(query, group);
         let total = indices.len() as u64;
-        let items = indices
+        let offset = cursor
+            .and_then(|cursor| cursor.strip_prefix("mock:"))
+            .and_then(|value| value.parse::<usize>().ok())
+            .unwrap_or(0)
+            .min(indices.len());
+        let page = indices
             .into_iter()
+            .skip(offset)
             .take(limit)
             .map(|index| self.records[index].clip.clone())
-            .collect();
+            .collect::<Vec<_>>();
+        let next = offset + page.len();
+        let next_cursor = (next < total as usize).then(|| format!("mock:{next}"));
         Ok(ClipPage {
-            items,
+            items: page,
             total,
+            total_is_estimate: false,
             took_ms: started.elapsed().as_millis() as u64,
-            next_cursor: None,
+            next_cursor,
         })
     }
 
@@ -410,7 +425,7 @@ mod tests {
         let mut provider = MockProvider::default();
         assert_eq!(provider.len(), 10_000);
         let page = provider
-            .load("", GroupFilter::All, 10_000)
+            .load("", GroupFilter::All, 10_000, None)
             .expect("load fixture");
         assert_eq!(page.items.len(), 10_000);
         assert!(page.items.iter().any(|clip| clip.kind == ClipKind::Image));

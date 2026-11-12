@@ -22,7 +22,7 @@ pub enum ActionKind {
 
 #[derive(Debug, Clone)]
 pub enum ProviderAction {
-    Paste { clip_id: i64, mode: PasteMode },
+    Paste { clip_ids: Vec<i64>, mode: PasteMode },
     SetPinned { clip_id: i64, pinned: bool },
     MoveToGroup { clip_id: i64, group_id: Option<i64> },
     Delete { clip_ids: Vec<i64> },
@@ -62,6 +62,7 @@ pub enum ProviderCommand {
         query: String,
         group: GroupFilter,
         limit: usize,
+        cursor: Option<String>,
     },
     RefreshMetadata,
     Action(ProviderAction),
@@ -133,8 +134,9 @@ fn provider_loop(
                 query,
                 group,
                 limit,
+                cursor,
             } => {
-                let result = provider.load(&query, group, limit);
+                let result = provider.load(&query, group, limit, cursor.as_deref());
                 if sender
                     .send(ProviderEvent::Loaded { request_id, result })
                     .is_err()
@@ -175,7 +177,7 @@ fn load_metadata(provider: &mut dyn ClipProvider) -> ProviderResult<ProviderMeta
 
 fn run_action(provider: &mut dyn ClipProvider, action: ProviderAction) -> ProviderResult<()> {
     match action {
-        ProviderAction::Paste { clip_id, mode } => provider.paste(clip_id, mode),
+        ProviderAction::Paste { clip_ids, mode } => provider.paste_many(&clip_ids, mode),
         ProviderAction::SetPinned { clip_id, pinned } => provider.set_pinned(clip_id, pinned),
         ProviderAction::MoveToGroup { clip_id, group_id } => {
             provider.move_to_group(clip_id, group_id)
@@ -210,6 +212,7 @@ mod tests {
             query: String::new(),
             group: GroupFilter::All,
             limit: 32,
+            cursor: None,
         });
         let mut saw_metadata = false;
         let mut saw_page = false;

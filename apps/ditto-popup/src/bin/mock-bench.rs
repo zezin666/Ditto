@@ -40,7 +40,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     write_summary(&output, &rows)?;
     fs::write(&output, csv)?;
-    let all = provider.load("", GroupFilter::All, usize::MAX)?;
+    let all = provider.load("", GroupFilter::All, usize::MAX, None)?;
     println!("wrote {} rows; fixture clips={}", rows.len(), all.total);
     Ok(())
 }

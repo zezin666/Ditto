@@ -51,8 +51,8 @@ A feature is **Done** only when all of the following are true:
 | C8 | Self-write suppression | T2 | Pasting from Ditto does not re-capture the clip or create a loop | Integration test with expected-hash suppression |
 | C9 | Max clip size + ignore rules | T2 | A clip above `max_clip_bytes` is ignored with a logged reason; excluded apps are not captured | Unit test + manual |
 | C10 | Source app/title | T2 | Each clip records the foreground app and window title; no content in logs | DB inspection; log scan |
-| C11 | Retention: max entries and expiry | T2 | Beyond the limit/age, unpinned unprotected clips are removed; pinned/dont-auto-delete/copy-buffer/global-shortcut clips are kept | Fixture test with controlled timestamps |
-| C12 | Delete, soft delete, undo, purge | T2 | Delete hides the clip; undo restores; purge after the retention window removes rows and blobs | Unit test + DB inspection |
+| C11 | Retention: max entries and expiry | T2/T9 | Core runs retention at startup and every 5 minutes; beyond the limit/age, unpinned unprotected clips are removed; pinned/dont-auto-delete/copy-buffer/global-shortcut clips are kept | Unit + core maintenance pass tests |
+| C12 | Delete, soft delete, undo, purge | T2/T9 | Delete hides the clip; undo restores; clear history soft-deletes then purges rows and GCs blobs; periodic purge removes expired tombstones | Unit tests + maintenance pass test |
 
 ### 2.2 Search and history
 
@@ -62,7 +62,7 @@ A feature is **Done** only when all of the following are true:
 | S2 | Search description/preview | T2/T3 | Substring search matches preview text; case-insensitive for ASCII; CJK substrings of ≥3 characters work | FTS + LIKE tests with EN/ZH fixtures |
 | S3 | Full-text search | T2/T3 | Matches text inside a clip, not just the preview; 10k dataset search p95 < 50 ms | Benchmark in `PERFORMANCE.md` |
 | S4 | Quick-paste text search | T2/T3 | `QuickPasteText` is searchable; `/q ` prefix works | Test + manual |
-| S5 | Search modes: contains, wildcard, regex | T2/T3 | Contains is default; wildcard `*`/`?` works; regex works with an invalid-pattern error | Unit tests for translation/escaping; no SQL injection |
+| S5 | Search modes: contains, wildcard, regex | T2/T3/T9 | Contains is default; wildcard `*`/`?` works; safe linear-time regex works at the storage/API layer with pattern-size and compiled-size limits; the v1 popup UI continues to send contains | Unit tests for regex validity/limits + real 10k paging |
 | S6 | Search no-results/loading states | T3 | Empty state and loading skeleton are shown; no stale results flash | UI QA |
 | S7 | Result count and latency indicator | T3 | Count is correct; a slow query shows a progress indicator after 150 ms | UI QA |
 | S8 | Clear search / close behavior | T3 | Esc clears query first, then closes; the list returns to the group view | Keyboard QA |
@@ -122,7 +122,7 @@ A feature is **Done** only when all of the following are true:
 
 | ID | Feature | Stage | Acceptance | Evidence |
 |---|---|---|---|---|
-| A1 | Tray icon + menu | T1/T5/T7 | Left click toggles; right-click menu has Open, Settings, Connect/Disconnect, Groups, Copy Buffers, Pause, Exit | Manual + Explorer restart |
+| A1 | Tray icon + menu | T1/T5/T7/T9 | Left click toggles; right-click menu has Open, Settings, Groups, Copy Buffers, Connect/Disconnect (pause/resume capture), Exit; labels follow EN/ZH locale files | Locale unit test + real settings screenshot; physical tray click UNVERIFIED |
 | A2 | Run at startup | T1/T5 | HKCU Run value written/removed; stale path repair; portable default off | Registry inspection |
 | A3 | Single instance | T1 | Second launch forwards and exits <150 ms; no second core | Process test |
 | A4 | Global hotkey configuration | T1/T5 | Rebind open/plain/first-ten/copy-buffer hotkeys; conflicts shown; no silent hook | Manual + registry/settings inspection |
@@ -133,7 +133,7 @@ A feature is **Done** only when all of the following are true:
 | A9 | History management in Data page | T5 | Search/filter/preview/edit/delete/group/pin/buffer actions work | UI QA |
 | A10 | Diagnostics/log level | T1/T5 | Log level changes; log path; diagnostics bundle without content | Manual + log scan |
 | A11 | No telemetry / no network | T1/T7 | No outbound connections except user-initiated (none in v1); no analytics | Network capture + code review |
-| A12 | WebView2-missing fallback | T1/T5 | Popup/core still work; Settings shows an actionable native error | Manual with WebView2 disabled |
+| A12 | WebView2-missing fallback | T1/T5/T9 | Host checks the Evergreen registry/install directory before opening Settings; on failure it shows a native MessageBox with the download URL and keeps running. NSIS uses the bootstrapper; Portable README documents the requirement. | Unit detection test; missing-runtime path UNVERIFIED |
 
 ### 2.7 Data, migration, packaging
 
@@ -145,7 +145,7 @@ A feature is **Done** only when all of the following are true:
 | D4 | Import/export new format | T6 | Manifest + DB + blobs; import validates hashes; merge policy documented | Round-trip test |
 | D5 | Legacy DB migration | T6 | Counts/content/groups/pins/copy buffers match the synthetic fixture; old DB unchanged (SHA-256) | `cargo test` + `MIGRATION-REPORT.md` |
 | D6 | Legacy settings migration | T6 | Mappable keys match; unsupported keys reported; no secrets/network/add-in keys | Mapping test |
-| D7 | Dry-run + progress + rollback | T6 | Dry-run reports counts; progress events; cancel/rollback leaves a consistent DB | Integration test |
+| D7 | Dry-run + progress + rollback | T6/T9 | **v1 product decision:** migration is one-shot and staged for the next start. Dry-run reports source counts; the pending UI shows the stored total and a warning that progress is only available after restart; there is no cancel. Every apply keeps a pre-migration backup for rollback. | Integration tests + T9 report |
 | D8 | Portable mode | T1/T7 | Runs from a read-only binary dir with writable `Data`; no installer/registry/admin | Portable QA |
 | D9 | NSIS installer | T1/T6/T7 | Installs/uninstalls; start menu; optional autostart; no VC++ dependency surprise | Installer QA log |
 | D10 | Portable ZIP | T7 | ZIP contains binaries/assets; runs after extraction; hash recorded | `cargo tauri build` + ZIP QA |

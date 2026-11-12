@@ -1,22 +1,45 @@
-use std::{collections::HashSet, path::Path, sync::Arc};
+use std::{
+    collections::HashSet,
+    path::Path,
+    sync::{
+        Arc,
+        atomic::{AtomicBool, Ordering},
+    },
+    thread,
+    time::Duration,
+};
 
-use ditto_clipboard::{CaptureConfig, CapturedClip, ClipboardMonitor};
+use ditto_clipboard::{CaptureConfig, CapturedClip, ClipboardMonitor, WriteSuppression};
 use ditto_ipc::{ErrorCode, Event, PasteOutcome, Request, Response};
 use ditto_model::{ClipQuery, SearchMode};
-use ditto_paste::{PasteErrorCode, PasteFailure, PasteOptions, WindowsPasteEngine};
+use ditto_paste::{PasteErrorCode, PasteFailure, PasteOptions, TargetWindow, WindowsPasteEngine};
 use ditto_storage::{Storage, StorageError};
 use ditto_win::PipeServer;
 use parking_lot::Mutex;
 
 type BroadcastSlot = Arc<Mutex<Option<PipeServer>>>;
 type PasteSlot = Arc<Mutex<Option<Arc<WindowsPasteEngine>>>>;
+type TargetSlot = Arc<Mutex<Option<TargetWindow>>>;
+type CaptureCallback = Arc<dyn Fn(CapturedClip) + Send + Sync>;
+
+const MAINTENANCE_INTERVAL: Duration = Duration::from_secs(300);
 
 pub struct CoreService {
     storage: Storage,
     pipe: PipeServer,
-    clipboard: ClipboardMonitor,
+    clipboard: Mutex<ClipboardMonitor>,
     broadcasts: BroadcastSlot,
     paste: PasteSlot,
+    suppression: Arc<WriteSuppression>,
+    capture_callback: CaptureCallback,
+    paste_target: TargetSlot,
+    paused: Arc<AtomicBool>,
+    maintenance: Mutex<Option<Maintenance>>,
+}
+
+struct Maintenance {
+    stop: Arc<AtomicBool>,
+    thread: Option<thread::JoinHandle<()>>,
 }
 
 impl CoreService {
@@ -30,12 +53,15 @@ impl CoreService {
         let broadcasts_for_requests = Arc::clone(&broadcast_slot);
         let paste_slot = Arc::new(Mutex::new(None));
         let paste_for_requests = Arc::clone(&paste_slot);
+        let paste_target = Arc::new(Mutex::new(None));
+        let targets_for_requests = Arc::clone(&paste_target);
         let pipe = PipeServer::start_with_handler(pipe_name, move |request| {
             handle_request(
                 &storage_for_requests,
                 request,
                 &broadcasts_for_requests,
                 &paste_for_requests,
+                &targets_for_requests,
             )
         })
         .map_err(|error| ditto_model::DittoError::Ipc(error.to_string()))?;
@@ -43,27 +69,115 @@ impl CoreService {
 
         let storage_for_capture = storage.clone();
         let pipe_for_capture = pipe.clone();
-        let clipboard = ClipboardMonitor::start_with_config(capture_config, move |captured| {
+        let paused = Arc::new(AtomicBool::new(false));
+        let paused_for_capture = Arc::clone(&paused);
+        let capture_callback: CaptureCallback = Arc::new(move |captured| {
+            if paused_for_capture.load(Ordering::SeqCst) {
+                return;
+            }
             persist_capture(&storage_for_capture, &pipe_for_capture, captured);
-        })
+        });
+        let suppression = Arc::new(WriteSuppression::default());
+        let callback = Arc::clone(&capture_callback);
+        let clipboard = ClipboardMonitor::start_with_suppression_config(
+            capture_config,
+            Arc::clone(&suppression),
+            move |captured| callback(captured),
+        )
         .map_err(ditto_model::DittoError::from)?;
         let paste = Arc::new(WindowsPasteEngine::new(
             storage.data_root().to_path_buf(),
-            clipboard.suppression(),
+            Arc::clone(&suppression),
         ));
         *paste_slot.lock() = Some(paste);
 
-        Ok(Self {
+        let service = Self {
             storage,
             pipe,
-            clipboard,
+            clipboard: Mutex::new(clipboard),
             broadcasts: broadcast_slot,
             paste: paste_slot,
-        })
+            suppression,
+            capture_callback,
+            paste_target,
+            paused,
+            maintenance: Mutex::new(None),
+        };
+        service.start_maintenance();
+        Ok(service)
     }
 
     pub fn pipe(&self) -> &PipeServer {
         &self.pipe
+    }
+
+    /// Captures the user's foreground window before the popup activates. The
+    /// popup can then take keyboard focus without becoming the paste target.
+    pub fn capture_paste_target(&self) -> Option<TargetWindow> {
+        match ditto_paste::capture_foreground_window() {
+            Ok(target) => {
+                *self.paste_target.lock() = Some(target.clone());
+                Some(target)
+            }
+            Err(error) => {
+                log::info!("no paste target captured before popup: {error}");
+                *self.paste_target.lock() = None;
+                None
+            }
+        }
+    }
+
+    pub fn clear_paste_target(&self) {
+        *self.paste_target.lock() = None;
+    }
+
+    /// Applies runtime settings that affect capture (format filters, limits,
+    /// debounce, source-app recording, retention).
+    pub fn apply_settings(&self, values: &serde_json::Value) -> Result<(), String> {
+        let config = capture_config(values);
+        if self.paused.load(Ordering::SeqCst) {
+            return Ok(());
+        }
+        let callback = Arc::clone(&self.capture_callback);
+        let monitor = ClipboardMonitor::start_with_suppression_config(
+            config,
+            Arc::clone(&self.suppression),
+            move |captured| callback(captured),
+        )
+        .map_err(|error| error.to_string())?;
+        let mut slot = self.clipboard.lock();
+        slot.stop();
+        *slot = monitor;
+        Ok(())
+    }
+
+    pub fn set_paused(&self, paused: bool) -> Result<(), String> {
+        if self.paused.load(Ordering::SeqCst) == paused {
+            return Ok(());
+        }
+        if paused {
+            self.clipboard.lock().stop();
+            self.paused.store(true, Ordering::SeqCst);
+        } else {
+            let settings = self
+                .storage
+                .get_settings()
+                .map_err(|error| error.to_string())?;
+            let callback = Arc::clone(&self.capture_callback);
+            let monitor = ClipboardMonitor::start_with_suppression_config(
+                capture_config(&settings.values),
+                Arc::clone(&self.suppression),
+                move |captured| callback(captured),
+            )
+            .map_err(|error| error.to_string())?;
+            *self.clipboard.lock() = monitor;
+            self.paused.store(false, Ordering::SeqCst);
+        }
+        Ok(())
+    }
+
+    pub fn is_paused(&self) -> bool {
+        self.paused.load(Ordering::SeqCst)
     }
 
     /// Runs the same paste path used by the IPC `Paste` request. The settings
@@ -75,6 +189,7 @@ impl CoreService {
         formats: &[String],
         clip_ids: &[i64],
     ) -> Result<PasteOutcome, String> {
+        let target = self.paste_target.lock().clone();
         match paste_response(
             &self.storage,
             &self.broadcasts,
@@ -83,6 +198,7 @@ impl CoreService {
             plain_text,
             formats,
             clip_ids,
+            target.as_ref(),
         ) {
             Response::PasteResult { outcome } if outcome.ok => Ok(outcome),
             Response::PasteResult { outcome } => Err(outcome.message),
@@ -101,14 +217,98 @@ impl CoreService {
         let formats =
             ditto_paste::build_payload(&clip, self.storage.data_root(), &PasteOptions::default())
                 .map_err(|error| error.to_string())?;
-        let suppression = self.clipboard.suppression();
+        let suppression = self.clipboard.lock().suppression();
         ditto_paste::drag_out(&formats, owner_hwnd, &suppression).map_err(|error| error.to_string())
     }
 
     pub fn stop(&mut self) {
-        self.clipboard.stop();
+        if let Some(maintenance) = self.maintenance.lock().take() {
+            maintenance.stop.store(true, Ordering::SeqCst);
+            if let Some(thread) = maintenance.thread {
+                let _ = thread.join();
+            }
+        }
+        self.clipboard.lock().stop();
         let _ = self.storage.checkpoint();
     }
+
+    fn start_maintenance(&self) {
+        let stop = Arc::new(AtomicBool::new(false));
+        let stop_for_thread = Arc::clone(&stop);
+        let storage = self.storage.clone();
+        let pipe = self.pipe.clone();
+        let thread = thread::Builder::new()
+            .name("ditto-maintenance".to_string())
+            .spawn(move || {
+                loop {
+                    run_maintenance(&storage, &pipe);
+                    let mut waited = Duration::ZERO;
+                    while waited < MAINTENANCE_INTERVAL {
+                        if stop_for_thread.load(Ordering::SeqCst) {
+                            return;
+                        }
+                        thread::sleep(Duration::from_millis(500));
+                        waited += Duration::from_millis(500);
+                    }
+                }
+            })
+            .ok();
+        *self.maintenance.lock() = Some(Maintenance { stop, thread });
+    }
+}
+
+fn run_maintenance(storage: &Storage, pipe: &PipeServer) {
+    let Ok(settings) = storage.get_settings() else {
+        return;
+    };
+    let values = &settings.values;
+    let max_entries = values
+        .pointer("/clipboard/max_entries")
+        .and_then(serde_json::Value::as_u64)
+        .unwrap_or(500);
+    let expire_days = values
+        .pointer("/clipboard/expire_days")
+        .and_then(serde_json::Value::as_u64)
+        .unwrap_or(5);
+    let deleted_retention_days = values
+        .pointer("/data/deleted_retention_days")
+        .and_then(serde_json::Value::as_u64)
+        .unwrap_or(7);
+    let mut changed = 0_u64;
+    match storage.cleanup_retention(
+        u32::try_from(max_entries).unwrap_or(u32::MAX),
+        u32::try_from(expire_days).unwrap_or(u32::MAX),
+    ) {
+        Ok(count) => changed += count,
+        Err(error) => log::warn!("retention cleanup failed: {error}"),
+    }
+    let cutoff = now_ms().saturating_sub(
+        i64::try_from(deleted_retention_days)
+            .unwrap_or(i64::MAX)
+            .saturating_mul(86_400_000),
+    );
+    match storage.purge_deleted_before(cutoff) {
+        Ok(count) => changed += count,
+        Err(error) => log::warn!("deleted-clip purge failed: {error}"),
+    }
+    if changed > 0 {
+        let state_rev = storage.state_rev().unwrap_or_default();
+        let event = Event::ClipDeleted {
+            ids: Vec::new(),
+            state_rev,
+        };
+        if let Err(error) = pipe.broadcast(&event) {
+            log::warn!("retention broadcast failed: {error}");
+        }
+        log::info!("maintenance removed {changed} clips");
+    }
+}
+
+fn now_ms() -> i64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|duration| duration.as_millis() as i64)
+        .unwrap_or_default()
 }
 
 fn persist_capture(storage: &Storage, pipe: &PipeServer, captured: CapturedClip) {
@@ -124,7 +324,14 @@ fn persist_capture(storage: &Storage, pipe: &PipeServer, captured: CapturedClip)
         .and_then(|settings| settings.values.pointer("/clipboard/allow_duplicates"))
         .and_then(serde_json::Value::as_bool)
         .unwrap_or(false);
-    let new_clip = captured.into_new_clip();
+    let default_group_id = settings
+        .as_ref()
+        .and_then(|settings| settings.values.pointer("/groups/default_group_id"))
+        .and_then(serde_json::Value::as_i64);
+    let mut new_clip = captured.into_new_clip();
+    if new_clip.group_id.is_none() {
+        new_clip.group_id = default_group_id;
+    }
     match storage.insert_clip(&new_clip, allow_duplicates) {
         Ok(outcome) if outcome.inserted => {
             let event = Event::ClipAdded { clip: outcome.clip };
@@ -149,6 +356,7 @@ pub(crate) fn handle_request(
     request: &Request,
     broadcasts: &BroadcastSlot,
     paste: &PasteSlot,
+    targets: &TargetSlot,
 ) -> Response {
     let method = request_method(request);
     let started = std::time::Instant::now();
@@ -205,15 +413,19 @@ pub(crate) fn handle_request(
             plain_text,
             formats,
             clip_ids,
-        } => paste_response(
-            storage,
-            broadcasts,
-            paste,
-            *clip_id,
-            *plain_text,
-            formats,
-            clip_ids,
-        ),
+        } => {
+            let target = targets.lock().clone();
+            paste_response(
+                storage,
+                broadcasts,
+                paste,
+                *clip_id,
+                *plain_text,
+                formats,
+                clip_ids,
+                target.as_ref(),
+            )
+        }
         Request::SetPinned { clip_id, pinned } => match storage.set_pinned(*clip_id, *pinned) {
             Ok(_) => {
                 broadcast_clip_updated(storage, broadcasts, *clip_id, "pinned");
@@ -364,17 +576,30 @@ pub(crate) fn handle_request(
 
 fn search_response(storage: &Storage, query: ClipQuery) -> Response {
     match storage.search_clips(&query) {
-        Ok(page) => Response::Clips {
-            items: page.items,
-            total: page.total,
-            total_is_estimate: page.total_is_estimate,
-            took_ms: page.took_ms,
-            next_cursor: page.next_cursor,
-        },
+        Ok(mut page) => {
+            match storage.count_clips(&query) {
+                Ok(total) => {
+                    page.total = total;
+                    page.total_is_estimate = false;
+                }
+                Err(error) => {
+                    log::warn!("total clip count failed; reporting a page estimate: {error}");
+                    page.total_is_estimate = true;
+                }
+            }
+            Response::Clips {
+                items: page.items,
+                total: page.total,
+                total_is_estimate: page.total_is_estimate,
+                took_ms: page.took_ms,
+                next_cursor: page.next_cursor,
+            }
+        }
         Err(error) => storage_error(error),
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn paste_response(
     storage: &Storage,
     broadcasts: &BroadcastSlot,
@@ -383,6 +608,7 @@ fn paste_response(
     plain_text: bool,
     formats: &[String],
     clip_ids: &[i64],
+    target: Option<&TargetWindow>,
 ) -> Response {
     let ids = paste_ids(clip_id, clip_ids);
     if ids.is_empty() {
@@ -407,7 +633,7 @@ fn paste_response(
         };
     };
     let options = paste_options(storage, plain_text, formats);
-    match engine.paste_many(&clips, &options) {
+    match engine.paste_many_with_target(&clips, &options, target) {
         Ok(report) => {
             for id in &report.pasted_clip_ids {
                 if let Err(error) = storage.mark_pasted(*id) {
@@ -610,6 +836,19 @@ fn capture_config(values: &serde_json::Value) -> CaptureConfig {
                     .collect()
             })
             .unwrap_or_default(),
+        capture_files: clipboard
+            .and_then(|value| value.get("capture_files"))
+            .and_then(serde_json::Value::as_bool)
+            .unwrap_or(defaults.capture_files),
+        capture_images: clipboard
+            .and_then(|value| value.get("capture_images"))
+            .and_then(serde_json::Value::as_bool)
+            .unwrap_or(defaults.capture_images),
+        record_source_app: clipboard
+            .and_then(|value| value.get("record_source_app"))
+            .and_then(serde_json::Value::as_bool)
+            .unwrap_or(defaults.record_source_app),
+        ..defaults
     }
 }
 
@@ -692,12 +931,19 @@ mod tests {
         let storage = Storage::open_data_root(temp.path()).expect("storage");
         let broadcasts = Arc::new(Mutex::new(None));
         let paste = Arc::new(Mutex::new(None));
+        let targets = Arc::new(Mutex::new(None));
         assert!(matches!(
-            handle_request(&storage, &Request::GetGroups, &broadcasts, &paste),
+            handle_request(&storage, &Request::GetGroups, &broadcasts, &paste, &targets),
             Response::Groups { groups } if groups.is_empty()
         ));
         assert!(matches!(
-            handle_request(&storage, &Request::GetSettings, &broadcasts, &paste),
+            handle_request(
+                &storage,
+                &Request::GetSettings,
+                &broadcasts,
+                &paste,
+                &targets
+            ),
             Response::Settings { .. }
         ));
         assert!(matches!(
@@ -711,6 +957,7 @@ mod tests {
                 },
                 &broadcasts,
                 &paste,
+                &targets,
             ),
             Response::Error {
                 code: ErrorCode::NotFound,
@@ -728,6 +975,7 @@ mod tests {
             .expect("insert clip");
         let broadcasts = Arc::new(Mutex::new(None));
         let paste = Arc::new(Mutex::new(None));
+        let targets = Arc::new(Mutex::new(None));
         assert!(matches!(
             handle_request(
                 &storage,
@@ -739,12 +987,135 @@ mod tests {
                 },
                 &broadcasts,
                 &paste,
+                &targets,
             ),
             Response::Error {
                 code: ErrorCode::NotReady,
                 ..
             }
         ));
+    }
+
+    #[test]
+    fn maintenance_pass_applies_retention_and_purges_deleted_clips() {
+        let temp = tempfile::tempdir().expect("temp root");
+        let storage = Storage::open_data_root(temp.path()).expect("storage");
+        storage
+            .set_settings(&serde_json::json!({
+                "clipboard": {"max_entries": 2, "expire_days": 3650},
+                "data": {"deleted_retention_days": 0}
+            }))
+            .expect("settings");
+        for index in 0..4 {
+            let mut clip = synthetic_clip();
+            let text = format!("retention {index}");
+            clip.text_content = Some(text.clone());
+            clip.preview_text = text.clone();
+            let mut hash = [0_u8; 32];
+            hash[0] = index + 1;
+            clip.content_hash = hash.to_vec();
+            clip.formats_hash = hash.to_vec();
+            clip.created_at_ms = now_ms() + i64::from(index);
+            clip.sort_order = f64::from(index);
+            storage.insert_clip(&clip, true).expect("insert");
+        }
+        let name = format!(
+            r"\\.\pipe\ditto-test-maintenance-{}-{}",
+            std::process::id(),
+            now_ms()
+        );
+        let pipe = PipeServer::start(&name).expect("pipe");
+        run_maintenance(&storage, &pipe);
+        let remaining = storage
+            .count_clips(&ClipQuery {
+                query: String::new(),
+                ..ClipQuery::default()
+            })
+            .expect("count");
+        assert_eq!(remaining, 2, "retention must keep only max_entries clips");
+        assert!(!pipe.popup_visible());
+        drop(pipe);
+    }
+
+    #[test]
+    fn get_clips_pages_past_one_thousand_rows_on_real_sqlite() {
+        let temp = tempfile::tempdir().expect("temp root");
+        let storage = Storage::open_data_root(temp.path()).expect("storage");
+        let clips = (0_i64..1_200)
+            .map(|index| {
+                let mut clip = synthetic_clip();
+                let text = format!("synthetic clip {index:04}");
+                clip.text_content = Some(text.clone());
+                clip.preview_text = text.clone();
+                clip.description = text.clone();
+                let mut hash = [0_u8; 32];
+                hash[..8].copy_from_slice(&index.to_le_bytes());
+                clip.content_hash = hash.to_vec();
+                clip.formats_hash = hash.to_vec();
+                clip.formats[0].data = text
+                    .encode_utf16()
+                    .chain(Some(0))
+                    .flat_map(u16::to_le_bytes)
+                    .collect();
+                clip.created_at_ms = index;
+                clip.sort_order = index as f64;
+                clip
+            })
+            .collect::<Vec<_>>();
+        storage.insert_many(&clips).expect("insert 1200 clips");
+        let broadcasts = Arc::new(Mutex::new(None));
+        let paste = Arc::new(Mutex::new(None));
+        let targets = Arc::new(Mutex::new(None));
+        let first = handle_request(
+            &storage,
+            &Request::GetClips {
+                query: String::new(),
+                group_id: None,
+                limit: 500,
+                cursor: None,
+                sort: ditto_model::ClipSort::Recent,
+            },
+            &broadcasts,
+            &paste,
+            &targets,
+        );
+        let Response::Clips {
+            items,
+            total,
+            next_cursor,
+            ..
+        } = first
+        else {
+            panic!("expected Clips");
+        };
+        assert_eq!(items.len(), 500);
+        assert_eq!(
+            total, 1_200,
+            "total is the real row count, not the page size"
+        );
+        let cursor = next_cursor.expect("first page has a cursor");
+        let second = handle_request(
+            &storage,
+            &Request::GetClips {
+                query: String::new(),
+                group_id: None,
+                limit: 500,
+                cursor: Some(cursor),
+                sort: ditto_model::ClipSort::Recent,
+            },
+            &broadcasts,
+            &paste,
+            &targets,
+        );
+        let Response::Clips {
+            items: second_items,
+            ..
+        } = second
+        else {
+            panic!("expected second Clips page");
+        };
+        assert_eq!(second_items.len(), 500);
+        assert_ne!(items[0].id, second_items[0].id);
     }
 
     #[test]
