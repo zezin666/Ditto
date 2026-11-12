@@ -1262,7 +1262,16 @@ dependencies = [
 name = "ditto-paste"
 version = "0.1.0"
 dependencies = [
+ "ditto-clipboard",
  "ditto-model",
+ "ditto-uac-helper",
+ "image",
+ "parking_lot",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tracing",
+ "windows 0.61.3",
+ "windows-core 0.61.2",
 ]
 
 [[package]]
@@ -1304,6 +1313,7 @@ dependencies = [
  "ditto-clipboard",
  "ditto-ipc",
  "ditto-model",
+ "ditto-paste",
  "ditto-storage",
  "ditto-ui-tokens",
  "ditto-win",
@@ -1325,6 +1335,12 @@ name = "ditto-uac-helper"
 version = "0.1.0"
 dependencies = [
  "ditto-model",
+ "parking_lot",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.21",
+ "tracing",
+ "windows 0.61.3",
 ]
 
 [[package]]

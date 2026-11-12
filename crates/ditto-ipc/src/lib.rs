@@ -115,8 +115,14 @@ pub enum Request {
         clip_id: i64,
     },
     Paste {
+        #[serde(default)]
         clip_id: i64,
+        #[serde(default)]
         plain_text: bool,
+        #[serde(default)]
+        formats: Vec<String>,
+        #[serde(default)]
+        clip_ids: Vec<i64>,
     },
     SetPinned {
         clip_id: i64,
@@ -200,6 +206,9 @@ pub enum Response {
         #[serde(default)]
         restart_required: bool,
     },
+    PasteResult {
+        outcome: PasteOutcome,
+    },
     Ok,
     Error {
         code: ErrorCode,
@@ -233,6 +242,9 @@ pub enum Event {
         keys: Vec<String>,
         revision: u64,
     },
+    PasteResult {
+        outcome: PasteOutcome,
+    },
     ShowPopup {
         at_ms: u64,
         monitor: Option<String>,
@@ -241,6 +253,18 @@ pub enum Event {
     Shutdown {
         reason: String,
     },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct PasteOutcome {
+    pub ok: bool,
+    pub mode: String,
+    pub elevated: bool,
+    pub target_pid: Option<u32>,
+    pub pasted_clip_ids: Vec<i64>,
+    pub failed_clip_id: Option<i64>,
+    pub error_code: Option<ErrorCode>,
+    pub message: String,
 }
 
 const fn default_limit() -> u32 {
@@ -427,5 +451,45 @@ mod tests {
         assert_eq!(value["values"]["general"]["language"], "en");
         assert_eq!(value["revision"], 7);
         assert_eq!(value["restart_required"], true);
+    }
+
+    #[test]
+    fn legacy_paste_request_defaults_new_fields() {
+        let request: Request =
+            serde_json::from_str(r#"{"type":"Paste","clip_id":7,"plain_text":true}"#)
+                .expect("decode legacy paste");
+        assert!(matches!(
+            request,
+            Request::Paste {
+                clip_id: 7,
+                plain_text: true,
+                formats,
+                clip_ids
+            } if formats.is_empty() && clip_ids.is_empty()
+        ));
+    }
+
+    #[test]
+    fn paste_result_round_trips_without_content() {
+        let outcome = PasteOutcome {
+            ok: false,
+            mode: "multi".to_string(),
+            elevated: false,
+            target_pid: Some(42),
+            pasted_clip_ids: vec![1],
+            failed_clip_id: Some(2),
+            error_code: Some(ErrorCode::Clipboard),
+            message: "clipboard unavailable".to_string(),
+        };
+        let encoded = serde_json::to_string(&Response::PasteResult {
+            outcome: outcome.clone(),
+        })
+        .expect("encode");
+        assert!(!encoded.contains("sensitive clip"));
+        let decoded: Response = serde_json::from_str(&encoded).expect("decode");
+        assert!(matches!(
+            decoded,
+            Response::PasteResult { outcome: decoded } if decoded == outcome
+        ));
     }
 }
