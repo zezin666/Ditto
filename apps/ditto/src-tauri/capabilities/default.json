@@ -1,0 +1,8 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Minimal capability for the on-demand settings webview.",
+  "windows": ["settings"],
+  "permissions": ["core:default"]
+}
+

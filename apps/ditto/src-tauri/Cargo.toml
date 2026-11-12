@@ -1,0 +1,32 @@
+[package]
+name = "ditto-tauri"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lib]
+name = "ditto_tauri_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[[bin]]
+name = "Ditto"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build.workspace = true
+
+[dependencies]
+ditto-ipc = { path = "../../../crates/ditto-ipc" }
+ditto-model = { path = "../../../crates/ditto-model" }
+ditto-ui-tokens = { path = "../../../crates/ditto-ui-tokens" }
+ditto-win = { path = "../../../crates/ditto-win" }
+log.workspace = true
+parking_lot.workspace = true
+serde.workspace = true
+tauri.workspace = true
+tauri-plugin-autostart.workspace = true
+tauri-plugin-global-shortcut.workspace = true
+tauri-plugin-log.workspace = true
+tauri-plugin-single-instance.workspace = true
+

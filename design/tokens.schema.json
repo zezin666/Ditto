@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ditto design tokens",
+  "type": "object",
+  "required": ["version", "meta", "tokens"],
+  "properties": {
+    "version": { "type": "string" },
+    "meta": { "type": "object" },
+    "tokens": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["$type", "$value"],
+        "properties": {
+          "$type": {
+            "enum": [
+              "color",
+              "dimension",
+              "fontFamily",
+              "fontWeight",
+              "fontSize",
+              "lineHeight",
+              "radius",
+              "shadow",
+              "duration",
+              "cubicBezier",
+              "number"
+            ]
+          },
+          "$value": {},
+          "$description": { "type": "string" }
+        }
+      }
+    }
+  }
+}
+

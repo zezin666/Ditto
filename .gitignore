@@ -1,75 +1,30 @@
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-*.asm
-*.tlog
+# Rust
+/target/
+**/*.rs.bk
 *.pdb
-*.def
-*.mk
-*.tlb
 
-# Precompiled Headers
-*.gch
-*.pch
+# Node/Vite
+node_modules/
+apps/ditto/ui/dist/
+npm-debug.log*
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+# Tauri generated and sidecar staging
+apps/ditto/src-tauri/gen/
+apps/ditto/src-tauri/binaries/*.exe
+apps/ditto/src-tauri/binaries/*.pdb
 
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-/.vs
-/packages
-/Debug64
-*.log
-*.recipe
-*.ilk
-*.res
-/enc_temp_folder
-/focusdll/Debug64
-CP_Main.vcxproj.user
-CP_Main_i.c
-CP_Main_i.h
-*.idb
-*.lnk
-CP_Main.aps
-/focusdll/Release64
-/ICU_Loader/x64
-/Release64
+# Runtime data and test output
+Data/
 *.db
+*.db-shm
+*.db-wal
 *.Settings
-Debug/portable
-*.exp
-*.map
-*.tlh
-/Addins/DittoUtil/Win32/Debug
-/Debug/EditClips
-/EncryptDecrypt/Win32/Debug
-/focusdll/Win32/Debug
-/ICU_Loader/Debug
-/Win32/Debug
-/Debug
-/Addins/DittoUtil/x64
-/EncryptDecrypt
-/focusdll/x64
-/FocusHighlight
-/focusdll
-/x64
+artifacts/rewrite/after/
+coverage/
+test-results/
+
+# Local tooling
+.idea/
+.vscode/
+*.user
+

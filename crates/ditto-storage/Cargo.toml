@@ -1,0 +1,11 @@
+[package]
+name = "ditto-storage"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+ditto-model = { path = "../ditto-model" }
+rusqlite.workspace = true
+

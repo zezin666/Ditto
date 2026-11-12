@@ -1,0 +1,25 @@
+[package]
+name = "ditto-popup-app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "DittoPopup"
+path = "src/main.rs"
+
+[dependencies]
+ditto-ipc = { path = "../../crates/ditto-ipc" }
+ditto-model = { path = "../../crates/ditto-model" }
+ditto-ui-tokens = { path = "../../crates/ditto-ui-tokens" }
+ditto-win = { path = "../../crates/ditto-win" }
+eframe.workspace = true
+egui.workspace = true
+parking_lot.workspace = true
+raw-window-handle.workspace = true
+windows = { workspace = true, features = [
+    "Win32_Foundation",
+    "Win32_UI_WindowsAndMessaging",
+] }
+

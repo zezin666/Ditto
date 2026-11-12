@@ -1,0 +1,98 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--ditto-color-canvas);
+  color: var(--ditto-color-text-primary);
+  font-family: "Segoe UI Variable Text", "Segoe UI", "Microsoft YaHei UI", sans-serif;
+  font-size: var(--ditto-font-body-size);
+  line-height: 1.45;
+}
+
+.settings-shell {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: var(--ditto-dimension-space-lg);
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: var(--ditto-dimension-space-md);
+  padding-block: var(--ditto-dimension-space-lg);
+}
+
+.brand-mark {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: var(--ditto-radius-control);
+  background: var(--ditto-color-accent-fill);
+  color: var(--ditto-color-on-accent);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 20px;
+  line-height: 28px;
+}
+
+h2 {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+p {
+  color: var(--ditto-color-text-secondary);
+}
+
+.settings-card {
+  display: grid;
+  gap: var(--ditto-dimension-space-md);
+  padding: var(--ditto-dimension-space-lg);
+  border: 1px solid var(--ditto-color-border);
+  border-radius: var(--ditto-radius-window);
+  background: var(--ditto-color-surface);
+}
+
+dl {
+  display: grid;
+  gap: var(--ditto-dimension-space-sm);
+  margin: 0;
+}
+
+dl div {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: var(--ditto-dimension-space-sm);
+}
+
+dt {
+  color: var(--ditto-color-text-secondary);
+}
+
+dd {
+  margin: 0;
+}
+
+@media (forced-colors: active) {
+  .settings-card {
+    border-color: CanvasText;
+  }
+}
+

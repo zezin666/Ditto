@@ -1,0 +1,57 @@
+name: rewrite-ci
+
+on:
+  push:
+    branches:
+      - "rewrite/**"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-2025
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable-x86_64-pc-windows-msvc
+          components: rustfmt, clippy
+          targets: x86_64-pc-windows-msvc
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: apps/ditto/ui/package-lock.json
+
+      - name: Install settings dependencies
+        working-directory: apps/ditto/ui
+        run: npm ci
+
+      - name: Build settings placeholder
+        working-directory: apps/ditto/ui
+        run: npm run build
+
+      - name: Build sidecars
+        shell: pwsh
+        run: |
+          cargo build -p ditto-popup-app -p ditto-uac-helper-app
+          ./scripts/prepare-sidecars.ps1 -Profile debug
+
+      - name: Format
+        run: cargo fmt --all --check
+
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: Test
+        run: cargo test --workspace
+
+      - name: Build
+        run: cargo build --workspace
+

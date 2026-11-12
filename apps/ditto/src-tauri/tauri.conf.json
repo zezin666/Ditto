@@ -1,0 +1,36 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Ditto",
+  "version": "0.1.0",
+  "identifier": "com.ditto.clipboard",
+  "build": {
+    "frontendDist": "../ui/dist"
+  },
+  "app": {
+    "windows": [],
+    "withGlobalTauri": false,
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' blob: data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "icon": ["icons/Ditto2.ico"],
+    "externalBin": [
+      "binaries/DittoPopup",
+      "binaries/DittoUacHelper"
+    ],
+    "resources": [
+      "../ui/locales/en-US.json",
+      "../ui/locales/zh-CN.json"
+    ],
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser",
+        "displayLanguageSelector": false
+      }
+    }
+  }
+}
+

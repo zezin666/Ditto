@@ -79,9 +79,11 @@ T0 must not create a Rust project, edit source/build config, or touch
 | Root `Cargo.toml`, `Cargo.lock`, `rust-toolchain.toml`, `.gitignore`, `README.md`, `CLAUDE.md` | Create/update |
 | `legacy/**` | Move old C++ files only; no edits after |
 | `crates/ditto-model/**`, `crates/ditto-ipc/**`, `crates/ditto-win/**`, `crates/ditto-clipboard/**`, `crates/ditto-storage/**`, `crates/ditto-migration/**`, `crates/ditto-paste/**`, `crates/ditto-uac-helper/**` | Create compilable skeletons |
+| `crates/ditto-ui-tokens/**` | Generated token constants from `design/tokens.json` |
 | `apps/ditto/**` (including `src-tauri/src/lib.rs`, `tauri.conf.json`, `capabilities/**`) | Create skeleton; T5 edits UI/commands/config later under its ownership |
 | `apps/ditto-popup/**`, `apps/ditto-uac-helper/**` | Create skeletons |
 | `design/**` | `tokens.json`, schema, generator, generated outputs |
+| `scripts/generate-tokens.mjs`, `scripts/prepare-sidecars.ps1` | Token and packaging helper scripts |
 | `.github/workflows/rewrite-*.yml` | Create/update |
 | `docs/rewrite/PHASE0-NOTES.md` | Create (spike/decision) |
 | `apps/ditto/ui/locales/**` (T1 creates the skeleton; T5 aggregates) | Create skeleton |
