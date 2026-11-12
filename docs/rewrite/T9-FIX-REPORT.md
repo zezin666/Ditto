@@ -16,7 +16,7 @@
 
 ## HEAD
 
-见本文件所在提交；base `e7a5e2d`，T9 修复提交在其后。
+`dcb75d3`（T9 修复提交）；base `e7a5e2d`。
 
 ## FILES
 
