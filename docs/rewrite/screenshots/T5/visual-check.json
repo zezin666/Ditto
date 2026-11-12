@@ -1,0 +1,272 @@
+{
+  "url": "http://127.0.0.1:1420/",
+  "browser": "Google Chrome",
+  "executablePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "generatedAt": "2026-11-12T13:43:37.742Z",
+  "screenshots": [
+    "light-en-general-100.png",
+    "light-en-history-100.png",
+    "dark-en-appearance-100.png",
+    "dark-en-history-100.png",
+    "light-zh-data-100.png",
+    "dark-zh-general-100.png",
+    "dark-zh-general-150.png",
+    "dark-zh-general-200.png",
+    "dark-zh-general-720x480.png",
+    "high-contrast-en-general-100.png"
+  ],
+  "consoleMessages": [],
+  "pageErrors": [],
+  "checks": [
+    {
+      "name": "light-en-general",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "en-US",
+      "theme": "light"
+    },
+    {
+      "name": "light-en-appearance-navigation",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "en-US",
+      "theme": "light"
+    },
+    {
+      "name": "light-en-hotkeys-navigation",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "en-US",
+      "theme": "light"
+    },
+    {
+      "name": "light-en-clipboard-navigation",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "en-US",
+      "theme": "light"
+    },
+    {
+      "name": "light-en-groups-navigation",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "en-US",
+      "theme": "light"
+    },
+    {
+      "name": "light-en-copyBuffers-navigation",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "en-US",
+      "theme": "light"
+    },
+    {
+      "name": "light-en-data-navigation",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "en-US",
+      "theme": "light"
+    },
+    {
+      "name": "light-en-languages-navigation",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "en-US",
+      "theme": "light"
+    },
+    {
+      "name": "light-en-about-navigation",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "en-US",
+      "theme": "light"
+    },
+    {
+      "name": "light-en-general-navigation",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "en-US",
+      "theme": "light"
+    },
+    {
+      "name": "light-en-history",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "en-US",
+      "theme": "light"
+    },
+    {
+      "name": "dark-en-appearance",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "en-US",
+      "theme": "dark"
+    },
+    {
+      "name": "light-zh-data",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "zh-CN",
+      "theme": "light"
+    },
+    {
+      "name": "dark-zh-general",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "zh-CN",
+      "theme": "dark"
+    },
+    {
+      "name": "dark-zh-general-150",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "zh-CN",
+      "theme": "dark"
+    },
+    {
+      "name": "dark-zh-general-200",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "zh-CN",
+      "theme": "dark"
+    },
+    {
+      "name": "dark-zh-general-min-window",
+      "viewport": {
+        "width": 720,
+        "height": 480
+      },
+      "documentScrollWidth": 720,
+      "bodyScrollWidth": 720,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "zh-CN",
+      "theme": "dark"
+    },
+    {
+      "name": "high-contrast-en-general",
+      "viewport": {
+        "width": 900,
+        "height": 640
+      },
+      "documentScrollWidth": 900,
+      "bodyScrollWidth": 900,
+      "outside": [],
+      "unlabeledButtons": [],
+      "language": "en-US",
+      "theme": "hc"
+    },
+    {
+      "name": "settings-apply-toast",
+      "status": "passed"
+    },
+    {
+      "name": "hotkey-conflict-warning",
+      "status": "passed"
+    },
+    {
+      "name": "destructive-confirmation-escape",
+      "status": "passed"
+    },
+    {
+      "name": "accessibility-tree",
+      "unnamedInteractive": []
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+
+> ditto-settings@0.1.0 build
+> npm run locales:check && tsc --noEmit && vite build
+
+
+> ditto-settings@0.1.0 locales:check
+> node scripts/check-locales.mjs
+
+Locale catalogs agree on 312 keys.
+vite v7.3.8 building client environment for production...
+transforming...
+✓ 2178 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.53 kB │ gzip:   0.32 kB
+dist/assets/index-DC72uOUc.css   23.77 kB │ gzip:   3.79 kB
+dist/assets/index-BHBesAV3.js   790.33 kB │ gzip: 224.77 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.14s

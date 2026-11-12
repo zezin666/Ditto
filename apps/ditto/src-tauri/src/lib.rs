@@ -16,6 +16,8 @@ use tauri::{
 };
 use tauri_plugin_global_shortcut::{Shortcut, ShortcutState};
 
+pub mod commands;
+
 const DEV_HOTKEY: &str = "Ctrl+Alt+D";
 const DEV_HOTKEY_FALLBACK: &str = "Ctrl+Alt+Shift+D";
 
@@ -56,6 +58,34 @@ pub fn run() {
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             Some(vec!["--background"]),
         ))
+        .invoke_handler(tauri::generate_handler![
+            commands::get_settings,
+            commands::set_settings,
+            commands::list_clips,
+            commands::search_clips,
+            commands::get_clip,
+            commands::delete_clips,
+            commands::set_pinned,
+            commands::move_to_group,
+            commands::edit_clip,
+            commands::get_groups,
+            commands::create_group,
+            commands::rename_group,
+            commands::delete_group,
+            commands::move_group,
+            commands::get_copy_buffers,
+            commands::set_copy_buffer,
+            commands::backup_db,
+            commands::restore_db,
+            commands::export_data,
+            commands::import_data,
+            commands::optimize_storage,
+            commands::get_migration_status,
+            commands::open_data_folder,
+            commands::open_log_folder,
+            commands::get_diagnostics,
+            commands::get_app_info,
+        ])
         .setup(move |app| {
             let name = pipe_name().map_err(|error| error.to_string())?;
             let pipe = PipeServer::start(&name).map_err(|error| error.to_string())?;
