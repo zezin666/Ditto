@@ -305,6 +305,15 @@ pub fn run() {
             let core =
                 CoreService::start(&name, storage.clone()).map_err(|error| error.to_string())?;
             startup_trace("core-started");
+            // If the configured chord was unavailable at startup, persist the
+            // fallback that is actually registered so Settings never shows a
+            // chord the process does not own.
+            if initial_hotkey != startup.open_chord
+                && let Err(error) =
+                    storage.set_setting("hotkeys.open_chord", serde_json::json!(initial_hotkey))
+            {
+                log::warn!("failed to persist fallback hotkey: {error}");
+            }
             let pipe = core.pipe().clone();
             app.manage(AppState {
                 pipe,

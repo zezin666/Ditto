@@ -1,14 +1,14 @@
-seeded 3 clips and group 1 into C:\Users\zezin\AppData\Local\Temp\ditto-t9-final\data
-CORE_PID=19036
+seeded 3 clips and group 1 into C:\Users\zezin\AppData\Local\Temp\ditto-t9-final2\data
+CORE_PID=27584
 PASS core created the per-user named pipe
 PASS core created ditto.db under the synthetic data root
 PASS core shows no user-facing window at startup
 CORE_MAIN_WINDOW_TITLE=com.ditto.clipboard-siw
 CORE_MAIN_WINDOW_VISIBLE=True
-POPUP_READY=True POPUP_READY_MS=7,961.0
-IDLE_PRE_SHOW_PRIVATE_BYTES=40415232
-IDLE_COLD_SAMPLES_BYTES=40415232,40480768,40480768
-IDLE_COLD_MEDIAN_PRIVATE_BYTES=40480768
+POPUP_READY=True POPUP_READY_MS=4,197.2
+IDLE_PRE_SHOW_PRIVATE_BYTES=40185856
+IDLE_COLD_SAMPLES_BYTES=40251392,40321024,40337408
+IDLE_COLD_MEDIAN_PRIVATE_BYTES=40321024
 PASS Hello returns HelloAck (protocol 1)
 CAPABILITIES=clipboard,groups,copy_buffers,preview,uac_paste
 PASS GetSettings returns a real settings snapshot
@@ -28,19 +28,19 @@ PASS RenameGroup succeeds
 PASS Delete removes the synthetic clip
 PASS deleted clip is gone
 PASS DeleteGroup succeeds
-SETTINGS_OPEN_MS=79.0
-SECOND_INSTANCE_EXIT_MS=49.5
+SETTINGS_OPEN_MS=91.6
+SECOND_INSTANCE_EXIT_MS=76.2
 
 sample core_working_set popup_working_set core_private_ws popup_private_ws total_private_ws
 ------ ---------------- ----------------- --------------- ---------------- ----------------
-     1         30822400         127188992         5124096         87986176         93110272
-     2         32567296         127188992         5238784         87986176         93224960
-     3         32559104         127188992         5238784         87986176         93224960
+     1         30851072         127246336         5193728         88018944         93212672
+     2         32804864         127246336         5332992         88018944         93351936
+     3         32665600         127246336         5316608         88018944         93335552
 
 
-IDLE_TOTAL_PRIVATE_BYTES=93224960
+IDLE_TOTAL_PRIVATE_BYTES=93351936
 POPUP_IPC_FRAMES=100
-POPUP_FIRST_FRAME_P50_US=1813
-POPUP_FIRST_FRAME_P95_US=3526
-QA_ROOT=C:\Users\zezin\AppData\Local\Temp\ditto-t9-final
+POPUP_FIRST_FRAME_P50_US=1711
+POPUP_FIRST_FRAME_P95_US=3106
+QA_ROOT=C:\Users\zezin\AppData\Local\Temp\ditto-t9-final2
 QA_RESULT=completed

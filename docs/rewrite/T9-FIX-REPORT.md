@@ -97,7 +97,7 @@
 | M-11 Tray 菜单 | **FIXED** | 菜单含 Open/Settings/Groups/Copy Buffers/Connect/Disconnect/Exit；Connect/Disconnect 暂停/恢复 capture；EN/ZH 从 locale JSON 读取；Groups/Copy Buffers 深链到设置页。locale 单测 + 截图；物理 tray click UNVERIFIED。 |
 | M-12 WebView2 fallback | **FIXED** | 打开 Settings 前检查 Evergreen 注册表/安装目录；缺失时原生 MessageBox 给出下载 URL，host 继续运行。NSIS 使用 `downloadBootstrapper`；Portable README 新增策略说明。缺失运行时的真实路径 UNVERIFIED。 |
 | M-13 explorer.exe 路径 | **FIXED** | 使用 `%WINDIR%\explorer.exe` 绝对路径；单测断言绝对路径且文件名固定。 |
-| M-14 popup 冷启动 | **FIXED** | popup 在 Tauri 初始化前启动，prewarm 在 window/renderer 前完成 Hello；app 侧 process-start→hello 0.3–0.7 ms。3 次无重建冷采样：1736.1 / 1707.7 / 1714.5 ms，中位数 **1714.5 ms（<2 s）**；热键→首帧 100 样本 P95 **3.526 ms**。首次运行新构建的未签名 exe 仍可能被 Defender 扫描到 6–8 s（根因见 RISKS）。 |
+| M-14 popup 冷启动 | **FIXED** | popup 在 Tauri 初始化前启动，prewarm 在 window/renderer 前完成 Hello；app 侧 process-start→hello 0.3–0.7 ms。3 次无重建冷采样：1696.6 / 2167.6 / 1762.9 ms，中位数 **1762.9 ms（<2 s）**；热键→首帧 100 样本 P95 **3.106 ms**。首次运行新构建的未签名 exe 仍可能被 Defender 扫描到 4–8 s（根因见 RISKS）。 |
 | M-15 migration progress/cancel | **DEFERRED（产品决策）** | v1 明确为一次性、重启时执行的 staged migration，不提供取消；pending 状态显示 dry-run 得到的总数与“仅重启后可见/不可取消”的 warning，应用前始终写备份。冻结矩阵 D7 已按此更新，移除了未实现的取消承诺。 |
 
 #### Minor / Nit
@@ -118,13 +118,13 @@
 
 | 指标 | 结果 |
 |---|---|
-| Release IPC smoke 100 show | 全部 PASS；首帧 P50 1.813 ms / P95 3.526 ms |
-| 空闲 3 次冷采样中位数（core+popup private） | 40,480,768 B（≈38.6 MiB） |
-| Settings 打开（标题出现） | 79.0 ms（另一次 96.6/152.1 ms） |
-| 二次实例退出 wall-clock | 49.5 ms（另一次 80.8/110.1 ms） |
+| Release IPC smoke 100 show | 全部 PASS；首帧 P50 1.711 ms / P95 3.106 ms |
+| 空闲 3 次冷采样中位数（core+popup private） | 40,321,024 B（≈38.5 MiB） |
+| Settings 打开（标题出现） | 91.6 ms（另一次 79.0/96.6/152.1 ms） |
+| 二次实例退出 wall-clock | 76.2 ms（另一次 49.5/80.8/110.1 ms） |
 | 真实 SQLite 10k cursor 分页 | 20 页 / 10,000 行 / 483 ms |
 | 真实 SQLite 10k 滚动 300 帧 | frame p95 1.205 ms，max 25.6 ms，>50 ms = 0 |
-| 冷启动（无重建） | 1736.1 / 1707.7 / 1714.5 ms，中位数 1714.5 ms |
+| 冷启动（无重建） | 1696.6 / 2167.6 / 1762.9 ms，中位数 1762.9 ms |
 | 本地隐藏/下一次显示/popup 崩溃 | False / True / False（`popup-hide-sync.log`） |
 | NSIS/Portable | 安装/卸载/启动/`Data\ditto.db` PASS |
 
@@ -132,11 +132,11 @@
 
 | 产物 | 字节 | SHA-256 | 签名 |
 |---|---:|---|---|
-| `Ditto.exe` | 11,382,272 | `3bf1e6e629ac5027b5b529dd48a93dd399b5552d13e6f35ef2fa8b0372ba66dc` | NotSigned |
+| `Ditto.exe` | 11,382,784 | `3d7b8706699db8bbe9901251579c6b767fabd0e57e2be55b965cce1932fe04f2` | NotSigned |
 | `DittoPopup.exe` | 5,007,872 | `4466e5d903eaae62b6d7219f10d635eedd6642cd98e6180cf6b801384b018323` | NotSigned |
 | `DittoUacHelper.exe` | 272,896 | `ec5b7eaf2dd18d6626d939d0d545fcad6475c0963674b85857a53ddf86b52705` | NotSigned |
-| `Ditto_0.1.0_x64-setup.exe` | 4,870,054 | `35ee43d7e8b7dfa20204b3b5272b9ed5035d0338bc7c6fb000932f5535c984d5` | NotSigned |
-| `Ditto-0.1.0-x64-portable.zip` | 6,855,700 | `c6523ae1f14ff373227ae5d41dca2e0e732c82093bca5d36f9cf4a7cdc0b9304` | 不适用 |
+| `Ditto_0.1.0_x64-setup.exe` | 4,872,133 | `bdb1bd535a6bd67f4a0283679bd30c3ded0cd4ef3dd9d700ac2ac230ded09267` | NotSigned |
+| `Ditto-0.1.0-x64-portable.zip` | 6,856,363 | `ccf1e5152bf347e5ecf42996896d9cd384eee780f7d5c91a6b0a0841a1998876` | 不适用 |
 
 ### 迁移 fixture
 

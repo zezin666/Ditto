@@ -1,13 +1,13 @@
-T9 release cold-start samples (fresh synthetic DITTO_DATA_DIR, no rebuild between samples)
-POPUP_READY_MS sample1=1736.1
-POPUP_READY_MS sample2=1707.7
-POPUP_READY_MS sample3=1714.5
-POPUP_READY_MEDIAN_MS=1714.5
-IDLE_COLD_MEDIAN_PRIVATE_BYTES sample1=40103936
-IDLE_COLD_MEDIAN_PRIVATE_BYTES sample2=40083456
-IDLE_COLD_MEDIAN_PRIVATE_BYTES sample3=40308736
-POPUP_FIRST_FRAME_100_SAMPLES=P50 1813 us / P95 3526 us (ipc-smoke-t9.log)
-NOTE=First launch immediately after rebuilding the unsigned release popup was 7961 ms; the
-process took 6.4 s before main() (Windows loader/Defender scan of a fresh unsigned binary).
-Subsequent cold launches of the unchanged binary are 1.71 s median. App-side prewarm handshake
-is 0.3-0.7 ms after process start; resident hotkey->first-frame P95 is 3.5 ms.
+T9 final release cold-start samples (fresh synthetic DITTO_DATA_DIR, no rebuild between samples)
+POPUP_READY_MS sample1=1696.6
+POPUP_READY_MS sample2=2167.6
+POPUP_READY_MS sample3=1762.9
+POPUP_READY_MEDIAN_MS=1762.9
+IDLE_COLD_MEDIAN_PRIVATE_BYTES sample1=40271872
+IDLE_COLD_MEDIAN_PRIVATE_BYTES sample2=40206336
+IDLE_COLD_MEDIAN_PRIVATE_BYTES sample3=40542208
+POPUP_FIRST_FRAME_100_SAMPLES=P50 1711 us / P95 3106 us (ipc-smoke-t9.log)
+NOTE=First launch immediately after rebuilding the unsigned release popup was 4197 ms (and 7961 ms
+in an earlier rebuild); the process spent 2-6 s in Windows loader/Defender scan before main().
+Subsequent cold launches of the unchanged binary are 1.70-2.17 s, median 1.76 s. App-side prewarm
+handshake is 0.3-0.7 ms after process start; resident hotkey->first-frame P95 is 3.106 ms.

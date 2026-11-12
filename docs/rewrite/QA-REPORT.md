@@ -246,18 +246,18 @@ Portable ZIP 内容：`Ditto.exe`、`DittoPopup.exe`、`DittoUacHelper.exe`、`D
 
 | 指标 | T9 实测 | 证据 |
 |---|---|---|
-| Popup 冷启动（无重建，3 次） | 1736.1 / 1707.7 / 1714.5 ms；中位数 **1714.5 ms** | `after/qa/cold-start-t9.txt` |
+| Popup 冷启动（无重建，3 次） | 1696.6 / 2167.6 / 1762.9 ms；中位数 **1762.9 ms** | `after/qa/cold-start-t9.txt` |
 | Popup app 侧 process-start→Hello | 0.3–0.7 ms | `popup-trace` |
-| Popup 首帧（100 次 IPC Show） | P50 1.813 ms / P95 **3.526 ms** | `after/qa/ipc-smoke-t9.log` |
-| 空闲 3 次冷采样中位数（core+popup private） | **40,480,768 B** | 同上 |
-| Settings 打开（窗口标题） | 79.0 ms | 同上 |
-| 二次实例退出 wall-clock | 49.5 ms | 同上 |
+| Popup 首帧（100 次 IPC Show） | P50 1.711 ms / P95 **3.106 ms** | `after/qa/ipc-smoke-t9.log` |
+| 空闲 3 次冷采样中位数（core+popup private） | **40,321,024 B** | 同上 |
+| Settings 打开（窗口标题） | 91.6 ms | 同上 |
+| 二次实例退出 wall-clock | 76.2 ms | 同上 |
 | 真实 SQLite 10k cursor 分页 | 20 页 / 10,000 行 / 483 ms | `after/qa/paging-10k-real-sqlite.log` |
 | 真实 SQLite 10k 滚动（300 帧） | frame p50 0.674 / p95 **1.205** / max 25.6 ms；>50 ms 帧 0；update p95 0.004 ms | `after/perf/scroll-10k-real-sqlite.csv` |
 | 本地隐藏同步 | outside click → visible=false；下一次 Show → true；popup 崩溃 → false | `after/qa/popup-hide-sync.log` |
 | 热键 Apply/冲突回滚 | 新键生效、旧键释放；冲突 toast 且持久化保持旧键 | `T9-hotkey-conflict-rollback.png`、`T9-tauri-hotkeys-real.png` |
 
-冷启动说明：首次运行“刚构建的未签名 popup”仍可能被 Defender 实时扫描，进程进入 `main()` 前耗时 6.4 s（本次一次 7961 ms）；同一二进制后续冷启动为 1.71 s。popup 在 core 启动早期即 spawn，并与 Tauri 初始化重叠；常驻后热键→首帧为毫秒级。
+冷启动说明：首次运行“刚构建的未签名 popup”仍可能被 Defender 实时扫描，进程进入 `main()` 前耗时 2–6 s（两次重建后首启 4197/7961 ms）；同一二进制后续冷启动中位数为 1.76 s。popup 在 core 启动早期即 spawn，并与 Tauri 初始化重叠；常驻后热键→首帧为毫秒级。
 
 ## 截图
 
