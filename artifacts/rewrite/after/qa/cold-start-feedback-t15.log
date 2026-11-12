@@ -1,0 +1,12 @@
+seeded 1 clips and group 1 into C:\Users\zezin\AppData\Local\Temp\ditto-feedback-qa-f7de06b9\startup-message\data
+STARTUP_MESSAGE_HINT_VISIBLE=True
+STARTUP_MESSAGE_HINT_SCREENSHOT=True
+STARTUP_MESSAGE_HINT_SCREENSHOT_PATH=C:\Users\zezin\AppData\Local\Temp\ditto-feedback-qa-f7de06b9\startup-message\startup-hint.png
+STARTUP_MESSAGE_HINT_AUTO_CLOSED=True
+seeded 1 clips and group 1 into C:\Users\zezin\AppData\Local\Temp\ditto-feedback-qa-f7de06b9\hotkey-hint\data
+HOTKEY_PREPARING_HINT_VISIBLE=True
+HOTKEY_PREPARING_HINT_SCREENSHOT=True
+HOTKEY_PREPARING_HINT_SCREENSHOT_PATH=C:\Users\zezin\AppData\Local\Temp\ditto-feedback-qa-f7de06b9\hotkey-hint\hotkey-hint.png
+HOTKEY_PREPARING_HINT_AUTO_CLOSED=True
+COLD_START_FEEDBACK_QA=PASS
+QA_ROOT=C:\Users\zezin\AppData\Local\Temp\ditto-feedback-qa-f7de06b9

@@ -1,0 +1,19 @@
+seeded 1 clips and group 1 into C:\Users\zezin\AppData\Local\Temp\ditto-pending-qa-a4a42ef1\target\data
+seeded 1 clips and group 1 into C:\Users\zezin\AppData\Local\Temp\ditto-pending-qa-a4a42ef1\source\data
+exported: 1 clips, 1 files verified -> C:\Users\zezin\AppData\Local\Temp\ditto-pending-qa-a4a42ef1\t15-import.zip
+STARTUP_COMPLETE=True
+OPEN_CHORD_AFTER_IMPORT=Ctrl+Alt+Q
+STARTUP_MESSAGE_AFTER_IMPORT=DITTO-T15-NEW-MESSAGE
+LANGUAGE_AFTER_IMPORT=zh-CN
+SHOW_TRAY_AFTER_IMPORT=False
+MAX_ENTRIES_AFTER_IMPORT=17
+IMPORTED_HOTKEY_Q_REGISTERED=True
+OLD_HOTKEY_K_FREE=True
+HOST_TRACE_ACTIVE_OPEN_Q=True
+HOST_TRACE_ACTIVE_OLD_OPEN_K=False
+HOST_TRACE_TRAY_HIDDEN=True
+HOST_TRACE_TRAY_CREATED=False
+POPUP_LANGUAGE_ZH=True
+STARTUP_MESSAGE_HINT_VISIBLE=True
+PENDING_IMPORT_STARTUP_QA=PASS
+QA_ROOT=C:\Users\zezin\AppData\Local\Temp\ditto-pending-qa-a4a42ef1

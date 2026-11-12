@@ -1,0 +1,11 @@
+   Compiling ditto-migration v0.1.0 (D:\orca\workspaces\Ditto\rewrite-fixes4\crates\ditto-migration)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.34s
+     Running tests\legacy_fixture.rs (target\debug\deps\legacy_fixture-36fb3147022ef92b.exe)
+
+running 3 tests
+test failed_migration_leaves_existing_destination_untouched ... ok
+test export_import_and_verify_round_trip_preserve_counts ... ok
+test synthetic_legacy_migration_matches_counts_content_and_is_idempotent ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.90s
+

@@ -1,0 +1,17 @@
+1794515866781 host:run-enter
+1794515866876 host:pending-applied: data import/restore applied
+1794515866902 host:startup-settings-loaded
+1794515866902 host:popup-path=D:\orca\workspaces\Ditto\rewrite-fixes4\target\release\DittoPopup.exe
+1794515867264 host:popup-pid=4256
+1794515867265 host:builder-ready
+1794515868657 host:tauri-built
+1794515868657 host:setup-enter
+1794515868657 host:data-root-and-staging
+1794515868665 host:storage-open
+1794515868674 host:core-started
+1794515868675 host:hotkeys-registered
+1794515868675 host:tray-hidden
+1794515868675 host:tray-ready
+1794515868675 host:hotkey-active=Ctrl+Alt+Q
+1794515868676 host:popup-spawned
+1794515868693 host:startup-complete

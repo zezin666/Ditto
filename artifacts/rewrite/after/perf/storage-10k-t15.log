@@ -1,0 +1,15 @@
+    Finished `release` profile [optimized] target(s) in 0.20s
+     Running tests\bench_10k.rs (target\release\deps\bench_10k-8291139e4d543757.exe)
+
+running 1 test
+T2_10K_BENCH insert_ms=1766.255 insert_per_sec=5661.7 db_bytes=87532728
+T2_10K_SEARCH query=browse p50_ms=0.441 p95_ms=0.540 p99_ms=0.586
+T2_10K_SEARCH query=english p50_ms=0.747 p95_ms=0.897 p99_ms=0.901
+T2_10K_SEARCH query=chinese p50_ms=0.587 p95_ms=0.755 p99_ms=0.944
+T2_10K_SEARCH query=two_char_en p50_ms=0.534 p95_ms=0.633 p99_ms=0.660
+T2_10K_SEARCH query=two_char_zh p50_ms=0.943 p95_ms=1.550 p99_ms=1.562
+T2_10K_SEARCH query=quick_paste p50_ms=16.447 p95_ms=18.078 p99_ms=18.369
+test synthetic_10k_insert_search_and_keyset_budget ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.59s
+
