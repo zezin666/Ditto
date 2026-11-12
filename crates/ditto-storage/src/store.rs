@@ -1022,12 +1022,30 @@ fn validate_slot(slot: u8) -> StorageResult<()> {
     }
 }
 
-fn store_format(
+pub(crate) fn store_format(
     transaction: &rusqlite::Transaction<'_>,
     data_root: &Path,
     clip_id: i64,
     format: &ditto_model::NewClipFormat,
     primary_format: Option<&str>,
+) -> StorageResult<()> {
+    store_format_with_legacy(
+        transaction,
+        data_root,
+        clip_id,
+        format,
+        primary_format,
+        None,
+    )
+}
+
+pub(crate) fn store_format_with_legacy(
+    transaction: &rusqlite::Transaction<'_>,
+    data_root: &Path,
+    clip_id: i64,
+    format: &ditto_model::NewClipFormat,
+    primary_format: Option<&str>,
+    legacy_data_id: Option<i64>,
 ) -> StorageResult<()> {
     let hash = blob::sha256(&format.data);
     let mime = format.mime.as_deref();
@@ -1047,8 +1065,9 @@ fn store_format(
     };
     transaction.execute(
         "INSERT INTO clip_formats(
-           clip_id, format_name, seq, size_bytes, mime, data, data_path, sha256, is_primary
-         ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
+           clip_id, format_name, seq, size_bytes, mime, data, data_path, sha256,
+           is_primary, legacy_data_id
+         ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
         rusqlite::params![
             clip_id,
             format.format_name,
@@ -1059,6 +1078,7 @@ fn store_format(
             data_path,
             hash.to_vec(),
             (format.is_primary || primary_format == Some(format.format_name.as_str())) as i64,
+            legacy_data_id,
         ],
     )?;
     Ok(())
@@ -1068,7 +1088,10 @@ fn bump_state(transaction: &rusqlite::Transaction<'_>) -> StorageResult<()> {
     bump_state_by(transaction, 1)
 }
 
-fn bump_state_by(transaction: &rusqlite::Transaction<'_>, amount: u64) -> StorageResult<()> {
+pub(crate) fn bump_state_by(
+    transaction: &rusqlite::Transaction<'_>,
+    amount: u64,
+) -> StorageResult<()> {
     if amount == 0 {
         return Ok(());
     }
@@ -1333,7 +1356,7 @@ fn append_cursor_filter(
     ]);
 }
 
-fn truncate_utf8(value: &str, max_bytes: usize) -> String {
+pub(crate) fn truncate_utf8(value: &str, max_bytes: usize) -> String {
     if value.len() <= max_bytes {
         return value.to_string();
     }

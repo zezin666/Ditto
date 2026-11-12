@@ -2,6 +2,7 @@
 
 mod blob;
 mod error;
+pub mod legacy;
 mod schema;
 mod settings_store;
 mod store;

@@ -837,3 +837,27 @@ and popup contracts:
 core avoids a second full FTS/LIKE scan for `COUNT(*)` and reports the returned
 page count as an estimated total. This follows `PERFORMANCE.md` §5.3, which
 requires a cached/deferred count when an exact count doubles query time.
+
+---
+
+## 15. T6 implementation delta
+
+T6 adds a narrow, additive legacy-insert API without changing the v1 schema or
+the existing T2 capture API:
+
+- `ditto_storage::legacy::LegacyBatch`
+- `LegacyClipRecord`, `LegacyGroupRecord`, `LegacyFormatRecord`,
+  `LegacyCopyBufferRecord`
+- `Storage::insert_legacy_many`
+- `Storage::insert_legacy_batch`
+- `LegacyInsertResult` with legacy-to-new ID maps
+
+`insert_legacy_batch` uses the existing transaction, FTS triggers, blob writer,
+thumbnail writer, and format storage. It deliberately bypasses capture dedupe:
+one new clip is inserted for every legacy `Main` row, even when content and
+format hashes collide. Existing `legacy_id` values are skipped on rerun.
+
+The migration package/export manifest is format version 1 and is not part of
+the SQLite schema. It records schema/app versions, platform, counts, and
+SHA-256 plus size for `ditto.db`, blobs, and thumbnails. Import is verified
+snapshot replacement; merge/remapping is deferred.
