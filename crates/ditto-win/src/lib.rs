@@ -7,7 +7,7 @@ use std::{
     os::windows::ffi::OsStrExt,
     sync::{
         Arc,
-        atomic::{AtomicU64, Ordering},
+        atomic::{AtomicBool, AtomicU64, Ordering},
     },
     thread,
     time::Duration,
@@ -52,9 +52,10 @@ use windows::{
             HOT_KEY_MODIFIERS, MOD_NOREPEAT, RegisterHotKey, UnregisterHotKey,
         },
         UI::WindowsAndMessaging::{
-            GWL_EXSTYLE, GetWindowLongPtrW, HWND_TOPMOST, SW_HIDE, SW_SHOWNOACTIVATE,
+            GWL_EXSTYLE, GetWindowLongPtrW, HWND_TOPMOST, LWA_ALPHA, SW_SHOWNOACTIVATE,
             SWP_NOACTIVATE, SWP_NOMOVE, SWP_NOSIZE, SWP_NOZORDER, SWP_SHOWWINDOW,
-            SetWindowLongPtrW, SetWindowPos, ShowWindow, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW,
+            SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, ShowWindow, WS_EX_LAYERED,
+            WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW, WS_EX_TRANSPARENT,
         },
     },
     core::{PWSTR, w},
@@ -222,15 +223,47 @@ pub fn make_popup_window(hwnd: windows::Win32::Foundation::HWND) -> ditto_model:
             GWL_EXSTYLE,
             ex_style | WS_EX_NOACTIVATE.0 as isize | WS_EX_TOOLWINDOW.0 as isize,
         );
-        let _ = ShowWindow(hwnd, SW_HIDE);
+        // Keep the window alive and paintable while invisible: hide it with a
+        // layered alpha of zero instead of SW_HIDE. winit stops delivering
+        // redraws to natively hidden windows, which would swallow IPC Shows.
+        set_layered_visibility(hwnd, false);
+        let _ = SetWindowPos(
+            hwnd,
+            None,
+            0,
+            0,
+            0,
+            0,
+            SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER,
+        );
     }
     Ok(())
 }
 
+fn set_layered_visibility(hwnd: windows::Win32::Foundation::HWND, visible: bool) {
+    unsafe {
+        let ex_style = GetWindowLongPtrW(hwnd, GWL_EXSTYLE);
+        let base = ex_style | WS_EX_NOACTIVATE.0 as isize | WS_EX_LAYERED.0 as isize;
+        let next = if visible {
+            base & !(WS_EX_TRANSPARENT.0 as isize)
+        } else {
+            base | WS_EX_TRANSPARENT.0 as isize
+        };
+        SetWindowLongPtrW(hwnd, GWL_EXSTYLE, next);
+        let _ = SetLayeredWindowAttributes(
+            hwnd,
+            windows::Win32::Foundation::COLORREF(0),
+            if visible { 255 } else { 0 },
+            LWA_ALPHA,
+        );
+    }
+}
+
 pub fn set_popup_visible(hwnd: windows::Win32::Foundation::HWND, visible: bool) {
     unsafe {
-        let _ = ShowWindow(hwnd, if visible { SW_SHOWNOACTIVATE } else { SW_HIDE });
+        set_layered_visibility(hwnd, visible);
         if visible {
+            let _ = ShowWindow(hwnd, SW_SHOWNOACTIVATE);
             let _ = SetWindowPos(
                 hwnd,
                 Some(HWND_TOPMOST),
@@ -269,6 +302,7 @@ pub fn resize_popup(
 pub struct PipeServer {
     clients: Arc<Mutex<HashMap<u64, Arc<Connection>>>>,
     next_event: Arc<AtomicU64>,
+    popup_visible: Arc<AtomicBool>,
 }
 
 pub type RequestHandler = Arc<dyn Fn(&Request) -> Response + Send + Sync>;
@@ -288,18 +322,29 @@ impl PipeServer {
     fn start_internal(name: &str, handler: Option<RequestHandler>) -> ditto_model::Result<Self> {
         let name = name.to_string();
         let clients = Arc::new(Mutex::new(HashMap::<u64, Arc<Connection>>::new()));
+        let popup_visible = Arc::new(AtomicBool::new(false));
         let first = Connection::create_server_instance(&name, true)?;
         let clients_for_thread = Arc::clone(&clients);
         let handler_for_thread = handler.clone();
+        let visible_for_thread = Arc::clone(&popup_visible);
 
         thread::Builder::new()
             .name("ditto-ipc-server".to_string())
-            .spawn(move || accept_loop(name, first, clients_for_thread, handler_for_thread))
+            .spawn(move || {
+                accept_loop(
+                    name,
+                    first,
+                    clients_for_thread,
+                    handler_for_thread,
+                    visible_for_thread,
+                )
+            })
             .map_err(|error| ditto_model::DittoError::Ipc(error.to_string()))?;
 
         Ok(Self {
             clients,
             next_event: Arc::new(AtomicU64::new(1)),
+            popup_visible,
         })
     }
 
@@ -314,6 +359,26 @@ impl PipeServer {
             }
         }
         Ok(())
+    }
+
+    pub fn popup_visible(&self) -> bool {
+        self.popup_visible.load(Ordering::SeqCst)
+    }
+
+    /// Updates the shared popup state and broadcasts the matching control
+    /// event. Clients that connect later query the state so a slow popup start
+    /// cannot lose the first hotkey press.
+    pub fn set_popup_visible(&self, visible: bool) -> ditto_model::Result<()> {
+        self.popup_visible.store(visible, Ordering::SeqCst);
+        let event = if visible {
+            Event::ShowPopup {
+                at_ms: unix_millis(),
+                monitor: None,
+            }
+        } else {
+            Event::HidePopup
+        };
+        self.broadcast(&event)
     }
 
     pub fn client_count(&self) -> usize {
@@ -419,6 +484,7 @@ fn accept_loop(
     mut current: Connection,
     clients: Arc<Mutex<HashMap<u64, Arc<Connection>>>>,
     handler: Option<RequestHandler>,
+    popup_visible: Arc<AtomicBool>,
 ) {
     loop {
         if let Err(error) = current.connect() {
@@ -440,8 +506,14 @@ fn accept_loop(
             .insert(connection.id, Arc::clone(&connection));
         let clients_for_handler = Arc::clone(&clients);
         let handler_for_connection = handler.clone();
+        let visible_for_connection = Arc::clone(&popup_visible);
         thread::spawn(move || {
-            handle_connection(connection, clients_for_handler, handler_for_connection)
+            handle_connection(
+                connection,
+                clients_for_handler,
+                handler_for_connection,
+                visible_for_connection,
+            )
         });
 
         match Connection::create_server_instance(&name, false) {
@@ -458,6 +530,7 @@ fn handle_connection(
     connection: Arc<Connection>,
     clients: Arc<Mutex<HashMap<u64, Arc<Connection>>>>,
     handler: Option<RequestHandler>,
+    popup_visible: Arc<AtomicBool>,
 ) {
     loop {
         match pipe_available(connection.read_handle.0) {
@@ -497,7 +570,7 @@ fn handle_connection(
             }
         };
 
-        let response = dispatch_request(&request, &clients, handler.as_deref());
+        let response = dispatch_request(&request, &clients, handler.as_deref(), &popup_visible);
         if send_response(&connection, frame.request_id, &response).is_err() {
             break;
         }
@@ -512,6 +585,7 @@ fn dispatch_request(
     request: &Request,
     clients: &Arc<Mutex<HashMap<u64, Arc<Connection>>>>,
     handler: Option<&(dyn Fn(&Request) -> Response + Send + Sync)>,
+    popup_visible: &AtomicBool,
 ) -> Response {
     match request {
         Request::Hello {
@@ -547,6 +621,7 @@ fn dispatch_request(
             }
         }
         Request::ShowPopup => {
+            popup_visible.store(true, Ordering::SeqCst);
             let event = Event::ShowPopup {
                 at_ms: unix_millis(),
                 monitor: None,
@@ -567,6 +642,7 @@ fn dispatch_request(
             Response::PopupVisibility { visible: true }
         }
         Request::HidePopup => {
+            popup_visible.store(false, Ordering::SeqCst);
             let event = Event::HidePopup;
             let frame = match Frame::json(FrameType::Event, unix_millis(), &event) {
                 Ok(frame) => frame,
@@ -583,6 +659,9 @@ fn dispatch_request(
             }
             Response::PopupVisibility { visible: false }
         }
+        Request::GetPopupVisibility => Response::PopupVisibility {
+            visible: popup_visible.load(Ordering::SeqCst),
+        },
         _ => handler.map_or_else(
             || Response::Error {
                 code: ErrorCode::NotImplemented,

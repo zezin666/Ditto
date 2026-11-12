@@ -345,7 +345,10 @@ pub(crate) fn handle_request(
             }
         }
         Request::Shutdown => Response::Ok,
-        Request::Hello { .. } | Request::ShowPopup | Request::HidePopup => Response::Error {
+        Request::Hello { .. }
+        | Request::ShowPopup
+        | Request::HidePopup
+        | Request::GetPopupVisibility => Response::Error {
             code: ErrorCode::Internal,
             message: "control request bypassed the pipe dispatcher".to_string(),
             retryable: true,
@@ -637,6 +640,7 @@ fn request_method(request: &Request) -> &'static str {
         Request::Hello { .. } => "Hello",
         Request::ShowPopup => "ShowPopup",
         Request::HidePopup => "HidePopup",
+        Request::GetPopupVisibility => "GetPopupVisibility",
         Request::GetClips { .. } => "GetClips",
         Request::Search { .. } => "Search",
         Request::GetClip { .. } => "GetClip",

@@ -13,7 +13,7 @@ use std::{
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
-use ditto_ipc::{ClientKind, Event, Response};
+use ditto_ipc::{ClientKind, Event, Request, Response};
 use ditto_model::{ClipKind, ClipSummary, CopyBufferSlot, GroupNode, SettingsSnapshot, ThemeMode};
 use ditto_ui_tokens::{Mode, border, dimension, font, radius};
 use ditto_win::{PipeClient, hello_request, make_popup_window, pipe_name, system_theme};
@@ -27,7 +27,7 @@ use raw_window_handle::{HasWindowHandle, RawWindowHandle};
 use windows::Win32::Foundation::{HWND, POINT};
 
 use crate::{
-    localization::{Localizer, key},
+    localization::{Language, Localizer, key},
     mock::MockProvider,
     options::{CaptureOptions, CaptureState, PopupOptions},
     platform::{self, PositionMode},
@@ -199,6 +199,7 @@ struct BadgeStyle<'a> {
 }
 
 pub struct PopupApp {
+    cjk_fonts_installed: bool,
     options: PopupOptions,
     locale: Localizer,
     signals: Receiver<PopupSignal>,
@@ -262,7 +263,8 @@ impl PopupApp {
         });
         let palette = Palette::for_theme(theme);
         let locale = Localizer::load(options.language);
-        install_fonts(&creation.egui_ctx);
+        let cjk_fonts_installed =
+            options.language == Language::Chinese && install_fonts(&creation.egui_ctx);
         apply_visuals(&creation.egui_ctx, theme, palette);
 
         let (sender, receiver) = mpsc::channel();
@@ -308,6 +310,7 @@ impl PopupApp {
             settings: runtime_settings,
             options: options.clone(),
             locale,
+            cjk_fonts_installed,
             signals: receiver,
             ctx: creation.egui_ctx.clone(),
             provider,
@@ -376,9 +379,13 @@ impl PopupApp {
         while let Ok(signal) = self.signals.try_recv() {
             match signal {
                 PopupSignal::Show { received_at } => {
+                    qa_trace("signal-show");
                     self.show_popup(received_at, true);
                 }
-                PopupSignal::Hide => self.hide_popup(),
+                PopupSignal::Hide => {
+                    qa_trace("signal-hide");
+                    self.hide_popup();
+                }
                 PopupSignal::Connection(connected) => {
                     if connected {
                         if self.service_error.is_some() {
@@ -475,7 +482,8 @@ impl PopupApp {
             platform::restore_foreground(self.previous_foreground);
         }
         self.user_activated = false;
-        self.ctx.send_viewport_cmd(ViewportCommand::Visible(false));
+        // Do not send ViewportCommand::Visible(false): winit would stop
+        // delivering redraws and the resident popup could not wake again.
         self.ctx.memory_mut(|memory| memory.stop_text_input());
     }
 
@@ -486,7 +494,6 @@ impl PopupApp {
         if let Some(hwnd) = self.window_handle {
             ditto_win::set_popup_visible(hwnd, false);
         }
-        self.ctx.send_viewport_cmd(ViewportCommand::Visible(false));
     }
 
     fn style_window_once(&mut self) {
@@ -511,6 +518,13 @@ impl PopupApp {
                     match result {
                         Ok(page) => {
                             self.service_error = None;
+                            if page
+                                .items
+                                .iter()
+                                .any(|clip| contains_cjk(&clip.preview_text))
+                            {
+                                self.ensure_cjk_fonts();
+                            }
                             self.items = page.items;
                             self.total = page.total;
                             self.loaded_query = self.query.clone();
@@ -553,10 +567,30 @@ impl PopupApp {
     }
 
     fn apply_metadata(&mut self, metadata: ProviderMetadata) {
+        if metadata
+            .groups
+            .iter()
+            .any(|group| contains_cjk(&group.name))
+            || metadata
+                .copy_buffers
+                .iter()
+                .any(|slot| contains_cjk(&slot.name))
+        {
+            self.ensure_cjk_fonts();
+        }
         self.groups = metadata.groups;
         self.copy_buffers = metadata.copy_buffers;
         self.apply_settings_snapshot(&metadata.settings);
         self.service_error = None;
+    }
+
+    fn ensure_cjk_fonts(&mut self) {
+        if self.cjk_fonts_installed {
+            return;
+        }
+        if install_fonts(&self.ctx) {
+            self.cjk_fonts_installed = true;
+        }
     }
 
     fn apply_settings_snapshot(&mut self, snapshot: &SettingsSnapshot) {
@@ -2024,6 +2058,7 @@ impl PopupApp {
 
 impl eframe::App for PopupApp {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+        qa_trace("update");
         let now = Instant::now();
         let external_dt = now.saturating_duration_since(self.last_frame_at);
         self.last_frame_at = now;
@@ -2669,7 +2704,7 @@ fn clip_row_height(mode: Mode) -> f32 {
     dimension::row_height(mode) * 1.5
 }
 
-fn install_fonts(ctx: &egui::Context) {
+fn install_fonts(ctx: &egui::Context) -> bool {
     let mut fonts = FontDefinitions::default();
     let candidates = [
         PathBuf::from(r"C:\Windows\Fonts\msyh.ttc"),
@@ -2693,7 +2728,19 @@ fn install_fonts(ctx: &egui::Context) {
         }
         break;
     }
+    let loaded = fonts.font_data.contains_key("ditto-cjk");
     ctx.set_fonts(fonts);
+    loaded
+}
+
+fn contains_cjk(value: &str) -> bool {
+    value.chars().any(|character| {
+        matches!(
+            character as u32,
+            0x3040..=0x30FF | 0x3400..=0x4DBF | 0x4E00..=0x9FFF | 0xAC00..=0xD7AF
+                | 0xF900..=0xFAFF
+        )
+    })
 }
 
 fn apply_visuals(ctx: &egui::Context, theme: Theme, palette: Palette) {
@@ -2780,6 +2827,19 @@ fn spawn_ipc_client(
         .expect("popup IPC thread");
 }
 
+fn qa_trace(message: &str) {
+    if let Ok(path) = std::env::var("DITTO_POPUP_TRACE") {
+        use std::io::Write;
+        if let Ok(mut file) = std::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(path)
+        {
+            let _ = writeln!(file, "{} {message}", unix_millis());
+        }
+    }
+}
+
 fn connect_and_read(
     ctx: egui::Context,
     sender: Sender<PopupSignal>,
@@ -2787,11 +2847,22 @@ fn connect_and_read(
 ) -> ditto_model::Result<()> {
     let name = pipe_name()?;
     let client = PipeClient::connect(&name)?;
+    qa_trace("connected");
     client.send(1, &hello_request(ClientKind::Popup))?;
     match client.read_response()? {
         Response::HelloAck { .. } => {
+            qa_trace("hello-ack");
             let _ = sender.send(PopupSignal::Connection(true));
             ctx.request_repaint();
+            // A hotkey press may arrive before this client connects. The core
+            // remembers visibility so the first press is not lost.
+            client.send(2, &Request::GetPopupVisibility)?;
+            if let Response::PopupVisibility { visible: true } = client.read_response()? {
+                let _ = sender.send(PopupSignal::Show {
+                    received_at: Instant::now(),
+                });
+                ctx.request_repaint();
+            }
         }
         Response::Error { message, .. } => {
             return Err(ditto_model::DittoError::Ipc(message));
@@ -2805,12 +2876,14 @@ fn connect_and_read(
     loop {
         match client.read_event()? {
             Event::ShowPopup { .. } => {
+                qa_trace("event-show");
                 let _ = sender.send(PopupSignal::Show {
                     received_at: Instant::now(),
                 });
                 ctx.request_repaint();
             }
             Event::HidePopup => {
+                qa_trace("event-hide");
                 let _ = sender.send(PopupSignal::Hide);
                 ctx.request_repaint();
             }

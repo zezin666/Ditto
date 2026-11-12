@@ -1,7 +1,6 @@
 use std::{
     path::PathBuf,
     process::{Child, Command},
-    sync::atomic::{AtomicBool, Ordering},
     thread,
     time::Duration,
 };
@@ -37,7 +36,6 @@ pub struct AppState {
     storage: Storage,
     data_root: DataRoot,
     core: Mutex<Option<CoreService>>,
-    popup_visible: AtomicBool,
     popup: Mutex<Option<Child>>,
     /// Keeps the primary-instance event handle alive for the process lifetime.
     _instance_signal: Option<SingleInstanceSignal>,
@@ -191,7 +189,6 @@ pub fn run() {
                 storage,
                 data_root,
                 core: Mutex::new(Some(core)),
-                popup_visible: AtomicBool::new(false),
                 popup: Mutex::new(None),
                 _instance_signal: instance_signal,
             });
@@ -302,20 +299,12 @@ fn choose_development_hotkey() -> String {
 fn toggle_popup(app: &AppHandle) {
     let state = app.state::<AppState>();
     ensure_popup_running(app);
-    let show = !state.popup_visible.fetch_xor(true, Ordering::SeqCst);
-    let event = if show {
-        Event::ShowPopup {
-            at_ms: ditto_win::unix_millis(),
-            monitor: None,
-        }
-    } else {
-        Event::HidePopup
-    };
+    let show = !state.pipe.popup_visible();
     log::info!(
         "toggle popup: show={show}, ipc_clients={}",
         state.pipe.client_count()
     );
-    if let Err(error) = state.pipe.broadcast(&event) {
+    if let Err(error) = state.pipe.set_popup_visible(show) {
         log::error!("failed to broadcast popup event: {error}");
     }
 }

@@ -25,7 +25,12 @@ fn main() -> eframe::Result {
             .with_decorations(false)
             .with_resizable(false)
             .with_always_on_top()
-            .with_visible(false),
+            // winit suppresses redraws for hidden windows, which would stop
+            // egui from processing IPC Show events. Create the window
+            // "visible" off-screen instead and hide it natively on the first
+            // update, so repaint requests keep flowing while it is resident.
+            .with_position([-32_000.0, -32_000.0])
+            .with_visible(true),
         ..Default::default()
     };
 

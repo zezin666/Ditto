@@ -85,6 +85,7 @@ pub enum Request {
     },
     ShowPopup,
     HidePopup,
+    GetPopupVisibility,
     GetClips {
         #[serde(default)]
         query: String,
