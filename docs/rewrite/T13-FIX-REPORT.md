@@ -30,8 +30,11 @@
 
 修复提交：`ff7c5be1e272ff48f9b8f301f96cb30554d9ac2e`
 
-本报告由随后的小提交加入（只新增本文件并记录上述 SHA）；代码/测试/QA 脚本/
-证据均在 `ff7c5be` 中。Portable `BUILD-INFO.json` 的 `git_sha` 为
+本报告、最终产物哈希和重新打包后的安装日志由紧随其后的 docs-only 提交加入
+（不改变代码/测试/QA 逻辑）。供 T14 复审的代码、测试与 QA 脚本在 `ff7c5be`
+中；最终 HEAD 以分支 `taohy/rewrite-fixes3` 为准，T14 应审阅
+`ff7c5be..HEAD` 的全部变更（预期只有本报告和证据刷新）。
+Portable `BUILD-INFO.json` 的 `git_sha` 为
 `ff7c5be1e272ff48f9b8f301f96cb30554d9ac2e`。
 
 ## FILES
