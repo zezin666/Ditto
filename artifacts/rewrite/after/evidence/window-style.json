@@ -1,0 +1,16 @@
+{
+  "pid": 47352,
+  "exited": false,
+  "foreground": 66386,
+  "popup_is_foreground": false,
+  "windows": [
+    {
+      "hwnd": 38732684,
+      "visible": true,
+      "title": "",
+      "exstyle": "0x8000080",
+      "toolwindow": true,
+      "noactivate": true
+    }
+  ]
+}
