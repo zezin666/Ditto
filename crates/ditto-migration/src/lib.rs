@@ -1,4 +1,23 @@
-//! Legacy data migration boundary. Fixture and mapping work belongs to T6.
+//! Legacy Ditto data migration and new-format import/export.
+
+mod error;
+mod format;
+mod ini;
+mod migrate;
+mod package;
+mod source;
+mod types;
+
+pub use error::{MigrationError, MigrationResult};
+pub use migrate::{MigrationOptions, MigrationOutcome, dry_run, migrate, migrate_with_progress};
+pub use package::{
+    ExportOptions, ImportOptions, PackageReport, backup, compact, create_export, import_package,
+    restore, verify_package,
+};
+pub use source::{LegacyCatalog, LegacySource, SourceFingerprint, fingerprint};
+pub use types::{
+    ImportedCounts, MigrationProgress, MigrationReport, MigrationStage, PackageCounts, SourceCounts,
+};
 
 use std::path::PathBuf;
 
@@ -6,16 +25,4 @@ use std::path::PathBuf;
 pub struct MigrationSource {
     pub database: PathBuf,
     pub settings: Option<PathBuf>,
-}
-
-#[derive(Debug, Clone, Default)]
-pub struct MigrationPlan {
-    pub source: Option<MigrationSource>,
-    pub estimated_clips: u64,
-}
-
-pub fn dry_run(_source: &MigrationSource) -> ditto_model::Result<MigrationPlan> {
-    Err(ditto_model::DittoError::NotImplemented(
-        "migration preflight",
-    ))
 }

@@ -6,5 +6,21 @@ license.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+ditto-clipboard = { path = "../ditto-clipboard" }
 ditto-model = { path = "../ditto-model" }
+ditto-storage = { path = "../ditto-storage" }
+hex = "0.4"
+rusqlite.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2 = "0.10"
+tempfile = "3"
+thiserror.workspace = true
+zip = { version = "2.2", default-features = false, features = ["deflate"] }
+
+[dev-dependencies]
+windows = { workspace = true, features = [
+    "Win32_System_ProcessStatus",
+    "Win32_System_Threading",
+] }
 
