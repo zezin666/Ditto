@@ -2,7 +2,7 @@ use ditto_popup_app::{PopupApp, PopupOptions, prewarm_ipc};
 use ditto_ui_tokens::{Mode, dimension};
 use eframe::egui;
 
-fn main() -> eframe::Result {
+fn trace(message: &str) {
     if let Ok(path) = std::env::var("DITTO_POPUP_TRACE") {
         use std::io::Write;
         if let Ok(mut file) = std::fs::OpenOptions::new()
@@ -10,9 +10,17 @@ fn main() -> eframe::Result {
             .append(true)
             .open(path)
         {
-            let _ = writeln!(file, "{} popup:process-start", ditto_win::unix_millis());
+            let _ = writeln!(file, "{} popup:{message}", ditto_win::unix_millis());
         }
     }
+}
+
+fn main() -> eframe::Result {
+    if let Err(error) = ditto_win::instance_suffix() {
+        eprintln!("DittoPopup: refusing to start: {error}");
+        std::process::exit(ditto_win::INVALID_SUFFIX_EXIT_CODE);
+    }
+    trace("process-start");
     let options = PopupOptions::parse();
     let width = options
         .dpi_scale_override
@@ -27,6 +35,7 @@ fn main() -> eframe::Result {
     // Establish IPC before the renderer/window initializes. The core's popup
     // "ready" signal then depends on the pipe, not on GPU/font cold-start.
     let preconnected = if options.mock { None } else { prewarm_ipc() };
+    trace("ipc-prewarm-returned");
     let native_options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_title("Ditto")
@@ -51,6 +60,7 @@ fn main() -> eframe::Result {
         ..Default::default()
     };
 
+    trace("run-native-enter");
     eframe::run_native(
         "Ditto",
         native_options,

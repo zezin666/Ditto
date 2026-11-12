@@ -155,6 +155,23 @@ pub struct HotkeySettings {
     pub first_ten_enabled: bool,
     pub first_ten_chords: Vec<String>,
     pub copy_buffers: Vec<CopyBufferHotkeys>,
+    /// Bindings that could not be registered at startup. The corresponding
+    /// chord fields above are cleared to the effective set; this list explains
+    /// why and is shown as a warning in Settings.
+    #[serde(default)]
+    pub startup_conflicts: Vec<HotkeyConflict>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct HotkeyConflict {
+    /// Stable action key, e.g. `open`, `openAlt`, `plainTextPaste`,
+    /// `copyBuffer.1.copy`, or `copyBuffer.1.paste`.
+    pub action: String,
+    pub chord: String,
+    /// Stable reason code: `in_use`, `invalid`, `duplicate`, or `fallback`.
+    pub reason: String,
+    pub effective: Option<String>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -439,6 +456,28 @@ fn hotkeys_from(values: &Value) -> HotkeySettings {
         })
         .filter(|items| !items.is_empty())
         .unwrap_or_else(default_copy_buffer_hotkeys);
+    let startup_conflicts = value_at(values, "hotkeys.startup_conflicts")
+        .and_then(Value::as_array)
+        .map(|items| {
+            items
+                .iter()
+                .filter_map(|item| {
+                    let action = item.get("action").and_then(Value::as_str)?;
+                    let chord = item.get("chord").and_then(Value::as_str)?;
+                    let reason = item.get("reason").and_then(Value::as_str)?;
+                    Some(HotkeyConflict {
+                        action: action.to_string(),
+                        chord: chord.to_string(),
+                        reason: reason.to_string(),
+                        effective: item
+                            .get("effective")
+                            .and_then(Value::as_str)
+                            .map(ToString::to_string),
+                    })
+                })
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default();
     HotkeySettings {
         open: value_string(values, "hotkeys.open_chord", "Ctrl+`"),
         open_alt: value_string(values, "hotkeys.open_alt_chord", ""),
@@ -446,6 +485,7 @@ fn hotkeys_from(values: &Value) -> HotkeySettings {
         first_ten_enabled: value_bool(values, "hotkeys.first_ten_enabled", true),
         first_ten_chords,
         copy_buffers,
+        startup_conflicts,
     }
 }
 
@@ -553,6 +593,7 @@ fn settings_value(settings: &SettingsState) -> Value {
             "first_ten_enabled": settings.hotkeys.first_ten_enabled,
             "first_ten_chords": settings.hotkeys.first_ten_chords,
             "copy_buffers": copy_buffer_hotkeys,
+            "startup_conflicts": settings.hotkeys.startup_conflicts,
         },
         "clipboard": {
             "max_entries": settings.clipboard.max_entries,
@@ -835,11 +876,15 @@ pub fn get_settings(
 pub fn set_settings(
     app: AppHandle,
     state: State<'_, AppState>,
-    settings: SettingsState,
+    mut settings: SettingsState,
 ) -> Result<SettingsEnvelope, CommandError> {
     if !matches!(settings.general.language.as_str(), "en-US" | "zh-CN") {
         return Err(CommandError::invalid("unsupported language"));
     }
+    // Startup conflicts describe the previous process launch. The user is now
+    // submitting an explicit binding set; the Apply path below either registers
+    // it or rolls back with an error, so stale warnings must not be persisted.
+    settings.hotkeys.startup_conflicts.clear();
     let previous = settings_state(&state)?;
     let restart_required = previous.general.language != settings.general.language
         || previous.general.run_at_startup != settings.general.run_at_startup
@@ -1689,6 +1734,36 @@ mod tests {
         let hotkeys = hotkeys_from(&Value::Null);
         assert_eq!(hotkeys.copy_buffers.len(), 5);
         assert_eq!(hotkeys.first_ten_chords.len(), 10);
+    }
+
+    #[test]
+    fn startup_conflicts_map_to_settings_values() {
+        let value = json!({
+            "hotkeys": {
+                "open_chord": "Ctrl+Alt+K",
+                "open_alt_chord": "",
+                "plain_text_paste_chord": "",
+                "copy_buffers": [
+                    {"slot": 1, "copy": "", "paste": "", "cut": ""}
+                ],
+                "startup_conflicts": [
+                    {
+                        "action": "copyBuffer.1.copy",
+                        "chord": "Ctrl+Alt+1",
+                        "reason": "in_use",
+                        "effective": null
+                    }
+                ]
+            }
+        });
+        let hotkeys = hotkeys_from(&value);
+        assert_eq!(hotkeys.open, "Ctrl+Alt+K");
+        assert!(hotkeys.copy_buffers[0].copy.is_empty());
+        assert_eq!(hotkeys.startup_conflicts.len(), 1);
+        assert_eq!(hotkeys.startup_conflicts[0].action, "copyBuffer.1.copy");
+        assert_eq!(hotkeys.startup_conflicts[0].reason, "in_use");
+        assert_eq!(hotkeys.startup_conflicts[0].effective, None);
+        assert!(hotkeys_from(&Value::Null).startup_conflicts.is_empty());
     }
 
     #[test]

@@ -34,6 +34,13 @@ export interface CopyBufferHotkeys {
   cut: string;
 }
 
+export interface HotkeyConflict {
+  action: string;
+  chord: string;
+  reason: "in_use" | "invalid" | "duplicate" | "fallback";
+  effective: string | null;
+}
+
 export interface HotkeySettings {
   open: string;
   openAlt: string;
@@ -41,6 +48,7 @@ export interface HotkeySettings {
   firstTenEnabled: boolean;
   firstTenChords: string[];
   copyBuffers: CopyBufferHotkeys[];
+  startupConflicts: HotkeyConflict[];
 }
 
 export interface ClipboardSettings {

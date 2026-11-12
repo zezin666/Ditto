@@ -6,6 +6,7 @@
 //! Registration is swapped atomically: the previous chord is restored when the
 //! new one cannot be registered.
 
+use serde_json::{Map, Value};
 use tauri_plugin_global_shortcut::Shortcut;
 
 pub const DEFAULT_OPEN_CHORD: &str = "Ctrl+`";
@@ -17,9 +18,58 @@ pub const FALLBACK_OPEN_CHORD: &str = "Ctrl+Alt+D";
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum HotkeyAction {
     ToggleOpen,
+    ToggleOpenAlt,
     PlainPaste,
     CopyBufferCopy(u8),
     CopyBufferPaste(u8),
+}
+
+impl HotkeyAction {
+    /// Stable identifier used by the Settings UI and persisted conflict list.
+    pub fn conflict_key(self) -> String {
+        match self {
+            Self::ToggleOpen => "open".to_string(),
+            Self::ToggleOpenAlt => "openAlt".to_string(),
+            Self::PlainPaste => "plainTextPaste".to_string(),
+            Self::CopyBufferCopy(slot) => format!("copyBuffer.{slot}.copy"),
+            Self::CopyBufferPaste(slot) => format!("copyBuffer.{slot}.paste"),
+        }
+    }
+
+    pub const fn is_open(self) -> bool {
+        matches!(self, Self::ToggleOpen | Self::ToggleOpenAlt)
+    }
+}
+
+/// Why a configured chord is not part of the effective global set.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct BindingIssue {
+    pub action: HotkeyAction,
+    pub chord: String,
+    /// Stable code persisted for the Settings UI: `in_use`, `invalid`,
+    /// `duplicate`, or `fallback`.
+    pub reason: &'static str,
+    /// The chord that is effective instead, when one could be registered.
+    pub effective: Option<String>,
+    /// Human-readable detail for logs only.
+    pub detail: Option<String>,
+}
+
+impl BindingIssue {
+    fn new(
+        action: HotkeyAction,
+        chord: impl Into<String>,
+        reason: &'static str,
+        detail: Option<String>,
+    ) -> Self {
+        Self {
+            action,
+            chord: chord.into(),
+            reason,
+            effective: None,
+            detail,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -48,11 +98,13 @@ pub fn binding(chord: &str, action: HotkeyAction) -> Result<Option<Binding>, Str
     Binding::parse(chord, action)
 }
 
-/// Reads every global chord from the persisted settings JSON.
+/// Reads every global chord from the persisted settings JSON and reports each
+/// entry that cannot be used instead of failing the whole set. Startup uses
+/// this to keep the working chords and reconcile the persisted settings.
 ///
 /// The legacy defaults for copy buffers and plain-text paste are "unassigned";
 /// registering them would hijack common Alt/Ctrl chords in every application.
-pub fn bindings_from_settings(values: &serde_json::Value) -> Result<Vec<Binding>, String> {
+pub fn bindings_with_issues(values: &serde_json::Value) -> (Vec<Binding>, Vec<BindingIssue>) {
     let string = |path: &str| {
         values
             .pointer(path)
@@ -60,6 +112,38 @@ pub fn bindings_from_settings(values: &serde_json::Value) -> Result<Vec<Binding>
             .unwrap_or("")
     };
     let mut bindings = Vec::new();
+    let mut issues = Vec::new();
+    let mut push = |chord: &str, action: HotkeyAction| {
+        let chord = chord.trim();
+        if chord.is_empty() {
+            return;
+        }
+        match parse_chord(chord) {
+            Err(error) => issues.push(BindingIssue::new(action, chord, "invalid", Some(error))),
+            Ok(shortcut) => {
+                if let Some(existing) = bindings
+                    .iter()
+                    .find(|binding: &&Binding| binding.shortcut == shortcut)
+                {
+                    issues.push(BindingIssue::new(
+                        action,
+                        chord,
+                        "duplicate",
+                        Some(format!(
+                            "also assigned to {}",
+                            existing.action.conflict_key()
+                        )),
+                    ));
+                } else {
+                    bindings.push(Binding {
+                        chord: chord.to_string(),
+                        shortcut,
+                        action,
+                    });
+                }
+            }
+        }
+    };
     let open = {
         let configured = string("/hotkeys/open_chord");
         if configured.trim().is_empty() {
@@ -68,20 +152,15 @@ pub fn bindings_from_settings(values: &serde_json::Value) -> Result<Vec<Binding>
             configured
         }
     };
-    if let Some(binding) = Binding::parse(open, HotkeyAction::ToggleOpen)? {
-        bindings.push(binding);
-    }
-    if let Some(binding) =
-        Binding::parse(string("/hotkeys/open_alt_chord"), HotkeyAction::ToggleOpen)?
-    {
-        bindings.push(binding);
-    }
-    if let Some(binding) = Binding::parse(
+    push(open, HotkeyAction::ToggleOpen);
+    push(
+        string("/hotkeys/open_alt_chord"),
+        HotkeyAction::ToggleOpenAlt,
+    );
+    push(
         string("/hotkeys/plain_text_paste_chord"),
         HotkeyAction::PlainPaste,
-    )? {
-        bindings.push(binding);
-    }
+    );
     if let Some(copy_buffers) = values
         .pointer("/hotkeys/copy_buffers")
         .and_then(serde_json::Value::as_array)
@@ -91,26 +170,37 @@ pub fn bindings_from_settings(values: &serde_json::Value) -> Result<Vec<Binding>
             if !(1..=5).contains(&slot) {
                 continue;
             }
-            if let Some(binding) = Binding::parse(
+            push(
                 item.get("copy")
                     .and_then(serde_json::Value::as_str)
                     .unwrap_or(""),
                 HotkeyAction::CopyBufferCopy(slot),
-            )? {
-                bindings.push(binding);
-            }
-            if let Some(binding) = Binding::parse(
+            );
+            push(
                 item.get("paste")
                     .and_then(serde_json::Value::as_str)
                     .unwrap_or(""),
                 HotkeyAction::CopyBufferPaste(slot),
-            )? {
-                bindings.push(binding);
-            }
-            // Cut is not a global action in v1: it needs a popup selection.
+            );
+            // Cut is not a global action in v1: it is deferred (Should) and
+            // has no popup/provider action either.
         }
     }
-    validate_bindings(&bindings)?;
+    (bindings, issues)
+}
+
+/// Strict variant used by the runtime Settings Apply path. Any invalid or
+/// duplicate chord rejects the whole update so it can roll back atomically.
+pub fn bindings_from_settings(values: &serde_json::Value) -> Result<Vec<Binding>, String> {
+    let (bindings, issues) = bindings_with_issues(values);
+    if let Some(issue) = issues.first() {
+        return Err(format!(
+            "{} {}: {}",
+            issue.chord,
+            issue.reason,
+            issue.detail.as_deref().unwrap_or("not usable")
+        ));
+    }
     Ok(bindings)
 }
 
@@ -292,6 +382,98 @@ pub fn swap_bindings(
         added.push(binding.shortcut);
     }
     Ok(())
+}
+
+/// Registers every binding independently at startup. Successful chords stay
+/// registered even when a later chord is owned by another application; each
+/// failure is reported so the caller can clear the persisted value and tell
+/// the user which binding is not effective.
+pub fn register_all_collecting(
+    registrar: &mut dyn ShortcutRegistrar,
+    bindings: &[Binding],
+) -> (Vec<Binding>, Vec<BindingIssue>) {
+    let mut registered = Vec::new();
+    let mut issues = Vec::new();
+    for binding in bindings {
+        match registrar.register(&binding.shortcut) {
+            Ok(()) => registered.push(binding.clone()),
+            Err(error) => issues.push(BindingIssue::new(
+                binding.action,
+                binding.chord.clone(),
+                "in_use",
+                Some(error),
+            )),
+        }
+    }
+    (registered, issues)
+}
+
+/// Builds the persisted settings overrides that reconcile the startup attempt:
+/// the effective open chord, every failed non-open chord cleared, and the
+/// conflict list that Settings displays. `values` is the settings snapshot
+/// read before registration.
+pub fn reconcile_settings(values: &Value, effective_open: &str, issues: &[BindingIssue]) -> Value {
+    let mut root = values.clone();
+    if !root.is_object() {
+        root = serde_json::json!({});
+    }
+    let root = root.as_object_mut().expect("settings root is an object");
+    let hotkeys = root
+        .entry("hotkeys")
+        .or_insert_with(|| Value::Object(Map::new()));
+    if !hotkeys.is_object() {
+        *hotkeys = Value::Object(Map::new());
+    }
+    let hotkeys = hotkeys.as_object_mut().expect("hotkeys is an object");
+    hotkeys.insert(
+        "open_chord".to_string(),
+        Value::String(effective_open.to_string()),
+    );
+    for issue in issues {
+        match issue.action {
+            // The open action is always replaced by the effective fallback
+            // above, so its original chord is only reported, not kept.
+            HotkeyAction::ToggleOpen => {}
+            HotkeyAction::ToggleOpenAlt => {
+                hotkeys.insert("open_alt_chord".to_string(), Value::String(String::new()));
+            }
+            HotkeyAction::PlainPaste => {
+                hotkeys.insert(
+                    "plain_text_paste_chord".to_string(),
+                    Value::String(String::new()),
+                );
+            }
+            HotkeyAction::CopyBufferCopy(slot) | HotkeyAction::CopyBufferPaste(slot) => {
+                let field = if matches!(issue.action, HotkeyAction::CopyBufferCopy(_)) {
+                    "copy"
+                } else {
+                    "paste"
+                };
+                let buffers = hotkeys
+                    .entry("copy_buffers")
+                    .or_insert_with(|| Value::Array(Vec::new()));
+                if let Some(items) = buffers.as_array_mut() {
+                    let index = usize::from(slot.saturating_sub(1));
+                    if let Some(item) = items.get_mut(index).and_then(Value::as_object_mut) {
+                        item.insert(field.to_string(), Value::String(String::new()));
+                    }
+                }
+            }
+        }
+    }
+    let conflicts = issues
+        .iter()
+        .map(|issue| {
+            serde_json::json!({
+                "action": issue.action.conflict_key(),
+                "chord": issue.chord,
+                "reason": issue.reason,
+                "effective": issue.effective,
+            })
+        })
+        .collect::<Vec<_>>();
+    hotkeys.insert("startup_conflicts".to_string(), Value::Array(conflicts));
+    serde_json::json!({ "hotkeys": Value::Object(hotkeys.clone()) })
 }
 
 #[cfg(test)]
@@ -487,6 +669,141 @@ mod tests {
             !registrar
                 .registered
                 .contains(&failing[0].shortcut.to_string())
+        );
+    }
+
+    #[test]
+    fn open_alt_has_its_own_action_for_reconciliation() {
+        let (bindings, issues) = bindings_with_issues(&serde_json::json!({
+            "hotkeys": {
+                "open_chord": "Ctrl+`",
+                "open_alt_chord": "Ctrl+Alt+K"
+            }
+        }));
+        assert!(issues.is_empty());
+        assert!(
+            bindings
+                .iter()
+                .any(|binding| binding.action == HotkeyAction::ToggleOpenAlt)
+        );
+    }
+
+    #[test]
+    fn tolerant_parse_reports_invalid_and_duplicate_bindings() {
+        let (bindings, issues) = bindings_with_issues(&serde_json::json!({
+            "hotkeys": {
+                "open_chord": "Ctrl+`",
+                "open_alt_chord": "Ctrl+`",
+                "plain_text_paste_chord": "NotAChord",
+                "copy_buffers": [{"copy": "Ctrl+Alt+1", "paste": "Ctrl+Alt+1"}]
+            }
+        }));
+        assert_eq!(bindings.len(), 2, "open and copy remain usable");
+        assert!(issues.iter().any(|issue| {
+            issue.action == HotkeyAction::ToggleOpenAlt && issue.reason == "duplicate"
+        }));
+        assert!(
+            issues
+                .iter()
+                .any(|issue| issue.reason == "invalid" && issue.action == HotkeyAction::PlainPaste)
+        );
+        assert!(issues.iter().any(|issue| {
+            issue.action == HotkeyAction::CopyBufferPaste(1) && issue.reason == "duplicate"
+        }));
+        assert!(
+            bindings_from_settings(&serde_json::json!({
+                "hotkeys": {"open_chord": "Ctrl+`", "open_alt_chord": "Ctrl+`"}
+            }))
+            .is_err(),
+            "the Apply path must stay strict"
+        );
+    }
+
+    #[test]
+    fn reconciliation_clears_only_the_uneffective_bindings() {
+        let values = serde_json::json!({
+            "hotkeys": {
+                "open_chord": "Ctrl+Alt+K",
+                "open_alt_chord": "Ctrl+Alt+J",
+                "plain_text_paste_chord": "Ctrl+Shift+P",
+                "copy_buffers": [
+                    {"slot": 1, "copy": "Ctrl+Alt+1", "paste": "Alt+1", "cut": "Ctrl+Alt+X"},
+                    {"slot": 2, "copy": "Ctrl+Alt+2", "paste": "", "cut": ""}
+                ],
+                "first_ten_enabled": true
+            }
+        });
+        let issues = vec![BindingIssue {
+            action: HotkeyAction::CopyBufferCopy(1),
+            chord: "Ctrl+Alt+1".to_string(),
+            reason: "in_use",
+            effective: None,
+            detail: Some("already in use".to_string()),
+        }];
+        let reconciled = reconcile_settings(&values, "Ctrl+Alt+J", &issues);
+        let hotkeys = &reconciled["hotkeys"];
+        assert_eq!(hotkeys["open_chord"], "Ctrl+Alt+J");
+        assert_eq!(hotkeys["open_alt_chord"], "Ctrl+Alt+J");
+        assert_eq!(hotkeys["plain_text_paste_chord"], "Ctrl+Shift+P");
+        assert_eq!(hotkeys["copy_buffers"][0]["copy"], "");
+        assert_eq!(hotkeys["copy_buffers"][0]["paste"], "Alt+1");
+        assert_eq!(hotkeys["copy_buffers"][0]["cut"], "Ctrl+Alt+X");
+        assert_eq!(hotkeys["copy_buffers"][1]["copy"], "Ctrl+Alt+2");
+        assert_eq!(hotkeys["first_ten_enabled"], true);
+        assert_eq!(
+            hotkeys["startup_conflicts"][0]["action"],
+            "copyBuffer.1.copy"
+        );
+        assert_eq!(hotkeys["startup_conflicts"][0]["reason"], "in_use");
+
+        let fallback = reconcile_settings(
+            &values,
+            "Ctrl+`",
+            &[BindingIssue {
+                action: HotkeyAction::ToggleOpen,
+                chord: "Ctrl+Alt+K".to_string(),
+                reason: "fallback",
+                effective: Some("Ctrl+`".to_string()),
+                detail: None,
+            }],
+        );
+        assert_eq!(fallback["hotkeys"]["open_chord"], "Ctrl+`");
+        assert_eq!(
+            fallback["hotkeys"]["startup_conflicts"][0]["effective"],
+            "Ctrl+`"
+        );
+        // A conflict list is always persisted, so a later successful launch
+        // clears stale warnings instead of leaving them behind.
+        assert_eq!(
+            reconcile_settings(&values, "Ctrl+Alt+K", &[])["hotkeys"]["startup_conflicts"],
+            serde_json::json!([])
+        );
+    }
+
+    #[test]
+    fn independent_registration_keeps_working_chords() {
+        let bindings = bindings_from_settings(&serde_json::json!({
+            "hotkeys": {
+                "open_chord": "Ctrl+`",
+                "copy_buffers": [{"copy": "Ctrl+Alt+1", "paste": ""}]
+            }
+        }))
+        .expect("bindings");
+        let mut registrar = MockRegistrar {
+            fail_on: Some(bindings[1].shortcut.to_string()),
+            ..MockRegistrar::default()
+        };
+        let (registered, issues) = register_all_collecting(&mut registrar, &bindings);
+        assert_eq!(registered.len(), 1);
+        assert_eq!(registered[0].action, HotkeyAction::ToggleOpen);
+        assert_eq!(issues.len(), 1);
+        assert_eq!(issues[0].action, HotkeyAction::CopyBufferCopy(1));
+        assert_eq!(issues[0].reason, "in_use");
+        assert!(
+            registrar
+                .registered
+                .contains(&bindings[0].shortcut.to_string()),
+            "the open chord must stay registered"
         );
     }
 }

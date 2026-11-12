@@ -5,6 +5,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "suffix-common.ps1")
 
 $DittoExe = (Resolve-Path -LiteralPath $DittoExe).Path
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -19,7 +20,7 @@ $csv = Join-Path $Root "scroll-10k-real-ipc.csv"
 New-Item -ItemType Directory -Force -Path $dataRoot | Out-Null
 
 # Unique instance suffix: isolated pipe and single-instance events.
-$suffix = if ($env:DITTO_PIPE_SUFFIX) { $env:DITTO_PIPE_SUFFIX } else { [Guid]::NewGuid().ToString("N").Substring(0, 10) }
+$suffix = Assert-DittoPipeSuffix $(if ($env:DITTO_PIPE_SUFFIX) { $env:DITTO_PIPE_SUFFIX } else { New-DittoPipeSuffix })
 $env:DITTO_PIPE_SUFFIX = $suffix
 $env:DITTO_DATA_DIR = $dataRoot
 $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value

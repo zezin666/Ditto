@@ -24,6 +24,7 @@ pub mod logging;
 mod pending;
 
 use core_service::CoreService;
+use hotkeys::ShortcutRegistrar;
 
 const DEV_HOTKEY: &str = "Ctrl+Alt+D";
 const DEV_HOTKEY_FALLBACK: &str = "Ctrl+Alt+Shift+D";
@@ -78,6 +79,8 @@ struct InstanceSignals {
 fn claim_single_instance() -> Option<InstanceSignals> {
     let sid = ditto_win::current_user_sid_string().ok()?;
     let suffix = ditto_win::instance_suffix()
+        .ok()
+        .flatten()
         .map(|suffix| format!(".{suffix}"))
         .unwrap_or_default();
     let settings =
@@ -207,6 +210,14 @@ fn startup_trace(message: &str) {
 
 pub fn run() {
     startup_trace("run-enter");
+    // Fail closed on a malformed isolation override before claiming the
+    // single-instance events or creating the production pipe. Sanitizing or
+    // falling back could signal a real user instance.
+    if let Err(error) = ditto_win::instance_suffix() {
+        eprintln!("Ditto: refusing to start: {error}");
+        startup_trace(&format!("invalid-suffix={error}"));
+        std::process::exit(ditto_win::INVALID_SUFFIX_EXIT_CODE);
+    }
     let startup = load_startup_settings();
     startup_trace("startup-settings-loaded");
     logging::set_runtime_level(startup.log_level);
@@ -217,7 +228,7 @@ pub fn run() {
     let listener_signals = claim_single_instance();
 
     let (initial_hotkey, _initial_shortcut) = choose_initial_hotkey(&startup.open_chord);
-    let initial_bindings = startup_bindings(&startup.values, &initial_hotkey);
+    let (initial_bindings, mut startup_issues) = startup_bindings(&startup.values, &initial_hotkey);
     let shortcut_plugin = tauri_plugin_global_shortcut::Builder::new()
         .with_handler(|app, shortcut, event| {
             if event.state() == ShortcutState::Pressed {
@@ -230,7 +241,7 @@ pub fn run() {
     // Defender startup time overlaps the host's own startup.
     let early_popup = spawn_popup_process(&startup.language);
     let mut builder = tauri::Builder::default();
-    if ditto_win::instance_suffix().is_none() {
+    if ditto_win::instance_suffix().ok().flatten().is_none() {
         // The Tauri single-instance plugin is the fallback safety net for the
         // normal user instance. QA instances use a unique suffix and the
         // fast-path events instead, so they never collide with a running
@@ -328,14 +339,51 @@ pub fn run() {
             let core =
                 CoreService::start(&name, storage.clone()).map_err(|error| error.to_string())?;
             startup_trace("core-started");
-            // If the configured chord was unavailable at startup, persist the
-            // fallback that is actually registered so Settings never shows a
-            // chord the process does not own.
-            if initial_hotkey != startup.open_chord
-                && let Err(error) =
-                    storage.set_setting("hotkeys.open_chord", serde_json::json!(initial_hotkey))
-            {
-                log::warn!("failed to persist fallback hotkey: {error}");
+            let (registered, registration_issues, effective_open) =
+                register_initial_hotkeys(app.handle(), &initial_bindings, &initial_hotkey);
+            startup_trace("hotkeys-registered");
+            // Reconcile the persisted settings with the chords this process
+            // actually owns: persist the effective open chord, clear failed
+            // non-open bindings, and expose the conflict list to Settings.
+            // Otherwise the UI would show a chord that was never registered.
+            if initial_hotkey != startup.open_chord {
+                startup_issues.push(hotkeys::BindingIssue {
+                    action: hotkeys::HotkeyAction::ToggleOpen,
+                    chord: startup.open_chord.clone(),
+                    reason: "fallback",
+                    effective: (!effective_open.is_empty()).then(|| effective_open.clone()),
+                    detail: Some(format!(
+                        "configured chord unavailable; using {effective_open}"
+                    )),
+                });
+            }
+            if effective_open != initial_hotkey {
+                startup_issues.push(hotkeys::BindingIssue {
+                    action: hotkeys::HotkeyAction::ToggleOpen,
+                    chord: initial_hotkey.clone(),
+                    reason: "in_use",
+                    effective: (!effective_open.is_empty()).then(|| effective_open.clone()),
+                    detail: Some("registration failed; a fallback chord was tried".to_string()),
+                });
+            }
+            startup_issues.extend(registration_issues);
+            let reconciled =
+                hotkeys::reconcile_settings(&startup.values, &effective_open, &startup_issues);
+            if let Err(error) = storage.set_settings(&reconciled) {
+                log::warn!("failed to persist reconciled hotkey settings: {error}");
+            }
+            for issue in &startup_issues {
+                log::warn!(
+                    "hotkey {} ({}) is not effective: {}{}",
+                    issue.action.conflict_key(),
+                    issue.chord,
+                    issue.reason,
+                    issue
+                        .effective
+                        .as_deref()
+                        .map(|effective| format!("; using {effective}"))
+                        .unwrap_or_default()
+                );
             }
             let pipe = core.pipe().clone();
             app.manage(AppState {
@@ -344,12 +392,9 @@ pub fn run() {
                 data_root,
                 core: Mutex::new(Some(core)),
                 popup: Mutex::new(early_popup),
-                hotkeys: Mutex::new(initial_bindings.clone()),
+                hotkeys: Mutex::new(registered.clone()),
                 _instance_signal: instance_signal,
             });
-            let registered =
-                register_initial_hotkeys(app.handle(), &initial_bindings, &initial_hotkey);
-            *app.state::<AppState>().hotkeys.lock() = registered;
 
             if let Some(settings) = settings_listener {
                 let handle = app.handle().clone();
@@ -382,9 +427,20 @@ pub fn run() {
                 create_tray(app.handle(), &startup.language)?;
             }
             startup_trace("tray-ready");
-            log::info!("global hotkey active: {initial_hotkey}");
+            log::info!("global hotkey active: {effective_open}");
             spawn_popup(app.handle());
             startup_trace("popup-spawned");
+            let startup_message = startup
+                .values
+                .pointer("/general/startup_message")
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or("");
+            if !startup_message.trim().is_empty()
+                && let Err(error) = ditto_win::show_native_hint(startup_message, 8000)
+            {
+                log::debug!("failed to show startup message hint: {error}");
+            }
+            startup_trace("startup-complete");
             if std::env::args().any(|argument| argument == "--settings")
                 && let Err(error) = open_settings(app.handle(), None)
             {
@@ -569,6 +625,7 @@ fn toggle_popup(app: &AppHandle) {
         state.pipe.client_count()
     );
     if show {
+        startup_trace("show-request");
         // Capture the user's foreground window before the popup can be
         // activated. Paste later uses this snapshot, never DittoPopup itself.
         if let Some(core) = state.core.lock().as_ref() {
@@ -581,6 +638,15 @@ fn toggle_popup(app: &AppHandle) {
             let pipe = state.pipe.clone();
             let handle = app.clone();
             set_tray_tooltip(&handle, "tray.preparing");
+            // The tray icon may be hidden. Show the same message as a native,
+            // non-activating hint so the first hotkey is never silent.
+            if app.tray_by_id("main").is_none() {
+                let language = current_language(app);
+                let message = locale_text(&language, "tray.preparing");
+                if let Err(error) = ditto_win::show_native_hint(&message, 6000) {
+                    log::debug!("failed to show native preparing hint: {error}");
+                }
+            }
             thread::spawn(move || {
                 for _ in 0..150 {
                     if pipe.popup_client_count() > 0 {
@@ -610,7 +676,10 @@ fn set_tray_tooltip(app: &AppHandle, key: &str) {
     }
 }
 
-fn startup_bindings(values: &serde_json::Value, open_chord: &str) -> Vec<hotkeys::Binding> {
+fn startup_bindings(
+    values: &serde_json::Value,
+    open_chord: &str,
+) -> (Vec<hotkeys::Binding>, Vec<hotkeys::BindingIssue>) {
     let mut values = values.clone();
     if !values.is_object() {
         values = serde_json::json!({ "hotkeys": {} });
@@ -629,44 +698,62 @@ fn startup_bindings(values: &serde_json::Value, open_chord: &str) -> Vec<hotkeys
             "open_chord".to_string(),
             serde_json::Value::String(open_chord.to_string()),
         );
-    match hotkeys::bindings_from_settings(&values) {
-        Ok(bindings) => bindings,
-        Err(error) => {
-            log::warn!("persisted hotkeys are invalid; registering the open chord only: {error}");
-            hotkeys::binding(open_chord, hotkeys::HotkeyAction::ToggleOpen)
-                .ok()
-                .flatten()
-                .into_iter()
-                .collect()
-        }
-    }
+    hotkeys::bindings_with_issues(&values)
 }
 
+/// Registers the startup binding set one chord at a time. A chord owned by
+/// another application is reported and left unregistered, while the rest stay
+/// effective. If the open chord itself cannot be registered, the configured
+/// fallback chain is tried so the user still has a way to open the popup.
 fn register_initial_hotkeys(
     app: &AppHandle,
     bindings: &[hotkeys::Binding],
-    open_chord: &str,
-) -> Vec<hotkeys::Binding> {
+    preferred_open: &str,
+) -> (Vec<hotkeys::Binding>, Vec<hotkeys::BindingIssue>, String) {
     let mut registrar = TauriRegistrar(app.clone());
-    match hotkeys::register_all(&mut registrar, bindings) {
-        Ok(()) => {
-            log::info!("registered {} global hotkey(s)", bindings.len());
-            return bindings.to_vec();
+    let (mut registered, mut issues) = hotkeys::register_all_collecting(&mut registrar, bindings);
+    let mut effective_open = registered
+        .iter()
+        .find(|binding| binding.action == hotkeys::HotkeyAction::ToggleOpen)
+        .map(|binding| binding.chord.clone())
+        .unwrap_or_default();
+    if effective_open.is_empty() {
+        for candidate in [
+            preferred_open,
+            hotkeys::DEFAULT_OPEN_CHORD,
+            DEV_HOTKEY,
+            DEV_HOTKEY_FALLBACK,
+        ] {
+            let Ok(shortcut) = hotkeys::parse_chord(candidate) else {
+                continue;
+            };
+            if registrar.register(&shortcut).is_ok() {
+                registered.push(hotkeys::Binding {
+                    chord: candidate.to_string(),
+                    shortcut,
+                    action: hotkeys::HotkeyAction::ToggleOpen,
+                });
+                effective_open = candidate.to_string();
+                break;
+            }
         }
-        Err(error) => log::error!("configured hotkeys were unavailable: {error}"),
     }
-    log::error!("falling back to the open chord {open_chord}");
-    let fallback = hotkeys::binding(open_chord, hotkeys::HotkeyAction::ToggleOpen)
-        .ok()
-        .flatten()
-        .into_iter()
-        .collect::<Vec<_>>();
-    let mut registrar = TauriRegistrar(app.clone());
-    if let Err(error) = hotkeys::register_all(&mut registrar, &fallback) {
-        log::error!("fallback hotkey {open_chord} also failed: {error}");
-        return Vec::new();
+    if registered
+        .iter()
+        .any(|binding| binding.action == hotkeys::HotkeyAction::ToggleOpen)
+    {
+        log::info!("registered {} global hotkey(s)", registered.len());
+    } else {
+        log::error!("no global open hotkey could be registered");
+        issues.push(hotkeys::BindingIssue {
+            action: hotkeys::HotkeyAction::ToggleOpen,
+            chord: preferred_open.to_string(),
+            reason: "in_use",
+            effective: None,
+            detail: Some("the fallback chain was also unavailable".to_string()),
+        });
     }
-    fallback
+    (registered, issues, effective_open)
 }
 
 fn handle_hotkey(app: &AppHandle, shortcut: &Shortcut) {
@@ -679,7 +766,9 @@ fn handle_hotkey(app: &AppHandle, shortcut: &Shortcut) {
             .map(|binding| binding.action)
     };
     match action {
-        Some(hotkeys::HotkeyAction::ToggleOpen) => toggle_popup(app),
+        Some(hotkeys::HotkeyAction::ToggleOpen) | Some(hotkeys::HotkeyAction::ToggleOpenAlt) => {
+            toggle_popup(app)
+        }
         Some(hotkeys::HotkeyAction::PlainPaste) => {
             let state = app.state::<AppState>();
             if let Some(core) = state.core.lock().as_ref() {

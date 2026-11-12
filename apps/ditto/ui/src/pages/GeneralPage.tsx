@@ -68,10 +68,9 @@ export function GeneralPage({
             ariaLabel={t("general.language")}
           />
         </SettingRow>
-        <SettingRow label={t("general.startupMessage")} help={t("common.comingLater")} align="start">
+        <SettingRow label={t("general.startupMessage")} help={t("general.startupMessageHelp")} align="start">
           <Input
             value={general.startupMessage}
-            disabled
             placeholder={t("general.startupMessagePlaceholder")}
             onChange={(_, data) => patch({ startupMessage: data.value })}
             aria-label={t("general.startupMessage")}

@@ -4,6 +4,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "suffix-common.ps1")
 
 Add-Type -TypeDefinition @"
 using System;
@@ -185,7 +186,7 @@ $hostTrace = Join-Path $Root "host-trace.log"
 New-Item -ItemType Directory -Force -Path $dataRoot | Out-Null
 
 # Unique instance: never touches the user's running Ditto or another QA core.
-$suffix = if ($env:DITTO_PIPE_SUFFIX) { $env:DITTO_PIPE_SUFFIX } else { [Guid]::NewGuid().ToString("N").Substring(0, 10) }
+$suffix = Assert-DittoPipeSuffix $(if ($env:DITTO_PIPE_SUFFIX) { $env:DITTO_PIPE_SUFFIX } else { New-DittoPipeSuffix })
 $env:DITTO_PIPE_SUFFIX = $suffix
 $env:DITTO_DATA_DIR = $dataRoot
 $env:DITTO_POPUP_TRACE = $tracePath

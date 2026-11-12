@@ -115,7 +115,7 @@ A feature is **Done** only when all of the following are true:
 | G2 | Move clips to groups | T2/T3/T5 | Single and multi-select move; breadcrumb/list refresh; `state_rev` increments | Integration test |
 | G3 | Group tree and breadcrumb | T3 | Parent/child navigation; counts; no cycles | Tree fixture + manual |
 | G4 | Pin/unpin | T2/T3 | Pinned clips sort first within their group; pin order persists; pin is not color-only | Unit + UI QA |
-| G5 | Copy buffers 1–5 | T2/T3/T4/T5 | Assign, paste, cut, clear; persist across restart; at least 3 slots accepted | Integration + restart test |
+| G5 | Copy buffers 1–5 | T2/T3/T4/T5 | Assign, paste, clear; persist across restart; at least 3 slots accepted. `cut` is **Should/Deferred** for v1 (coordinator T13 cut-line): no global hotkey and no popup/provider cut action; the Settings control stays disabled and says it is planned for a later release | Integration + restart test; T13 UI/locale check |
 | G6 | Show grouped clips in main list (setting) | T2/T3/T5/T11 | Toggle changes the main list; `false` maps All to the ungrouped inbox so grouped clips are excluded; explicit group navigation is unchanged; default matches legacy | Unit provider/storage tests + `tools/qa/grouped-main.ps1` |
 
 ### 2.6 Settings, tray, lifecycle
@@ -125,7 +125,7 @@ A feature is **Done** only when all of the following are true:
 | A1 | Tray icon + menu | T1/T5/T7/T9 | Left click toggles; right-click menu has Open, Settings, Groups, Copy Buffers, Connect/Disconnect (pause/resume capture), Exit; labels follow EN/ZH locale files | Locale unit test + real settings screenshot; physical tray click UNVERIFIED |
 | A2 | Run at startup | T1/T5 | HKCU Run value written/removed; stale path repair; portable default off | Registry inspection |
 | A3 | Single instance | T1 | Second launch forwards and exits <150 ms; no second core | Process test |
-| A4 | Global hotkey configuration | T1/T5/T11 | Rebind open/open-alt/plain/copy-buffer hotkeys; open/open-alt/plain/copy-buffer are global, first-ten is popup-scoped; conflicts show an error and roll back with no silent hook; copy-buffer `cut` has no global v1 action (UI disabled with explicit help) | T11 `hotkey-rebind.ps1` + swap/rollback unit tests |
+| A4 | Global hotkey configuration | T1/T5/T11/T13 | Rebind open/open-alt/plain/copy-buffer hotkeys; open/open-alt/plain/copy-buffer are global, first-ten is popup-scoped; conflicts show an error and roll back with no silent hook; a startup conflict clears the failed non-open binding, keeps the rest effective, persists the effective set and shows a Settings warning; copy-buffer `cut` is deferred (Should) with no global or popup action (UI disabled with explicit "coming later" help) | `tools/qa/hotkey-rebind.ps1` (startup conflict + swap/rollback unit tests) |
 | A5 | Settings window on demand | T1/T5 | Opens on demand; closes and frees WebView2; no WebView2 at startup | Process-tree snapshot + memory |
 | A6 | Settings pages | T5 | General/Appearance/Hotkeys/Clipboard/Groups/Copy Buffers/Data/Languages/About, all controls persist | UI QA + settings round-trip |
 | A7 | Theme/accent/density | T5/T11 | System/light/dark/HC; UI values `system/light/dark/highContrast` (legacy `hc/high_contrast`) map to popup; `system` re-resolves Windows light/dark/HC on Show and settings changes; HC uses system colors; accent validation; density changes popup and settings | `tools/qa/theme-modes.ps1` + mapping unit tests |
@@ -191,6 +191,7 @@ settings UI must hide/disable the control, not show a broken promise.
 | S11 | Custom accent color | T5 | Validation + fallback | Can ship System/Ditto only |
 | S12 | Edit clip (F2 / settings) | T5 | Text edit updates content/hash/preview/FTS | Can ship delete/recreate workflow |
 | S13 | Statistics page | T5 | Counts, DB size, top apps (no content) | Can ship in About/Data summary |
+| S14 | Copy-buffer `cut` | T4/T5/T13 | Assign a global or popup cut action and paste-cut into the target | **Deferred for v1** by coordinator cut-line; UI stays disabled with a "coming later" explanation; no provider cut action |
 
 ---
 

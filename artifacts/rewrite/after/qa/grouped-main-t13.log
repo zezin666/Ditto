@@ -1,0 +1,10 @@
+seeded 3 clips and group 1 into C:\Users\zezin\AppData\Local\Temp\ditto-grouped-qa-61ab6bf1\case-05279cfd\data
+PIPE_SETTINGS_SHOW_GROUPED=True
+GROUPED_MAIN_True_LOADS=1794511106630 load group=All limit=500
+SHOW_GROUPED_TRUE_USES_ALL=True
+seeded 3 clips and group 1 into C:\Users\zezin\AppData\Local\Temp\ditto-grouped-qa-61ab6bf1\case-89f413bf\data
+PIPE_SETTINGS_SHOW_GROUPED=False
+GROUPED_MAIN_False_LOADS=1794511112297 load group=All limit=500 | 1794511112302 load group=Ungrouped limit=500
+SHOW_GROUPED_FALSE_USES_UNGROUPED=1794511112302 load group=Ungrouped limit=500
+GROUPED_MAIN_QA=PASS
+QA_ROOT=C:\Users\zezin\AppData\Local\Temp\ditto-grouped-qa-61ab6bf1

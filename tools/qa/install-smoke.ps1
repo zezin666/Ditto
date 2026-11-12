@@ -5,6 +5,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "suffix-common.ps1")
 
 function Wait-ForPipe([string]$name, [int]$timeoutMs = 15000) {
     for ($i = 0; $i -lt ($timeoutMs / 100); $i++) {
@@ -18,8 +19,9 @@ function Wait-ForPipe([string]$name, [int]$timeoutMs = 15000) {
 
 $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
 if ([string]::IsNullOrWhiteSpace($PipeSuffix)) {
-    $PipeSuffix = [Guid]::NewGuid().ToString("N").Substring(0, 10)
+    $PipeSuffix = New-DittoPipeSuffix
 }
+$PipeSuffix = Assert-DittoPipeSuffix $PipeSuffix
 $env:DITTO_PIPE_SUFFIX = $PipeSuffix
 $pipeName = "ditto-$sid-$PipeSuffix"
 $base = Join-Path $env:TEMP ("ditto-package-qa-" + [Guid]::NewGuid().ToString("N").Substring(0, 8))

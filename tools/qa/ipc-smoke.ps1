@@ -7,6 +7,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "suffix-common.ps1")
 
 Add-Type -TypeDefinition @"
 using System;
@@ -31,8 +32,9 @@ $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
 # Unique instance suffix: a running user Ditto (or another QA instance) is
 # never contacted or terminated.
 if ([string]::IsNullOrWhiteSpace($PipeSuffix)) {
-    $PipeSuffix = [Guid]::NewGuid().ToString("N").Substring(0, 10)
+    $PipeSuffix = New-DittoPipeSuffix
 }
+$PipeSuffix = Assert-DittoPipeSuffix $PipeSuffix
 $env:DITTO_PIPE_SUFFIX = $PipeSuffix
 $pipeName = "ditto-$sid-$PipeSuffix"
 $pipePath = "//./pipe/$pipeName"

@@ -1,0 +1,21 @@
+seeded 3 clips and group 1 into C:\Users\zezin\AppData\Local\Temp\ditto-hotkey-qa-febba79f\data
+CONFIGURED_OPEN_REGISTERED=True
+CONFIGURED_COPY_BUFFER_REGISTERED=True
+OLD_DEFAULT_FREE_WHILE_CONFIGURED=True
+COPY_BUFFER_GLOBAL_ACTION_FILLED_SLOT=True
+COPY_BUFFER_CONTENT_MATCHES_CLIPBOARD=True
+seeded 3 clips and group 1 into C:\Users\zezin\AppData\Local\Temp\ditto-hotkey-qa-febba79f\data
+CHANGED_OPEN_REGISTERED=True
+PREVIOUS_OPEN_UNREGISTERED=True
+COPY_BUFFER_UNREGISTERED_WHEN_CLEARED=True
+seeded 3 clips and group 1 into C:\Users\zezin\AppData\Local\Temp\ditto-hotkey-qa-febba79f\data
+CONFLICT_EFFECTIVE_OPEN_CHORD=Ctrl+`
+CONFLICT_FELL_BACK_WITHOUT_SILENT_HOOK=True
+seeded 3 clips and group 1 into C:\Users\zezin\AppData\Local\Temp\ditto-hotkey-qa-febba79f\data
+STARTUP_COPY_CONFLICT_CLEARED=True
+STARTUP_COPY_CONFLICT_OPEN_KEPT=True
+STARTUP_COPY_CONFLICT_RECORDED=True
+STARTUP_COPY_CONFLICT_OPEN_REGISTERED=True
+STARTUP_COPY_CONFLICT_PIPE_ALIVE=True
+HOTKEY_REBIND_QA=PASS
+QA_ROOT=C:\Users\zezin\AppData\Local\Temp\ditto-hotkey-qa-febba79f

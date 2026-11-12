@@ -26,6 +26,10 @@ type TargetSlot = Arc<Mutex<Option<TargetWindow>>>;
 type CaptureCallback = Arc<dyn Fn(CapturedClip) + Send + Sync>;
 
 const MAINTENANCE_INTERVAL: Duration = Duration::from_secs(300);
+/// The first retention/purge pass runs after the hotkey, tray, and popup have
+/// had a chance to initialize. Running SQLite cleanup during the cold-start
+/// window competes with the popup's window/GPU initialization for disk and CPU.
+const MAINTENANCE_INITIAL_DELAY: Duration = Duration::from_secs(10);
 
 pub struct CoreService {
     storage: Storage,
@@ -311,6 +315,14 @@ impl CoreService {
         let thread = thread::Builder::new()
             .name("ditto-maintenance".to_string())
             .spawn(move || {
+                let mut waited = Duration::ZERO;
+                while waited < MAINTENANCE_INITIAL_DELAY {
+                    if stop_for_thread.load(Ordering::SeqCst) {
+                        return;
+                    }
+                    thread::sleep(Duration::from_millis(250));
+                    waited += Duration::from_millis(250);
+                }
                 loop {
                     run_maintenance(&storage, &pipe);
                     let mut waited = Duration::ZERO;

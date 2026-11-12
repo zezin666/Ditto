@@ -73,6 +73,20 @@ function initialSettings(): SettingsState {
         paste: "",
         cut: "",
       })),
+      // Browser-only QA hook: `?startup-conflict=1` renders the warning the
+      // real backend persists after a startup conflict, without a native host.
+      startupConflicts:
+        typeof window !== "undefined" &&
+        new URLSearchParams(window.location.search).has("startup-conflict")
+          ? [
+              {
+                action: "copyBuffer.1.copy",
+                chord: "Ctrl+Alt+1",
+                reason: "in_use" as const,
+                effective: null,
+              },
+            ]
+          : [],
     },
     clipboard: {
       maxEntries: 500,

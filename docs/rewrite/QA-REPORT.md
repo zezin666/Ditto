@@ -315,3 +315,51 @@ T11 在独立 worktree `D:\orca\workspaces\Ditto\rewrite-fixes2` 上重跑，使
 
 物理热键按键、真实应用富格式粘贴、UAC、IME/Narrator/HC 可读性、混合 DPI、
 托盘物理点击、缺失 WebView2、Windows 10、Defender/SmartScreen 实际行为。
+
+---
+
+## T13 补充 QA（2026-11-13）
+
+T13 在 `D:\orca\workspaces\Ditto\rewrite-fixes3` 上重跑，仍使用唯一
+`DITTO_PIPE_SUFFIX` 与临时 `DITTO_DATA_DIR`，未读取真实用户数据，未终止用户
+`D:\Programs\Ditto`（PID 35024）或既有 T9 popup（PID 40992）。完整逐条说明见
+`T13-FIX-REPORT.md`。
+
+### release 结果
+
+| 项目 | 结果 | 证据 |
+|---|---|---|
+| suffix fail-closed（`!!!`、空白、49 字符、`qa.1`） | 4/4 退出码 2、无 DB、无生产 pipe；合法 suffix 正常创建隔离 pipe | `after/qa/suffix-validation-t13.log` |
+| 启动非 open 冲突回写 | copy chord 清空、open `Ctrl+Alt+K` 保留、`startup_conflicts` 记录 `copyBuffer.1.copy/in_use`、pipe 存活 | `after/qa/hotkey-rebind-t13.log` |
+| 热键正常路径/持久化/open fallback/copy-buffer 全局动作 | PASS | 同上 |
+| 冷启动反馈（启动消息 + 隐藏 tray 首次热键） | 两场景窗口可见、PrintWindow 非黑、自动关闭；PASS | `after/qa/cold-start-feedback-t13.log`、`after/qa/startup-hint-t13.png`、`after/qa/hotkey-preparing-hint-t13.png` |
+| Settings 冲突 warning / cut 文案 | 截图显示 “Some shortcuts were not registered at startup … Slot 1 Copy (Ctrl+Alt+1)”；cut 为 disabled + “Coming later” | `after/qa/hotkeys-startup-conflict-t13.png`、`after/qa/hotkeys-cut-deferred-t13.png` |
+| keyboard-first（Show→键入→Enter/Shift+Enter→目标） | PASS；实际文本落地 | `after/qa/keyboard-first-t13.log` |
+| grouped main（false→Ungrouped） | PASS | `after/qa/grouped-main-t13.log` |
+| theme dark→HC→system | PASS；system 解析 Light | `after/qa/theme-modes-t13.log` |
+| 真实 10k SQLite + IPC，300 帧 | p50 1.468 ms / p95 2.326 ms / max 3.743 ms；>16.7 ms 0；PASS | `after/perf/scroll-10k-real-ipc-t13.csv`、`after/qa/scroll-10k-ipc-t13.log` |
+| 10k 分页 | 20 页/10,000 条，477 ms | `after/qa/paging-check-t13.log` |
+| popup hide 同步/崩溃清理 | PASS | `after/qa/popup-hide-sync-t13.log` |
+| IPC smoke / 内存 / 首帧 | 预展示空闲中位 40,607,744 B；含 popup 93,061,120 B；first-frame p50 3.571 ms / p95 5.735 ms；settings 89.2 ms；二次实例 72.8 ms | `after/qa/ipc-smoke-t13.log` |
+| 冷启动同 binary 3 次 | host→Show 3,633.5 / 3,701.9 / 4,107.4 ms；中位 3,701.9 ms | `after/qa/cold-start-t13.log` |
+| 新拷贝首启 | host→Show 4,918.7 ms | 同上 |
+| 迁移 fixture | 3/3 PASS | `after/qa/migration-fixture-t13.log` |
+| 存储 10k | insert 1,754 ms；search p95 ≤ 18.955 ms | `after/perf/storage-10k-t13.log` |
+| NSIS 安装/卸载 + Portable | PASS | `after/qa/install-smoke-t13.log` |
+| 全量 fmt/clippy/test | PASS；131 tests | 本报告 |
+
+### T13 新发现/修复
+
+- 启动时非 open chord 冲突只回退 open、不回写设置，Settings 会显示未注册 chord；
+  现已逐项注册、清空失败项、持久化 `startup_conflicts` 并在 Settings 显示 warning。
+- `DITTO_PIPE_SUFFIX=!!!` 清洗为空后静默落回生产命名；现已 fail-closed（退出码 2）。
+- copy-buffer `cut` 的 Must/UI/code 不一致；按编排者 cut-line 改为 Should/Deferred，
+  UI disabled 且文案改为“v1 暂不支持/计划后续”，popup/provider 无 Cut action。
+- tray 隐藏时首次热键无反馈；新增原生非激活提示窗口（PrintWindow 已验证非黑），
+  并实现可配置 `general.startup_message`。
+
+### 仍未验证
+
+物理热键按键到 Show 的事件源、真实应用富格式粘贴、UAC、IME/Narrator/HC、
+混合 DPI/多显示器、真实 tray 点击、缺失 WebView2、Windows 10、
+Defender/SmartScreen 实际行为；冷启动 `<2.0 s` 目标未达成（见 T13 报告 DEFERRED）。

@@ -60,6 +60,7 @@ T7/T11 改为：
 ### 3.2 单实例快速路径
 `claim_single_instance` 在 Tauri 初始化前创建 `Local\Ditto.v2.<SID>.{settings,toggle,instance}` 三个事件。第二个实例只发信号并 `exit(0)`，实测 1.1-2.3ms。
 T11 起支持 `DITTO_PIPE_SUFFIX`/`DITTO_INSTANCE_ID`：pipe 变为 `\\.\pipe\ditto-<SID>-<suffix>`，事件名追加相同后缀；QA 默认使用唯一后缀，不会命中用户的 Ditto 进程。
+T13 起 suffix 采用 fail-closed：变量存在时必须是 1–48 位 `[A-Za-z0-9_-]`；空、仅空白、超长或含非法字符时核心/弹窗以退出码 2 拒绝启动，绝不回退生产 pipe 或生产单实例事件。
 审查点：事件命名是否与旧 Ditto 冲突；异常退出后事件是否被系统回收；`--settings` 与普通启动的分流。
 回退路径：`tauri-plugin-single-instance` 在无后缀的正常实例中保留；QA 实例使用后缀事件。
 
@@ -70,8 +71,8 @@ T11 起支持 `DITTO_PIPE_SUFFIX`/`DITTO_INSTANCE_ID`：pipe 变为 `\\.\pipe\di
 ### 3.4 设置映射
 T5 `SettingsState` 与 T2 JSON 不完全同构：
 - 原生键：`clipboard.max_entries`、`appearance.popup_width`、`groups.*`、`copy_buffers.play_sound` 等；
-- 已消费的扩展键（T9/T11）：`hotkeys.open_chord`、`hotkeys.open_alt_chord`、`hotkeys.plain_text_paste_chord`、`hotkeys.first_ten_enabled/chords`、`hotkeys.copy_buffers[*].copy/paste`、`clipboard.capture_files/images`、`general.show_tray_icon`、`groups.show_grouped_in_main`、`diagnostics.log_level`；
-- 仍仅为持久化/占位：`copy_buffers.enabled`、`general.startup_message` 等（对应控件 disabled，矩阵注明）。
+- 已消费的扩展键（T9/T11/T13）：`hotkeys.open_chord`、`hotkeys.open_alt_chord`、`hotkeys.plain_text_paste_chord`、`hotkeys.first_ten_enabled/chords`、`hotkeys.copy_buffers[*].copy/paste`、`hotkeys.startup_conflicts`、`clipboard.capture_files/images`、`general.show_tray_icon`、`general.startup_message`、`groups.show_grouped_in_main`、`diagnostics.log_level`；
+- 仍仅为持久化/占位：`copy_buffers.enabled` 等（对应控件 disabled，矩阵注明）；`general.startup_message` 自 T13 起由原生非激活提示实现。
 `general.language` 以 `en` / `zh-CN` 存储，UI 层映射 `en-US`。
 审查点：hotkey 的全局/弹窗作用域（open/open_alt/plain/copy-buffer 为全局；first-ten 仅在 popup 可见时生效）；`show_grouped_in_main=false` 时主列表映射为 ungrouped；主题值 `system/light/dark/highContrast` 与旧 `hc/high_contrast` 的兼容。
 
@@ -96,6 +97,22 @@ T5 `SettingsState` 与 T2 JSON 不完全同构：
 - `crates/ditto-paste/src/clipboard.rs`：`GlobalUnlock` 语义修复（实际写入路径此前全部失败）。
 - `crates/ditto-clipboard/src/decode.rs`：ANSI/OEM 文本 NUL 终止。
 - `tools/qa/{keyboard-first.ps1,hotkey-rebind.ps1,scroll-10k-ipc.ps1,grouped-main.ps1,theme-modes.ps1,cold-start.ps1}`：T11 新增/更新的隔离 QA。
+
+## 3.8 T13 修复入口
+
+- `docs/rewrite/T13-FIX-REPORT.md`：CODE-REVIEW-3 的 R2-1、R2-2、QIS-1、R7-1 逐条状态、证据、残余风险。
+- `apps/ditto/src-tauri/src/hotkeys.rs`：`bindings_with_issues`（启动容错解析）、`register_all_collecting`（逐项注册）、`reconcile_settings`（写回 effective 集合 + `hotkeys.startup_conflicts`）。
+- `apps/ditto/src-tauri/src/lib.rs`：启动时逐项注册、open chord fallback、把冲突/清空写回存储；tray 隐藏时的原生非激活提示；`general.startup_message` 提示；冷启动 trace 点。
+- `apps/ditto/ui/src/pages/HotkeysPage.tsx` + locales：Settings 显示启动冲突原因；copy-buffer `cut` disabled 且文案改为“v1 暂不支持/计划后续”。
+- `crates/ditto-win/src/lib.rs`：`parse_instance_suffix`/`instance_suffix` fail-closed；`show_native_hint` 原生分层提示窗口。
+- `apps/ditto-popup/src/main.rs`：suffix 校验；`run-native-enter`、`ipc-prewarm-returned` trace。
+- `apps/ditto/src-tauri/src/core_service.rs`：retention 首轮延后 10 s，避开冷启动窗口。
+- `tools/qa/{suffix-validation.ps1,cold-start-feedback.ps1,hotkey-rebind.ps1,cold-start.ps1}` 与 `suffix-common.ps1`：T13 新增/更新的隔离 QA。
+
+T13 的冷启动结论：代码可控部分（setup、hotkey、tray）约 60 ms；剩余时间由
+未签名进程启动/扫描（约 1.8 s，host 与 popup 重叠）和 eframe 窗口/GL 初始化
+（约 1.7 s）构成。`host→Show <2.0 s` 在当前未签名、独立 popup 进程架构下未达标，
+已作为 DEFERRED 记录，并由原生提示覆盖隐藏 tray 的可见反馈。
 
 ## 4. 复现步骤
 

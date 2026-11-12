@@ -1,0 +1,10 @@
+seeded 3 clips and group 1 into C:\Users\zezin\AppData\Local\Temp\ditto-theme-qa-a52d28da\data
+THEME_DARK_APPLIED=True
+THEME_HIGH_CONTRAST_APPLIED=True
+HIGH_CONTRAST_USES_SYSTEM_PALETTE=True
+THEME_TRACE_TAIL=1794511121461 theme-apply Dark palette_high_contrast=false | 1794511121615 theme-apply HighContrast palette_high_contrast=true | 1794511121872 theme-apply Light palette_high_contrast=false
+OS_APPS_USE_LIGHT_THEME=True
+SYSTEM_FOLLOWS_LIGHT_OS=True
+STORED_THEME=system
+THEME_MODE_QA=PASS
+QA_ROOT=C:\Users\zezin\AppData\Local\Temp\ditto-theme-qa-a52d28da

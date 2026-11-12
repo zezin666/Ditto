@@ -4,6 +4,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "suffix-common.ps1")
 $DittoExe = (Resolve-Path -LiteralPath $DittoExe).Path
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 if ([string]::IsNullOrWhiteSpace($Root)) {
@@ -50,7 +51,7 @@ function Run-Case([bool]$showGrouped) {
     $caseRoot = Join-Path $Root ("case-" + [Guid]::NewGuid().ToString("N").Substring(0, 8))
     $dataRoot = Join-Path $caseRoot "data"
     New-Item -ItemType Directory -Force -Path $dataRoot | Out-Null
-    $suffix = [Guid]::NewGuid().ToString("N").Substring(0, 10)
+    $suffix = Assert-DittoPipeSuffix (New-DittoPipeSuffix)
     $env:DITTO_PIPE_SUFFIX = $suffix
     $env:DITTO_DATA_DIR = $dataRoot
     $trace = Join-Path $caseRoot "popup-trace.log"

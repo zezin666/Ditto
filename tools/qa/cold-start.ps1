@@ -5,6 +5,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "suffix-common.ps1")
 
 $DittoExe = (Resolve-Path -LiteralPath $DittoExe).Path
 $binaryDir = Split-Path -Parent $DittoExe
@@ -55,7 +56,7 @@ function Measure-ColdStart([string]$exe, [string]$label, [int]$index) {
     $runRoot = Join-Path $Root ("$label-$index-" + [Guid]::NewGuid().ToString("N").Substring(0, 8))
     $dataRoot = Join-Path $runRoot "data"
     New-Item -ItemType Directory -Force -Path $dataRoot | Out-Null
-    $suffix = [Guid]::NewGuid().ToString("N").Substring(0, 10)
+    $suffix = Assert-DittoPipeSuffix (New-DittoPipeSuffix)
     $env:DITTO_PIPE_SUFFIX = $suffix
     $env:DITTO_DATA_DIR = $dataRoot
     $hostTrace = Join-Path $runRoot "host-trace.log"
@@ -103,6 +104,28 @@ function Measure-ColdStart([string]$exe, [string]$label, [int]$index) {
         if ($popupStart -and (Select-String -Path $popupTrace -Pattern "using-prewarmed-ipc|connected" -Quiet)) {
             $readyLine = Select-String -Path $popupTrace -Pattern "using-prewarmed-ipc|connected" | Select-Object -First 1
             $popupToShowMs = [double]$readyLine.Line.Split(" ")[0] - [double]$popupStart.Line.Split(" ")[0]
+        }
+        # Breakdown: process creation/loading, eframe init, PopupApp::new, and
+        # the IPC-to-activation step. This distinguishes OS/loader time from
+        # the code-controlled critical path.
+        $runNative = Select-String -Path $popupTrace -Pattern "run-native-enter" | Select-Object -First 1
+        $appEnter = Select-String -Path $popupTrace -Pattern "app-new-enter" | Select-Object -First 1
+        $appExit = Select-String -Path $popupTrace -Pattern "app-new-exit" | Select-Object -First 1
+        if ($popupStart -and $runNative) {
+            Write-Host ("COLD_{0}_{1}_POPUP_START_TO_RUN_NATIVE_MS={2:N1}" -f $label, $index,
+                ([double]$runNative.Line.Split(" ")[0] - [double]$popupStart.Line.Split(" ")[0]))
+        }
+        if ($appEnter -and $appExit) {
+            Write-Host ("COLD_{0}_{1}_APP_NEW_MS={2:N1}" -f $label, $index,
+                ([double]$appExit.Line.Split(" ")[0] - [double]$appEnter.Line.Split(" ")[0]))
+        }
+        if ($hostRun -and $popupStart) {
+            Write-Host ("COLD_{0}_{1}_HOST_RUN_TO_POPUP_START_MS={2:N1}" -f $label, $index,
+                ([double]$popupStart.Line.Split(" ")[0] - [double]$hostRun.Line.Split(" ")[0]))
+        }
+        if ($readyLine -and $activate) {
+            Write-Host ("COLD_{0}_{1}_POPUP_IPC_TO_ACTIVATE_MS={2:N1}" -f $label, $index,
+                ([double]$activate.Line.Split(" ")[0] - [double]$readyLine.Line.Split(" ")[0]))
         }
         Write-Host ("COLD_{0}_{1}_HOST_TO_SHOW_MS={2:N1}" -f $label, $index, $elapsed)
         if ($null -ne $popupMs) {

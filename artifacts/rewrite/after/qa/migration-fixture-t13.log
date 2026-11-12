@@ -1,0 +1,19 @@
+   Compiling log v0.4.35
+   Compiling serde_json v1.0.154
+   Compiling windows v0.61.3
+   Compiling zopfli v0.8.4
+   Compiling zip v2.6.1
+   Compiling ditto-model v0.1.0 (D:\orca\workspaces\Ditto\rewrite-fixes3\crates\ditto-model)
+   Compiling ditto-clipboard v0.1.0 (D:\orca\workspaces\Ditto\rewrite-fixes3\crates\ditto-clipboard)
+   Compiling ditto-storage v0.1.0 (D:\orca\workspaces\Ditto\rewrite-fixes3\crates\ditto-storage)
+   Compiling ditto-migration v0.1.0 (D:\orca\workspaces\Ditto\rewrite-fixes3\crates\ditto-migration)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.11s
+     Running tests\legacy_fixture.rs (target\debug\deps\legacy_fixture-36fb3147022ef92b.exe)
+
+running 3 tests
+test failed_migration_leaves_existing_destination_untouched ... ok
+test synthetic_legacy_migration_matches_counts_content_and_is_idempotent ... ok
+test export_import_and_verify_round_trip_preserve_counts ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.66s
+

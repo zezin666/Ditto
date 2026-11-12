@@ -4,6 +4,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "suffix-common.ps1")
 
 Add-Type -TypeDefinition @"
 using System;
@@ -40,7 +41,7 @@ New-Item -ItemType Directory -Force -Path $Root | Out-Null
 $dataRoot = Join-Path $Root "data"
 New-Item -ItemType Directory -Force -Path $dataRoot | Out-Null
 
-$suffix = [Guid]::NewGuid().ToString("N").Substring(0, 10)
+$suffix = Assert-DittoPipeSuffix (New-DittoPipeSuffix)
 $env:DITTO_PIPE_SUFFIX = $suffix
 $env:DITTO_DATA_DIR = $dataRoot
 $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
@@ -122,6 +123,7 @@ function Seed([string]$settingsJson) {
 $core = $null
 $pipe = $null
 $heldConflict = $false
+$heldCopyConflict = $false
 $ok = $true
 try {
     # --- configured startup registration ---------------------------------
@@ -173,11 +175,42 @@ try {
     $fellBack = ($effectiveOpen -ne "Ctrl+Alt+J") -and ($effectiveOpen -ne "")
     Write-Output ("CONFLICT_FELL_BACK_WITHOUT_SILENT_HOOK={0}" -f $fellBack)
     if (-not $fellBack) { $ok = $false }
+    Stop-Core
+
+    # --- startup conflict: a non-open chord is owned by another app --------
+    # The core must keep the open chord, clear the failed copy-buffer setting,
+    # and persist a conflict record that Settings can display.
+    $heldCopyConflict = [DittoHotkeyQa]::RegisterHotKey([IntPtr]::Zero, 0x7A23, 0x0003, 0x31)
+    if (-not $heldCopyConflict) { throw "QA could not hold Ctrl+Alt+1 for the copy conflict test" }
+    Seed '{"hotkeys":{"open_chord":"Ctrl+Alt+K","plain_text_paste_chord":"","copy_buffers":[{"copy":"Ctrl+Alt+1","paste":""}]}}'
+    Start-Core
+    $settings = Call $pipe "GetSettings"
+    $effectiveCopy = $settings.values.hotkeys.copy_buffers[0].copy
+    $effectiveOpen = $settings.values.hotkeys.open_chord
+    $conflicts = @($settings.values.hotkeys.startup_conflicts)
+    $copyCleared = [string]::IsNullOrEmpty($effectiveCopy)
+    $openKept = $effectiveOpen -eq "Ctrl+Alt+K"
+    $conflictRecorded = ($conflicts | Where-Object {
+        $_.action -eq "copyBuffer.1.copy" -and $_.reason -eq "in_use"
+    } | Measure-Object).Count -eq 1
+    $openStillHeld = -not [DittoHotkeyQa]::CanRegister(0x0003, 0x4B)
+    Write-Output ("STARTUP_COPY_CONFLICT_CLEARED={0}" -f $copyCleared)
+    Write-Output ("STARTUP_COPY_CONFLICT_OPEN_KEPT={0}" -f $openKept)
+    Write-Output ("STARTUP_COPY_CONFLICT_RECORDED={0}" -f $conflictRecorded)
+    Write-Output ("STARTUP_COPY_CONFLICT_OPEN_REGISTERED={0}" -f $openStillHeld)
+    if (-not ($copyCleared -and $openKept -and $conflictRecorded -and $openStillHeld)) { $ok = $false }
+    $buffers = Call $pipe "GetCopyBuffers"
+    Write-Output ("STARTUP_COPY_CONFLICT_PIPE_ALIVE={0}" -f ($null -ne $buffers.slots))
+    if ($null -eq $buffers.slots) { $ok = $false }
+    $null = [DittoHotkeyQa]::UnregisterHotKey([IntPtr]::Zero, 0x7A23)
+    $heldCopyConflict = $false
+    Stop-Core
 
     Write-Output ("HOTKEY_REBIND_QA={0}" -f $(if ($ok) { "PASS" } else { "FAIL" }))
     if (-not $ok) { throw "hotkey QA assertions failed" }
 } finally {
     if ($heldConflict) { $null = [DittoHotkeyQa]::UnregisterHotKey([IntPtr]::Zero, 0x7A22) }
+    if ($heldCopyConflict) { $null = [DittoHotkeyQa]::UnregisterHotKey([IntPtr]::Zero, 0x7A23) }
     Stop-Core
     Get-Process -Name DittoPopup -ErrorAction SilentlyContinue |
         Where-Object { $_.Path -like "$repoRoot\target\*" } |

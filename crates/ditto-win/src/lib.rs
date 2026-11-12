@@ -22,11 +22,18 @@ use parking_lot::Mutex;
 use windows::{
     Win32::{
         Foundation::{
-            CloseHandle, DUPLICATE_SAME_ACCESS, DuplicateHandle, ERROR_ALREADY_EXISTS,
+            COLORREF, CloseHandle, DUPLICATE_SAME_ACCESS, DuplicateHandle, ERROR_ALREADY_EXISTS,
             ERROR_BROKEN_PIPE, ERROR_IO_PENDING, ERROR_PIPE_CONNECTED, GENERIC_READ, GENERIC_WRITE,
-            GetLastError, HANDLE, LocalFree, WAIT_OBJECT_0, WAIT_TIMEOUT,
+            GetLastError, HANDLE, HINSTANCE, LPARAM, LRESULT, LocalFree, RECT, WAIT_OBJECT_0,
+            WAIT_TIMEOUT, WPARAM,
         },
-        Graphics::Gdi::InvalidateRect,
+        Graphics::Gdi::{
+            BeginPaint, CLEARTYPE_QUALITY, CLIP_DEFAULT_PRECIS, COLOR_WINDOW, COLOR_WINDOWTEXT,
+            CreateFontW, CreateSolidBrush, DEFAULT_CHARSET, DEFAULT_PITCH, DT_END_ELLIPSIS,
+            DT_LEFT, DT_NOPREFIX, DT_SINGLELINE, DT_VCENTER, DeleteObject, DrawTextW, EndPaint,
+            FW_NORMAL, FillRect, GetSysColor, InvalidateRect, OUT_DEFAULT_PRECIS, PAINTSTRUCT,
+            SelectObject, SetBkMode, SetTextColor, TRANSPARENT,
+        },
         Security::{
             Authorization::{
                 ConvertSidToStringSidW, ConvertStringSecurityDescriptorToSecurityDescriptorW,
@@ -45,6 +52,7 @@ use windows::{
                 TH32CS_SNAPPROCESS,
             },
             IO::{CancelIoEx, GetOverlappedResult, OVERLAPPED},
+            LibraryLoader::GetModuleHandleW,
             Pipes::{
                 ConnectNamedPipe, CreateNamedPipeW, PIPE_READMODE_BYTE, PIPE_REJECT_REMOTE_CLIENTS,
                 PIPE_TYPE_BYTE, PIPE_WAIT, PeekNamedPipe, WaitNamedPipeW,
@@ -63,11 +71,16 @@ use windows::{
                 HOT_KEY_MODIFIERS, MOD_NOREPEAT, RegisterHotKey, UnregisterHotKey,
             },
             WindowsAndMessaging::{
-                GWL_EXSTYLE, GetWindowLongPtrW, HWND_TOPMOST, LWA_ALPHA, MB_ICONWARNING, MB_OK,
-                MessageBoxW, SW_SHOWNOACTIVATE, SWP_NOACTIVATE, SWP_NOMOVE, SWP_NOSIZE,
-                SWP_NOZORDER, SWP_SHOWWINDOW, SetLayeredWindowAttributes, SetWindowLongPtrW,
-                SetWindowPos, ShowWindow, WS_EX_LAYERED, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW,
-                WS_EX_TRANSPARENT,
+                CS_HREDRAW, CS_VREDRAW, CreateWindowExW, DefWindowProcW, DestroyWindow,
+                DispatchMessageW, GWL_EXSTYLE, GetClientRect, GetMessageW, GetWindowLongPtrW,
+                HWND_TOPMOST, KillTimer, LWA_ALPHA, MB_ICONWARNING, MB_OK, MSG, MessageBoxW,
+                PostQuitMessage, RegisterClassW, SPI_GETWORKAREA, SW_SHOWNOACTIVATE,
+                SWP_NOACTIVATE, SWP_NOMOVE, SWP_NOSIZE, SWP_NOZORDER, SWP_SHOWWINDOW,
+                SYSTEM_PARAMETERS_INFO_UPDATE_FLAGS, SetLayeredWindowAttributes, SetTimer,
+                SetWindowLongPtrW, SetWindowPos, ShowWindow, SystemParametersInfoW,
+                TranslateMessage, WM_DESTROY, WM_ERASEBKGND, WM_PAINT, WM_TIMER, WNDCLASSW,
+                WS_EX_LAYERED, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW, WS_EX_TOPMOST,
+                WS_EX_TRANSPARENT, WS_POPUP, WS_VISIBLE,
             },
         },
     },
@@ -125,31 +138,103 @@ pub fn current_user_sid_string() -> ditto_model::Result<String> {
     }
 }
 
+/// Exit code used when an isolation override is present but malformed.
+///
+/// The process refuses to start instead of silently falling back to the
+/// production pipe and single-instance names. Falling back could signal a
+/// running user instance and violates the QA isolation guarantee.
+pub const INVALID_SUFFIX_EXIT_CODE: i32 = 2;
+
+/// Maximum accepted QA/development suffix length.
+pub const MAX_INSTANCE_SUFFIX_LEN: usize = 48;
+
+/// A malformed `DITTO_PIPE_SUFFIX`/`DITTO_INSTANCE_ID` value.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct InvalidInstanceSuffix {
+    pub variable: &'static str,
+    pub reason: String,
+}
+
+impl std::fmt::Display for InvalidInstanceSuffix {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            formatter,
+            "{} is invalid: {}; use 1-{} characters from [A-Za-z0-9_-]",
+            self.variable, self.reason, MAX_INSTANCE_SUFFIX_LEN
+        )
+    }
+}
+
+impl std::error::Error for InvalidInstanceSuffix {}
+
+/// Validates an isolation suffix read from the environment.
+///
+/// `None` means "not configured" and keeps the production names. A present
+/// variable is never sanitized or truncated: whitespace-only, over-long, or
+/// out-of-charset values are rejected so a malformed QA override cannot touch
+/// a real user instance.
+pub fn parse_instance_suffix(
+    variable: &'static str,
+    value: Option<&str>,
+) -> Result<Option<String>, InvalidInstanceSuffix> {
+    let Some(raw) = value else {
+        return Ok(None);
+    };
+    let trimmed = raw.trim();
+    if trimmed.is_empty() {
+        return Err(InvalidInstanceSuffix {
+            variable,
+            reason: "the value is empty".to_string(),
+        });
+    }
+    if trimmed.len() > MAX_INSTANCE_SUFFIX_LEN {
+        return Err(InvalidInstanceSuffix {
+            variable,
+            reason: format!("the value is {} bytes long", trimmed.len()),
+        });
+    }
+    if let Some(character) = trimmed
+        .chars()
+        .find(|character| !(character.is_ascii_alphanumeric() || matches!(character, '-' | '_')))
+    {
+        return Err(InvalidInstanceSuffix {
+            variable,
+            reason: format!("it contains {character:?}"),
+        });
+    }
+    Ok(Some(trimmed.to_string()))
+}
+
 /// Optional QA/development isolation suffix.
 ///
-/// `DITTO_PIPE_SUFFIX` (or the alias `DITTO_INSTANCE_ID`) appends a sanitized
+/// `DITTO_PIPE_SUFFIX` (or the alias `DITTO_INSTANCE_ID`) appends a validated
 /// token to the pipe and single-instance names. It never weakens the pipe ACL:
 /// the descriptor still grants access only to SYSTEM and the current SID.
-pub fn instance_suffix() -> Option<String> {
-    std::env::var("DITTO_PIPE_SUFFIX")
-        .ok()
-        .or_else(|| std::env::var("DITTO_INSTANCE_ID").ok())
-        .map(|value| {
-            value
-                .trim()
-                .chars()
-                .filter(|character| {
-                    character.is_ascii_alphanumeric() || matches!(character, '-' | '_')
-                })
-                .take(48)
-                .collect::<String>()
-        })
-        .filter(|value| !value.is_empty())
+/// A present-but-invalid variable is an error, not a silent fallback.
+pub fn instance_suffix() -> Result<Option<String>, InvalidInstanceSuffix> {
+    let variables: [&'static str; 2] = ["DITTO_PIPE_SUFFIX", "DITTO_INSTANCE_ID"];
+    for variable in variables {
+        if std::env::var_os(variable).is_none() {
+            continue;
+        }
+        let value = std::env::var_os(variable)
+            .expect("checked above")
+            .into_string()
+            .map_err(|_| InvalidInstanceSuffix {
+                variable,
+                reason: "the value is not valid Unicode".to_string(),
+            })?;
+        return parse_instance_suffix(variable, Some(&value));
+    }
+    Ok(None)
 }
 
 pub fn pipe_name() -> ditto_model::Result<String> {
     let sid = current_user_sid_string()?;
-    Ok(match instance_suffix() {
+    let suffix = instance_suffix().map_err(|error| {
+        ditto_model::DittoError::Configuration(format!("refusing to start: {error}"))
+    })?;
+    Ok(match suffix {
         Some(suffix) => format!(r"\\.\pipe\ditto-{sid}-{suffix}"),
         None => format!(r"\\.\pipe\ditto-{sid}"),
     })
@@ -348,6 +433,240 @@ pub fn show_message_box(title: &str, text: &str, warning: bool) {
             PCWSTR(title_wide.as_ptr()),
             flags,
         );
+    }
+}
+
+static NATIVE_HINT_TEXT: std::sync::Mutex<String> = std::sync::Mutex::new(String::new());
+static NATIVE_HINT_VISIBLE: AtomicBool = AtomicBool::new(false);
+
+fn hint_trace(message: &str) {
+    if let Ok(path) = std::env::var("DITTO_HINT_TRACE") {
+        use std::io::Write;
+        if let Ok(mut file) = std::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(path)
+        {
+            let _ = writeln!(file, "{} hint:{message}", unix_millis());
+        }
+    }
+}
+
+/// Shows a small top-most, non-activating native hint near the bottom-right
+/// work-area corner. Used when the tray icon is hidden, so the user still gets
+/// visible feedback while the resident popup is cold-starting.
+///
+/// Returns after the window has been created; the helper thread owns the
+/// window and closes it after `duration_ms`. The call never blocks the caller
+/// on a user action and never steals focus.
+pub fn show_native_hint(text: &str, duration_ms: u32) -> ditto_model::Result<()> {
+    let text = text.trim().to_string();
+    if text.is_empty() {
+        hint_trace("skip-empty");
+        return Ok(());
+    }
+    if NATIVE_HINT_VISIBLE.swap(true, Ordering::SeqCst) {
+        hint_trace("skip-active");
+        return Ok(());
+    }
+    hint_trace(&format!("show len={} duration={duration_ms}", text.len()));
+    let (ready_tx, ready_rx) = std::sync::mpsc::sync_channel::<Result<(), String>>(1);
+    let spawn = thread::Builder::new()
+        .name("ditto-native-hint".to_string())
+        .spawn(move || {
+            if let Ok(mut current) = NATIVE_HINT_TEXT.lock() {
+                *current = text.clone();
+            }
+            let result = unsafe { run_native_hint(&text, duration_ms, &ready_tx) };
+            NATIVE_HINT_VISIBLE.store(false, Ordering::SeqCst);
+            if let Err(error) = result {
+                hint_trace(&format!("thread-error {error}"));
+                let _ = ready_tx.send(Err(error));
+            } else {
+                hint_trace("thread-closed");
+            }
+        });
+    if let Err(error) = spawn {
+        NATIVE_HINT_VISIBLE.store(false, Ordering::SeqCst);
+        hint_trace(&format!("spawn-error {error}"));
+        return Err(ditto_model::DittoError::Windows(format!(
+            "failed to spawn native hint thread: {error}"
+        )));
+    }
+    match ready_rx.recv_timeout(Duration::from_secs(2)) {
+        Ok(Ok(())) | Err(std::sync::mpsc::RecvTimeoutError::Timeout) => Ok(()),
+        Ok(Err(error)) => {
+            hint_trace(&format!("ready-error {error}"));
+            Err(ditto_model::DittoError::Windows(error))
+        }
+        Err(std::sync::mpsc::RecvTimeoutError::Disconnected) => Err(
+            ditto_model::DittoError::Windows("native hint thread ended early".to_string()),
+        ),
+    }
+}
+
+unsafe fn run_native_hint(
+    text: &str,
+    duration_ms: u32,
+    ready: &std::sync::mpsc::SyncSender<Result<(), String>>,
+) -> Result<(), String> {
+    let module = unsafe { GetModuleHandleW(None) }.map_err(|error| error.to_string())?;
+    let instance = HINSTANCE::from(module);
+    let class_name = w!("DittoNativeHint");
+    let window_class = WNDCLASSW {
+        style: CS_HREDRAW | CS_VREDRAW,
+        lpfnWndProc: Some(native_hint_proc),
+        hInstance: instance,
+        lpszClassName: class_name,
+        ..Default::default()
+    };
+    unsafe {
+        // A previous hint may still be tearing down; an existing class is fine.
+        let _ = RegisterClassW(&window_class);
+    }
+
+    let mut work = RECT {
+        left: 0,
+        top: 0,
+        right: 1280,
+        bottom: 720,
+    };
+    let _ = unsafe {
+        SystemParametersInfoW(
+            SPI_GETWORKAREA,
+            0,
+            Some((&mut work as *mut RECT).cast()),
+            SYSTEM_PARAMETERS_INFO_UPDATE_FLAGS(0),
+        )
+    };
+    let width = 400
+        .min((work.right - work.left).saturating_sub(32))
+        .max(160);
+    let height = 64;
+    let x = work.right - width - 16;
+    let y = work.bottom - height - 16;
+
+    let hwnd = unsafe {
+        CreateWindowExW(
+            WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_LAYERED,
+            class_name,
+            w!("Ditto"),
+            WS_POPUP | WS_VISIBLE,
+            x,
+            y,
+            width,
+            height,
+            None,
+            None,
+            Some(instance),
+            None,
+        )
+    }
+    .map_err(|error| error.to_string())?;
+    hint_trace(&format!("window-created hwnd={:?}", hwnd.0));
+    unsafe {
+        let _ = SetLayeredWindowAttributes(hwnd, COLORREF(0), 235, LWA_ALPHA);
+        let _ = ShowWindow(hwnd, SW_SHOWNOACTIVATE);
+        SetTimer(Some(hwnd), 1, duration_ms.max(500), None);
+    }
+    if let Ok(mut current) = NATIVE_HINT_TEXT.lock() {
+        *current = text.to_string();
+    }
+    let _ = ready.send(Ok(()));
+
+    let mut message = MSG::default();
+    while unsafe { GetMessageW(&mut message, None, 0, 0) }.as_bool() {
+        unsafe {
+            let _ = TranslateMessage(&message);
+            DispatchMessageW(&message);
+        }
+    }
+    Ok(())
+}
+
+unsafe extern "system" fn native_hint_proc(
+    hwnd: windows::Win32::Foundation::HWND,
+    message: u32,
+    wparam: WPARAM,
+    lparam: LPARAM,
+) -> LRESULT {
+    match message {
+        WM_PAINT => {
+            unsafe { paint_native_hint(hwnd) };
+            LRESULT(0)
+        }
+        WM_ERASEBKGND => LRESULT(1),
+        WM_TIMER => {
+            unsafe {
+                let _ = KillTimer(Some(hwnd), wparam.0);
+                let _ = DestroyWindow(hwnd);
+            }
+            LRESULT(0)
+        }
+        WM_DESTROY => {
+            unsafe { PostQuitMessage(0) };
+            LRESULT(0)
+        }
+        _ => unsafe { DefWindowProcW(hwnd, message, wparam, lparam) },
+    }
+}
+
+unsafe fn paint_native_hint(hwnd: windows::Win32::Foundation::HWND) {
+    let mut paint = PAINTSTRUCT::default();
+    let hdc = unsafe { BeginPaint(hwnd, &mut paint) };
+    if hdc.0.is_null() {
+        return;
+    }
+    let mut client = RECT::default();
+    let _ = unsafe { GetClientRect(hwnd, &mut client) };
+    let background = unsafe { CreateSolidBrush(COLORREF(GetSysColor(COLOR_WINDOW))) };
+    unsafe {
+        FillRect(hdc, &client, background);
+        let _ = DeleteObject(background.into());
+    }
+    let font = unsafe {
+        CreateFontW(
+            -17,
+            0,
+            0,
+            0,
+            FW_NORMAL.0 as i32,
+            0,
+            0,
+            0,
+            DEFAULT_CHARSET,
+            OUT_DEFAULT_PRECIS,
+            CLIP_DEFAULT_PRECIS,
+            CLEARTYPE_QUALITY,
+            DEFAULT_PITCH.0 as u32,
+            w!("Segoe UI"),
+        )
+    };
+    let previous = unsafe { SelectObject(hdc, font.into()) };
+    unsafe {
+        SetTextColor(hdc, COLORREF(GetSysColor(COLOR_WINDOWTEXT)));
+        SetBkMode(hdc, TRANSPARENT);
+    }
+    let mut text = NATIVE_HINT_TEXT
+        .lock()
+        .map(|text| OsStr::new(text.as_str()).encode_wide().collect::<Vec<_>>())
+        .unwrap_or_default();
+    let mut bounds = RECT {
+        left: 16,
+        top: 10,
+        right: client.right - 16,
+        bottom: client.bottom - 10,
+    };
+    unsafe {
+        DrawTextW(
+            hdc,
+            &mut text,
+            &mut bounds,
+            DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX,
+        );
+        SelectObject(hdc, previous);
+        let _ = DeleteObject(font.into());
+        let _ = EndPaint(hwnd, &paint);
     }
 }
 
@@ -1285,6 +1604,53 @@ fn _keep_w() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn instance_suffix_validation_is_fail_closed() {
+        assert_eq!(parse_instance_suffix("TEST", None).expect("unset"), None);
+        assert_eq!(
+            parse_instance_suffix("TEST", Some("qa-01_x")).expect("valid"),
+            Some("qa-01_x".to_string())
+        );
+        assert_eq!(
+            parse_instance_suffix("TEST", Some("  qa  ")).expect("trimmed"),
+            Some("qa".to_string())
+        );
+        for invalid in ["", "   ", "!!!", "qa.1", "qa 1", "中文"] {
+            assert!(
+                parse_instance_suffix("TEST", Some(invalid)).is_err(),
+                "{invalid:?} must be rejected instead of sanitized"
+            );
+        }
+        let longest = "a".repeat(MAX_INSTANCE_SUFFIX_LEN);
+        assert_eq!(
+            parse_instance_suffix("TEST", Some(&longest))
+                .expect("48 characters are allowed")
+                .as_deref(),
+            Some(longest.as_str())
+        );
+        assert!(
+            parse_instance_suffix("TEST", Some(&"a".repeat(MAX_INSTANCE_SUFFIX_LEN + 1))).is_err(),
+            "over-long suffixes must fail instead of being truncated"
+        );
+        let error = parse_instance_suffix("TEST", Some("!!!")).expect_err("invalid");
+        assert!(error.to_string().contains("TEST"));
+        assert!(error.to_string().contains("[A-Za-z0-9_-]"));
+    }
+
+    #[test]
+    fn native_hint_window_is_created_and_closes() {
+        use windows::Win32::UI::WindowsAndMessaging::FindWindowW;
+        show_native_hint("DITTO-NATIVE-HINT-TEST", 800).expect("show hint");
+        let hwnd = unsafe { FindWindowW(w!("DittoNativeHint"), PCWSTR::null()) }
+            .expect("hint window exists");
+        assert!(!hwnd.is_invalid());
+        thread::sleep(Duration::from_millis(2200));
+        assert!(
+            unsafe { FindWindowW(w!("DittoNativeHint"), PCWSTR::null()) }.is_err(),
+            "hint window closes after its timer"
+        );
+    }
 
     #[test]
     fn hello_and_popup_events_traverse_named_pipe() {

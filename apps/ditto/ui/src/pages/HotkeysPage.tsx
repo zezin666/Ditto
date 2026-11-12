@@ -20,7 +20,24 @@ function defaultHotkeys(): HotkeySettings {
       paste: "",
       cut: "",
     })),
+    startupConflicts: [],
   };
+}
+
+function conflictActionLabel(
+  action: string,
+  t: (key: string, replacements?: Record<string, string | number>) => string,
+) {
+  if (action === "open") return t("hotkeys.open");
+  if (action === "openAlt") return t("hotkeys.openAlt");
+  if (action === "plainTextPaste") return t("hotkeys.plainTextPaste");
+  const match = /^copyBuffer\.(\d+)\.(copy|paste)$/.exec(action);
+  if (match) {
+    return `${t("hotkeys.slot", { slot: match[1] })} ${
+      match[2] === "copy" ? t("hotkeys.copy") : t("hotkeys.paste")
+    }`;
+  }
+  return action;
 }
 
 export function HotkeysPage({
@@ -61,11 +78,6 @@ export function HotkeysPage({
           label: `${t("hotkeys.slot", { slot: buffer.slot })} ${t("hotkeys.paste")}`,
           chord: buffer.paste,
         },
-        {
-          key: `cut.${buffer.slot}`,
-          label: `${t("hotkeys.slot", { slot: buffer.slot })} ${t("hotkeys.cut")}`,
-          chord: buffer.cut,
-        },
       ]),
     ];
     return entries.filter((entry) => entry.chord);
@@ -102,6 +114,25 @@ export function HotkeysPage({
         <MessageBar intent="warning" className="inline-message">
           <MessageBarBody>
             {t("hotkeys.conflict", { action: conflict })}
+          </MessageBarBody>
+        </MessageBar>
+      ) : null}
+
+      {hotkeys.startupConflicts.length > 0 ? (
+        <MessageBar intent="warning" className="inline-message">
+          <MessageBarBody>
+            <strong>{t("hotkeys.startupConflictsTitle")}</strong>
+            {hotkeys.startupConflicts.map((item, index) => (
+              <div key={`${item.action}-${index}`}>
+                {t("hotkeys.startupConflictLine", {
+                  action: conflictActionLabel(item.action, t),
+                  chord: item.chord,
+                  reason: t(`hotkeys.conflictReason.${item.reason}`, {
+                    effective: item.effective ?? "",
+                  }),
+                })}
+              </div>
+            ))}
           </MessageBarBody>
         </MessageBar>
       ) : null}
@@ -177,11 +208,13 @@ export function HotkeysPage({
                 />
               </div>
               <div>
-                <span>{t("hotkeys.cut")}</span>
+                <span>
+                  {t("hotkeys.cut")} <em>{t("hotkeys.comingLater")}</em>
+                </span>
                 <HotkeyRecorder
                   compact
                   disabled
-                  value={buffer.cut}
+                  value=""
                   actionLabel={`${t("hotkeys.slot", { slot: buffer.slot })} ${t("hotkeys.cut")}`}
                   onChange={(value) => updateBinding(`cut.${buffer.slot}`, value)}
                 />

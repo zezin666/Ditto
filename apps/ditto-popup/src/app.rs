@@ -297,6 +297,7 @@ impl PopupApp {
         options: PopupOptions,
         preconnected: Option<PipeClient>,
     ) -> Self {
+        qa_trace("app-new-enter");
         let theme = options.theme_override.unwrap_or_else(|| {
             Theme::from(if crate::theme::high_contrast_enabled() {
                 ThemeMode::HighContrast
@@ -428,6 +429,7 @@ impl PopupApp {
         if app.options.auto_show {
             app.show_popup(Instant::now(), true);
         }
+        qa_trace("app-new-exit");
         app
     }
 

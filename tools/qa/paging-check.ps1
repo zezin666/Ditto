@@ -6,12 +6,14 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "suffix-common.ps1")
 $DittoExe = (Resolve-Path -LiteralPath $DittoExe).Path
 $DataRoot = (Resolve-Path -LiteralPath $DataRoot).Path
 $env:DITTO_DATA_DIR = $DataRoot
 if ([string]::IsNullOrWhiteSpace($PipeSuffix)) {
-    $PipeSuffix = [Guid]::NewGuid().ToString("N").Substring(0, 10)
+    $PipeSuffix = New-DittoPipeSuffix
 }
+$PipeSuffix = Assert-DittoPipeSuffix $PipeSuffix
 $env:DITTO_PIPE_SUFFIX = $PipeSuffix
 $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
 $pipeName = "ditto-$sid-$PipeSuffix"

@@ -1,0 +1,92 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling cfg-if v1.0.5
+   Compiling windows-link v0.1.3
+   Compiling simd-adler32 v0.3.10
+   Compiling memchr v2.8.3
+   Compiling typenum v1.20.1
+   Compiling serde_core v1.0.229
+   Compiling adler2 v2.0.1
+   Compiling windows-link v0.2.1
+   Compiling bitflags v2.13.2
+   Compiling serde_json v1.0.154
+   Compiling serde v1.0.229
+   Compiling once_cell v1.21.4
+   Compiling smallvec v1.16.5
+   Compiling scopeguard v1.2.0
+   Compiling itoa v1.0.19
+   Compiling zmij v1.0.23
+   Compiling foldhash v0.1.5
+   Compiling pxfm v0.1.30
+   Compiling regex-syntax v0.8.11
+   Compiling num-traits v0.2.19
+   Compiling pin-project-lite v0.2.17
+   Compiling cpufeatures v0.2.17
+   Compiling byteorder-lite v0.1.0
+   Compiling windows-result v0.3.4
+   Compiling windows-strings v0.4.2
+   Compiling miniz_oxide v0.9.1
+   Compiling crc32fast v1.5.5
+   Compiling miniz_oxide v0.8.9
+   Compiling fdeflate v0.3.7
+   Compiling windows-threading v0.1.0
+   Compiling tracing-core v0.1.36
+   Compiling parking_lot_core v0.9.12
+   Compiling hashbrown v0.15.5
+   Compiling lock_api v0.4.14
+   Compiling bytemuck v1.25.2
+   Compiling libsqlite3-sys v0.35.0
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling fallible-iterator v0.3.0
+   Compiling getrandom v0.4.3
+   Compiling aho-corasick v1.1.5
+   Compiling windows-sys v0.61.2
+   Compiling fastrand v2.5.0
+   Compiling hex v0.4.3
+   Compiling flate2 v1.1.11
+   Compiling parking_lot v0.12.5
+   Compiling generic-array v0.14.7
+   Compiling hashlink v0.10.0
+   Compiling png v0.18.1
+   Compiling rusqlite v0.37.0
+   Compiling quote v1.0.47
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling syn v2.0.119
+   Compiling syn v3.0.10
+   Compiling digest v0.10.7
+   Compiling tempfile v3.27.0
+   Compiling sha2 v0.10.9
+   Compiling regex-automata v0.4.18
+   Compiling moxcms v0.8.1
+   Compiling thiserror-impl v2.0.21
+   Compiling serde_derive v1.0.229
+   Compiling regex v1.13.1
+   Compiling thiserror v2.0.21
+   Compiling windows-interface v0.59.3
+   Compiling windows-implement v0.60.2
+   Compiling tracing-attributes v0.1.31
+   Compiling windows-core v0.61.2
+   Compiling image v0.25.10
+   Compiling tracing v0.1.44
+   Compiling ditto-model v0.1.0 (D:\orca\workspaces\Ditto\rewrite-fixes3\crates\ditto-model)
+   Compiling windows-collections v0.2.0
+   Compiling windows-numerics v0.2.0
+   Compiling windows-future v0.2.1
+   Compiling windows v0.61.3
+   Compiling ditto-clipboard v0.1.0 (D:\orca\workspaces\Ditto\rewrite-fixes3\crates\ditto-clipboard)
+   Compiling ditto-storage v0.1.0 (D:\orca\workspaces\Ditto\rewrite-fixes3\crates\ditto-storage)
+    Finished `release` profile [optimized] target(s) in 19.16s
+     Running tests\bench_10k.rs (target\release\deps\bench_10k-8291139e4d543757.exe)
+
+running 1 test
+T2_10K_BENCH insert_ms=1754.192 insert_per_sec=5700.6 db_bytes=87532728
+T2_10K_SEARCH query=browse p50_ms=0.469 p95_ms=0.594 p99_ms=1.080
+T2_10K_SEARCH query=english p50_ms=0.800 p95_ms=1.069 p99_ms=1.179
+T2_10K_SEARCH query=chinese p50_ms=0.608 p95_ms=0.711 p99_ms=0.815
+T2_10K_SEARCH query=two_char_en p50_ms=0.587 p95_ms=0.693 p99_ms=0.876
+T2_10K_SEARCH query=two_char_zh p50_ms=0.963 p95_ms=1.225 p99_ms=1.544
+T2_10K_SEARCH query=quick_paste p50_ms=18.299 p95_ms=18.955 p99_ms=19.421
+test synthetic_10k_insert_search_and_keyset_budget ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.65s
+
