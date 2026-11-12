@@ -2,12 +2,16 @@
 
 pub mod config;
 pub mod error;
+pub mod settings;
 pub mod types;
 
 pub use config::{AppConfig, DataRoot, ThemeMode};
 pub use error::{DittoError, Result};
+pub use settings::{default_settings, legacy_setting_to_new};
 pub use types::{
-    ClipKind, ClipSummary, CopyBufferSlot, GroupNode, ProtocolCapability, SettingsSnapshot,
+    ClipDetail, ClipFormatInfo, ClipKind, ClipPage, ClipQuery, ClipSort, ClipSummary,
+    CopyBufferSlot, GroupNode, NewClip, NewClipFormat, ProtocolCapability, SearchMode,
+    SettingsSnapshot,
 };
 
 /// Protocol and schema versions advertised by this foundation build.

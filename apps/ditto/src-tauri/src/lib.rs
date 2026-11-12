@@ -16,11 +16,16 @@ use tauri::{
 };
 use tauri_plugin_global_shortcut::{Shortcut, ShortcutState};
 
+mod core_service;
+
+use core_service::CoreService;
+
 const DEV_HOTKEY: &str = "Ctrl+Alt+D";
 const DEV_HOTKEY_FALLBACK: &str = "Ctrl+Alt+Shift+D";
 
 struct AppState {
     pipe: PipeServer,
+    core: Mutex<Option<CoreService>>,
     popup_visible: AtomicBool,
     popup: Mutex<Option<Child>>,
 }
@@ -58,9 +63,19 @@ pub fn run() {
         ))
         .setup(move |app| {
             let name = pipe_name().map_err(|error| error.to_string())?;
-            let pipe = PipeServer::start(&name).map_err(|error| error.to_string())?;
+            let executable = std::env::current_exe()?;
+            let executable_dir = executable
+                .parent()
+                .ok_or_else(|| "Ditto executable has no parent directory".to_string())?;
+            let data_root = core_service::resolve_data_root(executable_dir)
+                .map_err(|error| error.to_string())?;
+            let storage = ditto_storage::Storage::open_data_root(&data_root.path)
+                .map_err(|error| error.to_string())?;
+            let core = CoreService::start(&name, storage).map_err(|error| error.to_string())?;
+            let pipe = core.pipe().clone();
             app.manage(AppState {
                 pipe,
+                core: Mutex::new(Some(core)),
                 popup_visible: AtomicBool::new(false),
                 popup: Mutex::new(None),
             });
@@ -226,6 +241,9 @@ fn shutdown_and_exit(app: &AppHandle) {
     if let Some(mut child) = state.popup.lock().take() {
         let _ = child.kill();
         let _ = child.wait();
+    }
+    if let Some(mut core) = state.core.lock().take() {
+        core.stop();
     }
     app.exit(0);
 }

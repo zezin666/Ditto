@@ -818,3 +818,22 @@ Legacy facts were read from:
 Related: `ARCHITECTURE.md`, `DESIGN-SYSTEM.md`, `FEATURE-MATRIX.md`,
 `PERFORMANCE.md`, `SECURITY.md`, `RISK-REGISTER.md`, `OWNERSHIP.md`,
 `DECISIONS.md`.
+
+---
+
+## 14. T2 implementation deltas
+
+T2 implemented the v1 schema with three additive fields needed by the clipboard
+and popup contracts:
+
+| Area | Added | Reason |
+|---|---|---|
+| `clips.description` | `TEXT NOT NULL DEFAULT ''` | The task requires the FTS search fields `preview/text/quick_paste_text/description`; the T0 DDL listed only the first three. |
+| `clip_formats.mime` | `TEXT` | Persist the MIME type alongside `data_path` for PNG/DIB/HTML/RTF/file/custom formats. |
+| `clips_fts` | `description` column plus trigger values | Keep the new description field searchable through the same external-content FTS5 table. |
+
+`ClipPage`/the `GetClips` and `Search` response now include
+`total_is_estimate`. When another page exists, or when a cursor is used, the
+core avoids a second full FTS/LIKE scan for `COUNT(*)` and reports the returned
+page count as an estimated total. This follows `PERFORMANCE.md` §5.3, which
+requires a cached/deferred count when an exact count doubles query time.

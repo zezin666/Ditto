@@ -2,7 +2,10 @@
 
 use std::io::{self, Read, Write};
 
-use ditto_model::{ClipSummary, GroupNode, PROTOCOL_VERSION, SettingsSnapshot};
+use ditto_model::{
+    ClipDetail, ClipSort, ClipSummary, CopyBufferSlot, GroupNode, PROTOCOL_VERSION, SearchMode,
+    SettingsSnapshot,
+};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
@@ -83,12 +86,33 @@ pub enum Request {
     ShowPopup,
     HidePopup,
     GetClips {
+        #[serde(default)]
         query: String,
+        #[serde(default)]
+        group_id: Option<i64>,
+        #[serde(default = "default_limit")]
         limit: u32,
+        #[serde(default)]
+        cursor: Option<String>,
+        #[serde(default)]
+        sort: ClipSort,
     },
     Search {
+        #[serde(default)]
         query: String,
+        #[serde(default)]
+        group_id: Option<i64>,
+        #[serde(default)]
+        mode: SearchMode,
+        #[serde(default)]
+        sort: ClipSort,
+        #[serde(default = "default_limit")]
         limit: u32,
+        #[serde(default)]
+        cursor: Option<String>,
+    },
+    GetClip {
+        clip_id: i64,
     },
     Paste {
         clip_id: i64,
@@ -106,6 +130,31 @@ pub enum Request {
         clip_ids: Vec<i64>,
     },
     GetGroups,
+    CreateGroup {
+        name: String,
+        parent_id: Option<i64>,
+        sort_order: f64,
+    },
+    RenameGroup {
+        group_id: i64,
+        name: String,
+    },
+    DeleteGroup {
+        group_id: i64,
+    },
+    MoveGroup {
+        group_id: i64,
+        parent_id: Option<i64>,
+        sort_order: f64,
+    },
+    GetCopyBuffers,
+    CopyBufferAssign {
+        slot: u8,
+        clip_id: Option<i64>,
+    },
+    CopyBufferClear {
+        slot: u8,
+    },
     GetSettings,
     SetSettings {
         values: serde_json::Value,
@@ -131,14 +180,25 @@ pub enum Response {
     Clips {
         items: Vec<ClipSummary>,
         total: u64,
+        #[serde(default)]
+        total_is_estimate: bool,
         took_ms: u64,
         next_cursor: Option<String>,
+    },
+    Clip {
+        clip: Box<ClipDetail>,
     },
     Groups {
         groups: Vec<GroupNode>,
     },
+    CopyBuffers {
+        slots: Vec<CopyBufferSlot>,
+    },
     Settings {
-        values: SettingsSnapshot,
+        #[serde(flatten)]
+        snapshot: SettingsSnapshot,
+        #[serde(default)]
+        restart_required: bool,
     },
     Ok,
     Error {
@@ -163,6 +223,12 @@ pub enum Event {
         ids: Vec<i64>,
         state_rev: u64,
     },
+    GroupChanged {
+        state_rev: u64,
+    },
+    ClipboardState {
+        connected: bool,
+    },
     SettingsChanged {
         keys: Vec<String>,
         revision: u64,
@@ -175,6 +241,10 @@ pub enum Event {
     Shutdown {
         reason: String,
     },
+}
+
+const fn default_limit() -> u32 {
+    200
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -342,5 +412,20 @@ mod tests {
     fn invalid_magic_is_rejected() {
         let error = read_frame(&mut b"nope".as_slice()).expect_err("must fail");
         assert!(matches!(error, IpcError::Io(_)));
+    }
+
+    #[test]
+    fn settings_response_flattens_snapshot_to_documented_shape() {
+        let response = Response::Settings {
+            snapshot: ditto_model::SettingsSnapshot {
+                values: serde_json::json!({"general": {"language": "en"}}),
+                revision: 7,
+            },
+            restart_required: true,
+        };
+        let value = serde_json::to_value(response).expect("serialize settings");
+        assert_eq!(value["values"]["general"]["language"], "en");
+        assert_eq!(value["revision"], 7);
+        assert_eq!(value["restart_required"], true);
     }
 }

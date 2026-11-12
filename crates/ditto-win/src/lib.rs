@@ -202,21 +202,36 @@ pub fn resize_popup(
 }
 
 /// Named-pipe endpoint owned by the Tauri host.
+#[derive(Clone)]
 pub struct PipeServer {
     clients: Arc<Mutex<HashMap<u64, Arc<Connection>>>>,
     next_event: Arc<AtomicU64>,
 }
 
+pub type RequestHandler = Arc<dyn Fn(&Request) -> Response + Send + Sync>;
+
 impl PipeServer {
     pub fn start(name: &str) -> ditto_model::Result<Self> {
+        Self::start_internal(name, None)
+    }
+
+    pub fn start_with_handler<F>(name: &str, handler: F) -> ditto_model::Result<Self>
+    where
+        F: Fn(&Request) -> Response + Send + Sync + 'static,
+    {
+        Self::start_internal(name, Some(Arc::new(handler)))
+    }
+
+    fn start_internal(name: &str, handler: Option<RequestHandler>) -> ditto_model::Result<Self> {
         let name = name.to_string();
         let clients = Arc::new(Mutex::new(HashMap::<u64, Arc<Connection>>::new()));
         let first = Connection::create_server_instance(&name, true)?;
         let clients_for_thread = Arc::clone(&clients);
+        let handler_for_thread = handler.clone();
 
         thread::Builder::new()
             .name("ditto-ipc-server".to_string())
-            .spawn(move || accept_loop(name, first, clients_for_thread))
+            .spawn(move || accept_loop(name, first, clients_for_thread, handler_for_thread))
             .map_err(|error| ditto_model::DittoError::Ipc(error.to_string()))?;
 
         Ok(Self {
@@ -340,6 +355,7 @@ fn accept_loop(
     name: String,
     mut current: Connection,
     clients: Arc<Mutex<HashMap<u64, Arc<Connection>>>>,
+    handler: Option<RequestHandler>,
 ) {
     loop {
         if let Err(error) = current.connect() {
@@ -360,7 +376,10 @@ fn accept_loop(
             .lock()
             .insert(connection.id, Arc::clone(&connection));
         let clients_for_handler = Arc::clone(&clients);
-        thread::spawn(move || handle_connection(connection, clients_for_handler));
+        let handler_for_connection = handler.clone();
+        thread::spawn(move || {
+            handle_connection(connection, clients_for_handler, handler_for_connection)
+        });
 
         match Connection::create_server_instance(&name, false) {
             Ok(next) => current = next,
@@ -375,6 +394,7 @@ fn accept_loop(
 fn handle_connection(
     connection: Arc<Connection>,
     clients: Arc<Mutex<HashMap<u64, Arc<Connection>>>>,
+    handler: Option<RequestHandler>,
 ) {
     loop {
         match pipe_available(connection.read_handle.0) {
@@ -414,7 +434,7 @@ fn handle_connection(
             }
         };
 
-        let response = dispatch_request(&request, &clients);
+        let response = dispatch_request(&request, &clients, handler.as_deref());
         if send_response(&connection, frame.request_id, &response).is_err() {
             break;
         }
@@ -428,6 +448,7 @@ fn handle_connection(
 fn dispatch_request(
     request: &Request,
     clients: &Arc<Mutex<HashMap<u64, Arc<Connection>>>>,
+    handler: Option<&(dyn Fn(&Request) -> Response + Send + Sync)>,
 ) -> Response {
     match request {
         Request::Hello {
@@ -499,11 +520,14 @@ fn dispatch_request(
             }
             Response::PopupVisibility { visible: false }
         }
-        _ => Response::Error {
-            code: ErrorCode::NotImplemented,
-            message: "message is reserved for T2+".to_string(),
-            retryable: false,
-        },
+        _ => handler.map_or_else(
+            || Response::Error {
+                code: ErrorCode::NotImplemented,
+                message: "message handler is not configured".to_string(),
+                retryable: false,
+            },
+            |handler| handler(request),
+        ),
     }
 }
 
@@ -755,5 +779,37 @@ mod tests {
             client.read_event().expect("hide event"),
             Event::HidePopup
         ));
+    }
+
+    #[test]
+    fn custom_request_handler_is_invoked_after_hello() {
+        let name = format!(
+            r"\\.\pipe\ditto-test-handler-{}-{}",
+            std::process::id(),
+            unix_millis()
+        );
+        let server = PipeServer::start_with_handler(&name, |request| match request {
+            Request::GetGroups => Response::Groups { groups: Vec::new() },
+            _ => Response::Error {
+                code: ErrorCode::Internal,
+                message: "unexpected test request".to_string(),
+                retryable: false,
+            },
+        })
+        .expect("start server");
+        let client = PipeClient::connect(&name).expect("connect client");
+        client
+            .send(1, &hello_request(ClientKind::Popup))
+            .expect("send hello");
+        assert!(matches!(
+            client.read_response().expect("hello response"),
+            Response::HelloAck { .. }
+        ));
+        client.send(2, &Request::GetGroups).expect("send groups");
+        assert!(matches!(
+            client.read_response().expect("groups response"),
+            Response::Groups { groups } if groups.is_empty()
+        ));
+        drop(server);
     }
 }
