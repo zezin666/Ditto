@@ -11,6 +11,125 @@ use tauri_plugin_global_shortcut::Shortcut;
 pub const DEFAULT_OPEN_CHORD: &str = "Ctrl+`";
 pub const FALLBACK_OPEN_CHORD: &str = "Ctrl+Alt+D";
 
+/// A configurable global shortcut action. First-ten chords stay popup-scoped
+/// (they are only meaningful while the list is focused) and are not part of
+/// this global set.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum HotkeyAction {
+    ToggleOpen,
+    PlainPaste,
+    CopyBufferCopy(u8),
+    CopyBufferPaste(u8),
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Binding {
+    pub chord: String,
+    pub shortcut: Shortcut,
+    pub action: HotkeyAction,
+}
+
+impl Binding {
+    fn parse(chord: &str, action: HotkeyAction) -> Result<Option<Self>, String> {
+        let chord = chord.trim();
+        if chord.is_empty() {
+            return Ok(None);
+        }
+        let shortcut = parse_chord(chord)?;
+        Ok(Some(Self {
+            chord: chord.to_string(),
+            shortcut,
+            action,
+        }))
+    }
+}
+
+pub fn binding(chord: &str, action: HotkeyAction) -> Result<Option<Binding>, String> {
+    Binding::parse(chord, action)
+}
+
+/// Reads every global chord from the persisted settings JSON.
+///
+/// The legacy defaults for copy buffers and plain-text paste are "unassigned";
+/// registering them would hijack common Alt/Ctrl chords in every application.
+pub fn bindings_from_settings(values: &serde_json::Value) -> Result<Vec<Binding>, String> {
+    let string = |path: &str| {
+        values
+            .pointer(path)
+            .and_then(serde_json::Value::as_str)
+            .unwrap_or("")
+    };
+    let mut bindings = Vec::new();
+    let open = {
+        let configured = string("/hotkeys/open_chord");
+        if configured.trim().is_empty() {
+            DEFAULT_OPEN_CHORD
+        } else {
+            configured
+        }
+    };
+    if let Some(binding) = Binding::parse(open, HotkeyAction::ToggleOpen)? {
+        bindings.push(binding);
+    }
+    if let Some(binding) =
+        Binding::parse(string("/hotkeys/open_alt_chord"), HotkeyAction::ToggleOpen)?
+    {
+        bindings.push(binding);
+    }
+    if let Some(binding) = Binding::parse(
+        string("/hotkeys/plain_text_paste_chord"),
+        HotkeyAction::PlainPaste,
+    )? {
+        bindings.push(binding);
+    }
+    if let Some(copy_buffers) = values
+        .pointer("/hotkeys/copy_buffers")
+        .and_then(serde_json::Value::as_array)
+    {
+        for (index, item) in copy_buffers.iter().enumerate() {
+            let slot = u8::try_from(index + 1).unwrap_or(u8::MAX);
+            if !(1..=5).contains(&slot) {
+                continue;
+            }
+            if let Some(binding) = Binding::parse(
+                item.get("copy")
+                    .and_then(serde_json::Value::as_str)
+                    .unwrap_or(""),
+                HotkeyAction::CopyBufferCopy(slot),
+            )? {
+                bindings.push(binding);
+            }
+            if let Some(binding) = Binding::parse(
+                item.get("paste")
+                    .and_then(serde_json::Value::as_str)
+                    .unwrap_or(""),
+                HotkeyAction::CopyBufferPaste(slot),
+            )? {
+                bindings.push(binding);
+            }
+            // Cut is not a global action in v1: it needs a popup selection.
+        }
+    }
+    validate_bindings(&bindings)?;
+    Ok(bindings)
+}
+
+/// Rejects duplicate chords (including two actions on one chord) so Settings
+/// can report a conflict instead of silently registering the last one.
+pub fn validate_bindings(bindings: &[Binding]) -> Result<(), String> {
+    for (index, binding) in bindings.iter().enumerate() {
+        for other in &bindings[index + 1..] {
+            if binding.shortcut == other.shortcut {
+                return Err(format!(
+                    "shortcut {} is assigned to more than one action",
+                    binding.chord
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+
 pub fn parse_chord(chord: &str) -> Result<Shortcut, String> {
     let chord = chord.trim();
     if chord.is_empty() {
@@ -108,6 +227,73 @@ pub fn swap(
     Ok(())
 }
 
+/// Registers every binding. On the first failure, bindings registered by this
+/// call are removed again and the error is returned; the caller never ends up
+/// with a partially applied hotkey set.
+pub fn register_all(
+    registrar: &mut dyn ShortcutRegistrar,
+    bindings: &[Binding],
+) -> Result<(), String> {
+    let mut registered = Vec::new();
+    for binding in bindings {
+        if let Err(error) = registrar.register(&binding.shortcut) {
+            for shortcut in registered {
+                let _ = registrar.unregister(&shortcut);
+            }
+            return Err(format!(
+                "{} could not be registered: {error}",
+                binding.chord
+            ));
+        }
+        registered.push(binding.shortcut);
+    }
+    Ok(())
+}
+
+/// Atomically replaces `previous` with `next`. Bindings that keep the same
+/// chord/action stay registered; removed chords are unregistered and new ones
+/// registered. Failure restores the previous set exactly.
+pub fn swap_bindings(
+    registrar: &mut dyn ShortcutRegistrar,
+    previous: &[Binding],
+    next: &[Binding],
+) -> Result<(), String> {
+    let unchanged = |binding: &Binding| {
+        next.iter().any(|candidate| {
+            candidate.action == binding.action && candidate.shortcut == binding.shortcut
+        })
+    };
+    let mut removed = Vec::new();
+    for binding in previous {
+        if !unchanged(binding) && registrar.unregister(&binding.shortcut).is_ok() {
+            removed.push(binding.shortcut);
+        }
+    }
+    let mut added = Vec::new();
+    for binding in next {
+        let already = previous.iter().any(|candidate| {
+            candidate.action == binding.action && candidate.shortcut == binding.shortcut
+        });
+        if already {
+            continue;
+        }
+        if let Err(error) = registrar.register(&binding.shortcut) {
+            for shortcut in &added {
+                let _ = registrar.unregister(shortcut);
+            }
+            for shortcut in &removed {
+                let _ = registrar.register(shortcut);
+            }
+            return Err(format!(
+                "{} could not be registered: {error}",
+                binding.chord
+            ));
+        }
+        added.push(binding.shortcut);
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -179,5 +365,128 @@ mod tests {
         assert_eq!(win32_chord("Ctrl+Alt+D"), Some((0x0003, 0x44)));
         assert_eq!(win32_chord("Shift+F5"), Some((0x0004, 0x74)));
         assert_eq!(win32_chord("Ctrl+Nope"), None);
+    }
+
+    #[test]
+    fn settings_bindings_include_every_global_action() {
+        let values = serde_json::json!({
+            "hotkeys": {
+                "open_chord": "Ctrl+`",
+                "open_alt_chord": "Ctrl+Alt+K",
+                "plain_text_paste_chord": "Ctrl+Shift+P",
+                "copy_buffers": [
+                    {"slot": 1, "copy": "Ctrl+Alt+1", "paste": "Alt+1", "cut": ""},
+                    {"slot": 2, "copy": "", "paste": "", "cut": ""}
+                ]
+            }
+        });
+        let bindings = bindings_from_settings(&values).expect("bindings");
+        assert!(
+            bindings
+                .iter()
+                .any(|binding| binding.action == HotkeyAction::ToggleOpen)
+        );
+        assert!(
+            bindings
+                .iter()
+                .any(|binding| binding.action == HotkeyAction::PlainPaste)
+        );
+        assert!(
+            bindings
+                .iter()
+                .any(|binding| binding.action == HotkeyAction::CopyBufferCopy(1))
+        );
+        assert!(
+            bindings
+                .iter()
+                .any(|binding| binding.action == HotkeyAction::CopyBufferPaste(1))
+        );
+        assert_eq!(bindings.len(), 5);
+    }
+
+    #[test]
+    fn unassigned_legacy_chords_are_not_registered() {
+        let values = serde_json::json!({
+            "hotkeys": {
+                "open_chord": "Ctrl+`",
+                "plain_text_paste_chord": "",
+                "copy_buffers": [{"slot": 1, "copy": "", "paste": "", "cut": ""}]
+            }
+        });
+        let bindings = bindings_from_settings(&values).expect("bindings");
+        assert_eq!(bindings.len(), 1);
+        assert_eq!(bindings[0].action, HotkeyAction::ToggleOpen);
+    }
+
+    #[test]
+    fn duplicate_chords_are_rejected() {
+        let values = serde_json::json!({
+            "hotkeys": {
+                "open_chord": "Ctrl+Alt+K",
+                "open_alt_chord": "Ctrl+Alt+K"
+            }
+        });
+        assert!(bindings_from_settings(&values).is_err());
+    }
+
+    #[test]
+    fn swap_bindings_moves_buffers_and_rolls_back_on_conflict() {
+        let previous = bindings_from_settings(&serde_json::json!({
+            "hotkeys": {"open_chord": "Ctrl+`"}
+        }))
+        .expect("previous");
+        let next = bindings_from_settings(&serde_json::json!({
+            "hotkeys": {
+                "open_chord": "Ctrl+Alt+K",
+                "copy_buffers": [{"copy": "Ctrl+Alt+1", "paste": "Alt+1"}]
+            }
+        }))
+        .expect("next");
+        let mut registrar = MockRegistrar::default();
+        register_all(&mut registrar, &previous).expect("initial");
+        swap_bindings(&mut registrar, &previous, &next).expect("swap");
+        let next_chords = |action: HotkeyAction| {
+            next.iter()
+                .find(|binding| binding.action == action)
+                .map(|binding| binding.shortcut.to_string())
+        };
+        assert!(
+            !registrar
+                .registered
+                .contains(&previous[0].shortcut.to_string())
+        );
+        assert!(
+            registrar
+                .registered
+                .contains(&next_chords(HotkeyAction::ToggleOpen).unwrap())
+        );
+        assert!(
+            registrar
+                .registered
+                .contains(&next_chords(HotkeyAction::CopyBufferCopy(1)).unwrap())
+        );
+
+        let failing = bindings_from_settings(&serde_json::json!({
+            "hotkeys": {"open_chord": "Ctrl+Alt+J"}
+        }))
+        .expect("failing");
+        registrar.fail_on = Some(failing[0].shortcut.to_string());
+        let error = swap_bindings(&mut registrar, &next, &failing).expect_err("conflict");
+        assert!(error.contains("could not be registered"));
+        assert!(
+            registrar
+                .registered
+                .contains(&next_chords(HotkeyAction::ToggleOpen).unwrap())
+        );
+        assert!(
+            registrar
+                .registered
+                .contains(&next_chords(HotkeyAction::CopyBufferCopy(1)).unwrap())
+        );
+        assert!(
+            !registrar
+                .registered
+                .contains(&failing[0].shortcut.to_string())
+        );
     }
 }

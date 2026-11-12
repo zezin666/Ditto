@@ -1,7 +1,9 @@
 param(
     [Parameter(Mandatory = $true)][string]$DittoExe,
     [string]$Root = "",
-    [int]$ShowCycles = 100
+    [int]$ShowCycles = 100,
+    [int]$SeedCount = 3,
+    [string]$PipeSuffix = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -26,14 +28,22 @@ $resultDir = Join-Path $Root "results"
 New-Item -ItemType Directory -Force -Path $resultDir | Out-Null
 
 $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
-$pipePath = "\\.\pipe\ditto-$sid"
+# Unique instance suffix: a running user Ditto (or another QA instance) is
+# never contacted or terminated.
+if ([string]::IsNullOrWhiteSpace($PipeSuffix)) {
+    $PipeSuffix = [Guid]::NewGuid().ToString("N").Substring(0, 10)
+}
+$env:DITTO_PIPE_SUFFIX = $PipeSuffix
+$pipeName = "ditto-$sid-$PipeSuffix"
+$pipePath = "//./pipe/$pipeName"
 
 trap {
     if ($null -ne $core -and -not $core.HasExited) {
         Stop-Process -Id $core.Id -Force -ErrorAction SilentlyContinue
     }
+    $popupPattern = Join-Path $repoRoot "target\*"
     Get-Process -Name DittoPopup -ErrorAction SilentlyContinue |
-        Where-Object { $_.Path -like "$repoRoot	arget\*" } |
+        Where-Object { $_.Path -like $popupPattern -and $_.StartTime -ge $startedAt } |
         Stop-Process -Force -ErrorAction SilentlyContinue
     [Console]::Error.WriteLine("QA_TRAP: $_")
     exit 1
@@ -100,7 +110,7 @@ function Call($stream, [string]$type, [string]$fields = "") {
 # --- start core -----------------------------------------------------------
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 New-Item -ItemType Directory -Force -Path $dataRoot | Out-Null
-& cargo run --quiet --manifest-path (Join-Path $repoRoot "Cargo.toml") -p ditto-storage --example seed_qa -- $dataRoot
+& cargo run --quiet --manifest-path (Join-Path $repoRoot "Cargo.toml") -p ditto-storage --example seed_qa -- $dataRoot $SeedCount
 if ($LASTEXITCODE -ne 0) { throw "failed to seed the synthetic data root" }
 $env:DITTO_DATA_DIR = $dataRoot
 $env:DITTO_PERF_LOG = $perfLog
@@ -113,7 +123,7 @@ for ($i = 0; $i -lt 200; $i++) {
     Start-Sleep -Milliseconds 50
     $pipeNames = [System.IO.Directory]::GetFiles("//./pipe/") |
         ForEach-Object { [System.IO.Path]::GetFileName($_) }
-    if ($pipeNames -contains "ditto-$sid") { $pipeReady = $true; break }
+    if ($pipeNames -contains $pipeName) { $pipeReady = $true; break }
     if ($core.HasExited) { throw "Ditto exited during startup with code $($core.ExitCode)" }
 }
 Assert $pipeReady "core created the per-user named pipe"
@@ -169,7 +179,7 @@ Write-Output ("IDLE_COLD_SAMPLES_BYTES=" + ($coldSamples -join ","))
 Write-Output ("IDLE_COLD_MEDIAN_PRIVATE_BYTES={0}" -f $coldMedian)
 
 # --- IPC session ----------------------------------------------------------
-$pipe = New-Object System.IO.Pipes.NamedPipeClientStream(".", "ditto-$sid", [System.IO.Pipes.PipeDirection]::InOut)
+$pipe = New-Object System.IO.Pipes.NamedPipeClientStream(".", $pipeName, [System.IO.Pipes.PipeDirection]::InOut)
 $pipe.Connect(5000)
 $stream = $pipe
 $hello = Call $stream "Hello" "`"proto_min`":1,`"proto_max`":1,`"client`":`"cli`",`"pid`":$PID,`"nonce`":`"qa`",`"subscribe`":false"
@@ -191,7 +201,7 @@ Assert ($null -ne $qaGroup) "created group is listed"
 
 $clips = Call $stream "GetClips" "`"query`":`"`",`"limit`":50"
 Assert ($clips.type -eq "Clips") "GetClips returns clips"
-Assert ($clips.items.Count -ge 3) "seeded synthetic clips are visible ($($clips.items.Count) clip(s))"
+Assert ($clips.items.Count -ge [Math]::Min(3, $SeedCount)) "seeded synthetic clips are visible ($($clips.items.Count) clip(s))"
 $clip = $clips.items | Where-Object { $_.preview_text -eq "DITTO-QA-SYNTHETIC seed clip" } | Select-Object -First 1
 Assert ($null -ne $clip) "seeded clip is the known synthetic text"
 
@@ -323,8 +333,9 @@ if (Test-Path -LiteralPath $perfLog) {
 }
 
 # --- teardown -------------------------------------------------------------
+$popupPattern = Join-Path $repoRoot "target\*"
 Get-Process -Name DittoPopup -ErrorAction SilentlyContinue |
-    Where-Object { $_.Path -like "$repoRoot	arget\*" } |
+    Where-Object { $_.Path -like $popupPattern -and $_.StartTime -ge $startedAt } |
     Stop-Process -Force -ErrorAction SilentlyContinue
 Stop-Process -Id $core.Id -Force -ErrorAction SilentlyContinue
 Write-Output "QA_ROOT=$Root"

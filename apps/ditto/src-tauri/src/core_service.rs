@@ -9,9 +9,12 @@ use std::{
     time::Duration,
 };
 
-use ditto_clipboard::{CaptureConfig, CapturedClip, ClipboardMonitor, WriteSuppression};
+use ditto_clipboard::{
+    CaptureConfig, CapturedClip, ClipboardMonitor, ClipboardSource, WindowsClipboardSource,
+    WriteSuppression, build_captured_clip,
+};
 use ditto_ipc::{ErrorCode, Event, PasteOutcome, Request, Response};
-use ditto_model::{ClipQuery, SearchMode};
+use ditto_model::{ClipQuery, ClipSort, SearchMode};
 use ditto_paste::{PasteErrorCode, PasteFailure, PasteOptions, TargetWindow, WindowsPasteEngine};
 use ditto_storage::{Storage, StorageError};
 use ditto_win::PipeServer;
@@ -55,15 +58,26 @@ impl CoreService {
         let paste_for_requests = Arc::clone(&paste_slot);
         let paste_target = Arc::new(Mutex::new(None));
         let targets_for_requests = Arc::clone(&paste_target);
-        let pipe = PipeServer::start_with_handler(pipe_name, move |request| {
-            handle_request(
-                &storage_for_requests,
-                request,
-                &broadcasts_for_requests,
-                &paste_for_requests,
-                &targets_for_requests,
-            )
-        })
+        let targets_for_visibility = Arc::clone(&paste_target);
+        let pipe = PipeServer::start_with_handler_and_visibility(
+            pipe_name,
+            move |request| {
+                handle_request(
+                    &storage_for_requests,
+                    request,
+                    &broadcasts_for_requests,
+                    &paste_for_requests,
+                    &targets_for_requests,
+                )
+            },
+            move |visible| {
+                if visible {
+                    capture_target_into(&targets_for_visibility);
+                } else {
+                    *targets_for_visibility.lock() = None;
+                }
+            },
+        )
         .map_err(|error| ditto_model::DittoError::Ipc(error.to_string()))?;
         *broadcast_slot.lock() = Some(pipe.clone());
 
@@ -114,17 +128,8 @@ impl CoreService {
     /// Captures the user's foreground window before the popup activates. The
     /// popup can then take keyboard focus without becoming the paste target.
     pub fn capture_paste_target(&self) -> Option<TargetWindow> {
-        match ditto_paste::capture_foreground_window() {
-            Ok(target) => {
-                *self.paste_target.lock() = Some(target.clone());
-                Some(target)
-            }
-            Err(error) => {
-                log::info!("no paste target captured before popup: {error}");
-                *self.paste_target.lock() = None;
-                None
-            }
-        }
+        capture_target_into(&self.paste_target);
+        self.paste_target.lock().clone()
     }
 
     pub fn clear_paste_target(&self) {
@@ -209,6 +214,72 @@ impl CoreService {
 
     /// Starts an OLE drag-out for a clip. Blocks until the user drops or
     /// cancels, so it must be called from a UI thread with a mouse button down.
+    /// Pastes the most recent clip as plain text to the captured target. Used
+    /// by the configurable global "paste as plain text" chord.
+    pub fn paste_latest_plain(&self) -> Result<(), String> {
+        let page = self
+            .storage
+            .search_clips(&ClipQuery {
+                query: String::new(),
+                group_id: None,
+                kind: None,
+                pinned_only: false,
+                mode: SearchMode::Contains,
+                sort: ClipSort::Recent,
+                limit: 1,
+                cursor: None,
+                include_preview: false,
+            })
+            .map_err(|error| error.to_string())?;
+        let Some(clip) = page.items.first() else {
+            return Err("clipboard history is empty".to_string());
+        };
+        self.paste(clip.id, true, &[], &[]).map(|_| ())
+    }
+
+    /// Pastes a copy-buffer slot to the captured target.
+    pub fn paste_copy_buffer(&self, slot: u8, plain_text: bool) -> Result<(), String> {
+        let slots = self
+            .storage
+            .copy_buffers()
+            .map_err(|error| error.to_string())?;
+        let clip_id = slots
+            .iter()
+            .find(|buffer| buffer.slot == slot)
+            .and_then(|buffer| buffer.clip_id)
+            .ok_or_else(|| format!("copy buffer {slot} is empty"))?;
+        self.paste(clip_id, plain_text, &[], &[]).map(|_| ())
+    }
+
+    /// Captures the current system clipboard into a copy-buffer slot. This is
+    /// the global counterpart of "assign selection to buffer": it does not
+    /// depend on the popup being open or focused.
+    pub fn capture_clipboard_to_copy_buffer(&self, slot: u8) -> Result<(), String> {
+        let settings = self
+            .storage
+            .get_settings()
+            .map_err(|error| error.to_string())?;
+        let config = capture_config(&settings.values);
+        let source = WindowsClipboardSource::new(config.clone());
+        let snapshot = source
+            .read()
+            .map_err(|error| error.to_string())?
+            .ok_or_else(|| "clipboard is empty or excluded".to_string())?;
+        let captured = build_captured_clip(snapshot, &config).map_err(|error| error.to_string())?;
+        let outcome = self
+            .storage
+            .insert_clip(&captured.into_new_clip(), true)
+            .map_err(|error| error.to_string())?;
+        self.storage
+            .assign_copy_buffer(slot, Some(outcome.clip.id))
+            .map_err(|error| error.to_string())?;
+        let event = Event::ClipAdded { clip: outcome.clip };
+        if let Err(error) = self.pipe.broadcast(&event) {
+            log::warn!("copy-buffer capture broadcast failed: {error}");
+        }
+        Ok(())
+    }
+
     pub fn drag_out(&self, clip_id: i64, owner_hwnd: isize) -> Result<bool, String> {
         let clip = self
             .storage
@@ -309,6 +380,20 @@ fn now_ms() -> i64 {
         .duration_since(std::time::UNIX_EPOCH)
         .map(|duration| duration.as_millis() as i64)
         .unwrap_or_default()
+}
+
+/// Snapshots the current foreground window into the paste-target slot. Called
+/// by the pipe visibility hook *before* the popup is shown/activated.
+fn capture_target_into(slot: &TargetSlot) {
+    match ditto_paste::capture_foreground_window() {
+        Ok(target) => {
+            *slot.lock() = Some(target);
+        }
+        Err(error) => {
+            log::info!("no paste target captured before popup: {error}");
+            *slot.lock() = None;
+        }
+    }
 }
 
 fn persist_capture(storage: &Storage, pipe: &PipeServer, captured: CapturedClip) {

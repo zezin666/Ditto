@@ -395,11 +395,13 @@ fn default_first_ten_chords() -> Vec<String> {
 }
 
 fn default_copy_buffer_hotkeys() -> Vec<CopyBufferHotkeys> {
+    // Legacy copy-buffer hotkeys default to unassigned; registering Alt+1..5
+    // globally would hijack common shortcuts in every application.
     (1..=COPY_BUFFER_SLOTS)
         .map(|slot| CopyBufferHotkeys {
             slot,
-            copy: format!("Ctrl+Alt+{slot}"),
-            paste: format!("Alt+{slot}"),
+            copy: String::new(),
+            paste: String::new(),
             cut: String::new(),
         })
         .collect()
@@ -440,7 +442,7 @@ fn hotkeys_from(values: &Value) -> HotkeySettings {
     HotkeySettings {
         open: value_string(values, "hotkeys.open_chord", "Ctrl+`"),
         open_alt: value_string(values, "hotkeys.open_alt_chord", ""),
-        plain_text_paste: value_string(values, "hotkeys.plain_text_paste_chord", "Ctrl+Shift+V"),
+        plain_text_paste: value_string(values, "hotkeys.plain_text_paste_chord", ""),
         first_ten_enabled: value_bool(values, "hotkeys.first_ten_enabled", true),
         first_ten_chords,
         copy_buffers,

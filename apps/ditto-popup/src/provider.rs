@@ -474,4 +474,33 @@ mod tests {
             Request::Search { query, limit: 200, .. } if query == "needle"
         ));
     }
+
+    #[test]
+    fn group_filters_are_forwarded_to_the_core() {
+        assert!(matches!(
+            query_request_for_group("", 500, GroupFilter::All, None),
+            Request::GetClips { group_id: None, .. }
+        ));
+        assert!(matches!(
+            query_request_for_group("", 500, GroupFilter::Ungrouped, None),
+            Request::GetClips {
+                group_id: Some(-1),
+                ..
+            }
+        ));
+        assert!(matches!(
+            query_request_for_group("", 500, GroupFilter::Group(42), None),
+            Request::GetClips {
+                group_id: Some(42),
+                ..
+            }
+        ));
+        assert!(matches!(
+            query_request_for_group("needle", 500, GroupFilter::Group(42), None),
+            Request::Search {
+                group_id: Some(42),
+                ..
+            }
+        ));
+    }
 }

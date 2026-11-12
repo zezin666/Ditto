@@ -61,7 +61,7 @@ enum PopupPreviewMode {
     F3,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 struct RuntimeSettings {
     width: f32,
     height: f32,
@@ -75,6 +75,9 @@ struct RuntimeSettings {
     animations: bool,
     always_on_top: bool,
     show_grouped_in_main: bool,
+    theme: ThemeMode,
+    first_ten_enabled: bool,
+    first_ten_chords: Vec<String>,
 }
 
 impl RuntimeSettings {
@@ -92,6 +95,9 @@ impl RuntimeSettings {
             animations: true,
             always_on_top: true,
             show_grouped_in_main: true,
+            theme: ThemeMode::System,
+            first_ten_enabled: true,
+            first_ten_chords: default_first_ten_chords(),
         }
     }
 }
@@ -173,6 +179,7 @@ struct SoakRuntime {
 
 struct BenchScrollRuntime {
     frames: u32,
+    warmup_left: u32,
     offset: f32,
     log_path: PathBuf,
     rows: Vec<(u32, f32, f32, f32, usize)>,
@@ -235,6 +242,7 @@ pub struct PopupApp {
     visible_flag: Arc<AtomicBool>,
     always_on_top: bool,
     user_activated: bool,
+    activation_retries: u8,
     previous_foreground: HWND,
     last_popup_position: Option<POINT>,
     window_handle: Option<HWND>,
@@ -270,6 +278,7 @@ pub struct PopupApp {
     rendered_rows: usize,
     pending_scroll: Option<usize>,
     last_frame_at: Instant,
+    last_focus_trace: Option<Instant>,
     capture: Option<CaptureRuntime>,
     soak: Option<SoakRuntime>,
     bench_scroll: Option<BenchScrollRuntime>,
@@ -366,6 +375,7 @@ impl PopupApp {
             visible_flag,
             always_on_top: true,
             user_activated: false,
+            activation_retries: 0,
             previous_foreground: HWND::default(),
             last_popup_position: None,
             window_handle,
@@ -403,10 +413,12 @@ impl PopupApp {
             rendered_rows: 0,
             pending_scroll: None,
             last_frame_at: Instant::now(),
+            last_focus_trace: None,
             capture,
             soak,
             bench_scroll: options.bench_scroll.then(|| BenchScrollRuntime {
                 frames: 0,
+                warmup_left: options.bench_warmup,
                 offset: 0.0,
                 log_path: options.bench_log.clone(),
                 rows: Vec::new(),
@@ -421,6 +433,26 @@ impl PopupApp {
 
     fn mode(&self) -> Mode {
         self.theme.mode()
+    }
+
+    /// Re-resolves the configured theme. `system` follows the current Windows
+    /// light/dark/high-contrast state at every Show and settings change, so
+    /// switching from dark back to system does not stick until a restart.
+    fn refresh_theme(&mut self) {
+        let theme = Theme::from(self.settings.theme);
+        let palette_changed = self.theme != theme || self.palette.high_contrast;
+        if self.theme != theme || palette_changed {
+            self.theme = theme;
+            self.palette = Palette::for_theme(theme);
+            qa_trace(&format!(
+                "theme-apply {:?} palette_high_contrast={}",
+                theme, self.palette.high_contrast
+            ));
+            apply_visuals(&self.ctx, theme, self.palette);
+            if let Some(hwnd) = self.window_handle {
+                platform::configure_window(hwnd, theme, self.palette);
+            }
+        }
     }
 
     fn row_height(&self) -> f32 {
@@ -448,7 +480,7 @@ impl PopupApp {
                 }
                 PopupSignal::HideLocal => {
                     qa_trace("signal-hide-local");
-                    self.hide_popup();
+                    self.hide_popup_keep_foreground();
                 }
                 PopupSignal::SettingsChanged => {
                     self.provider.send(ProviderCommand::RefreshMetadata);
@@ -511,9 +543,13 @@ impl PopupApp {
                     (f64::from(self.settings.height) * scale).round() as i32,
                 );
             }
-            platform::restore_no_activate(hwnd);
+            // Keyboard-first hotkey path: the popup must own OS keyboard focus
+            // immediately so typing, Enter, and arrow keys work without a
+            // mouse click. Activation happens after the viewport commands
+            // below, since winit may re-show the window.
             ditto_win::set_popup_visible(hwnd, true);
         }
+        self.refresh_theme();
         self.ctx.send_viewport_cmd(ViewportCommand::Visible(true));
         self.ctx.send_viewport_cmd(ViewportCommand::WindowLevel(
             if self.settings.always_on_top {
@@ -524,7 +560,11 @@ impl PopupApp {
         ));
         self.visible = true;
         self.visible_flag.store(true, Ordering::SeqCst);
-        self.user_activated = false;
+        // `user_activated` means "the popup owns focus and must restore the
+        // previous foreground on hide". Hotkey Show activates by design.
+        self.user_activated = true;
+        self.activation_retries = 0;
+        self.last_focus_trace = None;
         self.shown_at = Some(Instant::now());
         self.show_received_at = Some(received_at);
         self.frame_logged_for_show = false;
@@ -543,10 +583,36 @@ impl PopupApp {
         }
         self.request_load();
         self.request_repaint_soon();
+        if let Some(hwnd) = self.window_handle {
+            let activated = platform::activate_popup(hwnd, self.previous_foreground);
+            qa_trace(&format!(
+                "activate-foreground={activated} hwnd={} visible={} fg={}",
+                hwnd.0 as isize,
+                platform::is_window_visible(hwnd),
+                platform::current_foreground().0 as isize
+            ));
+            // Start the focus-loss grace period after activation, not before
+            // the (possibly slow) first load and Win32 activation.
+            self.shown_at = Some(Instant::now());
+        }
     }
 
     fn hide_popup(&mut self) {
+        self.hide_popup_with(true);
+    }
+
+    /// Hides without pulling focus back to the paste target. Used when the
+    /// user switched to another application: that application must keep the
+    /// focus and the click that caused the switch.
+    fn hide_popup_keep_foreground(&mut self) {
+        self.hide_popup_with(false);
+    }
+
+    fn hide_popup_with(&mut self, restore_target: bool) {
         let was_visible = self.visible;
+        if !restore_target {
+            self.user_activated = false;
+        }
         self.hide_popup_internal();
         if was_visible {
             // Local hides (Esc, focus loss, outside click, errors) must update
@@ -695,6 +761,17 @@ impl PopupApp {
     }
 
     fn apply_settings_snapshot(&mut self, snapshot: &SettingsSnapshot) {
+        qa_trace(&format!(
+            "settings-snapshot groups={:?} appearance={:?}",
+            snapshot
+                .values
+                .pointer("/groups/show_grouped_in_main")
+                .and_then(serde_json::Value::as_bool),
+            snapshot
+                .values
+                .pointer("/appearance/show_grouped_in_main")
+                .and_then(serde_json::Value::as_bool)
+        ));
         let popup = snapshot.values.get("popup");
         let appearance = snapshot.values.get("appearance");
         let popup_value = |key: &str| popup.and_then(|value| value.get(key));
@@ -766,14 +843,49 @@ impl PopupApp {
                     }));
             }
         }
-        if let Some(value) = appearance_value("show_grouped_in_main")
-            .or_else(|| snapshot.values.pointer("/groups/show_grouped_in_main"))
+        if let Some(value) = snapshot
+            .values
+            .pointer("/groups/show_grouped_in_main")
             .and_then(serde_json::Value::as_bool)
+            .or_else(|| {
+                appearance_value("show_grouped_in_main").and_then(serde_json::Value::as_bool)
+            })
         {
+            let changed = self.settings.show_grouped_in_main != value;
             self.settings.show_grouped_in_main = value;
+            qa_trace(&format!(
+                "settings-apply show_grouped_in_main={value} changed={changed} visible={}",
+                self.visible
+            ));
             if !value {
                 self.current_group = GroupFilter::All;
                 self.group_menu.open = false;
+            }
+            if changed && self.visible {
+                // Metadata may arrive after the Show-time load; re-query so
+                // the main list immediately reflects the new group policy.
+                self.request_load();
+            }
+        }
+        if let Some(value) = snapshot
+            .values
+            .pointer("/hotkeys/first_ten_enabled")
+            .and_then(serde_json::Value::as_bool)
+        {
+            self.settings.first_ten_enabled = value;
+        }
+        if let Some(chords) = snapshot
+            .values
+            .pointer("/hotkeys/first_ten_chords")
+            .and_then(serde_json::Value::as_array)
+        {
+            let chords = chords
+                .iter()
+                .filter_map(serde_json::Value::as_str)
+                .map(ToString::to_string)
+                .collect::<Vec<_>>();
+            if chords.len() == FIRST_TEN {
+                self.settings.first_ten_chords = chords;
             }
         }
         if self.options.theme_override.is_none()
@@ -781,24 +893,19 @@ impl PopupApp {
                 .or_else(|| appearance_value("theme"))
                 .and_then(serde_json::Value::as_str)
         {
-            let theme = match value {
-                "light" => Some(Theme::Light),
-                "dark" => Some(Theme::Dark),
-                "hc" | "high_contrast" => Some(Theme::HighContrast),
-                _ => None,
-            };
-            if let Some(theme) = theme {
-                self.theme = theme;
-                self.palette = Palette::for_theme(theme);
-                apply_visuals(&self.ctx, theme, self.palette);
-                if let Some(hwnd) = self.window_handle {
-                    platform::configure_window(hwnd, theme, self.palette);
-                }
-            }
+            self.settings.theme = theme_mode_from_setting(value);
+            self.refresh_theme();
         }
     }
 
     fn handle_action_done(&mut self, action: ActionKind, result: ProviderResult<()>) {
+        qa_trace(&format!(
+            "action-done action={action:?} ok={}",
+            result.is_ok()
+        ));
+        if let Err(error) = &result {
+            qa_trace(&format!("action-error action={action:?} error={error}"));
+        }
         match result {
             Ok(()) => {
                 let key = match action {
@@ -842,16 +949,27 @@ impl PopupApp {
         }
     }
 
+    /// `show_grouped_in_main=false` means the main list is the ungrouped
+    /// inbox; explicit group navigation is unchanged. The provider receives a
+    /// real group filter either way (All is never silently dropped).
+    fn effective_group_filter(&self) -> GroupFilter {
+        main_list_group(self.settings.show_grouped_in_main, self.current_group)
+    }
+
     fn request_load(&mut self) {
         self.request_id = self.request_id.saturating_add(1);
         self.loading = true;
         self.append_request = None;
         self.search_due = None;
         let limit = if self.options.mock { 10_000 } else { 500 };
+        qa_trace(&format!(
+            "load group={:?} limit={limit}",
+            self.effective_group_filter()
+        ));
         self.provider.send(ProviderCommand::Load {
             request_id: self.request_id,
             query: self.query.clone(),
-            group: self.current_group,
+            group: self.effective_group_filter(),
             limit,
             cursor: None,
         });
@@ -873,7 +991,7 @@ impl PopupApp {
         self.provider.send(ProviderCommand::Load {
             request_id: self.request_id,
             query: self.query.clone(),
-            group: self.current_group,
+            group: self.effective_group_filter(),
             limit: 500,
             cursor: Some(cursor),
         });
@@ -959,6 +1077,52 @@ impl PopupApp {
         self.ctx.request_repaint();
     }
 
+    fn retry_hotkey_activation(&mut self) {
+        if !self.visible || !self.user_activated {
+            return;
+        }
+        if let Some(hwnd) = self.window_handle
+            && self
+                .shown_at
+                .is_some_and(|shown| shown.elapsed() < Duration::from_millis(1500))
+            && self
+                .last_focus_trace
+                .is_none_or(|last| last.elapsed() > Duration::from_millis(100))
+        {
+            self.last_focus_trace = Some(Instant::now());
+            qa_trace(&format!(
+                "focus-trace fg={} popup={}",
+                platform::current_foreground().0 as isize,
+                hwnd.0 as isize
+            ));
+        }
+        if self.activation_retries >= 4 {
+            return;
+        }
+        // Only fight for focus during the Show transition; after that, an
+        // unfocused popup means the user intentionally switched away.
+        if self
+            .shown_at
+            .is_none_or(|shown| shown.elapsed() > Duration::from_millis(350))
+        {
+            return;
+        }
+        let Some(hwnd) = self.window_handle else {
+            return;
+        };
+        if platform::current_foreground() != hwnd {
+            self.activation_retries = self.activation_retries.saturating_add(1);
+            let activated = platform::activate_popup(hwnd, self.previous_foreground);
+            qa_trace(&format!(
+                "retry-activate={activated} attempt={}",
+                self.activation_retries
+            ));
+            if activated {
+                self.shown_at = Some(Instant::now());
+            }
+        }
+    }
+
     fn activate_for_user_if_needed(&mut self) {
         if !self.visible || self.user_activated {
             return;
@@ -979,11 +1143,20 @@ impl PopupApp {
             return;
         }
         if self.user_activated {
-            let focused = self
-                .ctx
-                .input(|input| input.viewport().focused.unwrap_or(false));
-            if !focused {
-                self.hide_popup();
+            // Activation is requested during Show. Give the focus change one
+            // frame to land before treating an unfocused viewport as "the user
+            // switched away".
+            let enough_time = self
+                .shown_at
+                .is_none_or(|shown| shown.elapsed() > Duration::from_millis(120));
+            let focused = self.ctx.input(|input| {
+                input.viewport().focused.unwrap_or(false)
+                    || self
+                        .window_handle
+                        .is_some_and(|hwnd| platform::current_foreground() == hwnd)
+            });
+            if enough_time && !focused {
+                self.hide_popup_keep_foreground();
             }
             return;
         }
@@ -996,7 +1169,7 @@ impl PopupApp {
             })
         {
             qa_trace("outside-click-hide");
-            self.hide_popup();
+            self.hide_popup_keep_foreground();
         }
     }
 
@@ -1079,11 +1252,13 @@ impl PopupApp {
         if ctx.input_mut(|input| input.consume_key(Modifiers::NONE, egui::Key::Delete)) {
             self.request_delete_selected();
         }
-        if ctx.input_mut(|input| input.consume_key(Modifiers::NONE, egui::Key::Enter)) {
-            self.paste_selected(PasteMode::Original);
-        }
+        // egui ignores extra Shift/Alt modifiers when matching, so the
+        // more-specific Shift+Enter must be consumed before plain Enter.
         if ctx.input_mut(|input| input.consume_key(Modifiers::SHIFT, egui::Key::Enter)) {
             self.paste_selected(PasteMode::PlainText);
+        }
+        if ctx.input_mut(|input| input.consume_key(Modifiers::NONE, egui::Key::Enter)) {
+            self.paste_selected(PasteMode::Original);
         }
 
         let shift_control = Modifiers {
@@ -1105,9 +1280,16 @@ impl PopupApp {
                 self.paste_buffer(slot, false);
             }
         }
-        for (key, number) in number_keys() {
-            if ctx.input_mut(|input| input.consume_key(Modifiers::CTRL, key)) {
-                self.paste_first_ten(number);
+        if self.settings.first_ten_enabled {
+            let chords = self.settings.first_ten_chords.clone();
+            for (index, chord) in chords.iter().enumerate() {
+                let Some((modifiers, key)) = parse_popup_chord(chord) else {
+                    continue;
+                };
+                if ctx.input_mut(|input| input.consume_key(modifiers, key)) {
+                    let number = if index == 9 { 0 } else { index as u8 + 1 };
+                    self.paste_first_ten(number);
+                }
             }
         }
     }
@@ -1220,6 +1402,11 @@ impl PopupApp {
         if ids.is_empty() {
             return;
         }
+        qa_trace(&format!(
+            "paste-request count={} plain={}",
+            ids.len(),
+            matches!(mode, PasteMode::PlainText)
+        ));
         // One batch request: the core's PasteEngine::paste_many owns ordering,
         // stop-on-failure, the multi-paste interval, and write suppression.
         self.provider
@@ -1233,6 +1420,7 @@ impl PopupApp {
         let index = first_ten_index(number);
         if let Some(clip) = self.items.get(index) {
             let clip_id = clip.id;
+            qa_trace("paste-request first-ten");
             self.provider
                 .send(ProviderCommand::Action(ProviderAction::Paste {
                     clip_ids: vec![clip_id],
@@ -1553,6 +1741,7 @@ impl PopupApp {
                     let response =
                         ui.add_sized([edit_width, dimension::control_height(mode)], text_edit);
                     if response.changed() {
+                        qa_trace(&format!("search-len={}", self.query.chars().count()));
                         self.schedule_search();
                     }
                     if response.has_focus() {
@@ -1879,11 +2068,16 @@ impl PopupApp {
                     }
                 });
                 self.rendered_rows = rendered_rows;
+                let bench_near_end = self.bench_scroll.as_ref().is_some_and(|bench| {
+                    bench.offset + viewport_height
+                        >= item_count as f32 * row_height - row_height * 20.0
+                });
                 if self.next_cursor.is_some()
-                    && self
-                        .selection
-                        .primary
-                        .is_some_and(|index| index.saturating_add(20) >= item_count)
+                    && (bench_near_end
+                        || self
+                            .selection
+                            .primary
+                            .is_some_and(|index| index.saturating_add(20) >= item_count))
                 {
                     self.load_more_due = true;
                 }
@@ -2150,6 +2344,14 @@ impl PopupApp {
         }
         let dt_ms = self.ctx.input(|input| input.stable_dt).mul_add(1000.0, 0.0);
         let update_ms = update_started.elapsed().as_secs_f32() * 1000.0;
+        // Discard window/GPU/font warm-up frames. First-frame latency is
+        // measured separately; this harness measures steady-state scrolling.
+        if bench.warmup_left > 0 {
+            bench.warmup_left -= 1;
+            bench.offset += row_height * 40.0;
+            self.ctx.request_repaint();
+            return;
+        }
         bench.rows.push((
             bench.frames,
             dt_ms,
@@ -2158,7 +2360,10 @@ impl PopupApp {
             self.rendered_rows,
         ));
         bench.frames += 1;
-        bench.offset += row_height * 8.0;
+        // Fast-scroll cadence: 40 rows/frame covers ~12k rows in 300 frames,
+        // so a 10k corpus is traversed end-to-end instead of only the first
+        // page. Each frame still lays out the same virtualized rows.
+        bench.offset += row_height * 40.0;
         let max_offset = (item_count as f32 * row_height).max(0.0);
         if bench.offset > max_offset {
             bench.offset = 0.0;
@@ -2272,6 +2477,7 @@ impl eframe::App for PopupApp {
         self.drain_provider();
         self.process_ime_state();
         self.tick_search();
+        self.retry_hotkey_activation();
         self.activate_for_user_if_needed();
         self.maybe_hide_after_focus_loss();
         self.handle_keyboard(ctx);
@@ -2903,6 +3109,62 @@ fn first_ten_index(number: u8) -> usize {
     }
 }
 
+/// `show_grouped_in_main=false` narrows the All/main list to ungrouped clips;
+/// explicit group navigation is untouched.
+fn main_list_group(show_grouped_in_main: bool, current: GroupFilter) -> GroupFilter {
+    if !show_grouped_in_main && current == GroupFilter::All {
+        GroupFilter::Ungrouped
+    } else {
+        current
+    }
+}
+
+fn default_first_ten_chords() -> Vec<String> {
+    (1..=FIRST_TEN)
+        .map(|index| format!("Ctrl+{}", if index == 10 { 0 } else { index }))
+        .collect()
+}
+
+/// Maps stored theme values (new UI plus legacy spellings) to a ThemeMode.
+/// `system` is preserved so Show and settings changes can re-resolve it.
+fn theme_mode_from_setting(value: &str) -> ThemeMode {
+    match value.trim().to_ascii_lowercase().as_str() {
+        "light" => ThemeMode::Light,
+        "dark" => ThemeMode::Dark,
+        "hc" | "high_contrast" | "highcontrast" | "high-contrast" => ThemeMode::HighContrast,
+        _ => ThemeMode::System,
+    }
+}
+
+/// Parses a settings chord (`Ctrl+1`, `Alt+F2`, ...) for popup-scoped
+/// shortcuts. Returns None for empty or unsupported chords.
+fn parse_popup_chord(chord: &str) -> Option<(Modifiers, egui::Key)> {
+    let chord = chord.trim();
+    if chord.is_empty() {
+        return None;
+    }
+    let mut modifiers = Modifiers::NONE;
+    let mut key = None;
+    for token in chord.split('+') {
+        let token = token.trim();
+        match token.to_ascii_lowercase().as_str() {
+            "ctrl" | "control" => modifiers.ctrl = true,
+            "alt" => modifiers.alt = true,
+            "shift" => modifiers.shift = true,
+            "win" | "super" | "meta" => modifiers.command = true,
+            _ => {
+                if key.is_some() {
+                    return None;
+                }
+                // `Key::from_name` expects the canonical case (`F1`, `A`),
+                // so pass the original token rather than the lowercased one.
+                key = Some(egui::Key::from_name(token)?);
+            }
+        }
+    }
+    key.map(|key| (modifiers, key))
+}
+
 fn ime_composing_after_events(initial: bool, events: &[EguiEvent]) -> bool {
     let mut composing = initial;
     for event in events {
@@ -3298,6 +3560,43 @@ mod tests {
         assert_eq!(first_ten_index(1), 0);
         assert_eq!(first_ten_index(9), 8);
         assert_eq!(first_ten_index(0), 9);
+    }
+
+    #[test]
+    fn first_ten_chords_are_parsed_from_settings_values() {
+        let (modifiers, key) = parse_popup_chord("Ctrl+Shift+1").expect("chord");
+        assert!(modifiers.ctrl && modifiers.shift && !modifiers.alt);
+        assert_eq!(key, egui::Key::Num1);
+        assert!(parse_popup_chord("").is_none());
+        assert!(parse_popup_chord("Ctrl+NotAKey").is_none());
+    }
+
+    #[test]
+    fn hidden_groups_are_excluded_only_from_the_main_list() {
+        assert_eq!(
+            main_list_group(false, GroupFilter::All),
+            GroupFilter::Ungrouped
+        );
+        assert_eq!(main_list_group(true, GroupFilter::All), GroupFilter::All);
+        assert_eq!(
+            main_list_group(false, GroupFilter::Group(7)),
+            GroupFilter::Group(7)
+        );
+    }
+
+    #[test]
+    fn theme_values_map_from_ui_and_legacy_spellings() {
+        assert_eq!(theme_mode_from_setting("system"), ThemeMode::System);
+        assert_eq!(theme_mode_from_setting("light"), ThemeMode::Light);
+        assert_eq!(theme_mode_from_setting("dark"), ThemeMode::Dark);
+        for value in ["highContrast", "high_contrast", "hc", "high-contrast"] {
+            assert_eq!(
+                theme_mode_from_setting(value),
+                ThemeMode::HighContrast,
+                "{value}"
+            );
+        }
+        assert_eq!(theme_mode_from_setting("unexpected"), ThemeMode::System);
     }
 
     #[test]

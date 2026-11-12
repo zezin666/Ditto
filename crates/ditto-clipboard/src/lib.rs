@@ -15,8 +15,8 @@ use sha2::{Digest, Sha256};
 
 pub use decode::{
     decode_ansi_text, decode_code_page, decode_html, decode_oem_text, decode_utf16le, dib_to_png,
-    encode_ansi_text, encode_code_page, encode_oem_text, hdrop_paths, html_fragment_bytes,
-    html_preview, normalize_text_for_hash, rtf_preview, thumbnail_png,
+    encode_ansi_text, encode_code_page, encode_code_page_terminated, encode_oem_text, hdrop_paths,
+    html_fragment_bytes, html_preview, normalize_text_for_hash, rtf_preview, thumbnail_png,
 };
 pub use error::{ClipboardError, ClipboardResult};
 pub use windows::{ClipboardMonitor, WindowsClipboardSource};

@@ -125,8 +125,34 @@ pub fn current_user_sid_string() -> ditto_model::Result<String> {
     }
 }
 
+/// Optional QA/development isolation suffix.
+///
+/// `DITTO_PIPE_SUFFIX` (or the alias `DITTO_INSTANCE_ID`) appends a sanitized
+/// token to the pipe and single-instance names. It never weakens the pipe ACL:
+/// the descriptor still grants access only to SYSTEM and the current SID.
+pub fn instance_suffix() -> Option<String> {
+    std::env::var("DITTO_PIPE_SUFFIX")
+        .ok()
+        .or_else(|| std::env::var("DITTO_INSTANCE_ID").ok())
+        .map(|value| {
+            value
+                .trim()
+                .chars()
+                .filter(|character| {
+                    character.is_ascii_alphanumeric() || matches!(character, '-' | '_')
+                })
+                .take(48)
+                .collect::<String>()
+        })
+        .filter(|value| !value.is_empty())
+}
+
 pub fn pipe_name() -> ditto_model::Result<String> {
-    Ok(format!(r"\\.\pipe\ditto-{}", current_user_sid_string()?))
+    let sid = current_user_sid_string()?;
+    Ok(match instance_suffix() {
+        Some(suffix) => format!(r"\\.\pipe\ditto-{sid}-{suffix}"),
+        None => format!(r"\\.\pipe\ditto-{sid}"),
+    })
 }
 
 /// Per-user Win32 auto-reset event used as a fast single-instance signal.
@@ -457,23 +483,45 @@ pub struct PipeServer {
     next_event: Arc<AtomicU64>,
     popup_visible: Arc<AtomicBool>,
     popup_clients: Arc<AtomicU64>,
+    visibility_hook: Option<VisibilityHook>,
 }
 
 pub type RequestHandler = Arc<dyn Fn(&Request) -> Response + Send + Sync>;
+/// Called synchronously before a show/hide event is broadcast. The core uses
+/// it to snapshot (or clear) the user's foreground window before the popup can
+/// take keyboard focus.
+pub type VisibilityHook = Arc<dyn Fn(bool) + Send + Sync>;
 
 impl PipeServer {
     pub fn start(name: &str) -> ditto_model::Result<Self> {
-        Self::start_internal(name, None)
+        Self::start_internal(name, None, None)
     }
 
     pub fn start_with_handler<F>(name: &str, handler: F) -> ditto_model::Result<Self>
     where
         F: Fn(&Request) -> Response + Send + Sync + 'static,
     {
-        Self::start_internal(name, Some(Arc::new(handler)))
+        Self::start_internal(name, Some(Arc::new(handler)), None)
     }
 
-    fn start_internal(name: &str, handler: Option<RequestHandler>) -> ditto_model::Result<Self> {
+    /// Starts the server with both a request handler and a show/hide hook.
+    pub fn start_with_handler_and_visibility<F, V>(
+        name: &str,
+        handler: F,
+        visibility: V,
+    ) -> ditto_model::Result<Self>
+    where
+        F: Fn(&Request) -> Response + Send + Sync + 'static,
+        V: Fn(bool) + Send + Sync + 'static,
+    {
+        Self::start_internal(name, Some(Arc::new(handler)), Some(Arc::new(visibility)))
+    }
+
+    fn start_internal(
+        name: &str,
+        handler: Option<RequestHandler>,
+        visibility_hook: Option<VisibilityHook>,
+    ) -> ditto_model::Result<Self> {
         let name = name.to_string();
         let clients = Arc::new(Mutex::new(HashMap::<u64, Arc<Connection>>::new()));
         let popup_visible = Arc::new(AtomicBool::new(false));
@@ -483,6 +531,7 @@ impl PipeServer {
         let handler_for_thread = handler.clone();
         let visible_for_thread = Arc::clone(&popup_visible);
         let popup_clients_for_thread = Arc::clone(&popup_clients);
+        let hook_for_thread = visibility_hook.clone();
 
         thread::Builder::new()
             .name("ditto-ipc-server".to_string())
@@ -494,6 +543,7 @@ impl PipeServer {
                     handler_for_thread,
                     visible_for_thread,
                     popup_clients_for_thread,
+                    hook_for_thread,
                 )
             })
             .map_err(|error| ditto_model::DittoError::Ipc(error.to_string()))?;
@@ -503,6 +553,7 @@ impl PipeServer {
             next_event: Arc::new(AtomicU64::new(1)),
             popup_visible,
             popup_clients,
+            visibility_hook,
         })
     }
 
@@ -540,6 +591,9 @@ impl PipeServer {
     /// event. Clients that connect later query the state so a slow popup start
     /// cannot lose the first hotkey press.
     pub fn set_popup_visible(&self, visible: bool) -> ditto_model::Result<()> {
+        if let Some(hook) = &self.visibility_hook {
+            hook(visible);
+        }
         self.popup_visible.store(visible, Ordering::SeqCst);
         let event = if visible {
             Event::ShowPopup {
@@ -715,6 +769,7 @@ fn accept_loop(
     handler: Option<RequestHandler>,
     popup_visible: Arc<AtomicBool>,
     popup_clients: Arc<AtomicU64>,
+    visibility_hook: Option<VisibilityHook>,
 ) {
     loop {
         if let Err(error) = current.connect() {
@@ -738,6 +793,7 @@ fn accept_loop(
         let handler_for_connection = handler.clone();
         let visible_for_connection = Arc::clone(&popup_visible);
         let popup_clients_for_connection = Arc::clone(&popup_clients);
+        let hook_for_connection = visibility_hook.clone();
         thread::spawn(move || {
             handle_connection(
                 connection,
@@ -745,6 +801,7 @@ fn accept_loop(
                 handler_for_connection,
                 visible_for_connection,
                 popup_clients_for_connection,
+                hook_for_connection,
             )
         });
 
@@ -764,6 +821,7 @@ fn handle_connection(
     handler: Option<RequestHandler>,
     popup_visible: Arc<AtomicBool>,
     popup_clients: Arc<AtomicU64>,
+    visibility_hook: Option<VisibilityHook>,
 ) {
     loop {
         if connection.closed.load(Ordering::SeqCst) {
@@ -806,7 +864,13 @@ fn handle_connection(
             }
         };
 
-        let response = dispatch_request(&request, &clients, handler.as_deref(), &popup_visible);
+        let response = dispatch_request(
+            &request,
+            &clients,
+            handler.as_deref(),
+            &popup_visible,
+            visibility_hook.as_deref(),
+        );
         if let Request::Hello { client, .. } = &request {
             if *client == ClientKind::Popup {
                 popup_clients.fetch_add(1, Ordering::SeqCst);
@@ -837,6 +901,7 @@ fn dispatch_request(
     clients: &Arc<Mutex<HashMap<u64, Arc<Connection>>>>,
     handler: Option<&(dyn Fn(&Request) -> Response + Send + Sync)>,
     popup_visible: &AtomicBool,
+    visibility_hook: Option<&(dyn Fn(bool) + Send + Sync)>,
 ) -> Response {
     match request {
         Request::Hello {
@@ -872,6 +937,9 @@ fn dispatch_request(
             }
         }
         Request::ShowPopup => {
+            if let Some(hook) = visibility_hook {
+                hook(true);
+            }
             popup_visible.store(true, Ordering::SeqCst);
             let event = Event::ShowPopup {
                 at_ms: unix_millis(),
@@ -893,6 +961,9 @@ fn dispatch_request(
             Response::PopupVisibility { visible: true }
         }
         Request::HidePopup => {
+            if let Some(hook) = visibility_hook {
+                hook(false);
+            }
             popup_visible.store(false, Ordering::SeqCst);
             let event = Event::HidePopup;
             let frame = match Frame::json(FrameType::Event, unix_millis(), &event) {

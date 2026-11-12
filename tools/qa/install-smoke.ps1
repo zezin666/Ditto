@@ -1,21 +1,27 @@
 param(
     [Parameter(Mandatory = $true)][string]$Setup,
-    [Parameter(Mandatory = $true)][string]$PortableZip
+    [Parameter(Mandatory = $true)][string]$PortableZip,
+    [string]$PipeSuffix = ""
 )
 
 $ErrorActionPreference = "Stop"
 
-function Wait-ForPipe([string]$sid, [int]$timeoutMs = 15000) {
+function Wait-ForPipe([string]$name, [int]$timeoutMs = 15000) {
     for ($i = 0; $i -lt ($timeoutMs / 100); $i++) {
         $names = [System.IO.Directory]::GetFiles("//./pipe/") |
             ForEach-Object { [System.IO.Path]::GetFileName($_) }
-        if ($names -contains "ditto-$sid") { return $true }
+        if ($names -contains $name) { return $true }
         Start-Sleep -Milliseconds 100
     }
     return $false
 }
 
 $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+if ([string]::IsNullOrWhiteSpace($PipeSuffix)) {
+    $PipeSuffix = [Guid]::NewGuid().ToString("N").Substring(0, 10)
+}
+$env:DITTO_PIPE_SUFFIX = $PipeSuffix
+$pipeName = "ditto-$sid-$PipeSuffix"
 $base = Join-Path $env:TEMP ("ditto-package-qa-" + [Guid]::NewGuid().ToString("N").Substring(0, 8))
 $installDir = Join-Path $base "installed"
 $portableDir = Join-Path $base "portable"
@@ -37,7 +43,7 @@ foreach ($name in @("Ditto.exe", "DittoPopup.exe", "DittoUacHelper.exe", "uninst
 
 $env:DITTO_DATA_DIR = Join-Path $base "installed-data"
 $core = Start-Process -FilePath (Join-Path $installDir "Ditto.exe") -ArgumentList "--background" -PassThru
-$results.install_pipe = Wait-ForPipe $sid
+$results.install_pipe = Wait-ForPipe $pipeName
 $results.install_running = -not $core.HasExited
 Stop-Process -Id $core.Id -Force -ErrorAction SilentlyContinue
 Get-Process -Name DittoPopup -ErrorAction SilentlyContinue |
@@ -60,7 +66,7 @@ foreach ($name in @("Ditto.exe", "DittoPopup.exe", "DittoUacHelper.exe", "portab
 
 Remove-Item Env:DITTO_DATA_DIR -ErrorAction SilentlyContinue
 $portableCore = Start-Process -FilePath (Join-Path $portableDir "Ditto.exe") -ArgumentList "--background" -PassThru
-$results.portable_pipe = Wait-ForPipe $sid
+$results.portable_pipe = Wait-ForPipe $pipeName
 $portableData = Join-Path $portableDir "Data"
 $results.portable_marker_data = Test-Path -LiteralPath (Join-Path $portableData "ditto.db")
 Stop-Process -Id $portableCore.Id -Force -ErrorAction SilentlyContinue

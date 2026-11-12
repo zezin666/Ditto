@@ -43,7 +43,7 @@
 | D-022 | Do not modify Defender/system security settings; unsigned binaries may be flagged; report honestly. | §2, §5 |
 | D-023 | Process model default: `Ditto.exe` (Tauri 2 host, no WebView2 at startup) + `DittoPopup.exe` (egui, resident hidden) + `DittoUacHelper.exe` (elevation). Fallback: headless `DittoCore.exe` + popup + on-demand `DittoSettings.exe`. | §2 |
 | D-024 | IPC: named pipe, versioned protocol, request IDs, error codes, no remote access; Tauri settings uses in-process commands; popup uses the pipe. | §3.2 |
-| D-025 | Migration: read-only legacy DB, dry-run, backup, progress, rollback. | §3.4 |
+| D-025 | Migration: read-only legacy DB, dry-run, backup, rollback; v1 is one-shot and staged for the next start (no progress stream, no cancel). | §3.4 |
 | D-026 | No telemetry/network in v1. | §5 |
 | D-027 | The coordinator's task DAG and ownership matrix are authoritative. | §9, §10 |
 
@@ -57,7 +57,7 @@ them requires the coordinator so T2–T7 do not diverge.
 | ID | Decision | Rationale | Owner |
 |---|---|---|---|
 | D-101 | Data root: installed `%LOCALAPPDATA%\Ditto\v2\`; portable `<exe_dir>\Data\`; tests `DITTO_DATA_DIR`. Legacy `%APPDATA%\Ditto` is read-only migration input. | WAL/blobs should not roam; keeps portable self-contained; avoids clobbering legacy. | T1/T2/T6 |
-| D-102 | Pipe name `\\.\pipe\ditto-<current-user-sid>` with an SDDL granting full control to the current user/SYSTEM and read-only to Administrators; `PIPE_REJECT_REMOTE_CLIENTS`; `FILE_FLAG_FIRST_PIPE_INSTANCE`. | Matches the coordinator prompt; user boundary clear. | T1 |
+| D-102 | Pipe name `\\.\pipe\ditto-<current-user-sid>` with an SDDL granting full control only to the current SID and SYSTEM (Administrators are **not** granted read access); `PIPE_REJECT_REMOTE_CLIENTS`; `FILE_FLAG_FIRST_PIPE_INSTANCE`. QA/development may append `-<suffix>` via `DITTO_PIPE_SUFFIX` without changing the ACL. | Matches the coordinator prompt; user boundary clear; QA isolation. | T1/T11 |
 | D-103 | IPC framing: 24-byte header (`DTP1`, version, type, flags, length, request id) + UTF-8 JSON control payload; raw binary for blobs; max 16 MiB. | Debuggable, versionable, no arbitrary command surface. | T1/T2 |
 | D-104 | Protocol v1 message names: `Hello`, `GetClips`, `GetClip`, `Search`, `Paste`, `SetPinned`, `MoveToGroup`, `Delete`, `GetGroups`, `GetSettings`, `SetSettings`, `ShowPopup`, `HidePopup`, `Shutdown`; events `ClipAdded`, `ClipUpdated`, `SettingsChanged`, `ShowPopup`, `HidePopup`. Extras are additive. | Matches the coordinator; avoids naming drift. | T1/T2 |
 | D-105 | Settings stored in SQLite `settings` (JSON values); `config.json` is a tiny bootstrap file only. | Transactional, broadcastable, no dual source. | T2 |
@@ -74,7 +74,7 @@ them requires the coordinator so T2–T7 do not diverge.
 | D-116 | Locale catalogs: one shared EN/ZH source under `apps/ditto/ui/locales/` (T1 skeleton, T5 aggregates), generated/loaded by both apps; T3 requests popup keys through the coordinator. | Avoids two string stores and drift. | T1/T3/T5 |
 | D-117 | Settings webview capabilities: only the settings command namespace and window controls; no shell/HTTP/fs/process/updater plugins. | Least privilege. | T5 |
 | D-118 | Legacy add-ins, ChaiScript, themes, and language XML are never loaded as code; migration reads data only. | Security and maintenance. | T1/T6 |
-| D-119 | The new app does not create a taskbar button at idle; tray only. Popup is `WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW`. | Matches Ditto behavior and the prompt. | T1/T3 |
+| D-119 | The new app does not create a taskbar button at idle; tray only. The popup is `WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW` while hidden; hotkey Show deliberately clears NOACTIVATE and takes keyboard focus (T11 keyboard-first), while the pre-Show target is snapshotted for paste. | Keyboard-first hotkey use; target remains the paste destination; matching the prompt's keyboard-first requirement. | T1/T3/T11 |
 | D-120 | Data/backups/exports are unencrypted in v1; the UI warns; logs never contain content. | Explicit deferral, documented threat model. | T2/T7 |
 | D-121 | No auto-update; manual installer only. Future updater must be signed and user-initiated. | Confirmed; reduces attack surface. | T1/T7 |
 | D-122 | NSIS is per-user by default (no admin), with optional per-machine only if T1/T7 prove it is needed. Portable requires a writable `Data` dir. | Legacy is per-user; avoids elevation. | T1/T6/T7 |
@@ -95,7 +95,7 @@ them requires the coordinator so T2–T7 do not diverge.
 | D-206 | Fluent UI theme construction / page composition | T5 | React 19 + Fluent UI v9; nine pages; generated tokens |
 | D-207 | Mica/Acrylic on Settings | T5 | Mica on Win11, solid on Win10 |
 | D-208 | Settings window size | T5 | 900×640, min 720×480 |
-| D-209 | Migration UI flow (welcome/dry-run/cancel) | T6 | Offer migrate if legacy found; dry-run summary first |
+| D-209 | Migration UI flow (welcome/dry-run) | T6/T9 | Offer migrate if legacy found; dry-run summary first; v1 applies once at the next start and cannot be cancelled |
 | D-210 | Backup rotation details | T2/T6 | Last 3 verified; daily + before destructive ops |
 | D-211 | Whether regex/wildcard search ships in v1 | T3/T5 | Should; if not, contains+fulltext only; keep the API |
 | D-212 | Whether drag-to-reorder groups ships | T3/T5 | Should; move-to-group is Must |
@@ -121,7 +121,7 @@ recommended default unless it is marked blocking.
 | Q-05 | Copy buffer count: 3+ or legacy 5? | **5 slots** (legacy-compatible); acceptance requires at least 3. | No data loss; matches legacy. | No |
 | Q-06 | Should migration run automatically on first launch? | **Offer with a dry-run summary; default "Migrate" if a legacy DB is found, "Start fresh" always available.** | User consent and transparency; avoids silent long operations. | No |
 | Q-07 | Should `settings` be a JSON KV table or typed columns? | **JSON KV** with typed accessors and validation. | Extensible, fewer migrations; settings are not queried relationally. | No |
-| Q-08 | Should the popup activate on show or remain no-activate? | **No-activate on show; activate on explicit click/keyboard interaction.** | Preserves the target app's focus until the user commits. | No |
+| Q-08 | Should the popup activate on show or remain no-activate? | **Activate on hotkey Show (keyboard-first).** Snapshot the prev-foreground target before activation and paste to it; Esc/toggle hide restores the target, click-away keeps the newly focused app. | Direct typing/Enter immediately after the hotkey; the earlier no-activate choice made keyboard-first use impossible. | No (T11) |
 | Q-09 | Should the settings window be destroyed or hidden? | **Destroyed** after close. | Meets PF-9/idle memory. | No |
 | Q-10 | Data root `%LOCALAPPDATA%\Ditto\v2` vs legacy `%APPDATA%\Ditto`? | **LocalAppData** for installed; legacy AppData read-only for migration. | WAL/blobs are machine-local; avoids roaming corruption. | No; document in release notes |
 | Q-11 | Should the app support a per-machine install? | **Per-user NSIS by default**; per-machine only if required. | No admin; matches legacy. | No |
@@ -147,7 +147,7 @@ a confirmed user decision.
 | X-01 | Appendix A maps `Main.lDontAutoDelete` → `clips.pinned` | Keep `dont_auto_delete` separate; derive `pinned` from sticky fields (Q-01) | Different semantics; avoids retention bugs |
 | X-02 | Appendix A sketches `clips.copy_buffer` | Normalized `copy_buffers` table; derive in summaries (Q-02) | One source of truth; slots/names/legacy ids |
 | X-03 | T4 spec: "helper 设置剪贴板并粘贴" | Core writes clipboard; helper only sends Ctrl+V; helper may write payload only if T4 proves clipboard isolation requires it (D-115) | Least privilege; the helper stays minimal |
-| X-04 | Pipe name `ditto-<current-user-sid>` | Canonical SID string in the name; ACL is the boundary | Matches the prompt exactly; SID is safe in a pipe name |
+| X-04 | Pipe name `ditto-<current-user-sid>` | Canonical SID string in the name; ACL is the boundary; QA adds an optional `-<suffix>` for isolation | Matches the prompt exactly; SID is safe in a pipe name |
 | X-05 | "Rust 2024 edition (or 2021, T1 decides)" | T1 decides; T0 recommends 2024 | Explicitly delegated |
 | X-06 | Idle budget measured by T1 spike | T1 decides A/B in `PHASE0-NOTES.md`; T7 re-verifies | The prompt's gate is at T1, not T7 |
 | X-07 | Settings stack Fluent UI React v9 | Confirmed and used throughout the design system | No deviation |

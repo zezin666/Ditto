@@ -1,0 +1,21 @@
+{
+  "installer_exit": 0,
+  "install_Ditto.exe": true,
+  "install_DittoPopup.exe": true,
+  "install_DittoUacHelper.exe": true,
+  "install_uninstall.exe": true,
+  "install_pipe": true,
+  "install_running": true,
+  "uninstaller_exit": 0,
+  "portable_Ditto.exe": true,
+  "portable_DittoPopup.exe": true,
+  "portable_DittoUacHelper.exe": true,
+  "portable_portable": true,
+  "portable_README.txt": true,
+  "portable_BUILD-INFO.json": true,
+  "portable_locales\\en-US.json": true,
+  "portable_locales\\zh-CN.json": true,
+  "portable_pipe": true,
+  "portable_marker_data": true
+}
+INSTALL_QA_ROOT=C:\Users\zezin\AppData\Local\Temp\ditto-package-qa-b25d0292

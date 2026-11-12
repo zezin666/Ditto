@@ -48,18 +48,20 @@
 ### 3.1 Popup 常驻窗口内存/可见性
 T3 原本用 `with_visible(false)` + `ShowWindow(SW_HIDE)`。Windows 下 winit 不会给隐藏窗口派发 redraw，导致 IPC `ShowPopup` 事件无法唤醒 egui（实测冷启动约 5.9s 内事件会丢失，之后也永远不更新）。
 
-T7 改为：
+T7/T11 改为：
 - 窗口创建后以 `WS_EX_LAYERED`、alpha 0、`WS_EX_TRANSPARENT` 保持“可见但不可见”；
 - 不再发送 `ViewportCommand::Visible(false)`；
-- 核心在 `PipeServer` 中记录 popup 可见状态，popup 连接后发送 `GetPopupVisibility` 重放错过的 Show。
+- 核心在 `PipeServer` 中记录 popup 可见状态，popup 连接后发送 `GetPopupVisibility` 重放错过的 Show；
+- **T11 hotkey 路径**：Show 时核心先快照前台窗口，popup 随后清除 `WS_EX_NOACTIVATE`、用 `AttachThreadInput` + `SetForegroundWindow`/`SetFocus` 取得键盘焦点，因此 hotkey 后可直接键入、Enter/Shift+Enter；Esc/外部选择隐藏时恢复目标焦点，失焦/外部点击隐藏则保留新前台窗口。
 
-审查点：alpha=0 窗口是否仍可能抢占鼠标/Z 序；多显示器与 DPI 下位置是否正确；wl 层是否影响截图工具。
-相关证据：`artifacts/rewrite/after/qa/ipc-smoke.log`（12 次 Show 全部产生 first-frame 记录）。
+审查点：alpha=0 窗口是否仍可能抢占鼠标/Z 序；多显示器与 DPI 下位置是否正确；wl 层是否影响截图工具；激活是否在少数受保护桌面上失败。
+相关证据：`tools/qa/keyboard-first.ps1`（Show → 无鼠标键入 → Enter/Shift+Enter → 粘贴到受控目标窗口）；`tools/qa/ipc-smoke.ps1`（100 次 Show first-frame）。
 
 ### 3.2 单实例快速路径
 `claim_single_instance` 在 Tauri 初始化前创建 `Local\Ditto.v2.<SID>.{settings,toggle,instance}` 三个事件。第二个实例只发信号并 `exit(0)`，实测 1.1-2.3ms。
+T11 起支持 `DITTO_PIPE_SUFFIX`/`DITTO_INSTANCE_ID`：pipe 变为 `\\.\pipe\ditto-<SID>-<suffix>`，事件名追加相同后缀；QA 默认使用唯一后缀，不会命中用户的 Ditto 进程。
 审查点：事件命名是否与旧 Ditto 冲突；异常退出后事件是否被系统回收；`--settings` 与普通启动的分流。
-回退路径：`tauri-plugin-single-instance` 仍保留。
+回退路径：`tauri-plugin-single-instance` 在无后缀的正常实例中保留；QA 实例使用后缀事件。
 
 ### 3.3 导入/恢复的延迟应用
 `import_data`/`restore_db` 只调用 `ditto_migration::verify_package`，把包复制到 `<data_root>.pending-import.zip` 并写 marker；下次启动在 `Storage::open_data_root` 之前由 `pending::apply_staged` 替换数据根。迁移同理。
@@ -68,9 +70,10 @@ T7 改为：
 ### 3.4 设置映射
 T5 `SettingsState` 与 T2 JSON 不完全同构：
 - 原生键：`clipboard.max_entries`、`appearance.popup_width`、`groups.*`、`copy_buffers.play_sound` 等；
-- 扩展键（持久化但核心暂未消费）：`hotkeys.open_chord`、`hotkeys.first_ten_chords`、`copy_buffers.enabled`、`clipboard.capture_files/images`、`general.startup_message`。
+- 已消费的扩展键（T9/T11）：`hotkeys.open_chord`、`hotkeys.open_alt_chord`、`hotkeys.plain_text_paste_chord`、`hotkeys.first_ten_enabled/chords`、`hotkeys.copy_buffers[*].copy/paste`、`clipboard.capture_files/images`、`general.show_tray_icon`、`groups.show_grouped_in_main`、`diagnostics.log_level`；
+- 仍仅为持久化/占位：`copy_buffers.enabled`、`general.startup_message` 等（对应控件 disabled，矩阵注明）。
 `general.language` 以 `en` / `zh-CN` 存储，UI 层映射 `en-US`。
-审查点：是否接受扩展键命名；热键字符串尚未注册为全局热键（T1 dev hotkey 仍为 `Ctrl+Alt+D`）。
+审查点：hotkey 的全局/弹窗作用域（open/open_alt/plain/copy-buffer 为全局；first-ten 仅在 popup 可见时生效）；`show_grouped_in_main=false` 时主列表映射为 ungrouped；主题值 `system/light/dark/highContrast` 与旧 `hc/high_contrast` 的兼容。
 
 ### 3.5 存储增量
 `ClipQuery` 新增 `kind`、`pinned_only`；`ClipSummary` 新增 `size_bytes`；新增 `count_clips`、`update_clip_text`。
@@ -84,6 +87,15 @@ T5 `SettingsState` 与 T2 JSON 不完全同构：
 - `apps/ditto/src-tauri/src/core_service.rs`：显式目标粘贴、retention timer、暂停/捕获重配置。
 - `crates/ditto-win/src/lib.rs`：overlapped IPC 写超时、慢客户端断开、popup 崩溃可见性清理、ACL。
 - `tools/qa/popup-hide-sync.ps1`、`tools/qa/paging-check.ps1`：T9 新增的可重复 QA。
+
+## 3.7 T11 修复入口
+
+- `docs/rewrite/T11-FIX-REPORT.md`：CODE-REVIEW-2 R-1…R-10 逐条状态、证据与残余边界。
+- `apps/ditto-popup/src/{app.rs,platform.rs,provider.rs,options.rs}`：hotkey 键盘焦点、主题映射、分组主列表、真实 IPC scroll harness（`--provider=ipc`、`--bench-warmup`）。
+- `apps/ditto/src-tauri/src/{hotkeys.rs,logging.rs,lib.rs,core_service.rs}`：全局 hotkey 集合注册/回滚、可重载日志过滤、Show 前目标 hook、copy-buffer 全局动作。
+- `crates/ditto-paste/src/clipboard.rs`：`GlobalUnlock` 语义修复（实际写入路径此前全部失败）。
+- `crates/ditto-clipboard/src/decode.rs`：ANSI/OEM 文本 NUL 终止。
+- `tools/qa/{keyboard-first.ps1,hotkey-rebind.ps1,scroll-10k-ipc.ps1,grouped-main.ps1,theme-modes.ps1,cold-start.ps1}`：T11 新增/更新的隔离 QA。
 
 ## 4. 复现步骤
 
@@ -128,11 +140,11 @@ cargo test -p ditto-migration --test legacy_fixture --locked -- --nocapture
 
 以下项目在本次自动化环境中无法可靠执行，T8 需在解锁桌面、可交互的 Windows 会话中复核：
 
-1. 真实热键 `Ctrl+Alt+D` → popup 首帧（脚本通过 IPC `ShowPopup` 触发，非物理按键路径）。物理按键路径会走同一 `toggle_popup` → `PipeServer::set_popup_visible`。
-2. 粘贴到 Notepad/Word/Explorer：文本/HTML/RTF/图片/文件、纯文本、多选；自写抑制；UAC 提权目标。
+1. 真实物理 hotkey 按键（T11 用 IPC `ShowPopup` + 合成 WM_CHAR/WM_KEYDOWN 覆盖了同一条 Show→激活→键入→Enter/Shift+Enter→粘贴路径；物理按键只差 global-shortcut 事件源）。
+2. 粘贴到 Notepad/Word/Explorer 的真实应用：T11 在受控 Win32 EDIT 目标上验证了文本落地；富文本/图片/文件/多选仍需人工。
 3. 拖出 `drag_out_clip`（命令已注册，需要鼠标按下并保持，自动化环境无法安全模拟）。
-4. IME 中文/日文组合、Narrator、高对比度主题、150%/200% 系统 DPI、多显示器。
-5. 托盘菜单 Show/Settings/Exit 的实际点击（代码路径与单实例一致）。
+4. IME 中文/日文组合、Narrator、高对比度主题的系统级可读性、150%/200% 系统 DPI、多显示器。
+5. 托盘菜单 Show/Settings/Exit 的实际物理点击（代码路径与单实例一致）；T11 验证了 hotkey 注册/动作与 IPC。
 6. Defender/SmartScreen 对未签名二进制的实际提示；未修改任何安全设置。
 7. 迁移 UI 的源路径选择：当前为文本框输入，未接原生文件对话框。
 
@@ -144,8 +156,9 @@ cargo test -p ditto-migration --test legacy_fixture --locked -- --nocapture
 
 ## 7. 已知风险摘要
 
-1. Popup 冷启动约 5.9s（本机 release 实测）；期间热键会被 `GetPopupVisibility` 重放，但用户感知为首次热键延迟。
-2. 设置窗口标题出现耗时约 42-70ms；WebView2 前端实际渲染完成时间未单独测量（窗口销毁后 WebView2 进程归零沿用 T5 证据）。
-3. 设置中的热键字符串尚未实际注册为全局热键；核心仍使用 T1 开发热键。
+1. Popup 冷启动（同一 binary）：popup 进程 start→Show 约 1.76–1.77 s；host 进程 start→Show 约 3.51–3.54 s。首次新构建/新拷贝 host→Show 4.72 s（Defender 扫描未签名 host）。popup 已常驻时热键→首帧 p95 约 2.6–6.9 ms。
+2. 设置窗口标题出现耗时约 84 ms；WebView2 前端实际渲染完成时间未单独测量（窗口销毁后 WebView2 进程归零沿用 T5 证据）。
+3. T11 起 open/open_alt/plain/copy-buffer 热键按设置注册；first-ten 只在 popup 可见时生效。抄本/剪贴板里的 cut 不提供全局热键（v1 产品决策，见 FEATURE-MATRIX A4）。
 4. 导入/恢复需要重启应用才生效（UI 文案已说明）。
 5. 所有二进制未签名。
+6. popup 首次加载 CJK 文本会加载一个系统 CJK 字体：预展示空闲约 40 MB，加载后 core+popup private 约 93 MB（ASCII-only 约 55 MB），仍低于 100 MB 预算但已接近上限。

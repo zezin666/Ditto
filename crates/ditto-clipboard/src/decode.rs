@@ -67,13 +67,23 @@ pub fn decode_code_page(bytes: &[u8], code_page: u32, stop_at_nul: bool) -> Stri
 }
 
 /// Encodes text for legacy `CF_TEXT` using the process ANSI code page.
+/// Windows legacy text formats are NUL-terminated, so the returned payload
+/// always ends with one.
 pub fn encode_ansi_text(text: &str) -> Vec<u8> {
-    encode_code_page(text, CP_ACP)
+    encode_code_page_terminated(text, CP_ACP)
 }
 
 /// Encodes text for legacy `CF_OEMTEXT` using the OEM code page.
 pub fn encode_oem_text(text: &str) -> Vec<u8> {
-    encode_code_page(text, CP_OEMCP)
+    encode_code_page_terminated(text, CP_OEMCP)
+}
+
+/// Encodes text into a Windows code page and appends the NUL terminator that
+/// `CF_TEXT`/`CF_OEMTEXT` consumers expect.
+pub fn encode_code_page_terminated(text: &str, code_page: u32) -> Vec<u8> {
+    let mut bytes = encode_code_page(text, code_page);
+    bytes.push(0);
+    bytes
 }
 
 /// Encodes text into a Windows code page for legacy clipboard formats.
@@ -610,6 +620,24 @@ mod tests {
             "Café"
         );
         assert_eq!(decode_code_page(&[0x82], 437, true), "é");
+    }
+
+    #[test]
+    fn legacy_text_payloads_are_nul_terminated_and_round_trip() {
+        for (code_page, text) in [(936, "中文"), (1252, "Café"), (437, "Café")] {
+            let encoded = encode_code_page_terminated(text, code_page);
+            assert_eq!(encoded.last(), Some(&0), "code page {code_page} terminator");
+            assert_eq!(decode_code_page(&encoded, code_page, true), text);
+        }
+        for bytes in [
+            encode_ansi_text("plain Ascii"),
+            encode_oem_text("plain Ascii"),
+        ] {
+            assert_eq!(bytes.last(), Some(&0));
+            assert!(!bytes[..bytes.len() - 1].contains(&0));
+        }
+        assert_eq!(encode_ansi_text(""), vec![0]);
+        assert_eq!(encode_oem_text(""), vec![0]);
     }
 
     #[test]

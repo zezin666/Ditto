@@ -55,6 +55,7 @@ pub struct PopupOptions {
     pub soak_log: PathBuf,
     pub bench_scroll: bool,
     pub bench_frames: u32,
+    pub bench_warmup: u32,
     pub bench_log: PathBuf,
     pub latency_only: bool,
     pub perf_log: PathBuf,
@@ -74,6 +75,7 @@ impl Default for PopupOptions {
             soak_log: PathBuf::from("artifacts/rewrite/after/perf/popup-show-hide-20.csv"),
             bench_scroll: false,
             bench_frames: 300,
+            bench_warmup: 10,
             bench_log: PathBuf::from("artifacts/rewrite/after/perf/scroll-10k.csv"),
             latency_only: false,
             perf_log: PathBuf::from("artifacts/rewrite/after/perf/popup-latency.csv"),
@@ -102,7 +104,9 @@ impl PopupOptions {
                 "--auto-show" => options.auto_show = true,
                 "--no-hide-on-focus-loss" => options.hide_on_focus_loss = false,
                 "--bench-scroll" => {
-                    options.mock = true;
+                    // The provider choice stays explicit: `--bench-scroll`
+                    // alone uses the default (real IPC) provider. Pass
+                    // `--mock` for the deterministic synthetic corpus.
                     options.auto_show = true;
                     options.bench_scroll = true;
                 }
@@ -112,7 +116,13 @@ impl PopupOptions {
                     options.latency_only = true;
                 }
                 _ => {
-                    if let Some(value) = argument.strip_prefix("--lang=") {
+                    if let Some(value) = argument.strip_prefix("--provider=") {
+                        match value.to_ascii_lowercase().as_str() {
+                            "mock" => options.mock = true,
+                            "ipc" => options.mock = false,
+                            other => panic!("unknown popup provider {other:?}; use ipc or mock"),
+                        }
+                    } else if let Some(value) = argument.strip_prefix("--lang=") {
                         options.language = Language::from_tag(value);
                     } else if let Some(value) = argument.strip_prefix("--theme=") {
                         options.theme_override = match value {
@@ -137,6 +147,8 @@ impl PopupOptions {
                         options.soak_log = PathBuf::from(value);
                     } else if let Some(value) = argument.strip_prefix("--bench-frames=") {
                         options.bench_frames = value.parse().unwrap_or(options.bench_frames);
+                    } else if let Some(value) = argument.strip_prefix("--bench-warmup=") {
+                        options.bench_warmup = value.parse().unwrap_or(options.bench_warmup);
                     } else if let Some(value) = argument.strip_prefix("--bench-log=") {
                         options.bench_log = PathBuf::from(value);
                     } else if let Some(value) = argument.strip_prefix("--perf-log=") {

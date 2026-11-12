@@ -62,15 +62,15 @@ function initialSettings(): SettingsState {
     hotkeys: {
       open: "Ctrl+`",
       openAlt: "",
-      plainTextPaste: "Ctrl+Shift+V",
+      plainTextPaste: "",
       firstTenEnabled: true,
       firstTenChords: Array.from({ length: 10 }, (_, index) =>
         `Ctrl+${index === 9 ? 0 : index + 1}`,
       ),
       copyBuffers: Array.from({ length: 5 }, (_, index) => ({
         slot: index + 1,
-        copy: `Ctrl+Alt+${index + 1}`,
-        paste: `Alt+${index + 1}`,
+        copy: "",
+        paste: "",
         cut: "",
       })),
     },

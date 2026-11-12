@@ -1,16 +1,22 @@
 param(
     [Parameter(Mandatory = $true)][string]$DittoExe,
-    [Parameter(Mandatory = $true)][string]$DataRoot
+    [Parameter(Mandatory = $true)][string]$DataRoot,
+    [string]$PipeSuffix = ""
 )
 
 $ErrorActionPreference = "Stop"
 $DittoExe = (Resolve-Path -LiteralPath $DittoExe).Path
 $DataRoot = (Resolve-Path -LiteralPath $DataRoot).Path
 $env:DITTO_DATA_DIR = $DataRoot
+if ([string]::IsNullOrWhiteSpace($PipeSuffix)) {
+    $PipeSuffix = [Guid]::NewGuid().ToString("N").Substring(0, 10)
+}
+$env:DITTO_PIPE_SUFFIX = $PipeSuffix
 $env:DITTO_POPUP_TRACE = Join-Path $DataRoot "..\popup-hide-trace.log"
 $env:DITTO_HOST_TRACE = Join-Path $DataRoot "..\host-trace.log"
 $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
-$pipePath = "//./pipe/ditto-$sid"
+$pipeName = "ditto-$sid-$PipeSuffix"
+$pipePath = "//./pipe/$pipeName"
 
 Add-Type -TypeDefinition @"
 using System;
@@ -64,7 +70,7 @@ try {
         if (Test-Path $pipePath) { break }
         if ($core.HasExited) { throw "core exited during startup" }
     }
-    $pipe = New-Object System.IO.Pipes.NamedPipeClientStream(".", "ditto-$sid", [System.IO.Pipes.PipeDirection]::InOut)
+    $pipe = New-Object System.IO.Pipes.NamedPipeClientStream(".", $pipeName, [System.IO.Pipes.PipeDirection]::InOut)
     $pipe.Connect(5000)
     $script:requestId = 0
     $script:requestId++

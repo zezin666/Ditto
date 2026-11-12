@@ -6,7 +6,7 @@ use ditto_clipboard::{
 };
 use windows::{
     Win32::{
-        Foundation::{GlobalFree, HANDLE, HGLOBAL},
+        Foundation::{ERROR_SUCCESS, GetLastError, GlobalFree, HANDLE, HGLOBAL},
         System::{
             DataExchange::{
                 CloseClipboard, EmptyClipboard, OpenClipboard, RegisterClipboardFormatW,
@@ -147,8 +147,19 @@ fn global_from_bytes(bytes: &[u8]) -> PasteResult<HGLOBAL> {
     unsafe {
         std::ptr::copy_nonoverlapping(bytes.as_ptr(), pointer.cast::<u8>(), bytes.len());
     }
-    unsafe { GlobalUnlock(global) }
-        .map_err(|error| PasteError::Clipboard(format!("GlobalUnlock failed: {error}")))?;
+    // `GlobalUnlock` returns FALSE both on error and when the lock count
+    // reaches zero. With the latter, GetLastError stays ERROR_SUCCESS, which
+    // is the normal success path for a freshly locked handle.
+    if unsafe { GlobalUnlock(global) }.is_err() {
+        let error = unsafe { GetLastError() };
+        if error != ERROR_SUCCESS {
+            let _ = unsafe { GlobalFree(Some(global)) };
+            return Err(PasteError::Clipboard(format!(
+                "GlobalUnlock failed with Win32 error {}",
+                error.0
+            )));
+        }
+    }
     Ok(global)
 }
 
@@ -178,3 +189,25 @@ impl Drop for ClipboardGuard {
 }
 
 const _: usize = size_of::<HANDLE>();
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn movable_global_blocks_unlock_successfully() {
+        // Regression: GlobalUnlock returns FALSE when the lock count reaches
+        // zero while GetLastError stays ERROR_SUCCESS. Treating that as an
+        // error made every real clipboard write fail before SetClipboardData.
+        let global = global_from_bytes(b"hello").expect("allocated clipboard block");
+        assert!(!global.0.is_null());
+        let _ = unsafe { GlobalFree(Some(global)) };
+    }
+
+    #[test]
+    fn zero_length_payloads_still_allocate_a_single_byte() {
+        let global = global_from_bytes(b"").expect("empty payload");
+        assert!(!global.0.is_null());
+        let _ = unsafe { GlobalFree(Some(global)) };
+    }
+}

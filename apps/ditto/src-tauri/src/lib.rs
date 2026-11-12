@@ -20,6 +20,7 @@ use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut, ShortcutState};
 pub mod commands;
 mod core_service;
 pub mod hotkeys;
+pub mod logging;
 mod pending;
 
 use core_service::CoreService;
@@ -38,6 +39,9 @@ pub struct AppState {
     data_root: DataRoot,
     core: Mutex<Option<CoreService>>,
     popup: Mutex<Option<Child>>,
+    /// Currently registered global chord set, used by the plugin handler and
+    /// by atomic Settings swaps.
+    hotkeys: Mutex<Vec<hotkeys::Binding>>,
     /// Keeps the primary-instance event handle alive for the process lifetime.
     _instance_signal: Option<SingleInstanceSignal>,
 }
@@ -73,9 +77,15 @@ struct InstanceSignals {
 
 fn claim_single_instance() -> Option<InstanceSignals> {
     let sid = ditto_win::current_user_sid_string().ok()?;
-    let settings = SingleInstanceSignal::create(&format!("Local\\Ditto.v2.{sid}.settings")).ok()?;
-    let toggle = SingleInstanceSignal::create(&format!("Local\\Ditto.v2.{sid}.toggle")).ok()?;
-    let instance = SingleInstanceSignal::create(&format!("Local\\Ditto.v2.{sid}.instance")).ok()?;
+    let suffix = ditto_win::instance_suffix()
+        .map(|suffix| format!(".{suffix}"))
+        .unwrap_or_default();
+    let settings =
+        SingleInstanceSignal::create(&format!("Local\\Ditto.v2.{sid}.settings{suffix}")).ok()?;
+    let toggle =
+        SingleInstanceSignal::create(&format!("Local\\Ditto.v2.{sid}.toggle{suffix}")).ok()?;
+    let instance =
+        SingleInstanceSignal::create(&format!("Local\\Ditto.v2.{sid}.instance{suffix}")).ok()?;
     if instance.already_running() {
         if std::env::args().any(|argument| argument == "--settings") {
             settings.signal();
@@ -100,6 +110,7 @@ struct StartupSettings {
     language: String,
     log_level: log::LevelFilter,
     open_chord: String,
+    values: serde_json::Value,
 }
 
 fn load_startup_settings() -> StartupSettings {
@@ -108,6 +119,7 @@ fn load_startup_settings() -> StartupSettings {
         language: "en".to_string(),
         log_level: log::LevelFilter::Info,
         open_chord: hotkeys::DEFAULT_OPEN_CHORD.to_string(),
+        values: serde_json::Value::Null,
     };
     let Ok(executable) = std::env::current_exe() else {
         return defaults;
@@ -155,6 +167,7 @@ fn load_startup_settings() -> StartupSettings {
         language,
         log_level,
         open_chord,
+        values: snapshot.values.clone(),
     }
 }
 
@@ -196,20 +209,19 @@ pub fn run() {
     startup_trace("run-enter");
     let startup = load_startup_settings();
     startup_trace("startup-settings-loaded");
-    log::set_max_level(startup.log_level);
+    logging::set_runtime_level(startup.log_level);
     // Fast single-instance path: signal the running core and exit before
     // Tauri, the tray, the clipboard monitor, or WebView2 initialize. The
     // per-user pipe only supports one core, so this is always enforced; the
     // Settings toggle is disabled instead of pretending otherwise.
     let listener_signals = claim_single_instance();
 
-    let (initial_hotkey, initial_shortcut) = choose_initial_hotkey(&startup.open_chord);
+    let (initial_hotkey, _initial_shortcut) = choose_initial_hotkey(&startup.open_chord);
+    let initial_bindings = startup_bindings(&startup.values, &initial_hotkey);
     let shortcut_plugin = tauri_plugin_global_shortcut::Builder::new()
-        .with_shortcuts([initial_shortcut])
-        .expect("initial hotkey must parse")
-        .with_handler(|app, _shortcut, event| {
+        .with_handler(|app, shortcut, event| {
             if event.state() == ShortcutState::Pressed {
-                toggle_popup(app);
+                handle_hotkey(app, shortcut);
             }
         })
         .build();
@@ -217,8 +229,13 @@ pub fn run() {
     // Start the popup before Tauri/WebView2 initialization so loader and
     // Defender startup time overlaps the host's own startup.
     let early_popup = spawn_popup_process(&startup.language);
-    let builder = tauri::Builder::default()
-        .plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
+    let mut builder = tauri::Builder::default();
+    if ditto_win::instance_suffix().is_none() {
+        // The Tauri single-instance plugin is the fallback safety net for the
+        // normal user instance. QA instances use a unique suffix and the
+        // fast-path events instead, so they never collide with a running
+        // user core or another QA instance.
+        builder = builder.plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
             if args.iter().any(|argument| argument == "--settings") {
                 if let Err(error) = open_settings(app, None) {
                     log::error!("failed to open settings from second instance: {error}");
@@ -226,10 +243,16 @@ pub fn run() {
             } else {
                 toggle_popup(app);
             }
-        }))
+        }));
+    }
+    let builder = builder
         .plugin(
             tauri_plugin_log::Builder::new()
-                .level(startup.log_level)
+                // The plugin's fern filter is decided per record, unlike its
+                // startup level. Keep the max level at Trace and let the
+                // reloadable predicate make the real decision.
+                .level(log::LevelFilter::Trace)
+                .filter(logging::enabled)
                 .build(),
         )
         .plugin(shortcut_plugin)
@@ -321,8 +344,12 @@ pub fn run() {
                 data_root,
                 core: Mutex::new(Some(core)),
                 popup: Mutex::new(early_popup),
+                hotkeys: Mutex::new(initial_bindings.clone()),
                 _instance_signal: instance_signal,
             });
+            let registered =
+                register_initial_hotkeys(app.handle(), &initial_bindings, &initial_hotkey);
+            *app.state::<AppState>().hotkeys.lock() = registered;
 
             if let Some(settings) = settings_listener {
                 let handle = app.handle().clone();
@@ -547,11 +574,140 @@ fn toggle_popup(app: &AppHandle) {
         if let Some(core) = state.core.lock().as_ref() {
             core.capture_paste_target();
         }
+        // If the resident popup is still starting (first login, Defender scan,
+        // or a crash respawn), surface a visible "preparing" state instead of
+        // a silent hotkey. The tooltip returns to normal once Hello arrives.
+        if state.pipe.popup_client_count() == 0 {
+            let pipe = state.pipe.clone();
+            let handle = app.clone();
+            set_tray_tooltip(&handle, "tray.preparing");
+            thread::spawn(move || {
+                for _ in 0..150 {
+                    if pipe.popup_client_count() > 0 {
+                        break;
+                    }
+                    thread::sleep(Duration::from_millis(100));
+                }
+                set_tray_tooltip(&handle, "tray.tooltip");
+            });
+        }
     } else if let Some(core) = state.core.lock().as_ref() {
         core.clear_paste_target();
     }
     if let Err(error) = state.pipe.set_popup_visible(show) {
         log::error!("failed to broadcast popup event: {error}");
+    }
+}
+
+fn set_tray_tooltip(app: &AppHandle, key: &str) {
+    let Some(tray) = app.tray_by_id("main") else {
+        return;
+    };
+    let language = current_language(app);
+    let text = locale_text(&language, key);
+    if let Err(error) = tray.set_tooltip(Some(text)) {
+        log::debug!("failed to update tray tooltip: {error}");
+    }
+}
+
+fn startup_bindings(values: &serde_json::Value, open_chord: &str) -> Vec<hotkeys::Binding> {
+    let mut values = values.clone();
+    if !values.is_object() {
+        values = serde_json::json!({ "hotkeys": {} });
+    }
+    let root = values.as_object_mut().expect("settings root is an object");
+    let hotkeys_value = root
+        .entry("hotkeys")
+        .or_insert_with(|| serde_json::json!({}));
+    if !hotkeys_value.is_object() {
+        *hotkeys_value = serde_json::json!({});
+    }
+    hotkeys_value
+        .as_object_mut()
+        .expect("hotkeys is an object")
+        .insert(
+            "open_chord".to_string(),
+            serde_json::Value::String(open_chord.to_string()),
+        );
+    match hotkeys::bindings_from_settings(&values) {
+        Ok(bindings) => bindings,
+        Err(error) => {
+            log::warn!("persisted hotkeys are invalid; registering the open chord only: {error}");
+            hotkeys::binding(open_chord, hotkeys::HotkeyAction::ToggleOpen)
+                .ok()
+                .flatten()
+                .into_iter()
+                .collect()
+        }
+    }
+}
+
+fn register_initial_hotkeys(
+    app: &AppHandle,
+    bindings: &[hotkeys::Binding],
+    open_chord: &str,
+) -> Vec<hotkeys::Binding> {
+    let mut registrar = TauriRegistrar(app.clone());
+    match hotkeys::register_all(&mut registrar, bindings) {
+        Ok(()) => {
+            log::info!("registered {} global hotkey(s)", bindings.len());
+            return bindings.to_vec();
+        }
+        Err(error) => log::error!("configured hotkeys were unavailable: {error}"),
+    }
+    log::error!("falling back to the open chord {open_chord}");
+    let fallback = hotkeys::binding(open_chord, hotkeys::HotkeyAction::ToggleOpen)
+        .ok()
+        .flatten()
+        .into_iter()
+        .collect::<Vec<_>>();
+    let mut registrar = TauriRegistrar(app.clone());
+    if let Err(error) = hotkeys::register_all(&mut registrar, &fallback) {
+        log::error!("fallback hotkey {open_chord} also failed: {error}");
+        return Vec::new();
+    }
+    fallback
+}
+
+fn handle_hotkey(app: &AppHandle, shortcut: &Shortcut) {
+    let action = {
+        let state = app.state::<AppState>();
+        let bindings = state.hotkeys.lock();
+        bindings
+            .iter()
+            .find(|binding| binding.shortcut == *shortcut)
+            .map(|binding| binding.action)
+    };
+    match action {
+        Some(hotkeys::HotkeyAction::ToggleOpen) => toggle_popup(app),
+        Some(hotkeys::HotkeyAction::PlainPaste) => {
+            let state = app.state::<AppState>();
+            if let Some(core) = state.core.lock().as_ref() {
+                // Snapshot while the target still owns the foreground.
+                core.capture_paste_target();
+                if let Err(error) = core.paste_latest_plain() {
+                    log::warn!("plain-text hotkey paste failed: {error}");
+                }
+            }
+        }
+        Some(hotkeys::HotkeyAction::CopyBufferCopy(slot)) => {
+            let state = app.state::<AppState>();
+            if let Some(core) = state.core.lock().as_ref()
+                && let Err(error) = core.capture_clipboard_to_copy_buffer(slot)
+            {
+                log::warn!("copy-buffer {slot} capture failed: {error}");
+            }
+        }
+        Some(hotkeys::HotkeyAction::CopyBufferPaste(slot)) => {
+            let state = app.state::<AppState>();
+            if let Some(core) = state.core.lock().as_ref() {
+                core.capture_paste_target();
+                if let Err(error) = core.paste_copy_buffer(slot, false) {
+                    log::warn!("copy-buffer {slot} paste failed: {error}");
+                }
+            }
+        }
+        None => log::debug!("unbound global shortcut fired"),
     }
 }
 
@@ -717,32 +873,15 @@ pub(crate) fn apply_host_settings(
         .and_then(serde_json::Value::as_str)
         .unwrap_or("info");
     if previous_level != next_level {
-        log::set_max_level(match next_level {
-            "error" => log::LevelFilter::Error,
-            "warn" => log::LevelFilter::Warn,
-            "debug" => log::LevelFilter::Debug,
-            "trace" => log::LevelFilter::Trace,
-            _ => log::LevelFilter::Info,
-        });
+        logging::set_runtime_level_from_setting(next_level);
     }
-    let previous_chord = previous
-        .pointer("/hotkeys/open_chord")
-        .and_then(serde_json::Value::as_str)
-        .unwrap_or(hotkeys::DEFAULT_OPEN_CHORD);
-    let next_chord = values
-        .pointer("/hotkeys/open_chord")
-        .and_then(serde_json::Value::as_str)
-        .unwrap_or(hotkeys::DEFAULT_OPEN_CHORD);
-    if previous_chord != next_chord && !next_chord.trim().is_empty() {
-        let previous_shortcut = hotkeys::parse_chord(previous_chord).ok();
-        let next_shortcut = hotkeys::parse_chord(next_chord)?;
+    let next_bindings = hotkeys::bindings_from_settings(values)?;
+    let current_bindings = app.state::<AppState>().hotkeys.lock().clone();
+    if current_bindings != next_bindings {
         let mut registrar = TauriRegistrar(app.clone());
-        hotkeys::swap(
-            &mut registrar,
-            previous_shortcut.as_ref(),
-            Some(&next_shortcut),
-        )?;
-        log::info!("global hotkey changed to {next_chord}");
+        hotkeys::swap_bindings(&mut registrar, &current_bindings, &next_bindings)?;
+        *app.state::<AppState>().hotkeys.lock() = next_bindings;
+        log::info!("global hotkey set updated");
     }
     if let Some(core) = app.state::<AppState>().core.lock().as_ref() {
         core.apply_settings(values)
@@ -781,6 +920,7 @@ mod tests {
             "tray.groups",
             "tray.copyBuffers",
             "tray.pause",
+            "tray.preparing",
             "tray.resume",
             "tray.exit",
             "webview2.missingTitle",

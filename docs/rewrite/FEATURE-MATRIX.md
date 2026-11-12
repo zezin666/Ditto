@@ -71,24 +71,24 @@ A feature is **Done** only when all of the following are true:
 
 | ID | Feature | Stage | Acceptance | Evidence |
 |---|---|---|---|---|
-| P1 | Global hotkey opens/closes popup (default Ctrl+`) | T1/T3 | Hotkey works from any app; second press hides; conflict is reported | Manual + latency harness |
+| P1 | Global hotkey opens/closes popup (default Ctrl+`) | T1/T3/T11 | Hotkey works from any app; Show activates the popup for direct typing/Enter; the pre-Show foreground is snapshotted for paste; second press hides; conflict is reported | T11 keyboard-first QA + latency harness |
 | P2 | Pre-warmed, hidden popup, <50 ms first frame | T1/T3/T7 | p95 < 50 ms over 100 samples; no process start on hotkey | `PERFORMANCE.md` harness |
 | P3 | Bottom search with IME | T3 | Chinese/Japanese IME composition, commit, cancel, candidate window; no duplicate/lost characters | Manual IME QA (Microsoft Pinyin/Japanese) |
 | P4 | Keyboard navigation | T3 | Up/Down/PgUp/PgDn/Home/End; Tab order; visible focus ring; no focus trap | Keyboard-only QA script |
 | P5 | Enter paste, Shift+Enter plain text | T3/T4 | Both modes paste the selected clip; plain text writes only `CF_UNICODETEXT` | Manual into Word/Notepad/browser |
 | P6 | Multi-select and paste all | T3/T4 | Ctrl/Shift select, Space toggles, Ctrl+Enter pastes all selected in order | Manual with 3 clips; separator setting |
 | P7 | Special paste menu | T3/T4 | Plain text, HTML-as-text, and format-specific paste entries are available and correct | Manual |
-| P8 | First-ten badges and Ctrl+1..0 | T3/T4 | Badges show 1–10; hotkeys paste the corresponding visible item; configurable | Manual + unit test for index mapping |
+| P8 | First-ten badges and Ctrl+1..0 | T3/T4/T11 | Badges show 1–10; configurable chords paste the corresponding visible item while the popup is visible; first-ten can be disabled | Unit index mapping + T11 settings round-trip |
 | P9 | Copy-buffer badges and Alt+1..5 | T3/T4 | Badge shows B1–B5; Alt+num pastes the slot; slot contents persist | Manual + restart test |
 | P10 | Pinned and pasted indicators | T3 | Pin glyph, pasted check/left bar; state is not color-only | Screenshot + a11y check |
 | P11 | Empty, loading, error, disconnected states | T3 | Each state has text + action; no blank window | UI QA |
 | P12 | Multi-monitor, caret/cursor/previous placement | T3 | Popup appears on the correct monitor, clamped to the work area, at 100/150/200% | Manual mixed-DPI dual monitor |
-| P13 | Window styles: no activation, no taskbar | T3 | `WS_EX_NOACTIVATE`/`TOOLWINDOW`; target app does not lose focus on show | Window-style inspection; manual |
+| P13 | Window styles: activation policy | T3/T11 | `WS_EX_NOACTIVATE`/`TOOLWINDOW` while hidden; hotkey Show clears NOACTIVATE and takes keyboard focus (keyboard-first trade-off); click-away hides without returning focus to the old target; Esc restores it | Window-style inspection + T11 keyboard-first QA |
 | P14 | Resize and persist popup size | T3 | Drag edges; size persists; clamped to min/max/work area | Manual |
 | P15 | Group breadcrumb + flyout | T3 | Path is correct; navigation works; flyout supports All/Ungrouped/tree/New group | Manual + tree fixture |
 | P16 | Text/image/color/files preview | T3 | F3 toggles; text wraps; image fits; color shows values; files show names | UI QA with fixtures |
 | P17 | Context menu | T3 | Paste, paste plain, copy, pin, move, copy to buffer, edit, delete; disabled states correct | Manual |
-| P18 | Performance: 10k scroll 60 fps | T3/T7 | No frame over 16.7 ms while scrolling; no memory growth over 60 s | Frame-time harness |
+| P18 | Performance: 10k scroll 60 fps | T3/T7/T11 | No steady-state frame over 16.7 ms while scrolling 10k rows in a real SQLite/IPC session; 10 warm-up frames excluded and first-frame latency measured separately; no memory growth over 60 s | `tools/qa/scroll-10k-ipc.ps1` (300 frames) |
 | P19 | Fluent light/dark/HC visuals | T3 | Tokens match `DESIGN-SYSTEM.md`; HC uses system colors; no hardcoded colors | Screenshot review + token grep |
 | P20 | AccessKit semantics (Should, not Must) | T3 | Rows expose role/name/state; Narrator can read the list | Accessibility Insights/Narrator |
 
@@ -116,7 +116,7 @@ A feature is **Done** only when all of the following are true:
 | G3 | Group tree and breadcrumb | T3 | Parent/child navigation; counts; no cycles | Tree fixture + manual |
 | G4 | Pin/unpin | T2/T3 | Pinned clips sort first within their group; pin order persists; pin is not color-only | Unit + UI QA |
 | G5 | Copy buffers 1–5 | T2/T3/T4/T5 | Assign, paste, cut, clear; persist across restart; at least 3 slots accepted | Integration + restart test |
-| G6 | Show grouped clips in main list (setting) | T2/T3/T5 | Toggle changes the main list; default matches legacy | UI QA |
+| G6 | Show grouped clips in main list (setting) | T2/T3/T5/T11 | Toggle changes the main list; `false` maps All to the ungrouped inbox so grouped clips are excluded; explicit group navigation is unchanged; default matches legacy | Unit provider/storage tests + `tools/qa/grouped-main.ps1` |
 
 ### 2.6 Settings, tray, lifecycle
 
@@ -125,13 +125,13 @@ A feature is **Done** only when all of the following are true:
 | A1 | Tray icon + menu | T1/T5/T7/T9 | Left click toggles; right-click menu has Open, Settings, Groups, Copy Buffers, Connect/Disconnect (pause/resume capture), Exit; labels follow EN/ZH locale files | Locale unit test + real settings screenshot; physical tray click UNVERIFIED |
 | A2 | Run at startup | T1/T5 | HKCU Run value written/removed; stale path repair; portable default off | Registry inspection |
 | A3 | Single instance | T1 | Second launch forwards and exits <150 ms; no second core | Process test |
-| A4 | Global hotkey configuration | T1/T5 | Rebind open/plain/first-ten/copy-buffer hotkeys; conflicts shown; no silent hook | Manual + registry/settings inspection |
+| A4 | Global hotkey configuration | T1/T5/T11 | Rebind open/open-alt/plain/copy-buffer hotkeys; open/open-alt/plain/copy-buffer are global, first-ten is popup-scoped; conflicts show an error and roll back with no silent hook; copy-buffer `cut` has no global v1 action (UI disabled with explicit help) | T11 `hotkey-rebind.ps1` + swap/rollback unit tests |
 | A5 | Settings window on demand | T1/T5 | Opens on demand; closes and frees WebView2; no WebView2 at startup | Process-tree snapshot + memory |
 | A6 | Settings pages | T5 | General/Appearance/Hotkeys/Clipboard/Groups/Copy Buffers/Data/Languages/About, all controls persist | UI QA + settings round-trip |
-| A7 | Theme/accent/density | T5 | System/light/dark/HC; accent validation; density changes popup and settings | Visual QA |
+| A7 | Theme/accent/density | T5/T11 | System/light/dark/HC; UI values `system/light/dark/highContrast` (legacy `hc/high_contrast`) map to popup; `system` re-resolves Windows light/dark/HC on Show and settings changes; HC uses system colors; accent validation; density changes popup and settings | `tools/qa/theme-modes.ps1` + mapping unit tests |
 | A8 | EN/ZH localization | T3/T5 | All user-visible strings switch; no clipped long Chinese labels | Screenshot + string scan |
 | A9 | History management in Data page | T5 | Search/filter/preview/edit/delete/group/pin/buffer actions work | UI QA |
-| A10 | Diagnostics/log level | T1/T5 | Log level changes; log path; diagnostics bundle without content | Manual + log scan |
+| A10 | Diagnostics/log level | T1/T5/T11 | Log level changes at runtime through a reloadable filter (info→debug/trace emits new records); log path; diagnostics bundle without content | `tests/log_level.rs` + wiring review |
 | A11 | No telemetry / no network | T1/T7 | No outbound connections except user-initiated (none in v1); no analytics | Network capture + code review |
 | A12 | WebView2-missing fallback | T1/T5/T9 | Host checks the Evergreen registry/install directory before opening Settings; on failure it shows a native MessageBox with the download URL and keeps running. NSIS uses the bootstrapper; Portable README documents the requirement. | Unit detection test; missing-runtime path UNVERIFIED |
 

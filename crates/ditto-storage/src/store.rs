@@ -1734,6 +1734,94 @@ mod tests {
     }
 
     #[test]
+    fn ungrouped_filter_excludes_grouped_clips() {
+        let (_temp, storage) = temp_storage();
+        let group = storage
+            .create_group("QA group", None, 1.0)
+            .expect("create group");
+        let ungrouped = storage
+            .insert_clip(&test_clip("ungrouped clip", "hash-ungrouped"), false)
+            .expect("ungrouped")
+            .clip;
+        let grouped = storage
+            .insert_clip(&test_clip("grouped clip", "hash-grouped"), false)
+            .expect("grouped")
+            .clip;
+        storage
+            .move_clips_to_group(&[grouped.id], Some(group))
+            .expect("move");
+        let inbox = storage
+            .search_clips(&ClipQuery {
+                group_id: Some(-1),
+                ..ClipQuery::default()
+            })
+            .expect("ungrouped search");
+        assert_eq!(inbox.items.len(), 1);
+        assert_eq!(inbox.items[0].id, ungrouped.id);
+        let in_group = storage
+            .search_clips(&ClipQuery {
+                group_id: Some(group),
+                ..ClipQuery::default()
+            })
+            .expect("group search");
+        assert_eq!(in_group.items.len(), 1);
+        assert_eq!(in_group.items[0].id, grouped.id);
+    }
+
+    #[test]
+    fn rewrite_clip_text_terminates_ansi_and_oem_payloads() {
+        let (_temp, storage) = temp_storage();
+        let mut clip = test_clip("old ansi text", "hash-ansi-edit");
+        clip.formats = vec![
+            NewClipFormat {
+                format_name: "CF_UNICODETEXT".to_string(),
+                seq: 0,
+                data: "old ansi text"
+                    .encode_utf16()
+                    .chain(Some(0))
+                    .flat_map(u16::to_le_bytes)
+                    .collect(),
+                mime: Some("text/plain".to_string()),
+                is_primary: true,
+            },
+            NewClipFormat {
+                format_name: "CF_TEXT".to_string(),
+                seq: 1,
+                data: ditto_clipboard::encode_ansi_text("old ansi text"),
+                mime: Some("text/plain".to_string()),
+                is_primary: false,
+            },
+            NewClipFormat {
+                format_name: "CF_OEMTEXT".to_string(),
+                seq: 2,
+                data: ditto_clipboard::encode_oem_text("old ansi text"),
+                mime: Some("text/plain".to_string()),
+                is_primary: false,
+            },
+        ];
+        let clip = storage.insert_clip(&clip, false).expect("insert").clip;
+        storage
+            .rewrite_clip_text(clip.id, "new ansi text")
+            .expect("rewrite");
+        let detail = storage.get_clip(clip.id).expect("detail");
+        for name in ["CF_TEXT", "CF_OEMTEXT"] {
+            let format = detail
+                .formats
+                .iter()
+                .find(|format| format.format_name == name)
+                .unwrap_or_else(|| panic!("{name} missing"));
+            let data = format.data.clone().expect("inline payload");
+            assert_eq!(data.last(), Some(&0), "{name} must be NUL-terminated");
+            let decoded = if name == "CF_TEXT" {
+                ditto_clipboard::decode_ansi_text(&data)
+            } else {
+                ditto_clipboard::decode_oem_text(&data)
+            };
+            assert_eq!(decoded, "new ansi text");
+        }
+    }
+
+    #[test]
     fn regex_search_is_linear_and_rejects_invalid_or_oversized_patterns() {
         let (_temp, storage) = temp_storage();
         storage

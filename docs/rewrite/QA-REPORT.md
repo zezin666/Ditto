@@ -276,3 +276,42 @@ Portable ZIP 内容：`Ditto.exe`、`DittoPopup.exe`、`DittoUacHelper.exe`、`D
 3. 缺失 WebView2 的真实机器路径。
 4. 真实 UAC、IME、Narrator、高对比度、混合 DPI、多显示器。
 5. Defender/SmartScreen 实际拦截行为。
+
+---
+
+## T11 补充 QA（2026-11-13）
+
+T11 在独立 worktree `D:\orca\workspaces\Ditto\rewrite-fixes2` 上重跑，使用唯一
+`DITTO_PIPE_SUFFIX` 与临时 `DITTO_DATA_DIR`，未读取真实用户数据，未终止用户
+`D:\Programs\Ditto` 或任何用户进程。完整逐条说明见 `T11-FIX-REPORT.md`。
+
+### release 结果
+
+| 项目 | 结果 | 证据 |
+|---|---|---|
+| keyboard-first（Show→无鼠标键入→Enter/Shift+Enter→目标窗口） | PASS；实际文本落地 | `after/qa/keyboard-first-t11.log` + `...-popup-trace.log` |
+| 全局热键注册/持久化/冲突回退 + copy-buffer 全局动作 | PASS | `after/qa/hotkey-rebind-t11.log` |
+| grouped main（false→Ungrouped，true→All） | PASS | `after/qa/grouped-main-t11.log` |
+| theme dark→highContrast→system | PASS；system 在本机解析为 Light | `after/qa/theme-modes-t11.log` |
+| 真实 SQLite 10k + 真实 IPC provider，300 帧 | frame p50 1.347 ms / p95 2.624 ms / max 7.246 ms；>16.7 ms 0；update p95 0.009 ms；PASS | `after/perf/scroll-10k-real-ipc-t11.csv`、`after/qa/scroll-10k-ipc-t11.log` |
+| 冷启动 3 次同 binary | popup start→Show 1,774.0 / 1,765.0 / 1,756.0 ms | `after/qa/cold-start-t11.log` |
+| 新拷贝首启 | host→Show 4,724.6 ms；popup start→Show 1,834.0 ms | 同上 |
+| IPC smoke 100 show | first-frame p50 3.801 ms / p95 6.944 ms；预展示空闲 40.5 MB；100 show 后 93.0 MB | `after/qa/ipc-smoke-t11.log` |
+| Settings 打开 / 二次实例退出 | 84.0 ms / 67.1 ms | 同上 |
+| NSIS 安装/卸载 + Portable | PASS；隔离 pipe/Data | `after/qa/install-smoke-t11.log` |
+| 全量 fmt/clippy/test | PASS；128 tests | 本报告 |
+
+### 本轮新发现并修复
+
+- `ditto-paste::clipboard::global_from_bytes` 把 `GlobalUnlock` 的“锁计数归零返回
+  FALSE 且 GetLastError=NO_ERROR”当作错误，导致所有真实粘贴在写剪贴板阶段失败。
+  T11 修复并用真实 `GlobalAlloc/GlobalUnlock` 单测 + 受控目标端到端粘贴验证。
+- Popup 的 `appearance.show_grouped_in_main` 默认 true 遮蔽了
+  `groups.show_grouped_in_main=false`，导致 G6 失效。
+- egui `consume_key` 忽略额外 Shift/Alt，Enter 先于 Shift+Enter 被消费，导致
+  Shift+Enter 永远走 Original；已调整匹配顺序。
+
+### 仍未验证
+
+物理热键按键、真实应用富格式粘贴、UAC、IME/Narrator/HC 可读性、混合 DPI、
+托盘物理点击、缺失 WebView2、Windows 10、Defender/SmartScreen 实际行为。

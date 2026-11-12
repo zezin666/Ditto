@@ -16,16 +16,19 @@ use windows::{
         },
         System::{
             ProcessStatus::{GetProcessMemoryInfo, PROCESS_MEMORY_COUNTERS},
-            Threading::{GR_GDIOBJECTS, GR_USEROBJECTS, GetCurrentProcess, GetGuiResources},
+            Threading::{
+                AttachThreadInput, GR_GDIOBJECTS, GR_USEROBJECTS, GetCurrentProcess,
+                GetCurrentThreadId, GetGuiResources,
+            },
         },
         UI::{
             HiDpi::{GetDpiForMonitor, GetDpiForWindow, MDT_EFFECTIVE_DPI},
             Input::KeyboardAndMouse::{GetAsyncKeyState, SetFocus, VK_LBUTTON},
             WindowsAndMessaging::{
                 GUITHREADINFO, GWL_EXSTYLE, GetCursorPos, GetForegroundWindow, GetGUIThreadInfo,
-                GetWindowLongPtrW, GetWindowRect, GetWindowThreadProcessId, SWP_NOACTIVATE,
-                SWP_NOZORDER, SetForegroundWindow, SetWindowLongPtrW, SetWindowPos,
-                WS_EX_NOACTIVATE,
+                GetWindowLongPtrW, GetWindowRect, GetWindowThreadProcessId, HWND_TOPMOST, SW_SHOW,
+                SWP_NOACTIVATE, SWP_NOMOVE, SWP_NOSIZE, SWP_NOZORDER, SWP_SHOWWINDOW,
+                SetForegroundWindow, SetWindowLongPtrW, SetWindowPos, ShowWindow, WS_EX_NOACTIVATE,
             },
         },
     },
@@ -157,16 +160,47 @@ pub fn dpi_for_window(hwnd: HWND) -> u32 {
     if dpi == 0 { 96 } else { dpi }
 }
 
-pub fn activate_for_user(hwnd: HWND, previous_foreground: HWND) {
+/// Gives the popup real OS keyboard focus for the keyboard-first hotkey path.
+///
+/// `WS_EX_NOACTIVATE` is cleared, then the current thread is temporarily
+/// attached to the foreground thread so `SetForegroundWindow` is allowed even
+/// though the process was started in the background. This intentionally steals
+/// focus from the target app; the core has already snapshotted that target for
+/// paste, and hide restores it.
+pub fn activate_popup(hwnd: HWND, _previous_foreground: HWND) -> bool {
     unsafe {
         let style = GetWindowLongPtrW(hwnd, GWL_EXSTYLE);
         let _ = SetWindowLongPtrW(hwnd, GWL_EXSTYLE, style & !(WS_EX_NOACTIVATE.0 as isize));
-        if !previous_foreground.0.is_null() {
-            let _ = SetForegroundWindow(previous_foreground);
-        }
+        // Show/raise without SWP_NOACTIVATE so the activation request is not
+        // suppressed by the layer style.
+        let _ = ShowWindow(hwnd, SW_SHOW);
+        let _ = SetWindowPos(
+            hwnd,
+            Some(HWND_TOPMOST),
+            0,
+            0,
+            0,
+            0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW,
+        );
+        let foreground = GetForegroundWindow();
+        let foreground_thread = GetWindowThreadProcessId(foreground, None);
+        let current_thread = GetCurrentThreadId();
+        let attached = !foreground.0.is_null()
+            && foreground_thread != 0
+            && foreground_thread != current_thread
+            && AttachThreadInput(current_thread, foreground_thread, true).as_bool();
         let _ = SetForegroundWindow(hwnd);
         let _ = SetFocus(Some(hwnd));
+        if attached {
+            let _ = AttachThreadInput(current_thread, foreground_thread, false);
+        }
+        GetForegroundWindow() == hwnd
     }
+}
+
+pub fn activate_for_user(hwnd: HWND, previous_foreground: HWND) -> bool {
+    activate_popup(hwnd, previous_foreground)
 }
 
 pub fn restore_no_activate(hwnd: HWND) {
@@ -186,6 +220,10 @@ pub fn restore_foreground(previous_foreground: HWND) {
 
 pub fn current_foreground() -> HWND {
     unsafe { GetForegroundWindow() }
+}
+
+pub fn is_window_visible(hwnd: HWND) -> bool {
+    unsafe { windows::Win32::UI::WindowsAndMessaging::IsWindowVisible(hwnd).as_bool() }
 }
 
 pub fn primary_click_outside(hwnd: HWND) -> bool {
