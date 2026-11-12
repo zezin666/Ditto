@@ -257,4 +257,107 @@ mod tests {
         assert!(!marker.exists());
         assert!(failed_marker(&marker).is_file());
     }
+
+    #[test]
+    fn staged_import_replaces_settings_before_the_next_read() {
+        use ditto_migration::ExportOptions;
+        use ditto_storage::Storage;
+
+        let temp = tempfile::tempdir().expect("temp");
+        let current = temp.path().join("data");
+        let source = temp.path().join("source");
+
+        let old = Storage::open_data_root(&current).expect("old root");
+        old.set_settings(&serde_json::json!({
+            "hotkeys": {"open_chord": "Ctrl+Alt+K"},
+            "general": {
+                "language": "en",
+                "startup_message": "",
+                "show_tray_icon": true
+            },
+            "clipboard": {"max_entries": 5}
+        }))
+        .expect("seed old settings");
+        drop(old);
+
+        let imported = Storage::open_data_root(&source).expect("source root");
+        imported
+            .set_settings(&serde_json::json!({
+                "hotkeys": {"open_chord": "Ctrl+Alt+Q"},
+                "general": {
+                    "language": "zh-CN",
+                    "startup_message": "NEW-MESSAGE",
+                    "show_tray_icon": false
+                },
+                "clipboard": {"max_entries": 17}
+            }))
+            .expect("seed imported settings");
+        drop(imported);
+
+        let package = temp.path().join("import.zip");
+        ditto_migration::create_export(
+            &source,
+            &package,
+            &ExportOptions {
+                zip: true,
+                replace_existing: false,
+            },
+        )
+        .expect("export source root");
+
+        let staged = import_package_path(&current);
+        std::fs::copy(&package, &staged).expect("stage package");
+        let pending = PendingImport {
+            package: staged.display().to_string(),
+            requested_at_ms: 1,
+        };
+        write_marker(
+            &import_marker(&current),
+            &serde_json::to_vec(&pending).expect("json"),
+        )
+        .expect("write import marker");
+
+        let applied = apply_staged(&current);
+        assert!(
+            applied.iter().any(|entry| entry.contains("applied")),
+            "staged import did not apply: {applied:?}"
+        );
+        assert!(!import_marker(&current).exists());
+        assert!(!staged.exists(), "the staged package is consumed");
+
+        // This is the read the host performs after applying staged work. The
+        // imported settings must be visible, not the pre-import values.
+        let reopened = Storage::open_data_root(&current).expect("reopen imported root");
+        let values = reopened.get_settings().expect("settings").values;
+        assert_eq!(
+            values
+                .pointer("/hotkeys/open_chord")
+                .and_then(serde_json::Value::as_str),
+            Some("Ctrl+Alt+Q")
+        );
+        assert_eq!(
+            values
+                .pointer("/general/startup_message")
+                .and_then(serde_json::Value::as_str),
+            Some("NEW-MESSAGE")
+        );
+        assert_eq!(
+            values
+                .pointer("/general/language")
+                .and_then(serde_json::Value::as_str),
+            Some("zh-CN")
+        );
+        assert_eq!(
+            values
+                .pointer("/general/show_tray_icon")
+                .and_then(serde_json::Value::as_bool),
+            Some(false)
+        );
+        assert_eq!(
+            values
+                .pointer("/clipboard/max_entries")
+                .and_then(serde_json::Value::as_u64),
+            Some(17)
+        );
+    }
 }

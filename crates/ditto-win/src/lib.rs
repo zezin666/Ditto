@@ -72,14 +72,14 @@ use windows::{
             },
             WindowsAndMessaging::{
                 CS_HREDRAW, CS_VREDRAW, CreateWindowExW, DefWindowProcW, DestroyWindow,
-                DispatchMessageW, GWL_EXSTYLE, GetClientRect, GetMessageW, GetWindowLongPtrW,
-                HWND_TOPMOST, KillTimer, LWA_ALPHA, MB_ICONWARNING, MB_OK, MSG, MessageBoxW,
-                PostQuitMessage, RegisterClassW, SPI_GETWORKAREA, SW_SHOWNOACTIVATE,
-                SWP_NOACTIVATE, SWP_NOMOVE, SWP_NOSIZE, SWP_NOZORDER, SWP_SHOWWINDOW,
-                SYSTEM_PARAMETERS_INFO_UPDATE_FLAGS, SetLayeredWindowAttributes, SetTimer,
-                SetWindowLongPtrW, SetWindowPos, ShowWindow, SystemParametersInfoW,
-                TranslateMessage, WM_DESTROY, WM_ERASEBKGND, WM_PAINT, WM_TIMER, WNDCLASSW,
-                WS_EX_LAYERED, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW, WS_EX_TOPMOST,
+                DispatchMessageW, FindWindowW, GWL_EXSTYLE, GetClientRect, GetMessageW,
+                GetWindowLongPtrW, HWND_TOPMOST, KillTimer, LWA_ALPHA, MB_ICONWARNING, MB_OK, MSG,
+                MessageBoxW, PostMessageW, PostQuitMessage, RegisterClassW, SPI_GETWORKAREA,
+                SW_SHOWNOACTIVATE, SWP_NOACTIVATE, SWP_NOMOVE, SWP_NOSIZE, SWP_NOZORDER,
+                SWP_SHOWWINDOW, SYSTEM_PARAMETERS_INFO_UPDATE_FLAGS, SetLayeredWindowAttributes,
+                SetTimer, SetWindowLongPtrW, SetWindowPos, ShowWindow, SystemParametersInfoW,
+                TranslateMessage, WM_CLOSE, WM_DESTROY, WM_ERASEBKGND, WM_PAINT, WM_TIMER,
+                WNDCLASSW, WS_EX_LAYERED, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW, WS_EX_TOPMOST,
                 WS_EX_TRANSPARENT, WS_POPUP, WS_VISIBLE,
             },
         },
@@ -459,15 +459,19 @@ fn hint_trace(message: &str) {
 /// Returns after the window has been created; the helper thread owns the
 /// window and closes it after `duration_ms`. The call never blocks the caller
 /// on a user action and never steals focus.
-pub fn show_native_hint(text: &str, duration_ms: u32) -> ditto_model::Result<()> {
+///
+/// The boolean is `true` only when this call created the hint window. An empty
+/// message or an already visible hint returns `Ok(false)`, so the caller can
+/// tell whether it owns the window and may dismiss it later.
+pub fn show_native_hint(text: &str, duration_ms: u32) -> ditto_model::Result<bool> {
     let text = text.trim().to_string();
     if text.is_empty() {
         hint_trace("skip-empty");
-        return Ok(());
+        return Ok(false);
     }
     if NATIVE_HINT_VISIBLE.swap(true, Ordering::SeqCst) {
         hint_trace("skip-active");
-        return Ok(());
+        return Ok(false);
     }
     hint_trace(&format!("show len={} duration={duration_ms}", text.len()));
     let (ready_tx, ready_rx) = std::sync::mpsc::sync_channel::<Result<(), String>>(1);
@@ -494,7 +498,7 @@ pub fn show_native_hint(text: &str, duration_ms: u32) -> ditto_model::Result<()>
         )));
     }
     match ready_rx.recv_timeout(Duration::from_secs(2)) {
-        Ok(Ok(())) | Err(std::sync::mpsc::RecvTimeoutError::Timeout) => Ok(()),
+        Ok(Ok(())) | Err(std::sync::mpsc::RecvTimeoutError::Timeout) => Ok(true),
         Ok(Err(error)) => {
             hint_trace(&format!("ready-error {error}"));
             Err(ditto_model::DittoError::Windows(error))
@@ -503,6 +507,20 @@ pub fn show_native_hint(text: &str, duration_ms: u32) -> ditto_model::Result<()>
             ditto_model::DittoError::Windows("native hint thread ended early".to_string()),
         ),
     }
+}
+
+/// Closes the native hint window immediately, if one is visible.
+///
+/// Used when the popup finishes initializing, so the "preparing" hint does not
+/// linger on top of the popup it was covering. The owning thread receives
+/// `WM_CLOSE` through its message queue; calling this from any other thread is
+/// safe and never blocks.
+pub fn dismiss_native_hint() {
+    let Ok(hwnd) = (unsafe { FindWindowW(w!("DittoNativeHint"), PCWSTR::null()) }) else {
+        return;
+    };
+    hint_trace("dismiss");
+    let _ = unsafe { PostMessageW(Some(hwnd), WM_CLOSE, WPARAM(0), LPARAM(0)) };
 }
 
 unsafe fn run_native_hint(
@@ -800,9 +818,30 @@ pub fn resize_popup(
 pub struct PipeServer {
     clients: Arc<Mutex<HashMap<u64, Arc<Connection>>>>,
     next_event: Arc<AtomicU64>,
-    popup_visible: Arc<AtomicBool>,
-    popup_clients: Arc<AtomicU64>,
+    presence: PopupPresence,
     visibility_hook: Option<VisibilityHook>,
+}
+
+/// Shared popup lifecycle state. Kept in one struct so the pipe server and its
+/// per-connection threads can be passed as one value.
+#[derive(Clone)]
+struct PopupPresence {
+    visible: Arc<AtomicBool>,
+    clients: Arc<AtomicU64>,
+    /// True only after a popup client reported that its window exists.
+    /// `clients` covers IPC prewarm, which happens well before the eframe
+    /// window/GL context is usable.
+    window_ready: Arc<AtomicBool>,
+}
+
+impl PopupPresence {
+    fn new() -> Self {
+        Self {
+            visible: Arc::new(AtomicBool::new(false)),
+            clients: Arc::new(AtomicU64::new(0)),
+            window_ready: Arc::new(AtomicBool::new(false)),
+        }
+    }
 }
 
 pub type RequestHandler = Arc<dyn Fn(&Request) -> Response + Send + Sync>;
@@ -843,13 +882,11 @@ impl PipeServer {
     ) -> ditto_model::Result<Self> {
         let name = name.to_string();
         let clients = Arc::new(Mutex::new(HashMap::<u64, Arc<Connection>>::new()));
-        let popup_visible = Arc::new(AtomicBool::new(false));
-        let popup_clients = Arc::new(AtomicU64::new(0));
+        let presence = PopupPresence::new();
         let first = Connection::create_server_instance(&name, true)?;
         let clients_for_thread = Arc::clone(&clients);
         let handler_for_thread = handler.clone();
-        let visible_for_thread = Arc::clone(&popup_visible);
-        let popup_clients_for_thread = Arc::clone(&popup_clients);
+        let presence_for_thread = presence.clone();
         let hook_for_thread = visibility_hook.clone();
 
         thread::Builder::new()
@@ -860,8 +897,7 @@ impl PipeServer {
                     first,
                     clients_for_thread,
                     handler_for_thread,
-                    visible_for_thread,
-                    popup_clients_for_thread,
+                    presence_for_thread,
                     hook_for_thread,
                 )
             })
@@ -870,8 +906,7 @@ impl PipeServer {
         Ok(Self {
             clients,
             next_event: Arc::new(AtomicU64::new(1)),
-            popup_visible,
-            popup_clients,
+            presence,
             visibility_hook,
         })
     }
@@ -899,11 +934,18 @@ impl PipeServer {
     }
 
     pub fn popup_visible(&self) -> bool {
-        self.popup_visible.load(Ordering::SeqCst)
+        self.presence.visible.load(Ordering::SeqCst)
     }
 
     pub fn popup_client_count(&self) -> u64 {
-        self.popup_clients.load(Ordering::SeqCst)
+        self.presence.clients.load(Ordering::SeqCst)
+    }
+
+    /// True when a popup process reported that its window exists and can
+    /// render. IPC prewarm (`popup_client_count`) is not enough: the eframe
+    /// window/GL context is created after the handshake.
+    pub fn popup_window_ready(&self) -> bool {
+        self.presence.window_ready.load(Ordering::SeqCst)
     }
 
     /// Updates the shared popup state and broadcasts the matching control
@@ -913,7 +955,7 @@ impl PipeServer {
         if let Some(hook) = &self.visibility_hook {
             hook(visible);
         }
-        self.popup_visible.store(visible, Ordering::SeqCst);
+        self.presence.visible.store(visible, Ordering::SeqCst);
         let event = if visible {
             Event::ShowPopup {
                 at_ms: unix_millis(),
@@ -1086,8 +1128,7 @@ fn accept_loop(
     mut current: Connection,
     clients: Arc<Mutex<HashMap<u64, Arc<Connection>>>>,
     handler: Option<RequestHandler>,
-    popup_visible: Arc<AtomicBool>,
-    popup_clients: Arc<AtomicU64>,
+    presence: PopupPresence,
     visibility_hook: Option<VisibilityHook>,
 ) {
     loop {
@@ -1110,16 +1151,14 @@ fn accept_loop(
             .insert(connection.id, Arc::clone(&connection));
         let clients_for_handler = Arc::clone(&clients);
         let handler_for_connection = handler.clone();
-        let visible_for_connection = Arc::clone(&popup_visible);
-        let popup_clients_for_connection = Arc::clone(&popup_clients);
+        let presence_for_connection = presence.clone();
         let hook_for_connection = visibility_hook.clone();
         thread::spawn(move || {
             handle_connection(
                 connection,
                 clients_for_handler,
                 handler_for_connection,
-                visible_for_connection,
-                popup_clients_for_connection,
+                presence_for_connection,
                 hook_for_connection,
             )
         });
@@ -1138,8 +1177,7 @@ fn handle_connection(
     connection: Arc<Connection>,
     clients: Arc<Mutex<HashMap<u64, Arc<Connection>>>>,
     handler: Option<RequestHandler>,
-    popup_visible: Arc<AtomicBool>,
-    popup_clients: Arc<AtomicU64>,
+    presence: PopupPresence,
     visibility_hook: Option<VisibilityHook>,
 ) {
     loop {
@@ -1187,12 +1225,12 @@ fn handle_connection(
             &request,
             &clients,
             handler.as_deref(),
-            &popup_visible,
+            &presence,
             visibility_hook.as_deref(),
         );
         if let Request::Hello { client, .. } = &request {
             if *client == ClientKind::Popup {
-                popup_clients.fetch_add(1, Ordering::SeqCst);
+                presence.clients.fetch_add(1, Ordering::SeqCst);
             }
             *connection.client_kind.lock() = Some(*client);
         }
@@ -1206,12 +1244,14 @@ fn handle_connection(
     clients.lock().remove(&connection.id);
     connection.mark_closed();
     if connection.client_kind.lock().take() == Some(ClientKind::Popup)
-        && popup_clients.fetch_sub(1, Ordering::SeqCst) == 1
+        && presence.clients.fetch_sub(1, Ordering::SeqCst) == 1
     {
         // The resident popup process is gone (crash or exit). Do not leave the
         // core believing it is still visible, or the next hotkey would toggle
-        // it hidden instead of showing it.
-        popup_visible.store(false, Ordering::SeqCst);
+        // it hidden instead of showing it. Window readiness must reset too:
+        // the next popup process starts with IPC prewarm, not a usable window.
+        presence.visible.store(false, Ordering::SeqCst);
+        presence.window_ready.store(false, Ordering::SeqCst);
     }
 }
 
@@ -1219,7 +1259,7 @@ fn dispatch_request(
     request: &Request,
     clients: &Arc<Mutex<HashMap<u64, Arc<Connection>>>>,
     handler: Option<&(dyn Fn(&Request) -> Response + Send + Sync)>,
-    popup_visible: &AtomicBool,
+    presence: &PopupPresence,
     visibility_hook: Option<&(dyn Fn(bool) + Send + Sync)>,
 ) -> Response {
     match request {
@@ -1259,7 +1299,7 @@ fn dispatch_request(
             if let Some(hook) = visibility_hook {
                 hook(true);
             }
-            popup_visible.store(true, Ordering::SeqCst);
+            presence.visible.store(true, Ordering::SeqCst);
             let event = Event::ShowPopup {
                 at_ms: unix_millis(),
                 monitor: None,
@@ -1283,7 +1323,7 @@ fn dispatch_request(
             if let Some(hook) = visibility_hook {
                 hook(false);
             }
-            popup_visible.store(false, Ordering::SeqCst);
+            presence.visible.store(false, Ordering::SeqCst);
             let event = Event::HidePopup;
             let frame = match Frame::json(FrameType::Event, unix_millis(), &event) {
                 Ok(frame) => frame,
@@ -1301,8 +1341,12 @@ fn dispatch_request(
             Response::PopupVisibility { visible: false }
         }
         Request::GetPopupVisibility => Response::PopupVisibility {
-            visible: popup_visible.load(Ordering::SeqCst),
+            visible: presence.visible.load(Ordering::SeqCst),
         },
+        Request::PopupWindowReady => {
+            presence.window_ready.store(true, Ordering::SeqCst);
+            Response::Ok
+        }
         _ => handler.map_or_else(
             || Response::Error {
                 code: ErrorCode::NotImplemented,
@@ -1640,15 +1684,79 @@ mod tests {
 
     #[test]
     fn native_hint_window_is_created_and_closes() {
-        use windows::Win32::UI::WindowsAndMessaging::FindWindowW;
         show_native_hint("DITTO-NATIVE-HINT-TEST", 800).expect("show hint");
-        let hwnd = unsafe { FindWindowW(w!("DittoNativeHint"), PCWSTR::null()) }
-            .expect("hint window exists");
-        assert!(!hwnd.is_invalid());
+        assert!(
+            unsafe { FindWindowW(w!("DittoNativeHint"), PCWSTR::null()) }.is_ok(),
+            "hint window exists"
+        );
         thread::sleep(Duration::from_millis(2200));
         assert!(
             unsafe { FindWindowW(w!("DittoNativeHint"), PCWSTR::null()) }.is_err(),
             "hint window closes after its timer"
+        );
+
+        // The popup-ready path closes the hint before its timer: keep the
+        // native window alive for a long time, then dismiss it explicitly.
+        assert!(
+            show_native_hint("DITTO-NATIVE-HINT-DISMISS-TEST", 30_000).expect("show hint"),
+            "a fresh hint is owned by this caller"
+        );
+        assert!(
+            unsafe { FindWindowW(w!("DittoNativeHint"), PCWSTR::null()) }.is_ok(),
+            "long-lived hint window exists"
+        );
+        dismiss_native_hint();
+        let mut closed = false;
+        for _ in 0..100 {
+            if unsafe { FindWindowW(w!("DittoNativeHint"), PCWSTR::null()) }.is_err() {
+                closed = true;
+                break;
+            }
+            thread::sleep(Duration::from_millis(20));
+        }
+        assert!(closed, "dismiss_native_hint closes the hint window");
+    }
+
+    #[test]
+    fn popup_window_readiness_follows_the_ready_message_not_the_handshake() {
+        let name = format!(
+            r"\\.\pipe\ditto-test-ready-{}-{}",
+            std::process::id(),
+            unix_millis()
+        );
+        let server = PipeServer::start(&name).expect("start server");
+        assert!(!server.popup_window_ready());
+        let client = PipeClient::connect(&name).expect("connect client");
+        client
+            .send(1, &hello_request(ClientKind::Popup))
+            .expect("send hello");
+        assert!(matches!(
+            client.read_response().expect("hello response"),
+            Response::HelloAck { .. }
+        ));
+        // IPC prewarm alone must not look like a usable popup window.
+        assert!(!server.popup_window_ready());
+
+        client
+            .send(2, &Request::PopupWindowReady)
+            .expect("send window ready");
+        assert!(matches!(
+            client.read_response().expect("ready response"),
+            Response::Ok
+        ));
+        assert!(server.popup_window_ready());
+
+        drop(client);
+        for _ in 0..200 {
+            if server.popup_client_count() == 0 {
+                break;
+            }
+            thread::sleep(Duration::from_millis(5));
+        }
+        assert_eq!(server.popup_client_count(), 0);
+        assert!(
+            !server.popup_window_ready(),
+            "window readiness resets when the popup process disconnects"
         );
     }
 

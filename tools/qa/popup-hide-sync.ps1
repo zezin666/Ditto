@@ -7,6 +7,17 @@ param(
 $ErrorActionPreference = "Stop"
 . (Join-Path $PSScriptRoot "suffix-common.ps1")
 $DittoExe = (Resolve-Path -LiteralPath $DittoExe).Path
+$binaryDir = Split-Path -Parent $DittoExe
+$popupExe = Join-Path $binaryDir "DittoPopup.exe"
+# Only touch popup processes started by this script from this worktree's
+# binary directory. A hardcoded worktree path previously missed fresh
+# checkouts and could not be reused (Minor-1).
+$script:startedAt = Get-Date
+function Stop-RunPopups {
+    Get-Process -Name DittoPopup -ErrorAction SilentlyContinue |
+        Where-Object { $_.Path -eq $popupExe -and $_.StartTime -ge $script:startedAt } |
+        Stop-Process -Force -ErrorAction SilentlyContinue
+}
 $DataRoot = (Resolve-Path -LiteralPath $DataRoot).Path
 $env:DITTO_DATA_DIR = $DataRoot
 if ([string]::IsNullOrWhiteSpace($PipeSuffix)) {
@@ -118,9 +129,7 @@ try {
     # Simulate a popup crash while visible; the core must clear visibility when
     # its popup clients disconnect.
     Start-Sleep -Milliseconds 500
-    Get-Process -Name DittoPopup -ErrorAction SilentlyContinue |
-        Where-Object { $_.Path -like "*rewrite-fixes\target\*" } |
-        Stop-Process -Force -ErrorAction SilentlyContinue
+    Stop-RunPopups
     for ($i = 0; $i -lt 100; $i++) {
         Start-Sleep -Milliseconds 50
         if (-not (Call "GetPopupVisibility").visible) { break }
@@ -132,7 +141,5 @@ try {
 } finally {
     if ($null -ne $pipe) { $pipe.Dispose() }
     Stop-Process -Id $core.Id -Force -ErrorAction SilentlyContinue
-    Get-Process -Name DittoPopup -ErrorAction SilentlyContinue |
-        Where-Object { $_.Path -like "*rewrite-fixes\target\*" } |
-        Stop-Process -Force -ErrorAction SilentlyContinue
+    Stop-RunPopups
 }

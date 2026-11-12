@@ -51,7 +51,7 @@ A feature is **Done** only when all of the following are true:
 | C8 | Self-write suppression | T2 | Pasting from Ditto does not re-capture the clip or create a loop | Integration test with expected-hash suppression |
 | C9 | Max clip size + ignore rules | T2 | A clip above `max_clip_bytes` is ignored with a logged reason; excluded apps are not captured | Unit test + manual |
 | C10 | Source app/title | T2 | Each clip records the foreground app and window title; no content in logs | DB inspection; log scan |
-| C11 | Retention: max entries and expiry | T2/T9 | Core runs retention at startup and every 5 minutes; beyond the limit/age, unpinned unprotected clips are removed; pinned/dont-auto-delete/copy-buffer/global-shortcut clips are kept | Unit + core maintenance pass tests |
+| C11 | Retention: max entries and expiry | T2/T9 | Core delays the first retention pass by 10 s after launch (so cold-start window/GL initialization is not competing for disk/CPU) and then runs it every 5 minutes; beyond the limit/age, unpinned unprotected clips are removed; pinned/dont-auto-delete/copy-buffer/global-shortcut clips are kept | Unit + core maintenance pass tests (`MAINTENANCE_INITIAL_DELAY` = 10 s) |
 | C12 | Delete, soft delete, undo, purge | T2/T9 | Delete hides the clip; undo restores; clear history soft-deletes then purges rows and GCs blobs; periodic purge removes expired tombstones | Unit tests + maintenance pass test |
 
 ### 2.2 Search and history

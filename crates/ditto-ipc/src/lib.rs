@@ -86,6 +86,12 @@ pub enum Request {
     ShowPopup,
     HidePopup,
     GetPopupVisibility,
+    /// Sent by the resident popup once its window exists and can render.
+    ///
+    /// `Hello` only proves the IPC layer is warm; on a cold start the eframe
+    /// window and GL context still take roughly two seconds after that. The
+    /// core uses this message to tell "IPC ready" apart from "popup can show".
+    PopupWindowReady,
     GetClips {
         #[serde(default)]
         query: String,

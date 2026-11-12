@@ -1,5 +1,5 @@
 use std::{
-    path::PathBuf,
+    path::{Path, PathBuf},
     process::{Child, Command},
     thread,
     time::Duration,
@@ -104,9 +104,9 @@ fn claim_single_instance() -> Option<InstanceSignals> {
     })
 }
 
-/// Settings needed before Tauri starts: single-instance policy, tray policy,
-/// log level, and the global open chord. A short-lived read-only storage open
-/// is cheap and lets the host honor user settings from the first second.
+/// Settings needed before Tauri starts: log level and the language for the
+/// early popup process. The full values are re-read from the data root inside
+/// `setup` after any staged import/migration has been applied.
 #[derive(Debug, Clone)]
 struct StartupSettings {
     show_tray_icon: bool,
@@ -116,24 +116,30 @@ struct StartupSettings {
     values: serde_json::Value,
 }
 
-fn load_startup_settings() -> StartupSettings {
-    let defaults = StartupSettings {
-        show_tray_icon: true,
-        language: "en".to_string(),
-        log_level: log::LevelFilter::Info,
-        open_chord: hotkeys::DEFAULT_OPEN_CHORD.to_string(),
-        values: serde_json::Value::Null,
-    };
-    let Ok(executable) = std::env::current_exe() else {
-        return defaults;
-    };
-    let Some(executable_dir) = executable.parent() else {
-        return defaults;
-    };
-    let Ok(data_root) = core_service::resolve_data_root(executable_dir) else {
-        return defaults;
-    };
-    let Ok(storage) = Storage::open_data_root(&data_root.path) else {
+impl StartupSettings {
+    fn defaults() -> Self {
+        Self {
+            show_tray_icon: true,
+            language: "en".to_string(),
+            log_level: log::LevelFilter::Info,
+            open_chord: hotkeys::DEFAULT_OPEN_CHORD.to_string(),
+            values: serde_json::Value::Null,
+        }
+    }
+}
+
+/// Resolves the data root that this instance will use. Staged import,
+/// restore, and migration operations are applied to this path before anything
+/// reads settings from it.
+fn startup_data_root() -> Option<DataRoot> {
+    let executable = std::env::current_exe().ok()?;
+    let executable_dir = executable.parent()?;
+    core_service::resolve_data_root(executable_dir).ok()
+}
+
+fn load_startup_settings(data_root: &Path) -> StartupSettings {
+    let defaults = StartupSettings::defaults();
+    let Ok(storage) = Storage::open_data_root(data_root) else {
         return defaults;
     };
     let Ok(snapshot) = storage.get_settings() else {
@@ -218,17 +224,32 @@ pub fn run() {
         startup_trace(&format!("invalid-suffix={error}"));
         std::process::exit(ditto_win::INVALID_SUFFIX_EXIT_CODE);
     }
-    let startup = load_startup_settings();
-    startup_trace("startup-settings-loaded");
-    logging::set_runtime_level(startup.log_level);
     // Fast single-instance path: signal the running core and exit before
-    // Tauri, the tray, the clipboard monitor, or WebView2 initialize. The
-    // per-user pipe only supports one core, so this is always enforced; the
-    // Settings toggle is disabled instead of pretending otherwise.
+    // touching the data root, Tauri, the tray, the clipboard monitor, or
+    // WebView2. The per-user pipe only supports one core, so this is always
+    // enforced; the Settings toggle is disabled instead of pretending
+    // otherwise. Claiming first also means only the primary instance may
+    // apply a staged import/migration.
     let listener_signals = claim_single_instance();
 
-    let (initial_hotkey, _initial_shortcut) = choose_initial_hotkey(&startup.open_chord);
-    let (initial_bindings, mut startup_issues) = startup_bindings(&startup.values, &initial_hotkey);
+    // Apply staged data operations before reading the startup settings.
+    // An import, restore, or legacy migration replaces the whole data root,
+    // so a snapshot taken before it would keep the old open chord, tray,
+    // language, and startup message for this run and reconcile the old values
+    // back over the imported ones (P-1).
+    let startup_root = startup_data_root();
+    if let Some(root) = &startup_root {
+        for applied in pending::apply_staged(&root.path) {
+            startup_trace(&format!("pending-applied: {applied}"));
+        }
+    }
+    let startup = startup_root
+        .as_ref()
+        .map_or_else(StartupSettings::defaults, |root| {
+            load_startup_settings(&root.path)
+        });
+    startup_trace("startup-settings-loaded");
+    logging::set_runtime_level(startup.log_level);
     let shortcut_plugin = tauri_plugin_global_shortcut::Builder::new()
         .with_handler(|app, shortcut, event| {
             if event.state() == ShortcutState::Pressed {
@@ -336,6 +357,45 @@ pub fn run() {
             let storage =
                 Storage::open_data_root(&data_root.path).map_err(|error| error.to_string())?;
             startup_trace("storage-open");
+            // Read settings from the data root that is actually active now.
+            // The staged operation normally ran before this process read its
+            // startup snapshot, but re-reading here makes the first start
+            // authoritative even if that early read failed or a marker
+            // appeared late. No pre-import snapshot may reach the reconcile
+            // write-back below (P-1).
+            let startup_values = storage
+                .get_settings()
+                .map(|snapshot| snapshot.values)
+                .unwrap_or_else(|_| startup.values.clone());
+            let configured_open = startup_values
+                .pointer("/hotkeys/open_chord")
+                .and_then(serde_json::Value::as_str)
+                .filter(|chord| !chord.trim().is_empty())
+                .unwrap_or(startup.open_chord.as_str())
+                .to_string();
+            let (initial_hotkey, _) = choose_initial_hotkey(&configured_open);
+            let (initial_bindings, mut startup_issues) =
+                startup_bindings(&startup_values, &initial_hotkey);
+            let show_tray_icon = startup_values
+                .pointer("/general/show_tray_icon")
+                .and_then(serde_json::Value::as_bool)
+                .unwrap_or(startup.show_tray_icon);
+            let language = startup_values
+                .pointer("/general/language")
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or(startup.language.as_str())
+                .to_string();
+            let startup_message = startup_values
+                .pointer("/general/startup_message")
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or("")
+                .to_string();
+            logging::set_runtime_level_from_setting(
+                startup_values
+                    .pointer("/diagnostics/log_level")
+                    .and_then(serde_json::Value::as_str)
+                    .unwrap_or("info"),
+            );
             let core =
                 CoreService::start(&name, storage.clone()).map_err(|error| error.to_string())?;
             startup_trace("core-started");
@@ -346,10 +406,10 @@ pub fn run() {
             // actually owns: persist the effective open chord, clear failed
             // non-open bindings, and expose the conflict list to Settings.
             // Otherwise the UI would show a chord that was never registered.
-            if initial_hotkey != startup.open_chord {
+            if initial_hotkey != configured_open {
                 startup_issues.push(hotkeys::BindingIssue {
                     action: hotkeys::HotkeyAction::ToggleOpen,
-                    chord: startup.open_chord.clone(),
+                    chord: configured_open.clone(),
                     reason: "fallback",
                     effective: (!effective_open.is_empty()).then(|| effective_open.clone()),
                     detail: Some(format!(
@@ -368,7 +428,7 @@ pub fn run() {
             }
             startup_issues.extend(registration_issues);
             let reconciled =
-                hotkeys::reconcile_settings(&startup.values, &effective_open, &startup_issues);
+                hotkeys::reconcile_settings(&startup_values, &effective_open, &startup_issues);
             if let Err(error) = storage.set_settings(&reconciled) {
                 log::warn!("failed to persist reconciled hotkey settings: {error}");
             }
@@ -423,20 +483,19 @@ pub fn run() {
                 });
             }
 
-            if startup.show_tray_icon {
-                create_tray(app.handle(), &startup.language)?;
+            if show_tray_icon {
+                create_tray(app.handle(), &language)?;
+                startup_trace("tray-created");
+            } else {
+                startup_trace("tray-hidden");
             }
             startup_trace("tray-ready");
             log::info!("global hotkey active: {effective_open}");
+            startup_trace(&format!("hotkey-active={effective_open}"));
             spawn_popup(app.handle());
             startup_trace("popup-spawned");
-            let startup_message = startup
-                .values
-                .pointer("/general/startup_message")
-                .and_then(serde_json::Value::as_str)
-                .unwrap_or("");
             if !startup_message.trim().is_empty()
-                && let Err(error) = ditto_win::show_native_hint(startup_message, 8000)
+                && let Err(error) = ditto_win::show_native_hint(&startup_message, 8000)
             {
                 log::debug!("failed to show startup message hint: {error}");
             }
@@ -631,25 +690,36 @@ fn toggle_popup(app: &AppHandle) {
         if let Some(core) = state.core.lock().as_ref() {
             core.capture_paste_target();
         }
-        // If the resident popup is still starting (first login, Defender scan,
-        // or a crash respawn), surface a visible "preparing" state instead of
-        // a silent hotkey. The tooltip returns to normal once Hello arrives.
-        if state.pipe.popup_client_count() == 0 {
+        // If the popup process is still initializing, surface a visible
+        // "preparing" state instead of a silent hotkey. IPC prewarm completes
+        // before the eframe window/GL context exists, but showing the popup
+        // still takes roughly two seconds after that; only
+        // `popup_window_ready` means the window can actually render. The
+        // tooltip and native hint return to normal once the popup reports
+        // readiness.
+        if !state.pipe.popup_window_ready() {
             let pipe = state.pipe.clone();
             let handle = app.clone();
             set_tray_tooltip(&handle, "tray.preparing");
             // The tray icon may be hidden. Show the same message as a native,
             // non-activating hint so the first hotkey is never silent.
+            let mut owns_hint = false;
             if app.tray_by_id("main").is_none() {
                 let language = current_language(app);
                 let message = locale_text(&language, "tray.preparing");
-                if let Err(error) = ditto_win::show_native_hint(&message, 6000) {
-                    log::debug!("failed to show native preparing hint: {error}");
+                match ditto_win::show_native_hint(&message, 6000) {
+                    Ok(shown) => owns_hint = shown,
+                    Err(error) => log::debug!("failed to show native preparing hint: {error}"),
                 }
             }
             thread::spawn(move || {
-                for _ in 0..150 {
-                    if pipe.popup_client_count() > 0 {
+                for _ in 0..200 {
+                    if pipe.popup_window_ready() {
+                        // The popup can render now; do not leave the hint on
+                        // top of it until the 6 s timer expires.
+                        if owns_hint {
+                            ditto_win::dismiss_native_hint();
+                        }
                         break;
                     }
                     thread::sleep(Duration::from_millis(100));

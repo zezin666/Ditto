@@ -3432,9 +3432,21 @@ fn connect_and_read(
             }
         }
     };
+    // Hello only proves the IPC prewarm completed. The eframe window and GL
+    // context exist by the time this thread starts, so tell the core that the
+    // popup can actually render. Until then the core keeps showing its
+    // non-activating "preparing" hint (P-2).
+    client.send(2, &Request::PopupWindowReady)?;
+    match client.read_response()? {
+        Response::Ok => qa_trace("window-ready-ack"),
+        Response::Error { message, .. } => {
+            return Err(ditto_model::DittoError::Ipc(message));
+        }
+        _ => qa_trace("window-ready-unexpected-response"),
+    }
     // A hotkey press may arrive before this client connects. The core
     // remembers visibility so the first press is not lost.
-    client.send(2, &Request::GetPopupVisibility)?;
+    client.send(3, &Request::GetPopupVisibility)?;
     if let Response::PopupVisibility { visible: true } = client.read_response()? {
         let _ = sender.send(PopupSignal::Show {
             received_at: Instant::now(),

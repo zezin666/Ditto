@@ -657,7 +657,8 @@ pub(crate) fn handle_request(
         Request::Hello { .. }
         | Request::ShowPopup
         | Request::HidePopup
-        | Request::GetPopupVisibility => Response::Error {
+        | Request::GetPopupVisibility
+        | Request::PopupWindowReady => Response::Error {
             code: ErrorCode::Internal,
             message: "control request bypassed the pipe dispatcher".to_string(),
             retryable: true,
@@ -977,6 +978,7 @@ fn request_method(request: &Request) -> &'static str {
         Request::ShowPopup => "ShowPopup",
         Request::HidePopup => "HidePopup",
         Request::GetPopupVisibility => "GetPopupVisibility",
+        Request::PopupWindowReady => "PopupWindowReady",
         Request::GetClips { .. } => "GetClips",
         Request::Search { .. } => "Search",
         Request::GetClip { .. } => "GetClip",

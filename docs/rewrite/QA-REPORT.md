@@ -346,7 +346,7 @@ T13 在 `D:\orca\workspaces\Ditto\rewrite-fixes3` 上重跑，仍使用唯一
 | 迁移 fixture | 3/3 PASS | `after/qa/migration-fixture-t13.log` |
 | 存储 10k | insert 1,754 ms；search p95 ≤ 18.955 ms | `after/perf/storage-10k-t13.log` |
 | NSIS 安装/卸载 + Portable | PASS | `after/qa/install-smoke-t13.log` |
-| 全量 fmt/clippy/test | PASS；131 tests | 本报告 |
+| 全量 fmt/clippy/test | PASS；135 tests（T13 实测；T15 起为 137） | 本报告 |
 
 ### T13 新发现/修复
 
@@ -363,3 +363,56 @@ T13 在 `D:\orca\workspaces\Ditto\rewrite-fixes3` 上重跑，仍使用唯一
 物理热键按键到 Show 的事件源、真实应用富格式粘贴、UAC、IME/Narrator/HC、
 混合 DPI/多显示器、真实 tray 点击、缺失 WebView2、Windows 10、
 Defender/SmartScreen 实际行为；冷启动 `<2.0 s` 目标未达成（见 T13 报告 DEFERRED）。
+
+## T15 修复 QA（2026-11-13）
+
+T15 在 `D:\orca\workspaces\Ditto\rewrite-fixes4`（base `taohy/rewrite-review4`
+@ `65b9434`）上重跑。所有运行使用唯一合法 `DITTO_PIPE_SUFFIX` 和临时
+`DITTO_DATA_DIR`，未读取真实用户 `%APPDATA%\Ditto`/`%LOCALAPPDATA%\Ditto` 或
+剪贴板历史；用户 `D:\Programs\Ditto\Ditto.exe`（PID 35024）在 T15 前后保持
+不变。完整逐条说明见 `T15-FIX-REPORT.md`。
+
+### release 结果
+
+| 项目 | 结果 | 证据 |
+|---|---|---|
+| 全量 fmt/clippy/test | PASS；**137 passed，0 failed，1 ignored**（T13 为 135；新增 P-1/P-2 回归测试） | 本报告 |
+| P-1 pending import 首启设置 | 导入包 `Ctrl+Alt+Q`/`NEW-MESSAGE`/`zh-CN`/tray=false 全部生效；旧 `Ctrl+Alt+K` 未被写回；Q 已注册、K 空闲；启动提示可见 | `after/qa/pending-import-startup-t15.log`、`after/qa/pending-import-t15-host-trace.log` |
+| P-2 隐藏 tray 冷启动反馈 | signal→hint **29 ms**；hint 在 window ready（1,555 ms）前可见；ready 后关闭；signal→activation 1,597 ms；hint 不抢焦点；PrintWindow 非黑 | `after/qa/popup-ready-feedback-t15.log`、`after/qa/preparing-hint-t15.png`、`after/qa/popup-ready-t15-{host,popup,hint}-trace.log` |
+| suffix fail-closed | 4/4 非法 suffix 退出码 2、无 DB、无生产 pipe；合法 suffix 正常 | `after/qa/suffix-validation-t15.log` |
+| 启动热键冲突/回写 | PASS；open fallback、copy chord 清空、`startup_conflicts` 记录、pipe 存活 | `after/qa/hotkey-rebind-t15.log` |
+| keyboard-first（Show→键入→Enter/Shift+Enter→真实目标） | PASS；文本实际落地 | `after/qa/keyboard-first-t15.log` |
+| grouped main false→Ungrouped | PASS | `after/qa/grouped-main-t15.log` |
+| theme dark→HC→system | PASS；system 解析 Light | `after/qa/theme-modes-t15.log` |
+| real 10k SQLite + IPC scroll（300 帧） | p50 0.684 / p95 1.214 / max 2.767 ms；>16.7 ms 0 | `after/perf/scroll-10k-real-ipc-t15.csv`、`after/qa/scroll-10k-ipc-t15.log` |
+| 10k cursor paging | 20 页 / 10,000 条 / 444.3 ms | `after/qa/paging-check-t15.log` |
+| IPC smoke 100 show | first-frame p50 2.053 / p95 3.766 ms | `after/qa/ipc-smoke-t15.log` |
+| 空闲 private（3 次） | 92,913,664 / 93,040,640 / 93,040,640 B；中位 93,040,640 B < 100 MB | 同上 |
+| Settings 打开 / 二次实例退出 | 43.5 ms / 44.6 ms | 同上 |
+| popup hide 同步/崩溃清理（fresh worktree 路径） | PASS | `after/qa/popup-hide-sync-t15.log` |
+| 冷启动同 binary 3 次 | 5,550.2 / 3,391.6 / 3,448.0 ms；中位 3,448.0 ms | `after/qa/cold-start-t15.log` |
+| 新拷贝首启 | 4,557.0 ms | 同上 |
+| 冷启动 feedback（startup message + popup 缺失回退） | 两场景提示可见、PrintWindow 非黑、自动关闭 | `after/qa/cold-start-feedback-t15.log`、`after/qa/startup-hint-t15.png`、`after/qa/preparing-hint-fallback-t15.png` |
+| 迁移 fixture | 3/3 PASS | `after/qa/migration-fixture-t15.log` |
+| 存储 10k | insert 1,750.2 ms；quick-paste p95 18.341 ms；其余 search p95 ≤ 1.142 ms | `after/perf/storage-10k-t15.log` |
+| NSIS 安装/卸载 + Portable | PASS | 安装冒烟输出见 `T15-FIX-REPORT.md` |
+
+### T15 修复
+
+- P-1：pending import/restore/migration 现在在读取启动设置之前应用；`setup`
+  再从新的 data root 重新读取设置并据此重建 hotkey/tray/language/startup
+  message，旧快照不再参与 reconcile 写回。
+- P-2：新增 `PopupWindowReady` IPC 请求和 `PipeServer::popup_window_ready`；
+  popup 在 eframe 窗口创建后发送；core 只要窗口未 ready 就显示非激活提示，
+  ready 后立即关闭。IPC prewarm 不再被当作“可显示”。
+- Minor-1：`popup-hide-sync.ps1` 改为基于 `$DittoExe` 目录 + 启动时间筛选 popup
+  进程，fresh worktree 可运行。
+- Minor-2：测试数更新为 137，并补充本 T15 证据索引。
+- DOC-2（附带）：FEATURE-MATRIX C11 明确首轮 retention 延后 10 s。
+
+### 仍未验证
+
+物理热键按键到 Show 的真实事件源（QA 走同一 toggle 事件）、真实应用富格式
+粘贴、UAC/secure desktop、IME/Narrator/HC、混合 DPI/多显示器、真实 tray 点击、
+缺失 WebView2、Windows 10、Defender/SmartScreen 实际行为；冷启动 `<2.0 s`
+仍未达成（P-2 只保证该窗口内有可见反馈，见 `T15-FIX-REPORT.md` DEFERRED）。

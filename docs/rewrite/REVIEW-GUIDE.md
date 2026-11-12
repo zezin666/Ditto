@@ -114,6 +114,27 @@ T13 的冷启动结论：代码可控部分（setup、hotkey、tray）约 60 ms�
 （约 1.7 s）构成。`host→Show <2.0 s` 在当前未签名、独立 popup 进程架构下未达标，
 已作为 DEFERRED 记录，并由原生提示覆盖隐藏 tray 的可见反馈。
 
+## 3.9 T15 修复入口
+
+- `docs/rewrite/T15-FIX-REPORT.md`：CODE-REVIEW-4 的 P-1、P-2、Minor-1、Minor-2
+  逐条状态、证据与残余边界。
+- `apps/ditto/src-tauri/src/lib.rs`：`run()` 先 claim 单实例，再应用
+  `pending::apply_staged`，然后才读取启动设置；`setup` 打开 Storage 后重新读取
+  设置并据此重建 hotkey/tray/language/startup message；旧快照不参与 reconcile。
+  `toggle_popup` 改用 `popup_window_ready()` 判断是否需要 preparing 提示。
+- `crates/ditto-ipc/src/lib.rs`：新增 `Request::PopupWindowReady`。
+- `crates/ditto-win/src/lib.rs`：`PopupPresence`（visible/clients/window_ready）、
+  `PipeServer::popup_window_ready`、`dismiss_native_hint`；popup 断开时重置
+  window ready。
+- `apps/ditto-popup/src/app.rs`：`connect_and_read` 在窗口创建后发送
+  `PopupWindowReady` 并写 `window-ready-ack` trace。
+- `tools/qa/pending-import-startup.ps1`：合成导出包 + 旧设置目标，验证导入值
+  不被旧快照覆盖。
+- `tools/qa/popup-ready-feedback.ps1`：等待 `hello-ack-prewarm` 后直接信号
+  toggle event，断言 hint 在 window ready 前可见、ready 后关闭、不抢焦点。
+- `tools/qa/popup-hide-sync.ps1`：popup 进程筛选改为当前 worktree 的
+  `$DittoExe` 目录 + 启动时间，不再硬编码 `rewrite-fixes\target`。
+
 ## 4. 复现步骤
 
 ### 4.1 构建与质量门
