@@ -22,8 +22,9 @@ use parking_lot::Mutex;
 use windows::{
     Win32::{
         Foundation::{
-            CloseHandle, DUPLICATE_SAME_ACCESS, DuplicateHandle, ERROR_BROKEN_PIPE,
-            ERROR_PIPE_CONNECTED, GENERIC_READ, GENERIC_WRITE, GetLastError, HANDLE, LocalFree,
+            CloseHandle, DUPLICATE_SAME_ACCESS, DuplicateHandle, ERROR_ALREADY_EXISTS,
+            ERROR_BROKEN_PIPE, ERROR_PIPE_CONNECTED, GENERIC_READ, GENERIC_WRITE, GetLastError,
+            HANDLE, LocalFree, WAIT_OBJECT_0,
         },
         Graphics::Gdi::InvalidateRect,
         Security::{
@@ -43,7 +44,10 @@ use windows::{
             PIPE_TYPE_BYTE, PIPE_WAIT, PeekNamedPipe, WaitNamedPipeW,
         },
         System::Registry::{HKEY_CURRENT_USER, RRF_RT_REG_DWORD, RegGetValueW},
-        System::Threading::{GetCurrentProcess, OpenProcessToken},
+        System::Threading::{
+            CreateEventW, GetCurrentProcess, INFINITE, OpenProcessToken, SetEvent,
+            WaitForSingleObject,
+        },
         UI::Input::KeyboardAndMouse::{
             HOT_KEY_MODIFIERS, MOD_NOREPEAT, RegisterHotKey, UnregisterHotKey,
         },
@@ -105,6 +109,65 @@ pub fn current_user_sid_string() -> ditto_model::Result<String> {
 
 pub fn pipe_name() -> ditto_model::Result<String> {
     Ok(format!(r"\\.\pipe\ditto-{}", current_user_sid_string()?))
+}
+
+/// Per-user Win32 auto-reset event used as a fast single-instance signal.
+///
+/// The first process creates the event; later processes detect the existing
+/// object and signal it instead of initializing the whole Tauri application.
+pub struct SingleInstanceSignal {
+    raw: isize,
+    already_running: bool,
+}
+
+// The handle is an owned Win32 event handle. `SetEvent`,
+// `WaitForSingleObject`, and `CloseHandle` are safe to call from any thread.
+unsafe impl Send for SingleInstanceSignal {}
+unsafe impl Sync for SingleInstanceSignal {}
+
+impl SingleInstanceSignal {
+    pub fn create(name: &str) -> ditto_model::Result<Self> {
+        let wide: Vec<u16> = OsStr::new(name).encode_wide().chain(Some(0)).collect();
+        let handle =
+            unsafe { CreateEventW(None, false, false, windows::core::PCWSTR(wide.as_ptr())) }
+                .map_err(|error| ditto_model::DittoError::Ipc(error.to_string()))?;
+        let already_running = unsafe { GetLastError() } == ERROR_ALREADY_EXISTS;
+        Ok(Self {
+            raw: handle.0 as isize,
+            already_running,
+        })
+    }
+
+    pub const fn already_running(&self) -> bool {
+        self.already_running
+    }
+
+    pub fn signal(&self) {
+        unsafe {
+            let _ = SetEvent(self.handle());
+        }
+    }
+
+    /// Waits up to `timeout_ms`; `INFINITE` blocks until the event is set.
+    pub fn wait(&self, timeout_ms: u32) -> bool {
+        unsafe { WaitForSingleObject(self.handle(), timeout_ms) == WAIT_OBJECT_0 }
+    }
+
+    pub fn wait_forever(&self) -> bool {
+        self.wait(INFINITE)
+    }
+
+    const fn handle(&self) -> HANDLE {
+        HANDLE(self.raw as *mut std::ffi::c_void)
+    }
+}
+
+impl Drop for SingleInstanceSignal {
+    fn drop(&mut self) {
+        unsafe {
+            let _ = CloseHandle(self.handle());
+        }
+    }
 }
 
 pub fn system_theme() -> ditto_model::ThemeMode {

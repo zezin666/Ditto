@@ -211,18 +211,15 @@ impl ClipProvider for IpcProvider {
     }
 
     fn load(&mut self, query: &str, group: GroupFilter, limit: usize) -> ProviderResult<ClipPage> {
-        let request = query_request(query, limit);
+        let request = query_request_for_group(query, limit, group);
         match self.call(request)? {
             Response::Clips {
-                mut items,
-                mut total,
+                items,
+                total,
                 took_ms,
                 next_cursor,
+                ..
             } => {
-                if group != GroupFilter::All {
-                    items.retain(|clip| group.matches(clip));
-                    total = items.len() as u64;
-                }
                 self.update_buffer_cache(&items);
                 Ok(ClipPage {
                     items,
@@ -250,7 +247,7 @@ impl ClipProvider for IpcProvider {
 
     fn settings(&mut self) -> ProviderResult<SettingsSnapshot> {
         match self.call(Request::GetSettings)? {
-            Response::Settings { values } => Ok(values),
+            Response::Settings { snapshot, .. } => Ok(snapshot),
             other => Err(ProviderError::InvalidResponse(format!(
                 "expected Settings, received {}",
                 response_name(&other)
@@ -259,33 +256,42 @@ impl ClipProvider for IpcProvider {
     }
 
     fn copy_buffers(&mut self) -> ProviderResult<Vec<CopyBufferSlot>> {
-        Ok(self
-            .buffer_clips
-            .iter()
-            .enumerate()
-            .map(|(index, clip_id)| CopyBufferSlot {
-                slot: index as u8 + 1,
-                name: format!("Buffer {}", index + 1),
-                clip_id: *clip_id,
-            })
-            .collect())
+        match self.call(Request::GetCopyBuffers)? {
+            Response::CopyBuffers { slots } => {
+                self.buffer_clips = [None; 5];
+                for slot in &slots {
+                    if (1..=5).contains(&slot.slot)
+                        && let Some(clip_id) = slot.clip_id
+                    {
+                        self.buffer_clips[usize::from(slot.slot - 1)] = Some(clip_id);
+                    }
+                }
+                Ok(slots)
+            }
+            other => Err(ProviderError::InvalidResponse(format!(
+                "expected CopyBuffers, received {}",
+                response_name(&other)
+            ))),
+        }
     }
 
     fn paste(&mut self, clip_id: i64, mode: PasteMode) -> ProviderResult<()> {
-        match mode {
-            PasteMode::Original | PasteMode::PlainText => {
-                let plain_text = mode == PasteMode::PlainText;
-                match self.call(Request::Paste {
-                    clip_id,
-                    plain_text,
-                })? {
-                    Response::Ok | Response::PopupVisibility { .. } => Ok(()),
-                    other => Err(unexpected("paste", &other)),
-                }
-            }
-            PasteMode::Html | PasteMode::Rtf | PasteMode::Files => Err(ProviderError::Unsupported(
-                "format-specific paste requires a protocol extension".to_string(),
-            )),
+        let (plain_text, formats) = match mode {
+            PasteMode::Original => (false, Vec::new()),
+            PasteMode::PlainText => (true, Vec::new()),
+            PasteMode::Html => (false, vec!["HTML Format".to_string()]),
+            PasteMode::Rtf => (false, vec!["Rich Text Format".to_string()]),
+            PasteMode::Files => (false, vec!["CF_HDROP".to_string()]),
+        };
+        match self.call(Request::Paste {
+            clip_id,
+            plain_text,
+            formats,
+            clip_ids: Vec::new(),
+        })? {
+            Response::PasteResult { outcome } if outcome.ok => Ok(()),
+            Response::PasteResult { outcome } => Err(ProviderError::Core(outcome.message)),
+            other => Err(unexpected("paste", &other)),
         }
     }
 
@@ -312,26 +318,41 @@ impl ClipProvider for IpcProvider {
         }
     }
 
-    fn assign_copy_buffer(&mut self, _clip_id: i64, _slot: u8) -> ProviderResult<()> {
-        Err(ProviderError::Unsupported(
-            "copy-buffer assignment requires a protocol extension".to_string(),
-        ))
+    fn assign_copy_buffer(&mut self, clip_id: i64, slot: u8) -> ProviderResult<()> {
+        match self.call(Request::CopyBufferAssign {
+            slot,
+            clip_id: Some(clip_id),
+        })? {
+            Response::Ok | Response::PopupVisibility { .. } => {
+                self.buffer_clips[usize::from(slot.saturating_sub(1))] = Some(clip_id);
+                Ok(())
+            }
+            other => Err(unexpected("assign copy buffer", &other)),
+        }
     }
 
-    fn clear_copy_buffer(&mut self, _slot: u8) -> ProviderResult<()> {
-        Err(ProviderError::Unsupported(
-            "copy-buffer clearing requires a protocol extension".to_string(),
-        ))
+    fn clear_copy_buffer(&mut self, slot: u8) -> ProviderResult<()> {
+        match self.call(Request::CopyBufferClear { slot })? {
+            Response::Ok | Response::PopupVisibility { .. } => {
+                if let Some(entry) = self
+                    .buffer_clips
+                    .get_mut(usize::from(slot.saturating_sub(1)))
+                {
+                    *entry = None;
+                }
+                Ok(())
+            }
+            other => Err(unexpected("clear copy buffer", &other)),
+        }
     }
 
     fn paste_copy_buffer(&mut self, slot: u8, plain_text: bool) -> ProviderResult<()> {
-        let index = usize::from(slot.saturating_sub(1));
-        let clip_id = self
-            .buffer_clips
-            .get(index)
-            .copied()
-            .flatten()
-            .ok_or_else(|| ProviderError::Unsupported(format!("copy buffer {slot} is empty")))?;
+        let slots = self.copy_buffers()?;
+        let clip_id = slots
+            .iter()
+            .find(|buffer| buffer.slot == slot)
+            .and_then(|buffer| buffer.clip_id)
+            .ok_or_else(|| ProviderError::Core(format!("copy buffer {slot} is empty")))?;
         self.paste(
             clip_id,
             if plain_text {
@@ -344,16 +365,32 @@ impl ClipProvider for IpcProvider {
 }
 
 pub fn query_request(query: &str, limit: usize) -> Request {
+    query_request_for_group(query, limit, GroupFilter::All)
+}
+
+fn query_request_for_group(query: &str, limit: usize, group: GroupFilter) -> Request {
     let limit = u32::try_from(limit).unwrap_or(u32::MAX);
+    let group_id = match group {
+        GroupFilter::All => None,
+        GroupFilter::Ungrouped => Some(-1),
+        GroupFilter::Group(group_id) => Some(group_id),
+    };
     if query.trim().is_empty() {
         Request::GetClips {
             query: String::new(),
+            group_id,
             limit,
+            cursor: None,
+            sort: ditto_model::ClipSort::Recent,
         }
     } else {
         Request::Search {
             query: query.to_string(),
+            group_id,
+            mode: ditto_model::SearchMode::Contains,
+            sort: ditto_model::ClipSort::Recent,
             limit,
+            cursor: None,
         }
     }
 }
@@ -367,8 +404,11 @@ const fn response_name(response: &Response) -> &'static str {
         Response::HelloAck { .. } => "HelloAck",
         Response::PopupVisibility { .. } => "PopupVisibility",
         Response::Clips { .. } => "Clips",
+        Response::Clip { .. } => "Clip",
         Response::Groups { .. } => "Groups",
+        Response::CopyBuffers { .. } => "CopyBuffers",
         Response::Settings { .. } => "Settings",
+        Response::PasteResult { .. } => "PasteResult",
         Response::Ok => "Ok",
         Response::Error { .. } => "Error",
     }
@@ -390,7 +430,7 @@ mod tests {
     fn non_empty_query_requests_search() {
         assert!(matches!(
             query_request("needle", 200),
-            Request::Search { query, limit: 200 } if query == "needle"
+            Request::Search { query, limit: 200, .. } if query == "needle"
         ));
     }
 }

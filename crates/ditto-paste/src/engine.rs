@@ -336,6 +336,7 @@ mod tests {
                 group_id: None,
                 copy_buffer: None,
                 formats: vec!["CF_UNICODETEXT".to_string()],
+                size_bytes: 9,
                 has_image: false,
                 image_thumb_ref: None,
                 pasted_count: 0,

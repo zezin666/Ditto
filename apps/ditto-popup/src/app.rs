@@ -560,18 +560,23 @@ impl PopupApp {
     }
 
     fn apply_settings_snapshot(&mut self, snapshot: &SettingsSnapshot) {
-        let Some(popup) = snapshot.values.get("popup") else {
-            return;
-        };
-        if let Some(value) = popup.get("width").and_then(serde_json::Value::as_f64) {
+        let popup = snapshot.values.get("popup");
+        let appearance = snapshot.values.get("appearance");
+        let popup_value = |key: &str| popup.and_then(|value| value.get(key));
+        let appearance_value = |key: &str| appearance.and_then(|value| value.get(key));
+        if let Some(value) = popup_value("width")
+            .or_else(|| appearance_value("popup_width"))
+            .and_then(serde_json::Value::as_f64)
+        {
             self.settings.width = value as f32;
         }
-        if let Some(value) = popup.get("height").and_then(serde_json::Value::as_f64) {
+        if let Some(value) = popup_value("height")
+            .or_else(|| appearance_value("popup_height"))
+            .and_then(serde_json::Value::as_f64)
+        {
             self.settings.height = value as f32;
         }
-        if let Some(value) = popup
-            .get("hide_on_focus_loss")
-            .and_then(serde_json::Value::as_bool)
+        if let Some(value) = popup_value("hide_on_focus_loss").and_then(serde_json::Value::as_bool)
         {
             self.settings.hide_on_focus_loss = value;
         }
@@ -581,17 +586,19 @@ impl PopupApp {
         {
             self.settings.hide_on_focus_loss = false;
         }
-        if let Some(value) = popup.get("position").and_then(serde_json::Value::as_str) {
+        if let Some(value) = popup_value("position")
+            .or_else(|| appearance_value("popup_position"))
+            .and_then(serde_json::Value::as_str)
+        {
             self.settings.position = PositionMode::from_setting(value);
         }
-        if let Some(value) = popup
-            .get("confirm_delete")
-            .and_then(serde_json::Value::as_bool)
-        {
+        if let Some(value) = popup_value("confirm_delete").and_then(serde_json::Value::as_bool) {
             self.settings.confirm_delete = value;
         }
         if self.options.theme_override.is_none()
-            && let Some(value) = popup.get("theme").and_then(serde_json::Value::as_str)
+            && let Some(value) = popup_value("theme")
+                .or_else(|| appearance_value("theme"))
+                .and_then(serde_json::Value::as_str)
         {
             let theme = match value {
                 "light" => Some(Theme::Light),
@@ -1516,7 +1523,7 @@ impl PopupApp {
                                 }
                             });
                         }
-                        ClipKind::Rich => {
+                        ClipKind::Html | ClipKind::Rtf => {
                             let summary = html_summary(&clip.preview_text);
                             ui.vertical(|ui| {
                                 ui.label(
@@ -2156,7 +2163,7 @@ fn draw_row(
     );
     let body_font = FontId::proportional(font::popup_body_size(mode));
     let caption_font = FontId::proportional(font::caption_size(mode));
-    let preview = if clip.kind == ClipKind::Rich {
+    let preview = if matches!(clip.kind, ClipKind::Html | ClipKind::Rtf) {
         html_summary(&clip.preview_text)
     } else {
         truncate_text(&clip.preview_text)
@@ -2532,7 +2539,7 @@ fn icon_for_kind(kind: ClipKind) -> Icon {
         ClipKind::Text => Icon::Text,
         ClipKind::Image => Icon::Image,
         ClipKind::Files => Icon::Files,
-        ClipKind::Rich => Icon::Rich,
+        ClipKind::Html | ClipKind::Rtf => Icon::Rich,
         ClipKind::Custom => Icon::Buffer,
     }
 }
@@ -2542,7 +2549,8 @@ fn format_label(locale: &Localizer, kind: ClipKind) -> &str {
         ClipKind::Text => locale.text(key::FORMAT_TEXT),
         ClipKind::Image => locale.text(key::FORMAT_IMAGE),
         ClipKind::Files => locale.text(key::FORMAT_FILES),
-        ClipKind::Rich => locale.text(key::FORMAT_HTML),
+        ClipKind::Html => locale.text(key::FORMAT_HTML),
+        ClipKind::Rtf => locale.text(key::FORMAT_RTF),
         ClipKind::Custom => locale.text(key::FORMAT_CUSTOM),
     }
 }
@@ -2928,6 +2936,7 @@ mod tests {
             group_id: None,
             copy_buffer: None,
             formats: vec!["CF_UNICODETEXT".to_string()],
+            size_bytes: 9,
             has_image: false,
             image_thumb_ref: None,
             pasted_count: 0,

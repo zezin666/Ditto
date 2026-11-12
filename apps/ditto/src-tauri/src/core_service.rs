@@ -15,6 +15,8 @@ pub struct CoreService {
     storage: Storage,
     pipe: PipeServer,
     clipboard: ClipboardMonitor,
+    broadcasts: BroadcastSlot,
+    paste: PasteSlot,
 }
 
 impl CoreService {
@@ -55,11 +57,52 @@ impl CoreService {
             storage,
             pipe,
             clipboard,
+            broadcasts: broadcast_slot,
+            paste: paste_slot,
         })
     }
 
     pub fn pipe(&self) -> &PipeServer {
         &self.pipe
+    }
+
+    /// Runs the same paste path used by the IPC `Paste` request. The settings
+    /// history uses this to paste without going through the popup.
+    pub fn paste(
+        &self,
+        clip_id: i64,
+        plain_text: bool,
+        formats: &[String],
+        clip_ids: &[i64],
+    ) -> Result<PasteOutcome, String> {
+        match paste_response(
+            &self.storage,
+            &self.broadcasts,
+            &self.paste,
+            clip_id,
+            plain_text,
+            formats,
+            clip_ids,
+        ) {
+            Response::PasteResult { outcome } if outcome.ok => Ok(outcome),
+            Response::PasteResult { outcome } => Err(outcome.message),
+            Response::Error { message, .. } => Err(message),
+            _ => Err("paste returned an unexpected response".to_string()),
+        }
+    }
+
+    /// Starts an OLE drag-out for a clip. Blocks until the user drops or
+    /// cancels, so it must be called from a UI thread with a mouse button down.
+    pub fn drag_out(&self, clip_id: i64, owner_hwnd: isize) -> Result<bool, String> {
+        let clip = self
+            .storage
+            .get_clip(clip_id)
+            .map_err(|error| error.to_string())?;
+        let formats =
+            ditto_paste::build_payload(&clip, self.storage.data_root(), &PasteOptions::default())
+                .map_err(|error| error.to_string())?;
+        let suppression = self.clipboard.suppression();
+        ditto_paste::drag_out(&formats, owner_hwnd, &suppression).map_err(|error| error.to_string())
     }
 
     pub fn stop(&mut self) {
@@ -121,6 +164,8 @@ pub(crate) fn handle_request(
             ClipQuery {
                 query: query.clone(),
                 group_id: *group_id,
+                kind: None,
+                pinned_only: false,
                 mode: SearchMode::Contains,
                 sort: *sort,
                 limit: *limit,
@@ -140,6 +185,8 @@ pub(crate) fn handle_request(
             ClipQuery {
                 query: query.clone(),
                 group_id: *group_id,
+                kind: None,
+                pinned_only: false,
                 mode: *mode,
                 sort: *sort,
                 limit: *limit,

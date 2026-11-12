@@ -379,6 +379,7 @@ mod tests {
                     .iter()
                     .map(|format| format.format_name.clone())
                     .collect(),
+                size_bytes: 9,
                 has_image: false,
                 image_thumb_ref: None,
                 pasted_count: 0,

@@ -401,6 +401,7 @@ impl Storage {
         let mut clauses = vec!["c.is_deleted = 0".to_string()];
         let mut params = Vec::<SqlValue>::new();
         append_group_filter(&mut clauses, &mut params, query.group_id);
+        append_kind_pin_filters(&mut clauses, &mut params, query);
         let use_fts = append_text_filter(&mut clauses, &mut params, query)?;
         let fts_rowid_order = use_fts && matches!(query.sort, ClipSort::Recent | ClipSort::Oldest);
 
@@ -460,6 +461,32 @@ impl Storage {
             took_ms: started.elapsed().as_millis() as u64,
             next_cursor,
         })
+    }
+
+    /// Total number of clips matching a query, independent of paging.
+    ///
+    /// The paged search returns only the rows it fetched, so the settings
+    /// history needs a real count to render page controls.
+    pub fn count_clips(&self, query: &ClipQuery) -> StorageResult<u64> {
+        validate_search_mode(query.mode)?;
+        let connection = self.reader()?;
+        let mut clauses = vec!["c.is_deleted = 0".to_string()];
+        let mut params = Vec::<SqlValue>::new();
+        append_group_filter(&mut clauses, &mut params, query.group_id);
+        append_kind_pin_filters(&mut clauses, &mut params, query);
+        let use_fts = append_text_filter(&mut clauses, &mut params, query)?;
+        let join_sql = if use_fts {
+            "JOIN clips_fts ON clips_fts.rowid = c.id"
+        } else {
+            ""
+        };
+        let sql = format!(
+            "SELECT COUNT(*) FROM clips c {join_sql} WHERE {}",
+            clauses.join(" AND ")
+        );
+        let count: i64 =
+            connection.query_row(&sql, rusqlite::params_from_iter(params), |row| row.get(0))?;
+        Ok(u64::try_from(count).unwrap_or_default())
     }
 
     pub fn soft_delete_clips(&self, clip_ids: &[i64]) -> StorageResult<u64> {
@@ -604,6 +631,29 @@ impl Storage {
              SET last_pasted_at_ms = ?1, paste_count = paste_count + 1, updated_at_ms = ?1
              WHERE id = ?2 AND is_deleted = 0",
             rusqlite::params![now, clip_id],
+        )?;
+        if changed == 0 {
+            return Err(StorageError::NotFound(format!("clip {clip_id}")));
+        }
+        bump_state(&transaction)?;
+        transaction.commit()?;
+        Ok(())
+    }
+
+    /// Replaces the plain-text view of a clip while leaving the captured raw
+    /// formats intact. Preview, quick-paste text, and description follow the
+    /// edited text so search and the popup stay consistent.
+    pub fn update_clip_text(&self, clip_id: i64, text: &str) -> StorageResult<()> {
+        let text = truncate_utf8(text, 1024 * 1024);
+        let preview = truncate_utf8(&text, 8 * 1024);
+        let mut connection = self.writer.lock();
+        let transaction = connection.transaction()?;
+        let changed = transaction.execute(
+            "UPDATE clips
+             SET text_content = ?1, preview_text = ?2, quick_paste_text = ?2,
+                 description = ?2, size_bytes = ?3, updated_at_ms = ?4
+             WHERE id = ?5 AND is_deleted = 0",
+            rusqlite::params![text, preview, text.len() as i64, now_ms(), clip_id],
         )?;
         if changed == 0 {
             return Err(StorageError::NotFound(format!("clip {clip_id}")));
@@ -1109,7 +1159,8 @@ fn summary_columns() -> &'static str {
      c.last_pasted_at_ms, c.is_pinned, c.pin_order, c.group_id,
      (SELECT b.slot FROM copy_buffers b WHERE b.clip_id = c.id ORDER BY b.slot LIMIT 1),
      (SELECT group_concat(f.format_name, char(31)) FROM clip_formats f WHERE f.clip_id = c.id),
-     c.has_image, c.thumb_path, c.paste_count, c.sort_order, c.group_sort_order"
+     c.has_image, c.thumb_path, c.paste_count, c.sort_order, c.group_sort_order,
+     c.size_bytes"
 }
 
 fn summary_from_row(row: &Row<'_>, state_rev: u64) -> rusqlite::Result<ClipSummary> {
@@ -1146,6 +1197,7 @@ fn summary_from_row(row: &Row<'_>, state_rev: u64) -> rusqlite::Result<ClipSumma
         has_image: row.get::<_, i64>(11)? != 0,
         image_thumb_ref: row.get(12)?,
         pasted_count: row.get::<_, i64>(13)? as u32,
+        size_bytes: row.get::<_, i64>(16)? as u64,
         state_rev,
     })
 }
@@ -1162,6 +1214,20 @@ fn append_group_filter(
             params.push(SqlValue::Integer(group_id));
         }
         None => {}
+    }
+}
+
+fn append_kind_pin_filters(
+    clauses: &mut Vec<String>,
+    params: &mut Vec<SqlValue>,
+    query: &ClipQuery,
+) {
+    if let Some(kind) = query.kind {
+        clauses.push("c.kind = ?".to_string());
+        params.push(SqlValue::Text(kind.as_db_str().to_string()));
+    }
+    if query.pinned_only {
+        clauses.push("c.is_pinned = 1".to_string());
     }
 }
 

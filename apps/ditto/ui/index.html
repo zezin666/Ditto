@@ -1,31 +1,15 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="/Ditto2.ico" />
     <title>Ditto Settings</title>
   </head>
   <body>
-    <main class="settings-shell" aria-labelledby="page-title">
-      <header class="settings-header">
-        <div class="brand-mark" aria-hidden="true">D</div>
-        <div>
-          <h1 id="page-title">Ditto Settings</h1>
-          <p>Foundation placeholder. React and Fluent UI arrive in T5.</p>
-        </div>
-      </header>
-      <section class="settings-card" aria-label="Build status">
-        <h2>Settings host ready</h2>
-        <p>The Tauri window is created on demand and destroyed when closed.</p>
-        <dl>
-          <div><dt>UI</dt><dd>Vite + TypeScript</dd></div>
-          <div><dt>Runtime</dt><dd>Tauri 2 / WebView2</dd></div>
-          <div><dt>Design</dt><dd>Generated Fluent tokens</dd></div>
-        </dl>
-      </section>
-    </main>
-    <script type="module" src="/src/main.ts"></script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
 

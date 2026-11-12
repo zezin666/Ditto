@@ -7,7 +7,9 @@ use std::{
 };
 
 use ditto_ipc::Event;
-use ditto_win::{PipeServer, pipe_name};
+use ditto_model::DataRoot;
+use ditto_storage::Storage;
+use ditto_win::{PipeServer, SingleInstanceSignal, pipe_name};
 use parking_lot::Mutex;
 use tauri::{
     AppHandle, Manager, WebviewUrl, WebviewWindowBuilder,
@@ -16,21 +18,78 @@ use tauri::{
 };
 use tauri_plugin_global_shortcut::{Shortcut, ShortcutState};
 
+pub mod commands;
 mod core_service;
+mod pending;
 
 use core_service::CoreService;
 
 const DEV_HOTKEY: &str = "Ctrl+Alt+D";
 const DEV_HOTKEY_FALLBACK: &str = "Ctrl+Alt+Shift+D";
 
-struct AppState {
+/// Shared state for the tray/hotkey host and the settings commands.
+///
+/// The core service owns the clipboard monitor and paste engine; the storage
+/// handle is a cheap clone of the same SQLite pool, used by the settings
+/// commands so they do not have to go through the named pipe.
+pub struct AppState {
     pipe: PipeServer,
+    storage: Storage,
+    data_root: DataRoot,
     core: Mutex<Option<CoreService>>,
     popup_visible: AtomicBool,
     popup: Mutex<Option<Child>>,
+    /// Keeps the primary-instance event handle alive for the process lifetime.
+    _instance_signal: Option<SingleInstanceSignal>,
+}
+
+impl AppState {
+    pub(crate) fn storage(&self) -> &Storage {
+        &self.storage
+    }
+
+    pub(crate) fn data_root(&self) -> &DataRoot {
+        &self.data_root
+    }
+
+    pub(crate) fn broadcast(&self, event: &Event) {
+        if let Err(error) = self.pipe.broadcast(event) {
+            log::warn!("IPC broadcast failed: {error}");
+        }
+    }
+}
+
+struct InstanceSignals {
+    settings: SingleInstanceSignal,
+    toggle: SingleInstanceSignal,
+    instance: SingleInstanceSignal,
+}
+
+fn claim_single_instance() -> Option<InstanceSignals> {
+    let sid = ditto_win::current_user_sid_string().ok()?;
+    let settings = SingleInstanceSignal::create(&format!("Local\\Ditto.v2.{sid}.settings")).ok()?;
+    let toggle = SingleInstanceSignal::create(&format!("Local\\Ditto.v2.{sid}.toggle")).ok()?;
+    let instance = SingleInstanceSignal::create(&format!("Local\\Ditto.v2.{sid}.instance")).ok()?;
+    if instance.already_running() {
+        if std::env::args().any(|argument| argument == "--settings") {
+            settings.signal();
+        } else {
+            toggle.signal();
+        }
+        std::process::exit(0);
+    }
+    Some(InstanceSignals {
+        settings,
+        toggle,
+        instance,
+    })
 }
 
 pub fn run() {
+    // Fast single-instance path: signal the running core and exit before
+    // Tauri, the tray, the clipboard monitor, or WebView2 initialize.
+    let listener_signals = claim_single_instance();
+
     let development_hotkey = choose_development_hotkey();
     let development_shortcut: Shortcut = development_hotkey
         .parse()
@@ -61,7 +120,55 @@ pub fn run() {
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             Some(vec!["--background"]),
         ))
+        .invoke_handler(tauri::generate_handler![
+            commands::get_settings,
+            commands::set_settings,
+            commands::list_clips,
+            commands::search_clips,
+            commands::get_clip,
+            commands::delete_clips,
+            commands::clear_history,
+            commands::set_pinned,
+            commands::move_to_group,
+            commands::edit_clip,
+            commands::get_groups,
+            commands::create_group,
+            commands::rename_group,
+            commands::delete_group,
+            commands::move_group,
+            commands::get_copy_buffers,
+            commands::set_copy_buffer,
+            commands::clear_copy_buffer,
+            commands::paste_clip,
+            commands::paste_copy_buffer,
+            commands::drag_out_clip,
+            commands::backup_db,
+            commands::restore_db,
+            commands::export_data,
+            commands::import_data,
+            commands::optimize_storage,
+            commands::get_migration_status,
+            commands::migration_dry_run,
+            commands::migration_apply,
+            commands::open_data_folder,
+            commands::open_log_folder,
+            commands::get_diagnostics,
+            commands::get_app_info,
+        ])
         .setup(move |app| {
+            let mut settings_listener = None;
+            let mut toggle_listener = None;
+            let mut instance_signal = None;
+            if let Some(signals) = listener_signals {
+                let InstanceSignals {
+                    settings,
+                    toggle,
+                    instance,
+                } = signals;
+                settings_listener = Some(settings);
+                toggle_listener = Some(toggle);
+                instance_signal = Some(instance);
+            }
             let name = pipe_name().map_err(|error| error.to_string())?;
             let executable = std::env::current_exe()?;
             let executable_dir = executable
@@ -69,16 +176,52 @@ pub fn run() {
                 .ok_or_else(|| "Ditto executable has no parent directory".to_string())?;
             let data_root = core_service::resolve_data_root(executable_dir)
                 .map_err(|error| error.to_string())?;
-            let storage = ditto_storage::Storage::open_data_root(&data_root.path)
-                .map_err(|error| error.to_string())?;
-            let core = CoreService::start(&name, storage).map_err(|error| error.to_string())?;
+            for applied in pending::apply_staged(&data_root.path)
+                .map_err(|error| format!("staged data operation failed: {error}"))?
+            {
+                log::info!("applied staged operation: {applied}");
+            }
+            let storage =
+                Storage::open_data_root(&data_root.path).map_err(|error| error.to_string())?;
+            let core =
+                CoreService::start(&name, storage.clone()).map_err(|error| error.to_string())?;
             let pipe = core.pipe().clone();
             app.manage(AppState {
                 pipe,
+                storage,
+                data_root,
                 core: Mutex::new(Some(core)),
                 popup_visible: AtomicBool::new(false),
                 popup: Mutex::new(None),
+                _instance_signal: instance_signal,
             });
+
+            if let Some(settings) = settings_listener {
+                let handle = app.handle().clone();
+                thread::spawn(move || {
+                    while settings.wait_forever() {
+                        let dispatch = handle.clone();
+                        let open = handle.clone();
+                        if let Err(error) = dispatch.run_on_main_thread(move || {
+                            if let Err(error) = open_settings(&open) {
+                                log::error!(
+                                    "failed to open settings from instance signal: {error}"
+                                );
+                            }
+                        }) {
+                            log::error!("failed to dispatch settings signal: {error}");
+                        }
+                    }
+                });
+            }
+            if let Some(toggle) = toggle_listener {
+                let handle = app.handle().clone();
+                thread::spawn(move || {
+                    while toggle.wait_forever() {
+                        toggle_popup(&handle);
+                    }
+                });
+            }
 
             create_tray(app.handle())?;
             log::info!("development hotkey active: {development_hotkey}");
@@ -191,6 +334,26 @@ fn spawn_popup(app: &AppHandle) {
         return;
     };
     let mut command = Command::new(path);
+    let language = state
+        .storage()
+        .get_settings()
+        .ok()
+        .and_then(|snapshot| {
+            snapshot
+                .values
+                .pointer("/general/language")
+                .and_then(serde_json::Value::as_str)
+                .map(ToString::to_string)
+        })
+        .unwrap_or_else(|| "en".to_string());
+    command.arg(format!(
+        "--lang={}",
+        if language.starts_with("zh") {
+            "zh-CN"
+        } else {
+            "en-US"
+        }
+    ));
     if let Some(perf_log) = std::env::var_os("DITTO_PERF_LOG") {
         command.arg(format!("--perf-log={}", PathBuf::from(perf_log).display()));
     }

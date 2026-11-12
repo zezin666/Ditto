@@ -36,7 +36,8 @@ impl MockProvider {
             let kind = match index {
                 _ if index % 20 == 0 => ClipKind::Image,
                 _ if index % 31 == 0 => ClipKind::Files,
-                _ if index % 7 == 0 => ClipKind::Rich,
+                _ if index % 14 == 0 => ClipKind::Rtf,
+                _ if index % 7 == 0 => ClipKind::Html,
                 _ => ClipKind::Text,
             };
             let group_id = groups.get(index % groups.len()).map(|group| group.id);
@@ -59,10 +60,11 @@ impl MockProvider {
                     created_at_ms: now - (index as i64 * 60_000),
                     last_pasted_at_ms: (index % 9 == 0).then_some(now - 120_000),
                     pinned: index % 50 == 0,
-                    pin_order: (index % 50 == 0).then_some((count - index) as i64),
+                    pin_order: (index % 50 == 0).then_some((count - index) as f64),
                     group_id,
                     copy_buffer,
                     formats,
+                    size_bytes: 128,
                     has_image: kind == ClipKind::Image,
                     image_thumb_ref: (kind == ClipKind::Image)
                         .then(|| format!("mock://thumbnail/{id}")),
@@ -77,7 +79,13 @@ impl MockProvider {
                 .clip
                 .pinned
                 .cmp(&left.clip.pinned)
-                .then_with(|| right.clip.pin_order.cmp(&left.clip.pin_order))
+                .then_with(|| {
+                    right
+                        .clip
+                        .pin_order
+                        .unwrap_or(0.0)
+                        .total_cmp(&left.clip.pin_order.unwrap_or(0.0))
+                })
                 .then_with(|| right.clip.created_at_ms.cmp(&left.clip.created_at_ms))
         });
         let mut provider = Self {
@@ -219,7 +227,7 @@ impl ClipProvider for MockProvider {
             .find(|record| record.clip.id == clip_id)
             .ok_or_else(|| ProviderError::Core(format!("clip {clip_id} not found")))?;
         record.clip.pinned = pinned;
-        record.clip.pin_order = pinned.then_some(clip_id);
+        record.clip.pin_order = pinned.then_some(clip_id as f64);
         Ok(())
     }
 
@@ -338,15 +346,10 @@ fn synthetic_preview(index: usize, kind: ClipKind) -> String {
         ClipKind::Files => format!(
             "C:\\Synthetic\\Project\\report-{index:05}.pdf\nC:\\Synthetic\\Project\\data-{index:05}.csv"
         ),
-        ClipKind::Rich => {
-            if index % 2 == 0 {
-                format!(
-                    "<html><body><b>Release note {index:05}</b><script>not executed</script><p>Safe HTML summary.</p></body></html>"
-                )
-            } else {
-                format!("{{\\rtf1\\ansi Release note {index:05}\\par Safe RTF summary.}}")
-            }
-        }
+        ClipKind::Html => format!(
+            "<html><body><b>Release note {index:05}</b><script>not executed</script><p>Safe HTML summary.</p></body></html>"
+        ),
+        ClipKind::Rtf => format!("{{\\rtf1\\ansi Release note {index:05}\\par Safe RTF summary.}}"),
         ClipKind::Text => match index % 5 {
             0 => format!("客户项目会议纪要 {index:05}: 搜索、分组、快捷粘贴和性能验收。"),
             1 => format!("日本語の入力テスト {index:05}: クリップボードの検索と候補ウィンドウ。"),
@@ -364,10 +367,8 @@ fn synthetic_formats(kind: ClipKind) -> Vec<String> {
     match kind {
         ClipKind::Image => formats.push("CF_DIB".to_string()),
         ClipKind::Files => formats.push("CF_HDROP".to_string()),
-        ClipKind::Rich => {
-            formats.push("HTML Format".to_string());
-            formats.push("Rich Text Format".to_string());
-        }
+        ClipKind::Html => formats.push("HTML Format".to_string()),
+        ClipKind::Rtf => formats.push("Rich Text Format".to_string()),
         ClipKind::Custom => formats.push("Ditto.Synthetic".to_string()),
         ClipKind::Text => {}
     }
@@ -414,7 +415,11 @@ mod tests {
         assert_eq!(page.items.len(), 10_000);
         assert!(page.items.iter().any(|clip| clip.kind == ClipKind::Image));
         assert!(page.items.iter().any(|clip| clip.kind == ClipKind::Files));
-        assert!(page.items.iter().any(|clip| clip.kind == ClipKind::Rich));
+        assert!(
+            page.items
+                .iter()
+                .any(|clip| matches!(clip.kind, ClipKind::Html | ClipKind::Rtf))
+        );
         assert!(page.items.iter().any(|clip| clip.pinned));
         assert!(page.items.iter().any(|clip| clip.copy_buffer == Some(1)));
     }

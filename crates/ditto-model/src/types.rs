@@ -49,6 +49,7 @@ pub struct ClipSummary {
     pub group_id: Option<i64>,
     pub copy_buffer: Option<u8>,
     pub formats: Vec<String>,
+    pub size_bytes: u64,
     pub has_image: bool,
     pub image_thumb_ref: Option<String>,
     pub pasted_count: u32,
@@ -141,6 +142,10 @@ pub struct ClipQuery {
     pub query: String,
     pub group_id: Option<i64>,
     #[serde(default)]
+    pub kind: Option<ClipKind>,
+    #[serde(default)]
+    pub pinned_only: bool,
+    #[serde(default)]
     pub mode: SearchMode,
     #[serde(default)]
     pub sort: ClipSort,
@@ -155,6 +160,8 @@ impl Default for ClipQuery {
         Self {
             query: String::new(),
             group_id: None,
+            kind: None,
+            pinned_only: false,
             mode: SearchMode::Contains,
             sort: ClipSort::Recent,
             limit: 200,

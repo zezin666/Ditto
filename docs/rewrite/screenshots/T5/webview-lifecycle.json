@@ -1,0 +1,132 @@
+{
+  "status": "PASS",
+  "generatedAt": "2026-11-12T13:44:12.4811222Z",
+  "executable": "D:\\orca\\workspaces\\Ditto\\rewrite-settings\\target\\release\\Ditto.exe",
+  "syntheticDataDir": "C:\\Users\\zezin\\AppData\\Local\\Temp\\ditto-t5-lifecycle-8aa05dfe-7202-44e4-b954-6f646f35c87d",
+  "corePid": 12016,
+  "secondInstanceExitCode": 0,
+  "secondInstanceExitDurationMs": 4382.0,
+  "secondInstanceUnder150Ms": false,
+  "settingsWindowObservedMs": 1848.0,
+  "settingsWindowTitle": "Ditto Settings",
+  "settingsScreenshot": "D:\\orca\\workspaces\\Ditto\\rewrite-settings\\docs\\rewrite\\screenshots\\T5\\tauri-settings-window-100.png",
+  "coreAliveAfterClose": true,
+  "webviewBeforeCount": 0,
+  "webviewOpenCount": 6,
+  "webviewAfterCloseCount": 0,
+  "newWebviewPidsWhileOpen": [
+    556,
+    3408,
+    34980,
+    46624,
+    11080,
+    33072
+  ],
+  "remainingOpenWebviewAfterCloseCount": 0,
+  "remainingOpenWebviewAfterClosePids": "",
+  "corePrivateBytesBefore": 8577024,
+  "corePrivateBytesAfterClose": 8577024,
+  "corePrivateDeltaBytes": 0,
+  "before": [
+    {
+      "pid": 8036,
+      "parentPid": 12016,
+      "name": "DittoPopup.exe",
+      "executablePath": "D:\\orca\\workspaces\\Ditto\\rewrite-settings\\target\\release\\DittoPopup.exe",
+      "workingSetBytes": 2695168,
+      "privateBytes": 483328
+    },
+    {
+      "pid": 6912,
+      "parentPid": 8036,
+      "name": "conhost.exe",
+      "executablePath": "C:\\Windows\\system32\\conhost.exe",
+      "workingSetBytes": 11071488,
+      "privateBytes": 1732608
+    }
+  ],
+  "open": [
+    {
+      "pid": 8036,
+      "parentPid": 12016,
+      "name": "DittoPopup.exe",
+      "executablePath": "D:\\orca\\workspaces\\Ditto\\rewrite-settings\\target\\release\\DittoPopup.exe",
+      "workingSetBytes": 74309632,
+      "privateBytes": 85565440
+    },
+    {
+      "pid": 556,
+      "parentPid": 12016,
+      "name": "msedgewebview2.exe",
+      "executablePath": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe",
+      "workingSetBytes": 108158976,
+      "privateBytes": 32129024
+    },
+    {
+      "pid": 6912,
+      "parentPid": 8036,
+      "name": "conhost.exe",
+      "executablePath": "C:\\Windows\\system32\\conhost.exe",
+      "workingSetBytes": 11071488,
+      "privateBytes": 1732608
+    },
+    {
+      "pid": 3408,
+      "parentPid": 556,
+      "name": "msedgewebview2.exe",
+      "executablePath": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe",
+      "workingSetBytes": 18767872,
+      "privateBytes": 4911104
+    },
+    {
+      "pid": 34980,
+      "parentPid": 556,
+      "name": "msedgewebview2.exe",
+      "executablePath": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe",
+      "workingSetBytes": 81817600,
+      "privateBytes": 88641536
+    },
+    {
+      "pid": 46624,
+      "parentPid": 556,
+      "name": "msedgewebview2.exe",
+      "executablePath": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe",
+      "workingSetBytes": 44621824,
+      "privateBytes": 14180352
+    },
+    {
+      "pid": 11080,
+      "parentPid": 556,
+      "name": "msedgewebview2.exe",
+      "executablePath": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe",
+      "workingSetBytes": 20901888,
+      "privateBytes": 8024064
+    },
+    {
+      "pid": 33072,
+      "parentPid": 556,
+      "name": "msedgewebview2.exe",
+      "executablePath": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\157.0.4341.46\\msedgewebview2.exe",
+      "workingSetBytes": 76845056,
+      "privateBytes": 36990976
+    }
+  ],
+  "afterClose": [
+    {
+      "pid": 8036,
+      "parentPid": 12016,
+      "name": "DittoPopup.exe",
+      "executablePath": "D:\\orca\\workspaces\\Ditto\\rewrite-settings\\target\\release\\DittoPopup.exe",
+      "workingSetBytes": 74309632,
+      "privateBytes": 85565440
+    },
+    {
+      "pid": 6912,
+      "parentPid": 8036,
+      "name": "conhost.exe",
+      "executablePath": "C:\\Windows\\system32\\conhost.exe",
+      "workingSetBytes": 11071488,
+      "privateBytes": 1732608
+    }
+  ]
+}

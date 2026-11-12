@@ -120,15 +120,17 @@ pub struct Localizer {
 
 impl Localizer {
     pub fn load(language: Language) -> Self {
+        // The shared settings catalog is the canonical bundle; the popup
+        // bundle only carries fallback copy for a standalone popup build.
         let mut strings = parse_bundle(match language {
-            Language::English => EN_US,
-            Language::Chinese => ZH_CN,
+            Language::English => SHARED_EN_US,
+            Language::Chinese => SHARED_ZH_CN,
         });
         overlay_bundle(
             &mut strings,
             match language {
-                Language::English => SHARED_EN_US,
-                Language::Chinese => SHARED_ZH_CN,
+                Language::English => EN_US,
+                Language::Chinese => ZH_CN,
             },
         );
         for path in shared_locale_candidates(language) {

@@ -1,0 +1,5 @@
+
+> ditto-settings@0.1.0 visual:check
+> node scripts/visual-check.mjs
+
+Visual checks and 10 screenshots passed.
