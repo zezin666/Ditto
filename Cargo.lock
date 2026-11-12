@@ -1269,8 +1269,10 @@ dependencies = [
  "ditto-win",
  "eframe",
  "egui",
+ "image",
  "parking_lot",
  "raw-window-handle",
+ "serde_json",
  "windows 0.61.3",
 ]
 

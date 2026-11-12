@@ -1,0 +1,180 @@
+   Compiling ditto-popup-app v0.1.0 (D:\orca\workspaces\Ditto\rewrite-popup\apps\ditto-popup)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.92s
+     Running unittests src\lib.rs (target\debug\deps\ditto_clipboard-79c2af0729cd6c2d.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_ipc-e9996b2e77758063.exe)
+
+running 3 tests
+test tests::invalid_magic_is_rejected ... ok
+test tests::oversized_payload_is_rejected_before_write ... ok
+test tests::request_round_trip_uses_json_and_preserves_request_id ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_migration-8c74868c0c7a4507.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_model-19e5ea37798b428c.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_paste-4c45ad952c546932.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_popup_app-7b9e4157767a49d3.exe)
+
+running 17 tests
+test platform::tests::colorref_uses_windows_channel_order ... ok
+test app::tests::primary_selection_becomes_single_item_when_multi_is_empty ... ok
+test provider::tests::empty_query_requests_recent_clips ... ok
+test app::tests::ime_preedit_blocks_shortcuts_until_commit ... ok
+test platform::tests::position_mode_accepts_known_settings ... ok
+test localization::tests::both_locale_bundles_define_every_t3_key ... ok
+test provider::tests::non_empty_query_requests_search ... ok
+test app::tests::multi_selection_includes_primary_once ... ok
+test app::tests::first_ten_shortcuts_map_one_through_zero ... ok
+test options::tests::capture_state_names_are_stable ... ok
+test ui::tests::html_summary_never_exposes_script_content ... ok
+test ui::tests::color_hex_finds_embedded_token ... ok
+test localization::tests::placeholders_are_substituted ... ok
+test worker::tests::worker_delivers_mock_metadata_and_page ... ok
+test mock::tests::copy_buffer_assignment_and_clear_round_trip ... ok
+test mock::tests::fixture_has_ten_thousand_mixed_clips ... ok
+test mock::tests::mock_search_stays_under_fifty_milliseconds_p95 ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
+
+     Running unittests src\main.rs (target\debug\deps\DittoPopup-691b3d3688f8ffc6.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\mock-bench.rs (target\debug\deps\mock_bench-e088f3d61b62e61b.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_storage-b0d72dfb28c98c3c.exe)
+
+running 1 test
+test tests::bundled_sqlite_has_fts5_trigram ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_tauri_lib-df6c468e48e69ff9.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\main.rs (target\debug\deps\Ditto-2bff08fcea59e663.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_uac_helper-b018dcd8aec3dc4a.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\main.rs (target\debug\deps\DittoUacHelper-406dffdd34aab790.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_ui_tokens-d9a7d70409c937a1.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_win-6a006941a843fad1.exe)
+
+running 1 test
+test tests::hello_and_popup_events_traverse_named_pipe ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_clipboard
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_ipc
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_migration
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_model
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_paste
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_popup_app
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_storage
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_tauri_lib
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_uac_helper
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_ui_tokens
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_win
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
