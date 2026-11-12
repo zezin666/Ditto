@@ -1,0 +1,281 @@
+   Compiling ditto-migration v0.1.0 (D:\orca\workspaces\Ditto\rewrite-integration\crates\ditto-migration)
+   Compiling ditto-storage v0.1.0 (D:\orca\workspaces\Ditto\rewrite-integration\crates\ditto-storage)
+   Compiling ditto-tauri v0.1.0 (D:\orca\workspaces\Ditto\rewrite-integration\apps\ditto\src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.73s
+     Running unittests src\lib.rs (target\debug\deps\ditto_clipboard-71b36c2e1a4bccd2.exe)
+
+running 7 tests
+test decode::tests::html_fragment_and_preview_are_extracted_without_active_content ... ok
+test tests::oversized_and_ignored_formats_do_not_block_other_formats ... ok
+test decode::tests::rtf_and_hdrop_decoders_preserve_expected_text ... ok
+test tests::synthetic_multi_format_event_becomes_one_captured_clip ... ok
+test tests::self_write_suppression_consumes_the_next_matching_hash ... ok
+test tests::text_hash_normalizes_line_endings_for_dedupe ... ok
+test decode::tests::two_by_two_dib_becomes_png_and_thumbnail_is_bounded ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_ipc-e9996b2e77758063.exe)
+
+running 6 tests
+test tests::invalid_magic_is_rejected ... ok
+test tests::oversized_payload_is_rejected_before_write ... ok
+test tests::legacy_paste_request_defaults_new_fields ... ok
+test tests::request_round_trip_uses_json_and_preserves_request_id ... ok
+test tests::settings_response_flattens_snapshot_to_documented_shape ... ok
+test tests::paste_result_round_trips_without_content ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_migration-ca2d8c9b51cd26f3.exe)
+
+running 10 tests
+test format::tests::unicode_text_and_legacy_fields_map_together ... ok
+test format::tests::empty_data_still_produces_a_metadata_clip ... ok
+test ini::tests::malformed_popup_size_is_reported ... ok
+test source::tests::missing_parent_is_attached_to_root_without_losing_group ... ok
+test source::tests::fingerprint_changes_with_content ... ok
+test ini::tests::reads_utf16le_ini_and_redacts_passwords ... ok
+test source::tests::readonly_open_rejects_missing_tables ... ok
+test package::tests::export_directory_round_trip_verifies ... ok
+test package::tests::manifest_hash_mismatch_is_rejected ... ok
+test package::tests::zip_export_round_trip_verifies ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+     Running unittests src\bin\ditto-migrate.rs (target\debug\deps\ditto_migrate-9f822e6deffae2e5.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\bench_10k_migration.rs (target\debug\deps\bench_10k_migration-726134edb8cbfeb6.exe)
+
+running 1 test
+test migration_10k_reports_throughput_and_peak_memory ... ignored, 10k performance benchmark; run explicitly in release
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\legacy_fixture.rs (target\debug\deps\legacy_fixture-4876664e46581457.exe)
+
+running 3 tests
+test failed_migration_leaves_existing_destination_untouched ... ok
+test synthetic_legacy_migration_matches_counts_content_and_is_idempotent ... ok
+test export_import_and_verify_round_trip_preserve_counts ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.69s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_model-19e5ea37798b428c.exe)
+
+running 2 tests
+test settings::tests::legacy_dynamic_copy_buffer_keys_are_mapped ... ok
+test settings::tests::defaults_are_namespaced_and_merge_recursively ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_paste-e1125b3c6f234bef.exe)
+
+running 16 tests
+test target::tests::own_process_images_are_not_valid_paste_targets ... ok
+test payload::tests::format_aliases_cover_text_html_rtf_image_and_files ... ok
+test target::tests::shell_surfaces_are_not_paste_targets ... ok
+test payload::tests::plain_text_prefers_text_content_and_has_a_terminator ... ok
+test drag::tests::malformed_file_drop_is_rejected ... ok
+test drag::tests::existing_path_round_trip_is_stable ... ok
+test payload::tests::stored_blob_paths_cannot_escape_the_data_root ... ok
+test target::tests::integrity_thresholds_match_windows_rids ... ok
+test engine::tests::elevated_target_uses_elevation_backend_without_direct_send ... ok
+test payload::tests::requested_unknown_format_falls_back_to_primary ... ok
+test payload::tests::png_only_payload_gets_a_dib_fallback ... ok
+test payload::tests::requested_missing_text_format_falls_back_to_text_content ... ok
+test drag::tests::file_drop_receiver_only_returns_existing_paths ... ok
+test payload::tests::file_drop_round_trips_synthetic_path_and_rejects_missing_path ... ok
+test engine::tests::paste_stops_at_the_first_failure_and_reports_the_success_prefix ... ok
+test engine::tests::multiple_clips_are_pasted_in_order_and_each_activation_happens ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_popup_app-41552e4eab96f8e8.exe)
+
+running 17 tests
+test app::tests::first_ten_shortcuts_map_one_through_zero ... ok
+test options::tests::capture_state_names_are_stable ... ok
+test app::tests::primary_selection_becomes_single_item_when_multi_is_empty ... ok
+test platform::tests::position_mode_accepts_known_settings ... ok
+test app::tests::multi_selection_includes_primary_once ... ok
+test ui::tests::color_hex_finds_embedded_token ... ok
+test platform::tests::colorref_uses_windows_channel_order ... ok
+test app::tests::ime_preedit_blocks_shortcuts_until_commit ... ok
+test provider::tests::empty_query_requests_recent_clips ... ok
+test ui::tests::html_summary_never_exposes_script_content ... ok
+test provider::tests::non_empty_query_requests_search ... ok
+test localization::tests::both_locale_bundles_define_every_t3_key ... ok
+test localization::tests::placeholders_are_substituted ... ok
+test worker::tests::worker_delivers_mock_metadata_and_page ... ok
+test mock::tests::copy_buffer_assignment_and_clear_round_trip ... ok
+test mock::tests::fixture_has_ten_thousand_mixed_clips ... ok
+test mock::tests::mock_search_stays_under_fifty_milliseconds_p95 ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
+
+     Running unittests src\main.rs (target\debug\deps\DittoPopup-661f3e6b68f95ecd.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\mock-bench.rs (target\debug\deps\mock_bench-6baeebf34cb72957.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_storage-6d156bcc7a07ce60.exe)
+
+running 12 tests
+test settings_store::tests::legacy_conversion_handles_rich_types_and_copy_buffers ... ok
+test schema::tests::v1_schema_is_wal_fts5_and_idempotent ... ok
+test schema::tests::v1_down_migration_returns_to_an_empty_database ... ok
+test store::tests::fts_search_and_two_character_fallback_find_english_and_chinese ... ok
+test legacy::tests::legacy_batch_rolls_back_on_group_conflict ... ok
+test store::tests::retention_protects_pinned_dont_delete_and_copy_buffer_clips ... ok
+test legacy::tests::legacy_batch_preserves_duplicate_hashes_and_maps_ids ... ok
+test store::tests::hard_delete_and_gc_remove_blob_files ... ok
+test store::tests::settings_revision_advances_only_for_changed_values ... ok
+test store::tests::pin_group_and_copy_buffer_mutations_are_reflected_in_summary ... ok
+test store::tests::dedupe_updates_existing_and_multi_format_stays_one_clip ... ok
+test store::tests::copy_buffer_assignment_survives_reopen ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests\bench_10k.rs (target\debug\deps\bench_10k-fb717d84d6ae0758.exe)
+
+running 1 test
+test synthetic_10k_insert_search_and_keyset_budget ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.08s
+
+     Running tests\concurrency.rs (target\debug\deps\concurrency-ff3ea48886c8b903.exe)
+
+running 1 test
+test concurrent_readers_and_writers_share_wal_storage ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_tauri_lib-53ef689d9cca0e03.exe)
+
+running 7 tests
+test commands::tests::iso_time_conversion_matches_known_epoch ... ok
+test core_service::tests::paste_id_list_is_ordered_deduplicated_and_filters_invalid_ids ... ok
+test commands::tests::settings_mapping_round_trips_through_json ... ok
+test core_service::tests::paste_errors_map_to_stable_ipc_codes ... ok
+test core_service::tests::request_path_returns_groups_and_settings_from_temp_storage ... ok
+test commands::tests::page_helpers_count_and_slice_real_storage ... ok
+test core_service::tests::paste_request_reaches_the_engine_and_reports_not_ready_before_wiring ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running unittests src\main.rs (target\debug\deps\Ditto-84a76261b5bd0989.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_uac_helper-292937550f6b5df2.exe)
+
+running 5 tests
+test protocol::tests::hello_must_match_every_launched_request_field ... ok
+test token::tests::expired_token_is_rejected_and_removed ... ok
+test token::tests::token_is_bound_and_single_use ... ok
+test protocol::tests::helper_accepts_only_the_fixed_argument_set ... ok
+test token::tests::wrong_token_binding_or_request_is_rejected ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\main.rs (target\debug\deps\DittoUacHelper-ee35a3e7a8a3033b.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_ui_tokens-d9a7d70409c937a1.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\ditto_win-de5774c426482195.exe)
+
+running 2 tests
+test tests::hello_and_popup_events_traverse_named_pipe ... ok
+test tests::custom_request_handler_is_invoked_after_hello ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests ditto_clipboard
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_ipc
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_migration
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_model
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_paste
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_popup_app
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_storage
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_tauri_lib
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_uac_helper
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_ui_tokens
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ditto_win
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+TESTS_OK

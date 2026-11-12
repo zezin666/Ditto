@@ -1,0 +1,20 @@
+   Compiling ditto-win v0.1.0 (D:\orca\workspaces\Ditto\rewrite-integration\crates\ditto-win)
+   Compiling ditto-popup-app v0.1.0 (D:\orca\workspaces\Ditto\rewrite-integration\apps\ditto-popup)
+    Finished `release` profile [optimized] target(s) in 11.88s
+Prepared sidecars in D:\orca\workspaces\Ditto\rewrite-integration\apps\ditto\src-tauri\binaries for x86_64-pc-windows-msvc
+        Info `tauri-build` dependency has workspace inheritance enabled. The features array won't be automatically rewritten. Expected features: []
+        Info `tauri` dependency has workspace inheritance enabled. The features array won't be automatically rewritten. Expected features: []
+        Info Looking up installed tauri packages to check mismatched versions...
+   Compiling ditto-win v0.1.0 (D:\orca\workspaces\Ditto\rewrite-integration\crates\ditto-win)
+   Compiling ditto-tauri v0.1.0 (D:\orca\workspaces\Ditto\rewrite-integration\apps\ditto\src-tauri)
+    Finished `release` profile [optimized] target(s) in 1m 12s
+       Built application at: D:\orca\workspaces\Ditto\rewrite-integration\target\release\Ditto.exe
+        Info Patching D:\orca\workspaces\Ditto\rewrite-integration\target\release\Ditto.exe with bundle type information: nsis
+        Info Target: x64
+     Running makensis to produce D:\orca\workspaces\Ditto\rewrite-integration\target\release\bundle\nsis\Ditto_0.1.0_x64-setup.exe
+    Finished 1 bundle at:
+        D:\orca\workspaces\Ditto\rewrite-integration\target\release\bundle\nsis\Ditto_0.1.0_x64-setup.exe (4.28 MiB)
+
+PORTABLE_ZIP=D:\orca\workspaces\Ditto\rewrite-integration\target\release\bundle\portable\Ditto-0.1.0-x64-portable.zip
+PORTABLE_BYTES=6333881
+PORTABLE_SHA256=CEE8DC709056E76719B14BA6F7657F833F5249C9E625B9DAA9A2F67816ED3B7A

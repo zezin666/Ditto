@@ -1,0 +1,16 @@
+   Compiling ditto-storage v0.1.0 (D:\orca\workspaces\Ditto\rewrite-integration\crates\ditto-storage)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.78s
+     Running tests\bench_10k.rs (target\debug\deps\bench_10k-8eeaf55c2cd8d21e.exe)
+
+running 1 test
+T2_10K_BENCH insert_ms=2640.753 insert_per_sec=3786.8 db_bytes=87532728
+T2_10K_SEARCH query=browse p50_ms=0.978 p95_ms=1.293 p99_ms=1.513
+T2_10K_SEARCH query=english p50_ms=1.533 p95_ms=1.953 p99_ms=2.052
+T2_10K_SEARCH query=chinese p50_ms=1.116 p95_ms=1.415 p99_ms=1.462
+T2_10K_SEARCH query=two_char_en p50_ms=1.095 p95_ms=1.585 p99_ms=1.907
+T2_10K_SEARCH query=two_char_zh p50_ms=1.755 p95_ms=2.249 p99_ms=3.132
+T2_10K_SEARCH query=quick_paste p50_ms=20.321 p95_ms=22.136 p99_ms=22.762
+test synthetic_10k_insert_search_and_keyset_budget ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.04s
+

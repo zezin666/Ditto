@@ -1,0 +1,39 @@
+
+> ditto-settings@0.1.0 build
+> npm run locales:check && tsc --noEmit && vite build
+
+
+> ditto-settings@0.1.0 locales:check
+> node scripts/check-locales.mjs
+
+Locale catalogs agree on 397 shared and 77 popup keys.
+[36mvite v7.3.8 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32m✓[39m 2179 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                          [39m[1m[2m  0.53 kB[22m[1m[22m[2m │ gzip:   0.32 kB[22m
+[2mdist/[22m[35massets/index-WFPLK1AJ.css           [39m[1m[2m 23.70 kB[22m[1m[22m[2m │ gzip:   3.76 kB[22m
+[2mdist/[22m[36massets/chunk-13-CEcuiSKa.js         [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:   0.18 kB[22m
+[2mdist/[22m[36massets/chunk-17-CXmmenNy.js         [39m[1m[2m  0.37 kB[22m[1m[22m[2m │ gzip:   0.27 kB[22m
+[2mdist/[22m[36massets/chunk-16-CbNr0RiO.js         [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:   0.49 kB[22m
+[2mdist/[22m[36massets/LanguagesPage-FNQ7MAMj.js    [39m[1m[2m  1.69 kB[22m[1m[22m[2m │ gzip:   0.69 kB[22m
+[2mdist/[22m[36massets/ClipboardPage-BXoOEOxa.js    [39m[1m[2m  2.36 kB[22m[1m[22m[2m │ gzip:   0.75 kB[22m
+[2mdist/[22m[36massets/CopyBuffersPage-oIwux051.js  [39m[1m[2m  2.49 kB[22m[1m[22m[2m │ gzip:   1.01 kB[22m
+[2mdist/[22m[36massets/GeneralPage-D5cD67rW.js      [39m[1m[2m  2.66 kB[22m[1m[22m[2m │ gzip:   0.80 kB[22m
+[2mdist/[22m[36massets/AboutPage-CcPMaL8p.js        [39m[1m[2m  2.80 kB[22m[1m[22m[2m │ gzip:   0.86 kB[22m
+[2mdist/[22m[36massets/HotkeysPage-BGv8I7bW.js      [39m[1m[2m  3.92 kB[22m[1m[22m[2m │ gzip:   1.31 kB[22m
+[2mdist/[22m[36massets/GroupsPage-BqWdj77z.js       [39m[1m[2m  4.99 kB[22m[1m[22m[2m │ gzip:   1.77 kB[22m
+[2mdist/[22m[36massets/Badge-BbWMOIHA.js            [39m[1m[2m 13.02 kB[22m[1m[22m[2m │ gzip:   3.40 kB[22m
+[2mdist/[22m[36massets/Switch-CtjavNY8.js           [39m[1m[2m 13.06 kB[22m[1m[22m[2m │ gzip:   3.06 kB[22m
+[2mdist/[22m[36massets/Input-5GpA-U3v.js            [39m[1m[2m 13.55 kB[22m[1m[22m[2m │ gzip:   3.78 kB[22m
+[2mdist/[22m[36massets/AppearancePage-BCheoxsx.js   [39m[1m[2m 18.83 kB[22m[1m[22m[2m │ gzip:   5.55 kB[22m
+[2mdist/[22m[36massets/DataPage-DWFj13sZ.js         [39m[1m[2m100.21 kB[22m[1m[22m[2m │ gzip:  27.79 kB[22m
+[2mdist/[22m[36massets/Controls-CWqOQfaw.js         [39m[1m[2m120.92 kB[22m[1m[22m[2m │ gzip:  37.68 kB[22m
+[2mdist/[22m[36massets/index-CJ0WeW1q.js            [39m[1m[33m505.39 kB[39m[22m[2m │ gzip: 151.58 kB[22m
+[33m
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[32m✓ built in 4.71s[39m
