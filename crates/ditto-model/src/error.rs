@@ -10,6 +10,16 @@ pub enum DittoError {
     Ipc(String),
     #[error("Windows API error: {0}")]
     Windows(String),
+    #[error("storage error: {0}")]
+    Storage(String),
+    #[error("clipboard error: {0}")]
+    Clipboard(String),
+    #[error("migration error: {0}")]
+    Migration(String),
+    #[error("not found: {0}")]
+    NotFound(String),
+    #[error("conflict: {0}")]
+    Conflict(String),
     #[error("not implemented: {0}")]
     NotImplemented(&'static str),
     #[error("I/O error: {0}")]

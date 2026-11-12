@@ -1224,6 +1224,12 @@ name = "ditto-clipboard"
 version = "0.1.0"
 dependencies = [
  "ditto-model",
+ "image",
+ "parking_lot",
+ "sha2",
+ "thiserror 2.0.21",
+ "tracing",
+ "windows 0.61.3",
 ]
 
 [[package]]
@@ -1279,26 +1285,39 @@ name = "ditto-storage"
 version = "0.1.0"
 dependencies = [
  "ditto-model",
+ "hex",
+ "image",
+ "parking_lot",
  "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tracing",
 ]
 
 [[package]]
 name = "ditto-tauri"
 version = "0.1.0"
 dependencies = [
+ "ditto-clipboard",
  "ditto-ipc",
  "ditto-model",
+ "ditto-storage",
  "ditto-ui-tokens",
  "ditto-win",
  "log",
  "parking_lot",
  "serde",
+ "serde_json",
  "tauri",
  "tauri-build",
  "tauri-plugin-autostart",
  "tauri-plugin-global-shortcut",
  "tauri-plugin-log",
  "tauri-plugin-single-instance",
+ "tempfile",
 ]
 
 [[package]]
