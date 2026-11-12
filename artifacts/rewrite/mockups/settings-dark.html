@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ditto settings — Fluent dark (T0 mockup)</title>
+<link rel="stylesheet" href="mockup.css">
+</head>
+<body class="theme-dark">
+<header class="page-head">
+  <h1>Ditto settings — DARK</h1>
+  <p>Fluent reference mockup for the Tauri 2 settings window (React 19 + Fluent UI React v9). 1 CSS px = 1 logical px at 96 DPI. Not a screenshot; no app code.</p>
+  <div class="chips">
+    <span class="chip"><strong>900 × 640</strong> logical px</span>
+    <span class="chip"><strong>Left nav</strong> 208</span>
+    <span class="chip"><strong>Header</strong> 64</span>
+    <span class="chip"><strong>Control</strong> 32</span>
+    <span class="chip"><strong>Card</strong> radius 8 / padding 16</span>
+    <span class="chip"><a href="settings-light.html" style="color:inherit">Light version →</a></span>
+    <span class="chip"><a href="index.html" style="color:inherit">All mockups →</a></span>
+  </div>
+</header>
+
+<main class="page">
+  <div class="stage">
+    <div class="dim-top">900 logical px · 1:1 @96 DPI · 1350 @150% · 1800 @200%</div>
+    <div class="dim-left"><span>640 logical px</span></div>
+    <div class="settings-wrap">
+      <div class="settings" aria-label="Ditto settings dark mockup">
+        <!-- native title bar -->
+        <div class="win-titlebar">
+          <span class="wicon" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"><rect x="3.5" y="2.5" width="9" height="11" rx="1.5"></rect><path d="M6 2.5V1.8h4v.7"></path><path d="M5.5 5.5h5M5.5 8h5M5.5 10.5h3"></path></svg>
+          </span>
+          <span class="wtitle">Ditto Settings</span>
+          <span style="color:var(--text-secondary)">— Appearance</span>
+          <div class="win-controls"><span>—</span><span>□</span><span class="close">×</span></div>
+        </div>
+
+        <div class="settings-body">
+          <!-- left navigation -->
+          <nav class="nav" aria-label="Settings pages">
+            <div class="nav-item">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="2.2"></circle><path d="M8 1.7v1.4M8 12.9v1.4M1.7 8h1.4M12.9 8h1.4M3.6 3.6l1 1M11.4 11.4l1 1M12.4 3.6l-1 1M4.6 11.4l-1 1"></path></svg>
+              General
+            </div>
+            <div class="nav-item selected">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="5.5"></circle><path d="M8 2.5a5.5 5.5 0 0 1 0 11z" fill="currentColor" stroke="none"></path></svg>
+              Appearance
+            </div>
+            <div class="nav-item">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1.8" y="3.5" width="12.4" height="9" rx="1.5"></rect><path d="M4.5 6.5h2M4.5 9h3M9.5 6.5h2"></path></svg>
+              Hotkeys
+            </div>
+            <div class="nav-item">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="2.5" width="8" height="11" rx="1.5"></rect><path d="M6 2.5V1.8h4v.7M6 6h4M6 8.5h4M6 11h2.5"></path></svg>
+              Clipboard
+            </div>
+            <div class="nav-item">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 4.5h4l1 1.5h6v7H2z"></path></svg>
+              Groups
+            </div>
+            <div class="nav-item">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="4" width="10" height="9" rx="1.5"></rect><path d="M6 4V2.8h4V4M6 7h4M6 9.5h4"></path></svg>
+              Copy Buffers
+              <span class="nav-badge">5</span>
+            </div>
+            <div class="nav-sep"></div>
+            <div class="nav-item">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><ellipse cx="8" cy="4" rx="5" ry="2"></ellipse><path d="M3 4v4c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8v4c0 1.1 2.2 2 5 2s5-.9 5-2V8"></path></svg>
+              Data
+            </div>
+            <div class="nav-item">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="5.5"></circle><path d="M2.5 8h11M8 2.5c1.6 1.5 2.4 3.4 2.4 5.5S9.6 12 8 13.5C6.4 12 5.6 10.1 5.6 8S6.4 4 8 2.5z"></path></svg>
+              Languages
+            </div>
+            <div class="nav-item">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="5.8"></circle><path d="M8 10.5v.2M8 5.2c1.2 0 2 .8 2 1.7 0 1-.8 1.4-1.4 1.9-.4.3-.6.6-.6 1.1"></path></svg>
+              About
+            </div>
+          </nav>
+
+          <!-- page -->
+          <section class="settings-main" aria-label="Appearance settings">
+            <div class="settings-header">
+              <h2>Appearance <span class="cjk" style="font-weight:400;color:var(--text-secondary);font-size:14px">外观</span></h2>
+              <p>Theme, density, popup size, and motion. Changes apply to the popup immediately.</p>
+            </div>
+            <div class="settings-content">
+              <div class="card">
+                <h3>Theme</h3>
+                <p class="sub">Follow Windows, or pin a mode. High contrast always uses system colors.</p>
+                <div class="field-row">
+                  <div class="field-label">App theme</div>
+                  <div class="field-control">
+                    <div class="segmented" role="group" aria-label="App theme">
+                      <span class="seg selected">System</span>
+                      <span class="seg">Light</span>
+                      <span class="seg">Dark</span>
+                      <span class="seg">High contrast</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">Accent</div>
+                  <div class="field-control" style="flex-direction:column;align-items:stretch;gap:2px">
+                    <span class="control wide">System accent <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6.5L8 10l3.5-3.5"/></svg></span>
+                    <span class="field-help">Validated for contrast; falls back to Ditto Blue when the system accent fails.</span>
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">Density</div>
+                  <div class="field-control">
+                    <div class="segmented" role="group" aria-label="Density">
+                      <span class="seg selected">Comfortable</span>
+                      <span class="seg">Compact</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3>Popup</h3>
+                <p class="sub">The popup is keyboard-first. The search stays at the bottom.</p>
+                <div class="field-row">
+                  <div class="field-label">Popup size</div>
+                  <div class="field-control">
+                    <span class="control" style="width:88px;justify-content:space-between">420 <span style="color:var(--text-secondary)">×</span></span>
+                    <span class="control" style="width:88px;justify-content:space-between">480 <span style="color:var(--text-secondary)">px</span></span>
+                    <span class="field-help">Clamped to 90% of the work area.</span>
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">Position</div>
+                  <div class="field-control">
+                    <span class="control wide">At caret <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6.5L8 10l3.5-3.5"/></svg></span>
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">Lines per clip</div>
+                  <div class="field-control">
+                    <span class="slider" aria-hidden="true"></span>
+                    <span class="field-help" style="min-width:54px">1 line</span>
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">Animations</div>
+                  <div class="field-control">
+                    <span class="switch on" role="switch" aria-checked="true" aria-label="Animations"></span>
+                    <span class="field-help">Off for HC/reduced motion.</span>
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">Preview</div>
+                  <div class="field-control">
+                    <div class="segmented" role="group" aria-label="Preview">
+                      <span class="seg">Off</span>
+                      <span class="seg">Auto</span>
+                      <span class="seg selected">F3</span>
+                    </div>
+                    <span class="field-help">160 px default.</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="settings-footer">
+              <span class="btn">Discard</span>
+              <span class="btn primary">Apply</span>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- callouts -->
+      <span class="callout" style="left:-9px; top:-9px">1</span>
+      <span class="callout" style="right:-9px; top:10px">2</span>
+      <span class="callout" style="left:-9px; top:96px">3</span>
+      <span class="callout" style="left:-9px; top:54px">4</span>
+      <span class="callout" style="right:-9px; top:120px">5</span>
+      <span class="callout" style="right:-9px; top:180px">6</span>
+      <span class="callout" style="right:-9px; top:220px">7</span>
+      <span class="callout" style="right:-9px; top:560px">8</span>
+      <span class="callout" style="right:-9px; bottom:18px">9</span>
+      <span class="callout" style="right:-9px; bottom:-9px">10</span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <h2>Settings — dark</h2>
+    <p>Default 900 × 640. Native title bar; left navigation 208; content max 720; cards use the Fluent surface/border tokens.</p>
+    <ol class="legend">
+      <li><strong>Window:</strong> 900 × 640 logical px, radius 8, 1 px border, dialog shadow; native frame, optional Mica on Windows 11.</li>
+      <li><strong>Title bar:</strong> 32 px native system frame; app icon 14; title 12; window controls 46 × 32.</li>
+      <li><strong>Navigation:</strong> 208 px; items 40 high, radius 4, icon 16 + label 14/20; selected uses selection + 3 px accent bar.</li>
+      <li><strong>Page header:</strong> 64 px; title 20/28 semibold; description 12/16 secondary; content padding 24.</li>
+      <li><strong>Card:</strong> radius 8, 1 px border, padding 16; section title 14/20; helper 12/16.</li>
+      <li><strong>Field row:</strong> label 156 px (14/20); control column flexible; row min 44; gap 16.</li>
+      <li><strong>Segmented control:</strong> 32 px high; 4 segments; selected uses selection fill + accent text; keyboard focus ring 2 px.</li>
+      <li><strong>Switch:</strong> 40 × 20; knob 14; on uses accent fill; label/description adjacent.</li>
+      <li><strong>Primary button:</strong> 32 px high, radius 4, accent fill + onAccent text; secondary uses surface + border.</li>
+      <li><strong>DPI/tokens:</strong> all sizes are logical px; generated from <code>design/tokens.json</code>; no hardcoded colors.</li>
+    </ol>
+
+    <div class="note">The settings window is created on demand and destroyed on close. No WebView2 process exists at idle; closing the window releases the WebView2 tree.</div>
+
+    <h2 style="margin-top:22px">Page map</h2>
+    <ul>
+      <li><strong>General</strong> — startup, tray, language, updates (disabled).</li>
+      <li><strong>Appearance</strong> — theme, accent, density, popup size, preview.</li>
+      <li><strong>Hotkeys</strong> — open, plain text, first ten, copy buffers.</li>
+      <li><strong>Clipboard</strong> — formats, limits, dedupe, app filters, paste.</li>
+      <li><strong>Groups</strong> — tree, default group, ordering.</li>
+      <li><strong>Copy Buffers</strong> — 5 slots, hotkeys, contents.</li>
+      <li><strong>Data</strong> — backup/restore, import/export, history manager.</li>
+      <li><strong>Languages</strong> — English, 简体中文; restart note.</li>
+      <li><strong>About</strong> — version, GPLv3, diagnostics.</li>
+    </ul>
+
+    <h2 style="margin-top:22px">Token swatches</h2>
+    <div class="swatches">
+      <span class="swatch"><i style="background:#1B1C1F"></i><span><b>color.canvas</b>#1B1C1F</span></span>
+      <span class="swatch"><i style="background:#24262A"></i><span><b>color.surface</b>#24262A</span></span>
+      <span class="swatch"><i style="background:#2C2F34"></i><span><b>color.surfaceAlt</b>#2C2F34</span></span>
+      <span class="swatch"><i style="background:#4C8DFF"></i><span><b>color.accentFill</b>#4C8DFF</span></span>
+      <span class="swatch"><i style="background:#2E3A52"></i><span><b>color.selection</b>#2E3A52</span></span>
+      <span class="swatch"><i style="background:#383B41"></i><span><b>color.border</b>#383B41</span></span>
+    </div>
+
+    <h2 style="margin-top:22px">DPI scaling</h2>
+    <table class="dpi">
+      <tr><th>DPI</th><th>Window</th><th>Nav 208</th><th>Header 64</th><th>Control 32</th></tr>
+      <tr><td>100%</td><td>900 × 640</td><td>208</td><td>64</td><td>32</td></tr>
+      <tr><td>150%</td><td>1350 × 960</td><td>312</td><td>96</td><td>48</td></tr>
+      <tr><td>200%</td><td>1800 × 1280</td><td>416</td><td>128</td><td>64</td></tr>
+    </table>
+    <p style="margin-top:8px;font-size:11.5px">Physical pixels = logical px × DPI / 96. Use CSS px in the React app; the WebView2 maps to device pixels.</p>
+  </aside>
+</main>
+
+<main class="page" style="padding-top:0">
+  <div class="stage" style="padding:32px 40px">
+    <div class="history-wrap">
+      <div class="history">
+        <div class="history-head">
+          <strong>Data page — history management</strong>
+          <span class="control" style="width:220px;justify-content:space-between"><span style="color:var(--text-secondary)">Search clips…</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="7" r="4.3"></circle><path d="M10.2 10.2L14 14" stroke-linecap="round"/></svg></span>
+          <span class="control" style="width:120px;justify-content:space-between">All groups <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6.5L8 10l3.5-3.5"/></svg></span>
+          <span class="control" style="width:110px;justify-content:space-between">Pinned <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6.5L8 10l3.5-3.5"/></svg></span>
+          <span style="margin-left:auto;font-size:11px;color:var(--text-secondary)">5 of 10,000</span>
+        </div>
+        <table>
+          <thead><tr><th style="width:28px"></th><th>Clip</th><th>Source</th><th>Group</th><th>Tags</th><th>Copied</th></tr></thead>
+          <tbody>
+            <tr class="selected"><td><span class="radio on"><i></i></span></td><td>Quarterly report — final draft</td><td class="muted">Microsoft Word</td><td>Project X</td><td><span class="badge-inline">Pinned</span></td><td class="muted">2 min ago</td></tr>
+            <tr><td><span class="radio"><i></i></span></td><td class="cjk">会议纪要：下周三上午十点，产品评审。</td><td class="muted cjk">记事本</td><td>Work</td><td><span class="badge-inline">Pinned</span></td><td class="muted cjk">5 分钟前</td></tr>
+            <tr><td><span class="radio"><i></i></span></td><td>https://github.com/sabrogden/Ditto</td><td class="muted">Microsoft Edge</td><td>—</td><td><span class="badge-inline">Pasted</span></td><td class="muted">8 min ago</td></tr>
+            <tr><td><span class="radio"><i></i></span></td><td>screenshot-2026-11-12.png</td><td class="muted">Snipping Tool</td><td>Project X</td><td><span class="badge-inline">B2</span></td><td class="muted">12 min ago</td></tr>
+            <tr><td><span class="radio"><i></i></span></td><td style="font-family:'Cascadia Mono',Consolas,monospace;font-size:11px">SELECT id, preview_text FROM clips …</td><td class="muted">Windows Terminal</td><td>Work</td><td><span class="badge-inline">B1</span></td><td class="muted">14 min ago</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <aside class="sidebar">
+    <h2>Data page inset</h2>
+    <p>The Data page is the management surface: search/filter, preview, edit, delete, move to group, pin, and assign a copy buffer. The popup remains the daily fast path.</p>
+    <div class="note">The table is virtualized for large histories. Preview shows escaped text or a validated image; it never renders active HTML/RTF.</div>
+    <h2 style="margin-top:22px">Interaction notes</h2>
+    <ul>
+      <li>Every control is keyboard reachable; focus ring 2 px.</li>
+      <li>Writes are validated by the core; invalid values do not partially apply.</li>
+      <li>Language, data root, and autostart path changes show a restart banner.</li>
+      <li>Destructive actions require confirmation; backup before restore/import.</li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="page-foot">Ditto T0 mockup · logical px at 96 DPI · dark theme · mockup only, not a screenshot · see <a href="../../../docs/rewrite/DESIGN-SYSTEM.md" style="color:inherit">DESIGN-SYSTEM.md</a></footer>
+</body>
+</html>

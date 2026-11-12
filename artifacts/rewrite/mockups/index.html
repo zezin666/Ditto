@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ditto rewrite — T0 Fluent mockups</title>
+<link rel="stylesheet" href="mockup.css">
+<style>
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-top: 14px; }
+  .card-link { min-width: 0;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .card-link:hover { border-color: var(--border-strong); box-shadow: var(--shadow-flyout); }
+  .thumb-box { height: 190px; display: grid; place-items: center; background: var(--surface-alt); border-bottom: 1px solid var(--border); }
+  .mini-popup { width: 126px; height: 144px; border-radius: 4px; background: var(--canvas); border: 1px solid var(--border); box-shadow: var(--shadow-popup); overflow: hidden; display: flex; flex-direction: column; }
+  .mini-popup .t { height: 12px; background: var(--surface-alt); border-bottom: 1px solid var(--border); }
+  .mini-popup .b { height: 10px; background: var(--canvas); border-bottom: 1px solid var(--border); }
+  .mini-popup .l { flex: 1; padding: 4px 5px; display: flex; flex-direction: column; gap: 4px; }
+  .mini-popup .l i { display: block; height: 7px; border-radius: 2px; background: var(--surface); border: 1px solid var(--border); }
+  .mini-popup .l i.sel { background: var(--selection); border-color: var(--accent); }
+  .mini-popup .s { height: 14px; background: var(--surface-alt); border-top: 1px solid var(--border); }
+  .mini-settings { width: 210px; height: 140px; border-radius: 4px; background: var(--canvas); border: 1px solid var(--border); box-shadow: var(--shadow-dialog); overflow: hidden; display: flex; flex-direction: column; }
+  .mini-settings .t { height: 10px; background: var(--surface-alt); border-bottom: 1px solid var(--border); }
+  .mini-settings .body { flex: 1; display: flex; }
+  .mini-settings .nav { width: 52px; border-right: 1px solid var(--border); background: var(--surface-alt); padding: 4px; display: flex; flex-direction: column; gap: 3px; }
+  .mini-settings .nav i { display: block; height: 6px; border-radius: 2px; background: var(--surface); border: 1px solid var(--border); }
+  .mini-settings .nav i.sel { background: var(--selection); border-color: var(--accent); }
+  .mini-settings .main { flex: 1; padding: 8px; display: flex; flex-direction: column; gap: 5px; }
+  .mini-settings .main i { display: block; height: 8px; border-radius: 2px; background: var(--surface); border: 1px solid var(--border); }
+  .mini-settings .main i.wide { height: 26px; }
+  .meta { padding: 14px 16px; }
+  .meta strong { display: block; font-size: 14px; margin-bottom: 3px; }
+  .meta span { display: block; font-size: 12px; color: var(--page-muted); }
+  .meta em { display: block; font-style: normal; margin-top: 8px; font-size: 10.5px; color: var(--accent); font-weight: 600; }
+</style>
+</head>
+<body class="theme-light">
+<header class="page-head">
+  <h1>Ditto rewrite — T0 Fluent mockups</h1>
+  <p>Offline HTML/CSS reference mockups for the Rust/Tauri rewrite. Open any file directly; no server, build step, or external asset is required. All measurements are logical px at 96 DPI.</p>
+  <div class="chips">
+    <span class="chip"><strong>4</strong> annotated mockups</span>
+    <span class="chip"><strong>Popup</strong> 420 × 480</span>
+    <span class="chip"><strong>Settings</strong> 900 × 640</span>
+    <span class="chip"><strong>Light + Dark</strong></span>
+    <span class="chip"><strong>100 / 150 / 200%</strong> DPI notes</span>
+    <span class="chip">Not screenshots</span>
+  </div>
+</header>
+
+<main class="page" style="display:block;max-width:1320px">
+  <section>
+    <h2 style="font-size:18px;margin:0 0 4px">Mockups</h2>
+    <p style="color:var(--page-muted);font-size:13px;margin:0 0 14px">Each file shows the default state, annotations, token swatches, and a DPI table. The popup files also show the F3 preview state and empty/warning states.</p>
+    <div class="grid">
+      <a class="card-link" href="popup-light.html">
+        <div class="thumb-box"><div class="mini-popup"><div class="t"></div><div class="b"></div><div class="l"><i class="sel"></i><i></i><i></i><i></i><i></i><i></i></div><div class="s"></div></div></div>
+        <div class="meta"><strong>Popup — light</strong><span>420 × 480 · title 40 · breadcrumb 32 · row 36 · search 48 · radius 8</span><em>Open popup-light.html →</em></div>
+      </a>
+      <a class="card-link" href="popup-dark.html">
+        <div class="thumb-box"><div class="mini-popup"><div class="t"></div><div class="b"></div><div class="l"><i class="sel"></i><i></i><i></i><i></i><i></i><i></i></div><div class="s"></div></div></div>
+        <div class="meta"><strong>Popup — dark</strong><span>Same geometry; dark surfaces, selection, pinned/pasted colors</span><em>Open popup-dark.html →</em></div>
+      </a>
+      <a class="card-link" href="settings-light.html">
+        <div class="thumb-box"><div class="mini-settings"><div class="t"></div><div class="body"><div class="nav"><i></i><i class="sel"></i><i></i><i></i><i></i><i></i></div><div class="main"><i class="wide"></i><i class="wide"></i><i></i><i></i></div></div></div></div>
+        <div class="meta"><strong>Settings — light</strong><span>900 × 640 · nav 208 · header 64 · cards radius 8 · controls 32</span><em>Open settings-light.html →</em></div>
+      </a>
+      <a class="card-link" href="settings-dark.html">
+        <div class="thumb-box"><div class="mini-settings"><div class="t"></div><div class="body"><div class="nav"><i></i><i class="sel"></i><i></i><i></i><i></i><i></i></div><div class="main"><i class="wide"></i><i class="wide"></i><i></i><i></i></div></div></div></div>
+        <div class="meta"><strong>Settings — dark</strong><span>Same geometry; dark surfaces and Fluent control states</span><em>Open settings-dark.html →</em></div>
+      </a>
+    </div>
+  </section>
+
+  <section style="margin-top:34px">
+    <h2 style="font-size:18px;margin:0 0 4px">Dimensions</h2>
+    <table class="dpi" style="max-width:980px">
+      <tr><th>Surface</th><th>Default</th><th>Min</th><th>Key metrics</th></tr>
+      <tr><td>Popup</td><td>420 × 480</td><td>360 × 320</td><td>Title 40, breadcrumb 32, row 36 (1 line), search 48, preview 160 (F3)</td></tr>
+      <tr><td>Settings</td><td>900 × 640</td><td>720 × 480</td><td>Nav 208, header 64, content padding 24, card radius 8/padding 16, control 32</td></tr>
+      <tr><td>Group flyout</td><td>280 × 360</td><td>—</td><td>Rows 32, indent 16/level, header 40</td></tr>
+      <tr><td>Tooltip</td><td>max 320 wide</td><td>—</td><td>Padding 12, radius 8, shadow 4/8</td></tr>
+    </table>
+  </section>
+
+  <section style="margin-top:34px">
+    <h2 style="font-size:18px;margin:0 0 4px">Token values</h2>
+    <p style="color:var(--page-muted);font-size:13px;margin:0 0 10px">Light/dark values used in the mockups. High contrast is not hardcoded: it maps to Windows system colors (<code>Window</code>, <code>WindowText</code>, <code>Highlight</code>, <code>HighlightText</code>, <code>GrayText</code>).</p>
+    <table class="dpi" style="max-width:980px">
+      <tr><th>Token</th><th>Light</th><th>Dark</th><th>Role</th></tr>
+      <tr><td><code>color.canvas</code></td><td>#F7F8FA</td><td>#1B1C1F</td><td>Window/popup background</td></tr>
+      <tr><td><code>color.surface</code></td><td>#FFFFFF</td><td>#24262A</td><td>Cards, fields, list base</td></tr>
+      <tr><td><code>color.surfaceAlt</code></td><td>#F1F3F6</td><td>#2C2F34</td><td>Title/bottom bars, nav</td></tr>
+      <tr><td><code>color.border</code></td><td>#E3E6EC</td><td>#383B41</td><td>1 px separators</td></tr>
+      <tr><td><code>color.textPrimary</code></td><td>#1B1F24</td><td>#F2F3F5</td><td>Primary text</td></tr>
+      <tr><td><code>color.textSecondary</code></td><td>#5C6470</td><td>#A7ADB7</td><td>Meta/helper text</td></tr>
+      <tr><td><code>color.accentFill</code></td><td>#2563EB</td><td>#4C8DFF</td><td>Primary actions, first-ten badge</td></tr>
+      <tr><td><code>color.selection</code></td><td>#E8F0FF</td><td>#2E3A52</td><td>Selected row/page</td></tr>
+      <tr><td><code>color.pinned</code></td><td>#8A5A00</td><td>#E0A94A</td><td>Pin glyph/text</td></tr>
+      <tr><td><code>color.pasted</code></td><td>#1F7A4D</td><td>#4CC38A</td><td>Pasted check/bar</td></tr>
+    </table>
+  </section>
+
+  <section style="margin-top:34px">
+    <h2 style="font-size:18px;margin:0 0 4px">DPI scaling</h2>
+    <table class="dpi" style="max-width:980px">
+      <tr><th>Scale</th><th>Popup</th><th>Settings</th><th>Row 36</th><th>Control 32</th><th>Focus ring 2</th></tr>
+      <tr><td>100%</td><td>420 × 480</td><td>900 × 640</td><td>36</td><td>32</td><td>2</td></tr>
+      <tr><td>150%</td><td>630 × 720</td><td>1350 × 960</td><td>54</td><td>48</td><td>3</td></tr>
+      <tr><td>200%</td><td>840 × 960</td><td>1800 × 1280</td><td>72</td><td>64</td><td>4</td></tr>
+    </table>
+    <p style="color:var(--page-muted);font-size:12px;margin-top:8px">Physical pixels = logical px × DPI / 96. Hairline borders are 1 physical px; the focus ring is 2 logical px. Multi-monitor: use per-monitor DPI and clamp to the work area.</p>
+  </section>
+
+  <section style="margin-top:34px">
+    <h2 style="font-size:18px;margin:0 0 4px">What these mockups are not</h2>
+    <div class="note" style="max-width:980px">They are design references, not screenshots, not implementation, and not pixel-perfect runtime output. Runtime fonts, WebView2/egui rasterization, Windows 10 vs 11 DWM, and high-contrast system colors may differ. T3/T5/T7 must capture real screenshots and measurements in their evidence.</div>
+  </section>
+</main>
+
+<footer class="page-foot">Ditto T0 · docs/rewrite/DESIGN-SYSTEM.md · docs/rewrite/ARCHITECTURE.md · offline mockups, no external dependencies</footer>
+</body>
+</html>

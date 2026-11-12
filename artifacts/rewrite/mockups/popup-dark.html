@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ditto popup — Fluent dark (T0 mockup)</title>
+<link rel="stylesheet" href="mockup.css">
+</head>
+<body class="theme-dark">
+<header class="page-head">
+  <h1>Ditto quick-paste popup — DARK</h1>
+  <p>Fluent reference mockup for the egui popup. 1 CSS px = 1 logical px at 96 DPI. Not a screenshot; no app code.</p>
+  <div class="chips">
+    <span class="chip"><strong>420 × 480</strong> logical px</span>
+    <span class="chip"><strong>Top</strong> minimal title 40</span>
+    <span class="chip"><strong>Bottom</strong> search 48</span>
+    <span class="chip"><strong>Row</strong> 36</span>
+    <span class="chip"><strong>Radius</strong> 8 / 4</span>
+    <span class="chip"><a href="popup-light.html" style="color:inherit">Light version →</a></span>
+    <span class="chip"><a href="index.html" style="color:inherit">All mockups →</a></span>
+  </div>
+</header>
+
+<main class="page">
+  <div class="stage">
+    <div class="dim-top">420 logical px · 1:1 @96 DPI · 630 @150% · 840 @200%</div>
+    <div class="dim-left"><span>480 logical px</span></div>
+    <div class="popup-wrap">
+      <div class="popup" aria-label="Ditto popup dark mockup">
+        <!-- title area -->
+        <div class="titlebar">
+          <span class="app-icon" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round">
+              <rect x="3.5" y="2.5" width="9" height="11" rx="1.5"></rect>
+              <path d="M6 2.5V1.8h4v.7"></path>
+              <path d="M5.5 5.5h5M5.5 8h5M5.5 10.5h3"></path>
+            </svg>
+          </span>
+          <span class="title">Ditto</span>
+          <span class="title-status"><i class="dot"></i>Connected</span>
+          <div class="title-actions">
+            <button class="icon-btn active" title="Always on top" aria-label="Always on top">
+              <svg viewBox="0 0 16 16" fill="currentColor"><path d="M9.2 1.4l5.4 5.4-2.1.5-2.8 2.8-.3 2.6-1.5 1.5-3.9-3.9L.6 13.7l-.9-.9 3.4-3.4L-.8 5.5 1.6 3.1l2.6-.3 2.8-2.8 2.2.5z"/></svg>
+            </button>
+            <button class="icon-btn" title="Settings" aria-label="Settings">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3">
+                <circle cx="8" cy="8" r="2.1"></circle>
+                <path d="M8 1.6v1.5M8 12.9v1.5M1.6 8h1.5M12.9 8h1.5M3.5 3.5l1.1 1.1M11.4 11.4l1.1 1.1M12.5 3.5l-1.1 1.1M4.6 11.4l-1.1 1.1"></path>
+              </svg>
+            </button>
+            <button class="icon-btn close" title="Close" aria-label="Close">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- breadcrumb -->
+        <div class="breadcrumb">
+          <span class="back" aria-hidden="true">
+            <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5L5.5 8l4.5 4.5"/></svg>
+          </span>
+          <span class="seg">All clips</span>
+          <span class="sep">/</span>
+          <span class="seg">Work</span>
+          <span class="sep">/</span>
+          <span class="seg current">Project X</span>
+          <span class="crumb-count">12 clips</span>
+          <svg class="crumb-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6.5L8 10l3.5-3.5"/></svg>
+        </div>
+
+        <!-- list: 10 rows x 36 = 360 -->
+        <div class="list">
+          <div class="row selected focused">
+            <span class="gutter"><span class="idx">1</span></span>
+            <span class="row-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 2.5h7l3 3v8H3z"></path><path d="M10 2.5v3h3M5 8h6M5 10.5h6"/></svg></span>
+            <span class="row-main">
+              <span class="row-text">Quarterly report — final draft</span>
+              <span class="row-meta">Microsoft Word · 2 minutes ago</span>
+            </span>
+            <span class="badges"><span class="badge pin" title="Pinned"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M9.2 1.4l5.4 5.4-2.1.5-2.8 2.8-.3 2.6-1.5 1.5-3.9-3.9L.6 13.7l-.9-.9 3.4-3.4L-.8 5.5 1.6 3.1l2.6-.3 2.8-2.8 2.2.5z"/></svg></span></span>
+          </div>
+
+          <div class="row">
+            <span class="gutter"><span class="idx">2</span></span>
+            <span class="row-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 2.5h7l3 3v8H3z"></path><path d="M10 2.5v3h3M5 8h6M5 10.5h4"/></svg></span>
+            <span class="row-main">
+              <span class="row-text cjk">会议纪要：下周三上午十点，产品评审。</span>
+              <span class="row-meta cjk">记事本 · 5 分钟前</span>
+            </span>
+            <span class="badges"><span class="badge pin" title="Pinned"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M9.2 1.4l5.4 5.4-2.1.5-2.8 2.8-.3 2.6-1.5 1.5-3.9-3.9L.6 13.7l-.9-.9 3.4-3.4L-.8 5.5 1.6 3.1l2.6-.3 2.8-2.8 2.2.5z"/></svg></span></span>
+          </div>
+
+          <div class="row pasted">
+            <span class="gutter"><span class="idx">3</span></span>
+            <span class="row-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M6.5 9.5l3-3M5 11l-1 1a2.1 2.1 0 0 1-3-3l2-2a2.1 2.1 0 0 1 3 0M11 5l1-1a2.1 2.1 0 0 1 3 3l-2 2a2.1 2.1 0 0 1-3 0"/></svg></span>
+            <span class="row-main">
+              <span class="row-text">https://github.com/sabrogden/Ditto</span>
+              <span class="row-meta">Microsoft Edge · 8 minutes ago</span>
+            </span>
+            <span class="badges"><span class="badge check" title="Pasted"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></span>
+          </div>
+
+          <div class="row">
+            <span class="gutter"><span class="idx">4</span></span>
+            <span class="thumb" title="Image thumbnail"></span>
+            <span class="row-main">
+              <span class="row-text">screenshot-2026-11-12.png</span>
+              <span class="row-meta">Snipping Tool · 12 minutes ago</span>
+            </span>
+            <span class="badges"><span class="buffer" title="Copy buffer 2">B2</span></span>
+          </div>
+
+          <div class="row">
+            <span class="gutter"><span class="idx">5</span></span>
+            <span class="row-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 2.5h10v11H3zM5 5h6M5 7.5h6M5 10h4"/></svg></span>
+            <span class="row-main">
+              <span class="row-text" style="font-family:'Cascadia Mono',Consolas,monospace;font-size:12px">SELECT id, preview_text FROM clips WHERE is_deleted = 0 ORDER BY sort_order DESC;</span>
+              <span class="row-meta">Windows Terminal · 14 minutes ago</span>
+            </span>
+            <span class="badges"><span class="buffer" title="Copy buffer 1">B1</span></span>
+          </div>
+
+          <div class="row">
+            <span class="gutter"><span class="idx">6</span></span>
+            <span class="row-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2.5 4.5h4l1 1.5h6v7h-11z"></path></svg></span>
+            <span class="row-main">
+              <span class="row-text">report.pdf, budget.xlsx, notes.txt</span>
+              <span class="row-meta">File Explorer · 3 files · 20 minutes ago</span>
+            </span>
+            <span class="badges"></span>
+          </div>
+
+          <div class="row">
+            <span class="gutter"><span class="idx">7</span></span>
+            <span class="row-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 2.5h7l3 3v8H3z"></path><path d="M10 2.5v3h3M5 8h6M5 10.5h6"/></svg></span>
+            <span class="row-main">
+              <span class="row-text">Design tokens: color.canvas, color.surface, color.accentFill…</span>
+              <span class="row-meta">Visual Studio Code · 25 minutes ago</span>
+            </span>
+            <span class="badges"></span>
+          </div>
+
+          <div class="row">
+            <span class="gutter"><span class="idx">8</span></span>
+            <span class="row-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M6.5 9.5l3-3M5 11l-1 1a2.1 2.1 0 0 1-3-3l2-2a2.1 2.1 0 0 1 3 0M11 5l1-1a2.1 2.1 0 0 1 3 3l-2 2a2.1 2.1 0 0 1-3 0"/></svg></span>
+            <span class="row-main">
+              <span class="row-text">https://learn.microsoft.com/windows/apps/design/</span>
+              <span class="row-meta">Microsoft Edge · 31 minutes ago</span>
+            </span>
+            <span class="badges"></span>
+          </div>
+
+          <div class="row">
+            <span class="gutter"><span class="idx">9</span></span>
+            <span class="row-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 2.5h7l3 3v8H3z"></path><path d="M10 2.5v3h3M5 8h6M5 10.5h5"/></svg></span>
+            <span class="row-main">
+              <span class="row-text">Ditto rewrite: T0 architecture — process model and IPC.</span>
+              <span class="row-meta">Notion · 40 minutes ago</span>
+            </span>
+            <span class="badges"></span>
+          </div>
+
+          <div class="row">
+            <span class="gutter"><span class="idx">10</span></span>
+            <span class="row-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 2.5h7l3 3v8H3z"></path><path d="M10 2.5v3h3M5 8h6M5 10.5h6"/></svg></span>
+            <span class="row-main">
+              <span class="row-text">Thank you — I’ll review the migration plan tomorrow.</span>
+              <span class="row-meta">Outlook · 1 hour ago</span>
+            </span>
+            <span class="badges"></span>
+          </div>
+        </div>
+
+        <!-- bottom search -->
+        <div class="searchbar">
+          <div class="search-field">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="7" r="4.3"></circle><path d="M10.2 10.2L14 14" stroke-linecap="round"/></svg>
+            <span class="search-placeholder">Search clips…</span>
+            <span class="search-clear" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></span>
+          </div>
+          <span class="search-count">1,204</span>
+        </div>
+      </div>
+
+      <!-- callouts -->
+      <span class="callout" style="left:-9px; top:-9px">1</span>
+      <span class="callout" style="right:-9px; top:12px">2</span>
+      <span class="callout" style="right:-9px; top:50px">3</span>
+      <span class="callout" style="right:-9px; top:88px">4</span>
+      <span class="callout" style="right:-9px; top:126px">5</span>
+      <span class="callout" style="right:-9px; top:164px">6</span>
+      <span class="callout" style="right:-9px; top:202px">7</span>
+      <span class="callout" style="right:-9px; top:240px">8</span>
+      <span class="callout" style="left:-9px; bottom:12px">9</span>
+      <span class="callout" style="right:-9px; bottom:12px">10</span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <h2>Popup — dark</h2>
+    <p>Default state. The list is virtualized: 10 visible rows × 36 px; only visible rows + 3 overscan are drawn.</p>
+    <ol class="legend">
+      <li><strong>Window:</strong> 420 × 480 logical px, radius 8, 1 px border, Fluent shadow (0 8 16).</li>
+      <li><strong>Title area:</strong> 40 px; 16 px app icon; title 14/20 semibold; icon buttons 32 × 32 hit targets (30 px visual); pin/settings/close.</li>
+      <li><strong>Breadcrumb:</strong> 32 px; back 24; 13/18 semibold; count 11/14; chevron opens the group flyout.</li>
+      <li><strong>Row pitch:</strong> 36 px; inset X 4, Y 2; radius 4; selected fill; focused row gets a 2 px inset focus ring.</li>
+      <li><strong>First-ten badge:</strong> 18 × 18, radius 4, 11/14 semibold; index gutter 28 px.</li>
+      <li><strong>Text:</strong> 13/18 regular; meta 11/14 secondary; ellipsis; no unexpected row expansion.</li>
+      <li><strong>Badges:</strong> pinned glyph 14 (caution); pasted check 14 + 3 px left bar (success); copy buffer chip 18 × 18.</li>
+      <li><strong>Image:</strong> 32 × 32 thumbnail, radius 4, 1 px border; full image in the preview pane.</li>
+      <li><strong>Search:</strong> 48 px container; 32 px field, radius 4; 2 px focus ring; IME-aware; bottom position preserved.</li>
+      <li><strong>Count:</strong> 11/14 secondary; progress indicator replaces it after 150 ms for slow queries.</li>
+    </ol>
+
+    <div class="note">State is never color-only: pinned has a pin glyph, pasted has a check and a left bar, copy buffer has a B# chip. High contrast replaces brand colors with system colors.</div>
+
+    <h2 style="margin-top:22px">Token swatches</h2>
+    <div class="swatches">
+      <span class="swatch"><i style="background:#1B1C1F"></i><span><b>color.canvas</b>#1B1C1F</span></span>
+      <span class="swatch"><i style="background:#24262A"></i><span><b>color.surface</b>#24262A</span></span>
+      <span class="swatch"><i style="background:#4C8DFF"></i><span><b>color.accentFill</b>#4C8DFF</span></span>
+      <span class="swatch"><i style="background:#2E3A52"></i><span><b>color.selection</b>#2E3A52</span></span>
+      <span class="swatch"><i style="background:#E0A94A"></i><span><b>color.pinned</b>#E0A94A</span></span>
+      <span class="swatch"><i style="background:#4CC38A"></i><span><b>color.pasted</b>#4CC38A</span></span>
+    </div>
+
+    <h2 style="margin-top:22px">DPI scaling</h2>
+    <table class="dpi">
+      <tr><th>DPI</th><th>Popup</th><th>Row 36</th><th>Title 40</th><th>Search 48</th></tr>
+      <tr><td>100%</td><td>420 × 480</td><td>36</td><td>40</td><td>48</td></tr>
+      <tr><td>150%</td><td>630 × 720</td><td>54</td><td>60</td><td>72</td></tr>
+      <tr><td>200%</td><td>840 × 960</td><td>72</td><td>80</td><td>96</td></tr>
+    </table>
+    <p style="margin-top:8px;font-size:11.5px">Physical pixels = logical px × DPI / 96. Hairline borders are 1 physical px; focus rings are 2 logical px.</p>
+  </aside>
+</main>
+
+<main class="page" style="padding-top:0">
+  <div class="stage">
+    <div class="dim-top">Preview open (F3) · same 420 × 480 geometry · list 200 + preview 160</div>
+    <div class="popup-wrap">
+      <div class="popup with-preview" aria-label="Ditto popup dark with preview mockup">
+        <div class="titlebar">
+          <span class="app-icon" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"><rect x="3.5" y="2.5" width="9" height="11" rx="1.5"></rect><path d="M6 2.5V1.8h4v.7"></path><path d="M5.5 5.5h5M5.5 8h5M5.5 10.5h3"></path></svg>
+          </span>
+          <span class="title">Ditto</span>
+          <span class="title-status"><i class="dot"></i>Connected</span>
+          <div class="title-actions">
+            <button class="icon-btn active" title="Always on top" aria-label="Always on top"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M9.2 1.4l5.4 5.4-2.1.5-2.8 2.8-.3 2.6-1.5 1.5-3.9-3.9L.6 13.7l-.9-.9 3.4-3.4L-.8 5.5 1.6 3.1l2.6-.3 2.8-2.8 2.2.5z"/></svg></button>
+            <button class="icon-btn" title="Settings" aria-label="Settings"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="2.1"></circle><path d="M8 1.6v1.5M8 12.9v1.5M1.6 8h1.5M12.9 8h1.5M3.5 3.5l1.1 1.1M11.4 11.4l1.1 1.1M12.5 3.5l-1.1 1.1M4.6 11.4l-1.1 1.1"></path></svg></button>
+            <button class="icon-btn close" title="Close" aria-label="Close"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/></svg></button>
+          </div>
+        </div>
+        <div class="breadcrumb">
+          <span class="back" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5L5.5 8l4.5 4.5"/></svg></span>
+          <span class="seg">All clips</span><span class="sep">/</span><span class="seg">Work</span><span class="sep">/</span><span class="seg current">Project X</span>
+          <span class="crumb-count">12 clips</span>
+          <svg class="crumb-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6.5L8 10l3.5-3.5"/></svg>
+        </div>
+        <div class="list">
+          <div class="row selected focused">
+            <span class="gutter"><span class="idx">1</span></span>
+            <span class="row-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 2.5h7l3 3v8H3z"></path><path d="M10 2.5v3h3M5 8h6M5 10.5h6"/></svg></span>
+            <span class="row-main"><span class="row-text">Quarterly report — final draft</span><span class="row-meta">Microsoft Word · 2 minutes ago</span></span>
+            <span class="badges"><span class="badge pin"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M9.2 1.4l5.4 5.4-2.1.5-2.8 2.8-.3 2.6-1.5 1.5-3.9-3.9L.6 13.7l-.9-.9 3.4-3.4L-.8 5.5 1.6 3.1l2.6-.3 2.8-2.8 2.2.5z"/></svg></span></span>
+          </div>
+          <div class="row">
+            <span class="gutter"><span class="idx">2</span></span>
+            <span class="row-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 2.5h7l3 3v8H3z"></path><path d="M10 2.5v3h3M5 8h6M5 10.5h4"/></svg></span>
+            <span class="row-main"><span class="row-text cjk">会议纪要：下周三上午十点，产品评审。</span><span class="row-meta cjk">记事本 · 5 分钟前</span></span>
+          </div>
+          <div class="row pasted">
+            <span class="gutter"><span class="idx">3</span></span>
+            <span class="row-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M6.5 9.5l3-3M5 11l-1 1a2.1 2.1 0 0 1-3-3l2-2a2.1 2.1 0 0 1 3 0M11 5l1-1a2.1 2.1 0 0 1 3 3l-2 2a2.1 2.1 0 0 1-3 0"/></svg></span>
+            <span class="row-main"><span class="row-text">https://github.com/sabrogden/Ditto</span><span class="row-meta">Microsoft Edge · 8 minutes ago</span></span>
+            <span class="badges"><span class="badge check"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></span>
+          </div>
+          <div class="row">
+            <span class="gutter"><span class="idx">4</span></span>
+            <span class="thumb"></span>
+            <span class="row-main"><span class="row-text">screenshot-2026-11-12.png</span><span class="row-meta">Snipping Tool · 12 minutes ago</span></span>
+            <span class="badges"><span class="buffer">B2</span></span>
+          </div>
+          <div class="row">
+            <span class="gutter"><span class="idx">5</span></span>
+            <span class="row-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 2.5h10v11H3zM5 5h6M5 7.5h6M5 10h4"/></svg></span>
+            <span class="row-main"><span class="row-text" style="font-family:'Cascadia Mono',Consolas,monospace;font-size:12px">SELECT id, preview_text FROM clips …</span><span class="row-meta">Windows Terminal · 14 minutes ago</span></span>
+            <span class="badges"><span class="buffer">B1</span></span>
+          </div>
+        </div>
+        <div class="preview">
+          <div class="preview-text">
+            <div class="preview-title">Quarterly report — final draft</div>
+            <div class="preview-body">Revenue grew 18% quarter over quarter, led by the EMEA region. The migration plan is on track for the November release, with the remaining risk in data validation.</div>
+            <div class="preview-meta"><span class="preview-chip">Text</span><span>2 minutes ago</span><span>·</span><span>1.2 KB</span><span style="margin-left:auto;color:var(--accent);font-weight:600">Copy</span></div>
+          </div>
+          <div class="preview-img" aria-label="Preview image placeholder"></div>
+        </div>
+        <div class="searchbar">
+          <div class="search-field">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="7" r="4.3"></circle><path d="M10.2 10.2L14 14" stroke-linecap="round"/></svg>
+            <span class="search-placeholder">Search clips…</span>
+            <span class="search-clear" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></span>
+          </div>
+          <span class="search-count">12</span>
+        </div>
+      </div>
+      <span class="callout" style="right:-9px; top:372px">11</span>
+    </div>
+  </div>
+  <aside class="sidebar">
+    <h2>Preview state</h2>
+    <p>F3 toggles the preview. It is docked above the search, 160 px default (min 96, max 45% of content). On short popups it replaces the list and keeps the search visible.</p>
+    <ol class="legend">
+      <li><strong>Preview pane:</strong> 160 px, padding 12, 1 px top border; text 12/16; image fit; color swatch 48; files show names only.</li>
+      <li><strong>Actions:</strong> Copy, Paste, Copy plain text, Open (files), Close. Esc closes the preview before the popup.</li>
+      <li><strong>No content execution:</strong> HTML/RTF are shown as escaped text; no live webview, no scripts, no remote images.</li>
+    </ol>
+    <div class="note">The popup never renders active HTML. Preview is text or a decoded image; file paths are displayed, not executed.</div>
+    <h2 style="margin-top:22px">Empty / warning states</h2>
+    <div class="empty-state">
+      <div class="e-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.3 15.3L21 21" stroke-linecap="round"/></svg></div>
+      <div class="e-title">No results</div>
+      <div class="e-body">Try a shorter search, or clear the group filter.</div>
+      <span class="e-action">Clear search</span>
+    </div>
+    <div class="state-strip"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5l6.5 12h-13z"/><path d="M7.2 5.5h1.6v4H7.2zM7.2 10.7h1.6v1.6H7.2z" fill="var(--surface)"/></svg>Clipboard capture is paused<span class="action">Resume</span></div>
+  </aside>
+</main>
+
+<footer class="page-foot">Ditto T0 mockup · logical px at 96 DPI · dark theme · mockup only, not a screenshot · see <a href="../../../docs/rewrite/DESIGN-SYSTEM.md" style="color:inherit">DESIGN-SYSTEM.md</a></footer>
+</body>
+</html>
