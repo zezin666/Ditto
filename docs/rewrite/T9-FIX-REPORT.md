@@ -16,7 +16,7 @@
 
 ## HEAD
 
-`dcb75d3`（T9 修复提交）；base `e7a5e2d`。
+`1f41f29`（T9 修复/证据提交；主要代码提交为 `dcb75d3`）；base `e7a5e2d`。
 
 ## FILES
 
